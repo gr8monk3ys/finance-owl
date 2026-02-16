@@ -1,0 +1,42 @@
+FROM node:20-slim AS base
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+WORKDIR /app
+
+# Install dependencies
+FROM base AS deps
+COPY pnpm-workspace.yaml pnpm-lock.yaml* package.json ./
+COPY packages/frontend/package.json packages/frontend/
+COPY packages/shared/package.json packages/shared/
+RUN pnpm install --frozen-lockfile --filter @finance-owl/frontend --filter @finance-owl/shared
+
+# Build shared
+FROM deps AS build-shared
+COPY packages/shared packages/shared/
+COPY tsconfig.base.json ./
+RUN pnpm --filter @finance-owl/shared build
+
+# Build frontend (force adapter-node for Docker deployment)
+FROM build-shared AS build
+COPY packages/frontend packages/frontend/
+ENV ADAPTER=node
+RUN pnpm --filter @finance-owl/frontend build
+
+# Production
+FROM node:20-slim AS production
+RUN addgroup --system app && adduser --system --ingroup app app
+WORKDIR /app
+
+COPY --from=build /app/packages/frontend/build ./build
+COPY --from=build /app/packages/frontend/package.json ./
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
+EXPOSE 3000
+
+USER app
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD node -e "fetch('http://localhost:3000').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"
+
+CMD ["node", "--max-old-space-size=512", "build"]

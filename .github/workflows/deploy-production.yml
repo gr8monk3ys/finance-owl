@@ -1,0 +1,244 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9.15.0"
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Wait for CI to pass
+  # ──────────────────────────────────────────────
+  ci:
+    name: Wait for CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Wait for CI workflow
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.sha }}
+          check-name: CI Passed
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 15
+
+  # ──────────────────────────────────────────────
+  # Build and push Docker images
+  # ──────────────────────────────────────────────
+  build-and-push:
+    name: Build & Push (${{ matrix.target.name }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [ci]
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        target:
+          - name: backend
+            dockerfile: docker/Dockerfile.backend
+          - name: frontend
+            dockerfile: docker/Dockerfile.frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-${{ matrix.target.name }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.target.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ──────────────────────────────────────────────
+  # Run database migrations
+  # ──────────────────────────────────────────────
+  migrate:
+    name: Database Migrations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [ci]
+    environment:
+      name: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared
+        run: pnpm build --filter @finance-owl/shared
+
+      - name: Run migrations
+        run: pnpm --filter @finance-owl/backend db:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  # ──────────────────────────────────────────────
+  # Deploy frontend to Vercel (production)
+  # ──────────────────────────────────────────────
+  deploy-frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [ci, migrate]
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.production-url }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel@latest
+
+      - name: Pull Vercel environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build project
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel (production)
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "production-url=$url" >> "$GITHUB_OUTPUT"
+
+  # ──────────────────────────────────────────────
+  # Deploy backend to Railway
+  # ──────────────────────────────────────────────
+  deploy-backend:
+    name: Deploy Backend (Railway)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [build-and-push, migrate]
+    environment:
+      name: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: railway up --service backend --environment production
+
+      # ──────────────────────────────────────────
+      # Alternative: Railway GitHub Integration (preferred)
+      # ──────────────────────────────────────────
+      # If you use Railway's native GitHub integration instead of CLI:
+      #   1. Connect your repo in Railway dashboard
+      #   2. Set the root directory to "." (monorepo root)
+      #   3. Railway will auto-deploy on push to main
+      #   4. You can remove this entire job and rely on Railway's integration
+      #
+      # To use the Docker image from GHCR instead of building on Railway:
+      # - name: Deploy GHCR image to Railway
+      #   env:
+      #     RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      #   run: |
+      #     railway run --service backend \
+      #       railway variables set RAILWAY_DOCKERFILE_PATH=docker/Dockerfile.backend
+      #     railway up --service backend --environment production
+
+  # ──────────────────────────────────────────────
+  # Post-deploy smoke test
+  # ──────────────────────────────────────────────
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [deploy-frontend, deploy-backend]
+    environment:
+      name: production
+    steps:
+      - name: Health check - backend
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+        run: |
+          for i in 1 2 3 4 5; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" "$BACKEND_URL/api/health" || true)
+            if [ "$status" = "200" ]; then
+              echo "Backend health check passed."
+              exit 0
+            fi
+            echo "Attempt $i: got status $status, retrying in 10s..."
+            sleep 10
+          done
+          echo "Backend health check failed after 5 attempts."
+          exit 1
+
+      - name: Health check - frontend
+        env:
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+        run: |
+          for i in 1 2 3 4 5; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" "$FRONTEND_URL" || true)
+            if [ "$status" = "200" ]; then
+              echo "Frontend health check passed."
+              exit 0
+            fi
+            echo "Attempt $i: got status $status, retrying in 10s..."
+            sleep 10
+          done
+          echo "Frontend health check failed after 5 attempts."
+          exit 1

@@ -1,0 +1,12 @@
+dbs:
+  - path: /app/data/finance-owl.db
+    replicas:
+      - type: s3
+        bucket: ${LITESTREAM_S3_BUCKET}
+        path: finance-owl
+        endpoint: ${LITESTREAM_S3_ENDPOINT}
+        access-key-id: ${LITESTREAM_S3_ACCESS_KEY_ID}
+        secret-access-key: ${LITESTREAM_S3_SECRET_ACCESS_KEY}
+        retention: 72h
+        retention-check-interval: 1h
+        sync-interval: 1s

@@ -1,0 +1,49 @@
+# ──────────────────────────────────────────────
+# Finance Owl — Code Owners
+# ──────────────────────────────────────────────
+# These owners will be automatically requested
+# for review when a PR touches matching paths.
+#
+# Order matters: later rules override earlier ones.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# ──────────────────────────────────────────────
+
+# Default owner for everything
+*                                   @natalyscaturchio
+
+# ──────────────────────────────────────────────
+# Backend
+# ──────────────────────────────────────────────
+packages/backend/                   @natalyscaturchio
+packages/backend/src/modules/auth/  @natalyscaturchio
+
+# ──────────────────────────────────────────────
+# Frontend
+# ──────────────────────────────────────────────
+packages/frontend/                  @natalyscaturchio
+
+# ──────────────────────────────────────────────
+# Shared types and utilities
+# ──────────────────────────────────────────────
+packages/shared/                    @natalyscaturchio
+
+# ──────────────────────────────────────────────
+# Mobile
+# ──────────────────────────────────────────────
+packages/mobile/                    @natalyscaturchio
+
+# ──────────────────────────────────────────────
+# Infrastructure & DevOps
+# ──────────────────────────────────────────────
+.github/                            @natalyscaturchio
+docker/                             @natalyscaturchio
+docker-compose*.yml                 @natalyscaturchio
+turbo.json                          @natalyscaturchio
+pnpm-workspace.yaml                 @natalyscaturchio
+
+# ──────────────────────────────────────────────
+# Security-sensitive files (require explicit review)
+# ──────────────────────────────────────────────
+.github/workflows/                  @natalyscaturchio
+packages/backend/src/modules/auth/  @natalyscaturchio
+packages/backend/drizzle/           @natalyscaturchio

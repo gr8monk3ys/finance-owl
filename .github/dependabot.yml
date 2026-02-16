@@ -1,0 +1,199 @@
+version: 2
+
+updates:
+  # ──────────────────────────────────────────────
+  # Root workspace dependencies
+  # ──────────────────────────────────────────────
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: tuesday
+      time: "09:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 10
+    reviewers:
+      - natalyscaturchio
+    labels:
+      - dependencies
+      - automated
+    groups:
+      # Group minor/patch updates to reduce PR noise
+      typescript-ecosystem:
+        patterns:
+          - "typescript"
+          - "typescript-eslint"
+          - "@typescript-eslint/*"
+        update-types:
+          - minor
+          - patch
+      eslint:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+          - "eslint-*"
+        update-types:
+          - minor
+          - patch
+      turbo:
+        patterns:
+          - "turbo"
+        update-types:
+          - minor
+          - patch
+
+  # ──────────────────────────────────────────────
+  # Backend dependencies
+  # ──────────────────────────────────────────────
+  - package-ecosystem: npm
+    directory: /packages/backend
+    schedule:
+      interval: weekly
+      day: tuesday
+      time: "09:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 10
+    reviewers:
+      - natalyscaturchio
+    labels:
+      - dependencies
+      - backend
+      - automated
+    groups:
+      nestjs:
+        patterns:
+          - "@nestjs/*"
+        update-types:
+          - minor
+          - patch
+      drizzle:
+        patterns:
+          - "drizzle-orm"
+          - "drizzle-kit"
+        update-types:
+          - minor
+          - patch
+      sentry:
+        patterns:
+          - "@sentry/*"
+        update-types:
+          - minor
+          - patch
+      testing:
+        patterns:
+          - "vitest"
+          - "supertest"
+          - "@types/*"
+        update-types:
+          - minor
+          - patch
+
+  # ──────────────────────────────────────────────
+  # Frontend dependencies
+  # ──────────────────────────────────────────────
+  - package-ecosystem: npm
+    directory: /packages/frontend
+    schedule:
+      interval: weekly
+      day: tuesday
+      time: "09:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 10
+    reviewers:
+      - natalyscaturchio
+    labels:
+      - dependencies
+      - frontend
+      - automated
+    groups:
+      svelte:
+        patterns:
+          - "svelte"
+          - "svelte-*"
+          - "@sveltejs/*"
+        update-types:
+          - minor
+          - patch
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+        update-types:
+          - minor
+          - patch
+      vite:
+        patterns:
+          - "vite"
+          - "vitest"
+          - "@sveltejs/vite-*"
+        update-types:
+          - minor
+          - patch
+
+  # ──────────────────────────────────────────────
+  # Mobile dependencies
+  # ──────────────────────────────────────────────
+  - package-ecosystem: npm
+    directory: /packages/mobile
+    schedule:
+      interval: weekly
+      day: tuesday
+      time: "09:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 5
+    reviewers:
+      - natalyscaturchio
+    labels:
+      - dependencies
+      - mobile
+      - automated
+    groups:
+      capacitor:
+        patterns:
+          - "@capacitor/*"
+        update-types:
+          - minor
+          - patch
+
+  # ──────────────────────────────────────────────
+  # GitHub Actions
+  # ──────────────────────────────────────────────
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: tuesday
+      time: "09:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 5
+    reviewers:
+      - natalyscaturchio
+    labels:
+      - dependencies
+      - ci
+      - automated
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+
+  # ──────────────────────────────────────────────
+  # Docker base images
+  # ──────────────────────────────────────────────
+  - package-ecosystem: docker
+    directory: /docker
+    schedule:
+      interval: weekly
+      day: tuesday
+      time: "09:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 3
+    reviewers:
+      - natalyscaturchio
+    labels:
+      - dependencies
+      - docker
+      - automated

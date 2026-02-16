@@ -1,0 +1,47 @@
+FROM node:20-slim AS base
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+WORKDIR /app
+
+# Install dependencies
+FROM base AS deps
+COPY pnpm-workspace.yaml pnpm-lock.yaml* package.json ./
+COPY packages/backend/package.json packages/backend/
+COPY packages/shared/package.json packages/shared/
+RUN pnpm install --frozen-lockfile --filter @finance-owl/backend --filter @finance-owl/shared
+
+# Build shared
+FROM deps AS build-shared
+COPY packages/shared packages/shared/
+COPY tsconfig.base.json ./
+RUN pnpm --filter @finance-owl/shared build
+
+# Build backend
+FROM build-shared AS build
+COPY packages/backend packages/backend/
+RUN pnpm --filter @finance-owl/backend build
+
+# Production
+FROM node:20-slim AS production
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+RUN addgroup --system app && adduser --system --ingroup app app
+WORKDIR /app
+
+COPY --from=build /app/packages/backend/dist ./dist
+COPY --from=build /app/packages/backend/drizzle ./drizzle
+COPY --from=build /app/packages/backend/package.json ./
+COPY --from=build /app/packages/backend/node_modules ./node_modules
+
+ENV NODE_ENV=production
+ENV PORT=4000
+
+RUN mkdir -p /app/data && chown -R app:app /app/data
+
+# Railway dynamically assigns PORT; EXPOSE documents the default
+EXPOSE 4000
+
+USER app
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:${PORT}/api/health || exit 1
+
+CMD ["node", "--max-old-space-size=512", "dist/main"]
