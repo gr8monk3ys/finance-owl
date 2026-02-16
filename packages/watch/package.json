@@ -1,0 +1,10 @@
+{
+  "name": "@finance-owl/watch",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Apple Watch companion app for Finance Owl",
+  "scripts": {
+    "build": "echo 'Build via Xcode'",
+    "open": "open FinanceOwlWatch.xcodeproj"
+  }
+}
