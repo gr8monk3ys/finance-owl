@@ -1,0 +1,37 @@
+<div class="card">
+  <div style="margin-bottom: 16px;">
+    <span class="badge badge-warning">Upcoming Bill</span>
+  </div>
+
+  <h1>Bill Reminder</h1>
+  <p>You have an upcoming bill that needs your attention.</p>
+
+  <hr class="divider" />
+
+  <table class="stats">
+    <tr>
+      <td>Bill Name</td>
+      <td>{{BILL_NAME}}</td>
+    </tr>
+    <tr>
+      <td>Amount</td>
+      <td style="color: #fbbf24; font-size: 16px;">${{AMOUNT}}</td>
+    </tr>
+    <tr>
+      <td>Due Date</td>
+      <td>{{DUE_DATE}}</td>
+    </tr>
+    <tr>
+      <td>Frequency</td>
+      <td>{{FREQUENCY}}</td>
+    </tr>
+  </table>
+
+  <hr class="divider" />
+
+  <p class="muted">
+    Make sure you have enough funds in your account before the due date to avoid late fees.
+  </p>
+
+  <a href="{{APP_URL}}/bills" class="btn">View Bills</a>
+</div>

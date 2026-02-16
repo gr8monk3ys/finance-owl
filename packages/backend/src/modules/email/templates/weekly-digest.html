@@ -1,0 +1,44 @@
+<div class="card">
+  <div style="margin-bottom: 16px;">
+    <span class="badge badge-info">Weekly Summary</span>
+  </div>
+
+  <h1>Your Weekly Spending Summary</h1>
+  <p>Here is an overview of your finances for the past week.</p>
+
+  <hr class="divider" />
+
+  <div style="text-align: center; padding: 16px 0;">
+    <p class="muted" style="margin-bottom: 4px;">Total Spent This Week</p>
+    <div class="amount">${{TOTAL_SPENT}}</div>
+  </div>
+
+  <hr class="divider" />
+
+  {{#if TOP_CATEGORIES}}
+  <h2>Top Spending Categories</h2>
+  <table class="stats">
+    {{TOP_CATEGORIES_ROWS}}
+  </table>
+
+  <hr class="divider" />
+  {{/if}}
+
+  {{#if UPCOMING_BILLS}}
+  <h2>Upcoming Bills</h2>
+  <table class="stats">
+    {{UPCOMING_BILLS_ROWS}}
+  </table>
+
+  <hr class="divider" />
+  {{/if}}
+
+  {{#if INSIGHTS}}
+  <h2>Insights</h2>
+  {{INSIGHTS_CONTENT}}
+
+  <hr class="divider" />
+  {{/if}}
+
+  <a href="{{APP_URL}}/dashboard" class="btn">View Dashboard</a>
+</div>

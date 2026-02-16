@@ -1,0 +1,41 @@
+<div class="card">
+  <div style="margin-bottom: 16px;">
+    <span class="badge badge-danger">Unusual Activity</span>
+  </div>
+
+  <h1>Unusual Transaction Detected</h1>
+  <p>We noticed a transaction that looks different from your typical spending pattern.</p>
+
+  <hr class="divider" />
+
+  <table class="stats">
+    <tr>
+      <td>Merchant</td>
+      <td>{{MERCHANT_NAME}}</td>
+    </tr>
+    <tr>
+      <td>Amount Charged</td>
+      <td style="color: #f87171; font-size: 16px;">${{AMOUNT}}</td>
+    </tr>
+    <tr>
+      <td>Expected Amount</td>
+      <td>${{EXPECTED_AMOUNT}}</td>
+    </tr>
+    <tr>
+      <td>Date</td>
+      <td>{{DATE}}</td>
+    </tr>
+    <tr>
+      <td>Difference</td>
+      <td style="color: #fbbf24;">{{DIFFERENCE_DIRECTION}}${{DIFFERENCE}} ({{DIFFERENCE_PERCENT}}%)</td>
+    </tr>
+  </table>
+
+  <hr class="divider" />
+
+  <p class="muted">
+    If you don't recognize this transaction, review it immediately and flag it if necessary.
+  </p>
+
+  <a href="{{APP_URL}}/transactions" class="btn">Review Transactions</a>
+</div>

@@ -1,0 +1,32 @@
+<div class="card">
+  <div style="margin-bottom: 16px;">
+    <span class="badge badge-danger">Budget Alert</span>
+  </div>
+
+  <h1>Budget Limit Reached</h1>
+  <p>Your spending in <strong style="color: #ffffff;">{{BUDGET_NAME}}</strong> has reached a significant threshold.</p>
+
+  <hr class="divider" />
+
+  <div style="text-align: center; padding: 16px 0;">
+    <p class="muted" style="margin-bottom: 4px;">Spent</p>
+    <div class="amount" style="color: #f87171;">${{SPENT}}</div>
+    <p class="muted" style="margin-top: 4px;">of ${{LIMIT}} budget</p>
+  </div>
+
+  <!-- Progress bar -->
+  <div style="background-color: #2d3748; border-radius: 8px; height: 8px; overflow: hidden; margin-bottom: 8px;">
+    <div style="background-color: {{PROGRESS_COLOR}}; height: 100%; width: {{PERCENT_CAPPED}}%; border-radius: 8px;"></div>
+  </div>
+  <p style="text-align: right; margin: 0;">
+    <span class="badge {{PERCENT_BADGE_CLASS}}">{{PERCENT_USED}}% used</span>
+  </p>
+
+  <hr class="divider" />
+
+  <p class="muted">
+    Consider reviewing your recent transactions in this category to stay on track.
+  </p>
+
+  <a href="{{APP_URL}}/budgets" class="btn">View Budgets</a>
+</div>
