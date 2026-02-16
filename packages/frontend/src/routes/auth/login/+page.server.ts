@@ -1,0 +1,76 @@
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
+import { api } from '$lib/server/api';
+
+const API_URL = process.env.API_URL || 'http://localhost:4000';
+
+export const load: PageServerLoad = async ({ locals }) => {
+	if (locals.user) {
+		throw redirect(303, '/dashboard');
+	}
+
+	// Check if first run
+	try {
+		const res = await fetch(`${API_URL}/api/auth/first-run`);
+		if (res.ok) {
+			const data = await res.json();
+			if (data.isFirstRun) {
+				throw redirect(303, '/auth/setup');
+			}
+		}
+	} catch (e) {
+		if (e instanceof Response || (e && typeof e === 'object' && 'status' in e)) throw e;
+	}
+};
+
+export const actions: Actions = {
+	default: async ({ request, cookies }) => {
+		const data = await request.formData();
+		const email = data.get('email') as string;
+		const password = data.get('password') as string;
+		const totpCode = data.get('totpCode') as string | null;
+
+		if (!email || !password) {
+			return fail(400, { error: 'Email and password are required', email });
+		}
+
+		try {
+			const res = await fetch(`${API_URL}/api/auth/login`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email, password, ...(totpCode ? { totpCode } : {}) })
+			});
+
+			if (!res.ok) {
+				const body = await res.json().catch(() => ({ message: 'Login failed' }));
+				return fail(res.status, {
+					error: body.message || 'Login failed',
+					code: body.code,
+					email
+				});
+			}
+
+			const tokens = await res.json();
+
+			cookies.set('access_token', tokens.accessToken, {
+				path: '/',
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'lax',
+				maxAge: 60 * 15
+			});
+
+			cookies.set('refresh_token', tokens.refreshToken, {
+				path: '/',
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'lax',
+				maxAge: 60 * 60 * 24 * 7
+			});
+		} catch {
+			return fail(500, { error: 'Network error. Is the API running?', email });
+		}
+
+		throw redirect(303, '/dashboard');
+	}
+};
