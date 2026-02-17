@@ -22,7 +22,6 @@
     "db:setup-env": "npx tsx scripts/setup-env.ts"
   },
   "dependencies": {
-    "@finance-owl/shared": "workspace:*",
     "@nestjs/bullmq": "^11.0.0",
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.0",
@@ -62,6 +61,7 @@
     "@simplewebauthn/types": "^12.0.0",
     "@swc/core": "^1.15.11",
     "@types/multer": "^1.4.12",
+    "@types/express": "^5.0.0",
     "@types/node": "^22.0.0",
     "@types/nodemailer": "^7.0.9",
     "@types/passport-jwt": "^4.0.1",
