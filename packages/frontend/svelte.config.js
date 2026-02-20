@@ -1,9 +1,9 @@
-import adapterAuto from '@sveltejs/adapter-auto';
+import adapterVercel from '@sveltejs/adapter-vercel';
 import adapterNode from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /**
- * Use adapter-auto for Vercel/cloud deployments (auto-detects platform).
+ * Use adapter-vercel for Vercel deployments (pin runtime to a supported LTS).
  * Use adapter-node for Docker/self-hosted deployments.
  *
  * Set ADAPTER=node to force adapter-node (e.g. in docker-compose).
@@ -16,7 +16,7 @@ const config = {
 	kit: {
 		adapter: useNodeAdapter
 			? adapterNode({ out: 'build' })
-			: adapterAuto(),
+			: adapterVercel({ runtime: 'nodejs24.x' }),
 		alias: {
 			$components: 'src/lib/components',
 			$stores: 'src/lib/stores'
