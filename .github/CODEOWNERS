@@ -47,3 +47,5 @@ pnpm-workspace.yaml                 @natalyscaturchio
 .github/workflows/                  @natalyscaturchio
 packages/backend/src/modules/auth/  @natalyscaturchio
 packages/backend/drizzle/           @natalyscaturchio
+
+* @gr8monk3ys
