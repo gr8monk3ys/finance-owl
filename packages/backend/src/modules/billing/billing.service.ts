@@ -58,7 +58,12 @@ export class BillingService {
     private configService: ConfigService,
   ) {
     const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
-    this.stripe = new Stripe(secretKey || '');
+    if (!secretKey) {
+      this.logger.warn(
+        'STRIPE_SECRET_KEY is not configured. Billing features will not work.',
+      );
+    }
+    this.stripe = new Stripe(secretKey || 'sk_not_configured');
   }
 
   // -------------------------------------------------------------------------
@@ -421,7 +426,7 @@ export class BillingService {
 
     if (!subscription) {
       const plans = await this.getPlans();
-      const freePlan = plans.find((p: any) => p.name === 'free');
+      const freePlan = plans.find((p: { name: string }) => p.name === 'free');
       return {
         plan: freePlan || { name: 'free', features: PLAN_FEATURES.free },
         status: 'active' as const,
@@ -504,7 +509,7 @@ export class BillingService {
       );
 
       const plans = await this.getPlans();
-      const freePlan = plans.find((p: any) => p.name === 'free');
+      const freePlan = plans.find((p: { name: string }) => p.name === 'free');
 
       await this.db
         .update(userSubscriptions)
@@ -929,7 +934,7 @@ export class BillingService {
 
     // Resolve plan ID from database
     const plans = await this.getPlans();
-    const matchingPlan = plans.find((p: any) => p.name === planName);
+    const matchingPlan = plans.find((p: { name: string }) => p.name === planName);
     const planId = matchingPlan?.id;
 
     // Ensure billing_customers record exists
@@ -1017,7 +1022,7 @@ export class BillingService {
       planUpdate = this.resolvePlanNameFromPrice(currentPriceId);
     }
 
-    const updateData: Record<string, any> = {
+    const updateData: Record<string, unknown> = {
       status: statusMap[subscription.status] || 'active',
       currentPeriodStart: periodStart,
       currentPeriodEnd: periodEnd,
@@ -1057,7 +1062,7 @@ export class BillingService {
     }
 
     const plans = await this.getPlans();
-    const freePlan = plans.find((p: any) => p.name === 'free');
+    const freePlan = plans.find((p: { name: string }) => p.name === 'free');
 
     if (freePlan) {
       await this.db

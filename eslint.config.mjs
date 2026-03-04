@@ -16,8 +16,22 @@ export default tseslint.config(
         'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
+  {
+    // Allow `any` in test files — mocks inherently require flexible typing
+    files: [
+      '**/*.spec.ts',
+      '**/*.test.ts',
+      '**/*.spec.tsx',
+      '**/*.test.tsx',
+      '**/test/**',
+      '**/e2e/**',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
   {

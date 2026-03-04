@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { CurrentUser, Public } from '../../common/decorators';
 import { AdvisorSharingService } from './advisor-sharing.service';
 import { IsString, IsNotEmpty, IsArray, IsOptional } from 'class-validator';
@@ -67,9 +68,10 @@ export class AdvisorSharingController {
 
   @Public()
   @Get('portal/:token')
-  async getPortal(@Param('token') token: string, @Req() req: any) {
+  async getPortal(@Param('token') token: string, @Req() req: Request) {
     const share = await this.advisorSharingService.getShareByToken(token);
-    const ip = req.headers['x-forwarded-for'] || req.ip;
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = (Array.isArray(forwarded) ? forwarded[0] : forwarded) || req.ip;
     await this.advisorSharingService.logAccess(share.id, 'portal_view', ip);
     return share;
   }

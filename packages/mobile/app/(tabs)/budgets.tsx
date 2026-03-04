@@ -83,8 +83,9 @@ export default function BudgetsScreen() {
       setAmount('');
       setPeriod('monthly');
       await fetchData();
-    } catch (err: any) {
-      setCreateError(err.response?.data?.message ?? 'Failed to create budget');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setCreateError(error.response?.data?.message ?? 'Failed to create budget');
     } finally {
       setCreating(false);
     }

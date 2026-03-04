@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const GET: RequestHandler = async ({ params, url, locals }) => {
 	const { symbol } = params;
@@ -11,7 +12,7 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 			accessToken: locals.accessToken
 		});
 		return json(result);
-	} catch (e: any) {
-		return json({ prices: [], error: e.message || 'Failed to fetch price history' }, { status: 500 });
+	} catch (e: unknown) {
+		return json({ prices: [], error: getErrorMessage(e) || 'Failed to fetch price history' }, { status: 500 });
 	}
 };

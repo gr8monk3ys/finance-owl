@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -44,8 +45,8 @@ export const actions: Actions = {
 			});
 
 			return { success: true, answer: result.answer, sources: result.sources ?? [] };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to get answer from AI.' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to get answer from AI.' });
 		}
 	},
 
@@ -57,8 +58,8 @@ export const actions: Actions = {
 			});
 
 			return { anomaliesDetected: true, anomalies: result.anomalies ?? [] };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to detect anomalies.' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to detect anomalies.' });
 		}
 	}
 };

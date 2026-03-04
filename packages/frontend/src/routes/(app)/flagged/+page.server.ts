@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -11,7 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		]);
 
 		// If user has a household, also load household flags
-		let householdFlags: any[] = [];
+		let householdFlags: Record<string, unknown>[] = [];
 		if (households.length > 0) {
 			try {
 				householdFlags = await api(`/flags/household/${households[0].id}`, {
@@ -55,8 +56,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to flag transaction' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to flag transaction' });
 		}
 	},
 
@@ -72,8 +73,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to resolve flag' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to resolve flag' });
 		}
 	}
 };

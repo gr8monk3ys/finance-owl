@@ -59,10 +59,10 @@ export class TransUnionProvider implements CreditBureauProvider {
       });
 
       return {
-        score: response.score,
-        model: response.scoreModel || 'vantage3',
+        score: response.score as number,
+        model: (response.scoreModel || 'vantage3') as CreditScoreResult['model'],
         range: { min: 300, max: 850 },
-        factors: this.mapFactors(response.factors || []),
+        factors: this.mapFactors((response.factors || []) as Record<string, unknown>[]),
         pulledAt: new Date(),
         bureau: 'transunion',
       };
@@ -105,7 +105,7 @@ export class TransUnionProvider implements CreditBureauProvider {
         body: { consumerId: userId },
       });
 
-      return this.mapFactors(response.factors || []);
+      return this.mapFactors((response.factors || []) as Record<string, unknown>[]);
     } catch (error) {
       this.logger.error(`TransUnion getCreditFactors failed: ${error}`);
       return generateSimulatedFactors();
@@ -140,12 +140,12 @@ export class TransUnionProvider implements CreditBureauProvider {
       });
 
       return {
-        disputeId: response.disputeId,
+        disputeId: response.disputeId as string,
         bureau: 'transunion',
-        status: response.status || 'submitted',
-        filedAt: new Date(response.filedAt || Date.now()),
-        estimatedResolutionDate: response.estimatedResolutionDate,
-        referenceNumber: response.referenceNumber,
+        status: (response.status || 'submitted') as DisputeResult['status'],
+        filedAt: new Date((response.filedAt as string) || Date.now()),
+        estimatedResolutionDate: (response.estimatedResolutionDate || '') as string,
+        referenceNumber: (response.referenceNumber || '') as string,
       };
     } catch (error) {
       this.logger.error(`TransUnion fileDispute failed: ${error}`);
@@ -170,12 +170,12 @@ export class TransUnionProvider implements CreditBureauProvider {
       });
 
       return {
-        disputeId: response.disputeId,
-        status: response.status,
-        filedAt: new Date(response.filedAt),
-        updatedAt: new Date(response.updatedAt),
-        resolution: response.resolution,
-        resolvedAt: response.resolvedAt ? new Date(response.resolvedAt) : undefined,
+        disputeId: response.disputeId as string,
+        status: response.status as DisputeStatus['status'],
+        filedAt: new Date(response.filedAt as string),
+        updatedAt: new Date(response.updatedAt as string),
+        resolution: response.resolution as string | undefined,
+        resolvedAt: response.resolvedAt ? new Date(response.resolvedAt as string) : undefined,
       };
     } catch (error) {
       this.logger.error(`TransUnion getDisputeStatus failed: ${error}`);
@@ -204,9 +204,9 @@ export class TransUnionProvider implements CreditBureauProvider {
       return {
         enabled: true,
         bureau: 'transunion',
-        monitoringId: response.monitoringId,
-        alertTypes: response.alertTypes || ['score_change', 'new_account', 'hard_inquiry'],
-        enrolledAt: new Date(response.enrolledAt || Date.now()),
+        monitoringId: response.monitoringId as string,
+        alertTypes: (response.alertTypes || ['score_change', 'new_account', 'hard_inquiry']) as string[],
+        enrolledAt: new Date((response.enrolledAt as string) || Date.now()),
       };
     } catch (error) {
       this.logger.error(`TransUnion setupMonitoring failed: ${error}`);
@@ -221,7 +221,7 @@ export class TransUnionProvider implements CreditBureauProvider {
   private async makeRequest(
     path: string,
     options: { method: string; body?: Record<string, unknown> },
-  ): Promise<any> {
+  ): Promise<Record<string, unknown>> {
     const url = `${this.baseUrl}${path}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -246,14 +246,14 @@ export class TransUnionProvider implements CreditBureauProvider {
     return response.json();
   }
 
-  private mapFactors(rawFactors: any[]): CreditFactor[] {
+  private mapFactors(rawFactors: Record<string, unknown>[]): CreditFactor[] {
     return rawFactors.map((f) => ({
       type: f.impact === 'positive' ? ('positive' as const) : ('negative' as const),
-      category: this.mapCategory(f.category || f.code),
-      title: f.title || f.description || 'Credit Factor',
-      description: f.description || f.narrative || '',
-      impact: this.mapImpactLevel(f.impactLevel || f.weight),
-      value: f.value,
+      category: this.mapCategory((f.category || f.code) as string),
+      title: (f.title || f.description || 'Credit Factor') as string,
+      description: (f.description || f.narrative || '') as string,
+      impact: this.mapImpactLevel((f.impactLevel || f.weight) as string | number),
+      value: f.value as string | undefined,
     }));
   }
 
@@ -283,49 +283,54 @@ export class TransUnionProvider implements CreditBureauProvider {
     return 'low';
   }
 
-  private mapReport(raw: any): CreditReport {
+  private mapReport(raw: Record<string, unknown>): CreditReport {
+    const tradeLines = (raw.tradeLines || raw.accounts || []) as Record<string, unknown>[];
+    const inquiries = (raw.inquiries || []) as Record<string, unknown>[];
+    const publicRecords = (raw.publicRecords || []) as Record<string, unknown>[];
+    const personalInfo = raw.personalInfo as Record<string, unknown> | undefined;
+    const summary = raw.summary as Record<string, unknown> | undefined;
     return {
-      accounts: (raw.tradeLines || raw.accounts || []).map((a: any) => ({
-        accountName: a.creditorName || a.subscriberName || 'Unknown',
-        accountType: this.mapAccountType(a.accountType),
-        status: this.mapAccountStatus(a.accountStatus),
-        balance: a.currentBalance || 0,
-        creditLimit: a.creditLimit,
-        monthlyPayment: a.monthlyPayment,
-        openedDate: a.dateOpened || '',
-        lastReportedDate: a.dateReported || '',
-        paymentHistory: (a.paymentPattern || []).map((p: string) =>
+      accounts: tradeLines.map((a: Record<string, unknown>) => ({
+        accountName: (a.creditorName || a.subscriberName || 'Unknown') as string,
+        accountType: this.mapAccountType(a.accountType as string),
+        status: this.mapAccountStatus(a.accountStatus as string),
+        balance: (a.currentBalance || 0) as number,
+        creditLimit: a.creditLimit as number | undefined,
+        monthlyPayment: a.monthlyPayment as number | undefined,
+        openedDate: (a.dateOpened || '') as string,
+        lastReportedDate: (a.dateReported || '') as string,
+        paymentHistory: ((a.paymentPattern || []) as string[]).map((p: string) =>
           this.mapPaymentStatus(p),
         ),
       })),
-      inquiries: (raw.inquiries || []).map((i: any) => ({
-        creditorName: i.subscriberName || 'Unknown',
-        inquiryDate: i.inquiryDate || '',
+      inquiries: inquiries.map((i: Record<string, unknown>) => ({
+        creditorName: (i.subscriberName || 'Unknown') as string,
+        inquiryDate: (i.inquiryDate || '') as string,
         type: i.inquiryType === 'soft' ? ('soft' as const) : ('hard' as const),
       })),
-      publicRecords: (raw.publicRecords || []).map((pr: any) => ({
+      publicRecords: publicRecords.map((pr: Record<string, unknown>) => ({
         type: 'other' as const,
         status: 'active' as const,
-        filedDate: pr.dateFiled || '',
-        amount: pr.amount,
-        description: pr.description || 'Public record',
+        filedDate: (pr.dateFiled || '') as string,
+        amount: pr.amount as number | undefined,
+        description: (pr.description || 'Public record') as string,
       })),
       personalInfo: {
-        name: raw.personalInfo?.name || '',
-        addresses: raw.personalInfo?.addresses || [],
-        employers: raw.personalInfo?.employers || [],
+        name: (personalInfo?.name || '') as string,
+        addresses: (personalInfo?.addresses || []) as string[],
+        employers: (personalInfo?.employers || []) as string[],
       },
       summary: {
-        totalAccounts: raw.summary?.totalAccounts || 0,
-        openAccounts: raw.summary?.openAccounts || 0,
-        closedAccounts: raw.summary?.closedAccounts || 0,
-        totalBalance: raw.summary?.totalBalance || 0,
-        totalCreditLimit: raw.summary?.totalCreditLimit || 0,
-        utilization: raw.summary?.utilization || 0,
-        oldestAccountAge: raw.summary?.oldestAccountAge || 'N/A',
-        hardInquiriesLast12Months: raw.summary?.hardInquiries || 0,
-        collectionsCount: raw.summary?.collections || 0,
-        publicRecordsCount: raw.summary?.publicRecords || 0,
+        totalAccounts: (summary?.totalAccounts || 0) as number,
+        openAccounts: (summary?.openAccounts || 0) as number,
+        closedAccounts: (summary?.closedAccounts || 0) as number,
+        totalBalance: (summary?.totalBalance || 0) as number,
+        totalCreditLimit: (summary?.totalCreditLimit || 0) as number,
+        utilization: (summary?.utilization || 0) as number,
+        oldestAccountAge: (summary?.oldestAccountAge || 'N/A') as string,
+        hardInquiriesLast12Months: (summary?.hardInquiries || 0) as number,
+        collectionsCount: (summary?.collections || 0) as number,
+        publicRecordsCount: (summary?.publicRecords || 0) as number,
       },
     };
   }

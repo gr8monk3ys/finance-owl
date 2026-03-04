@@ -2,18 +2,14 @@ import { Injectable, Inject, BadRequestException, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config';
 import { eq, and } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
+import { CacheService } from '../../common/cache/cache.service';
 import * as schema from '../../database/schema';
+import type { RegistrationResponseJSON, AuthenticationResponseJSON, AuthenticatorTransportFuture } from '@simplewebauthn/types';
 
 // SimpleWebAuthn is ESM-only -- use dynamic imports
 async function loadWebAuthn() {
   const mod = await import('@simplewebauthn/server');
   return mod;
-}
-
-/** Challenge stored with creation timestamp for expiry enforcement. */
-interface StoredChallenge {
-  challenge: string;
-  createdAt: number;
 }
 
 @Injectable()
@@ -23,15 +19,10 @@ export class WebAuthnService {
   private rpID: string;
   private origin: string;
 
-  // Challenge TTL: 5 minutes in milliseconds
-  private static readonly CHALLENGE_TTL_MS = 5 * 60 * 1000;
-
-  // In-memory challenge store with expiry (keyed by userId)
-  private challenges = new Map<string, StoredChallenge>();
-
   constructor(
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
     private configService: ConfigService,
+    private cacheService: CacheService,
   ) {
     this.rpName = this.configService.get('WEBAUTHN_RP_NAME', 'FinanceOwl');
     this.rpID = this.configService.get('WEBAUTHN_RP_ID', 'localhost');
@@ -39,9 +30,6 @@ export class WebAuthnService {
       'WEBAUTHN_ORIGIN',
       'http://localhost:3000',
     );
-
-    // Periodically clean up expired challenges every 60 seconds
-    setInterval(() => this.cleanupExpiredChallenges(), 60_000);
   }
 
   async generateRegistrationOptions(userId: string, userName: string) {
@@ -69,17 +57,18 @@ export class WebAuthnService {
       },
     });
 
-    this.setChallenge(userId, options.challenge);
+    await this.setChallenge(userId, options.challenge);
     return options;
   }
 
-  async verifyRegistration(userId: string, body: any) {
+  async verifyRegistration(userId: string, body: unknown) {
     const { verifyRegistrationResponse } = await loadWebAuthn();
+    const regBody = body as RegistrationResponseJSON;
 
-    const expectedChallenge = this.getAndValidateChallenge(userId);
+    const expectedChallenge = await this.getAndValidateChallenge(userId);
 
     const verification = await verifyRegistrationResponse({
-      response: body,
+      response: regBody,
       expectedChallenge,
       expectedOrigin: this.origin,
       expectedRPID: this.rpID,
@@ -99,19 +88,18 @@ export class WebAuthnService {
       counter: credential.counter,
       deviceType: credentialDeviceType,
       backedUp: credentialBackedUp,
-      transports: body.response?.transports
-        ? JSON.stringify(body.response.transports)
+      transports: regBody.response?.transports
+        ? JSON.stringify(regBody.response.transports)
         : null,
     });
 
-    this.challenges.delete(userId);
     return { verified: true };
   }
 
   async generateAuthenticationOptions(userId?: string) {
     const { generateAuthenticationOptions } = await loadWebAuthn();
 
-    let allowCredentials: any[] | undefined;
+    let allowCredentials: { id: string; transports?: AuthenticatorTransportFuture[] }[] | undefined;
 
     if (userId) {
       const creds = await this.db
@@ -121,7 +109,7 @@ export class WebAuthnService {
 
       allowCredentials = creds.map((cred) => ({
         id: cred.id,
-        transports: cred.transports ? JSON.parse(cred.transports) : undefined,
+        transports: cred.transports ? JSON.parse(cred.transports) as AuthenticatorTransportFuture[] : undefined,
       }));
     }
 
@@ -133,15 +121,16 @@ export class WebAuthnService {
 
     // Store challenge keyed by a temp ID when no userId
     const challengeKey = userId || 'anonymous';
-    this.setChallenge(challengeKey, options.challenge);
+    await this.setChallenge(challengeKey, options.challenge);
 
     return options;
   }
 
-  async verifyAuthentication(body: any, userId?: string) {
+  async verifyAuthentication(body: unknown, userId?: string) {
     const { verifyAuthenticationResponse } = await loadWebAuthn();
 
-    const credentialId = body.id;
+    const credential_body = body as AuthenticationResponseJSON;
+    const credentialId = credential_body.id;
 
     const [credential] = await this.db
       .select()
@@ -154,10 +143,10 @@ export class WebAuthnService {
     }
 
     const challengeKey = userId || 'anonymous';
-    const expectedChallenge = this.getAndValidateChallenge(challengeKey);
+    const expectedChallenge = await this.getAndValidateChallenge(challengeKey);
 
     const verification = await verifyAuthenticationResponse({
-      response: body,
+      response: credential_body,
       expectedChallenge,
       expectedOrigin: this.origin,
       expectedRPID: this.rpID,
@@ -168,7 +157,7 @@ export class WebAuthnService {
         ),
         counter: credential.counter,
         transports: credential.transports
-          ? JSON.parse(credential.transports)
+          ? JSON.parse(credential.transports) as AuthenticatorTransportFuture[]
           : undefined,
       },
     });
@@ -183,7 +172,6 @@ export class WebAuthnService {
       .set({ counter: verification.authenticationInfo.newCounter })
       .where(eq(schema.webauthnCredentials.id, credentialId));
 
-    this.challenges.delete(challengeKey);
     return { verified: true, userId: credential.userId };
   }
 
@@ -210,52 +198,27 @@ export class WebAuthnService {
       );
   }
 
-  /** Store a challenge with a creation timestamp. */
-  private setChallenge(key: string, challenge: string): void {
-    this.challenges.set(key, {
-      challenge,
-      createdAt: Date.now(),
-    });
+  /** Store a challenge in the cache with a 5-minute TTL. */
+  private async setChallenge(key: string, challenge: string): Promise<void> {
+    await this.cacheService.set(`webauthn:challenge:${key}`, challenge, 300);
   }
 
   /**
    * Retrieve and validate a challenge, removing it on retrieval (single-use).
    * Throws if the challenge does not exist or has expired.
    */
-  private getAndValidateChallenge(key: string): string {
-    const stored = this.challenges.get(key);
-    if (!stored) {
+  private async getAndValidateChallenge(key: string): Promise<string> {
+    const cacheKey = `webauthn:challenge:${key}`;
+    const challenge = await this.cacheService.get<string>(cacheKey);
+    if (!challenge) {
       throw new BadRequestException(
         'No challenge found. Please request a new challenge.',
       );
     }
 
     // Always delete the challenge (single-use)
-    this.challenges.delete(key);
+    await this.cacheService.del(cacheKey);
 
-    // Check if the challenge has expired
-    const elapsed = Date.now() - stored.createdAt;
-    if (elapsed > WebAuthnService.CHALLENGE_TTL_MS) {
-      throw new BadRequestException(
-        'Challenge has expired. Please request a new one.',
-      );
-    }
-
-    return stored.challenge;
-  }
-
-  /** Remove all expired challenges from the in-memory store. */
-  private cleanupExpiredChallenges(): void {
-    const now = Date.now();
-    let cleaned = 0;
-    for (const [key, stored] of this.challenges.entries()) {
-      if (now - stored.createdAt > WebAuthnService.CHALLENGE_TTL_MS) {
-        this.challenges.delete(key);
-        cleaned++;
-      }
-    }
-    if (cleaned > 0) {
-      this.logger.debug(`Cleaned up ${cleaned} expired WebAuthn challenges`);
-    }
+    return challenge;
   }
 }

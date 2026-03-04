@@ -5,13 +5,13 @@ import { OllamaClient } from './ollama.client';
 interface ChromaDocument {
   id: string;
   text: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 interface ChromaQueryResult {
   id: string;
   document: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   distance: number;
 }
 
@@ -194,7 +194,7 @@ export class ChromaDBService implements OnModuleInit {
       const data = (await res.json()) as {
         ids: string[][];
         documents: string[][];
-        metadatas: Record<string, any>[][];
+        metadatas: Record<string, unknown>[][];
         distances: number[][];
       };
 

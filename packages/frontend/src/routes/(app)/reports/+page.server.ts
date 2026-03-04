@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const now = new Date();
@@ -57,8 +58,8 @@ export const actions: Actions = {
 			});
 
 			return { csv, filename: `financeowl-${type}-${new Date().toISOString().split('T')[0]}.csv` };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to export CSV' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to export CSV' });
 		}
 	}
 };

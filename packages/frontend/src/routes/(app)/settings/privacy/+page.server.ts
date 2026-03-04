@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const dashboard = await api('/privacy/dashboard', { accessToken: locals.accessToken });
@@ -18,8 +19,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return { error: e.message };
+		} catch (e: unknown) {
+			return { error: getErrorMessage(e) };
 		}
 	},
 	requestExport: async ({ locals }) => {
@@ -30,8 +31,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, message: 'Data export requested' };
-		} catch (e: any) {
-			return { error: e.message };
+		} catch (e: unknown) {
+			return { error: getErrorMessage(e) };
 		}
 	},
 	requestDeletion: async ({ request, locals }) => {
@@ -44,8 +45,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, message: 'Deletion request submitted' };
-		} catch (e: any) {
-			return { error: e.message };
+		} catch (e: unknown) {
+			return { error: getErrorMessage(e) };
 		}
 	}
 };

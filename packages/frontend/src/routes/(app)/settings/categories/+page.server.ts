@@ -1,10 +1,11 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	let categories: any[] = [];
-	let rules: any[] = [];
+	let categories: Array<{ id: string; name: string; color?: string; icon?: string; userId?: string; isSystem?: boolean; parentId?: string }> = [];
+	let rules: Array<{ id: string; categoryId: string; matchType: string; matchValue: string }> = [];
 
 	try {
 		const [cats, rls] = await Promise.all([
@@ -45,8 +46,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { categorySuccess: true };
-		} catch (e: any) {
-			return fail(500, { categoryError: e.message || 'Failed to create category.' });
+		} catch (e: unknown) {
+			return fail(500, { categoryError: getErrorMessage(e) || 'Failed to create category.' });
 		}
 	},
 
@@ -74,8 +75,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { categoryUpdateSuccess: true };
-		} catch (e: any) {
-			return fail(500, { categoryError: e.message || 'Failed to update category.' });
+		} catch (e: unknown) {
+			return fail(500, { categoryError: getErrorMessage(e) || 'Failed to update category.' });
 		}
 	},
 
@@ -93,8 +94,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { categoryDeleteSuccess: true };
-		} catch (e: any) {
-			return fail(500, { categoryError: e.message || 'Failed to delete category.' });
+		} catch (e: unknown) {
+			return fail(500, { categoryError: getErrorMessage(e) || 'Failed to delete category.' });
 		}
 	},
 
@@ -115,8 +116,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { ruleSuccess: true };
-		} catch (e: any) {
-			return fail(500, { ruleError: e.message || 'Failed to create rule.' });
+		} catch (e: unknown) {
+			return fail(500, { ruleError: getErrorMessage(e) || 'Failed to create rule.' });
 		}
 	},
 
@@ -134,8 +135,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { ruleDeleteSuccess: true };
-		} catch (e: any) {
-			return fail(500, { ruleError: e.message || 'Failed to delete rule.' });
+		} catch (e: unknown) {
+			return fail(500, { ruleError: getErrorMessage(e) || 'Failed to delete rule.' });
 		}
 	}
 };

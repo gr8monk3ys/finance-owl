@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	try {
@@ -11,7 +12,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			accessToken: locals.accessToken
 		});
 		return json(result);
-	} catch (e: any) {
-		return json({ error: e.message || 'Verification failed' }, { status: 500 });
+	} catch (e: unknown) {
+		return json({ error: getErrorMessage(e) || 'Verification failed' }, { status: 500 });
 	}
 };

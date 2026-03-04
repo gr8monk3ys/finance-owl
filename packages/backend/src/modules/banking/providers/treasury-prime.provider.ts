@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
+
 import type {
   BaaSProvider,
   BaaSProviderName,
@@ -97,8 +99,8 @@ export class TreasuryPrimeProvider implements BaaSProvider {
     );
 
     return {
-      available: response.available_balance ?? 0,
-      pending: (response.current_balance ?? 0) - (response.available_balance ?? 0),
+      available: (response.available_balance as number) ?? 0,
+      pending: ((response.current_balance as number) ?? 0) - ((response.available_balance as number) ?? 0),
       currency: 'USD',
     };
   }
@@ -195,10 +197,8 @@ export class TreasuryPrimeProvider implements BaaSProvider {
       `/transaction?${params.toString()}`,
     );
 
-    const transactions = Array.isArray(response) ? response : response.data || [];
-    return transactions.map((tx: Record<string, unknown>) =>
-      this.mapTransaction(tx),
-    );
+    const transactions = (Array.isArray(response) ? response : (response.data as Record<string, unknown>[]) || []) as Record<string, unknown>[];
+    return transactions.map((tx) => this.mapTransaction(tx));
   }
 
   async closeAccount(
@@ -248,14 +248,14 @@ export class TreasuryPrimeProvider implements BaaSProvider {
     };
 
     const response = await this.request('POST', '/person', body);
-    return response.id;
+    return response.id as string;
   }
 
   private async request(
     method: string,
     path: string,
     body?: Record<string, unknown>,
-  ): Promise<Record<string, any>> {
+  ): Promise<Record<string, unknown>> {
     const url = `${this.baseUrl}${path}`;
     const headers: Record<string, string> = {
       Authorization: `Bearer ${this.apiKey}`,
@@ -292,20 +292,20 @@ export class TreasuryPrimeProvider implements BaaSProvider {
     return (cents / 100).toFixed(2);
   }
 
-  private mapAccount(data: Record<string, any>): BaaSAccount {
+  private mapAccount(data: Record<string, unknown>): BaaSAccount {
     return {
-      externalAccountId: data.id,
+      externalAccountId: data.id as string,
       type: data.account_type === 'savings' ? 'savings' : 'checking',
-      status: this.mapAccountStatus(data.status),
-      routingNumber: data.routing_number || data.aba_routing_number || '',
+      status: this.mapAccountStatus(data.status as string),
+      routingNumber: (data.routing_number || data.aba_routing_number || '') as string,
       accountNumberMask: data.account_number
         ? String(data.account_number).slice(-4)
         : '****',
-      balance: data.available_balance ?? 0,
+      balance: (data.available_balance as number) ?? 0,
       apy: data.account_type === 'savings' ? 0.042 : 0.0005,
       fdicInsured: true,
-      bankName: data.bank_name || 'Treasury Prime Bank Partner',
-      createdAt: data.created_at || new Date().toISOString(),
+      bankName: (data.bank_name || 'Treasury Prime Bank Partner') as string,
+      createdAt: (data.created_at || new Date().toISOString()) as string,
     };
   }
 
@@ -322,17 +322,17 @@ export class TreasuryPrimeProvider implements BaaSProvider {
     return statusMap[status] || 'pending';
   }
 
-  private mapTransfer(data: Record<string, any>): BaaSTransfer {
+  private mapTransfer(data: Record<string, unknown>): BaaSTransfer {
     return {
-      transferId: data.id,
-      status: this.mapTransferStatus(data.status),
+      transferId: data.id as string,
+      status: this.mapTransferStatus(data.status as string),
       amount: data.amount
-        ? Math.round(parseFloat(data.amount) * 100)
+        ? Math.round(parseFloat(data.amount as string) * 100)
         : 0,
-      memo: data.description || null,
-      estimatedArrival: data.estimated_settlement_date || null,
-      createdAt: data.created_at || new Date().toISOString(),
-      completedAt: data.settled_at || null,
+      memo: (data.description as string | null) || null,
+      estimatedArrival: (data.estimated_settlement_date as string | null) || null,
+      createdAt: (data.created_at || new Date().toISOString()) as string,
+      completedAt: (data.settled_at as string | null) || null,
     };
   }
 
@@ -355,19 +355,19 @@ export class TreasuryPrimeProvider implements BaaSProvider {
     return statusMap[status] || 'pending';
   }
 
-  private mapTransaction(data: Record<string, any>): BaaSTransaction {
+  private mapTransaction(data: Record<string, unknown>): BaaSTransaction {
     const amount = data.amount
-      ? Math.round(parseFloat(data.amount) * 100)
+      ? Math.round(parseFloat(data.amount as string) * 100)
       : 0;
 
     return {
-      externalId: data.id,
+      externalId: data.id as string,
       amount,
       type: amount >= 0 ? 'credit' : 'debit',
-      description: data.description || data.memo || '',
-      date: data.created_at || new Date().toISOString(),
+      description: (data.description || data.memo || '') as string,
+      date: (data.created_at || new Date().toISOString()) as string,
       pending: data.status === 'pending',
-      category: data.category || null,
+      category: (data.category as string | null) || null,
     };
   }
 }

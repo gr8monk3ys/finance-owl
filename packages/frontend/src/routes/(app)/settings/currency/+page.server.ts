@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 interface CurrencyPreferences {
 	defaultCurrency: string;
@@ -65,8 +66,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to save currency preferences' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to save currency preferences' });
 		}
 	},
 
@@ -77,8 +78,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { refreshed: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to refresh exchange rates' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to refresh exchange rates' });
 		}
 	}
 };

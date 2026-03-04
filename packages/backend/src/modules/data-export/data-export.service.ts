@@ -301,7 +301,7 @@ export class DataExportService {
       .where(eq(budgets.userId, userId));
 
     const budgetIds = userBudgets.map((b) => b.id);
-    let userBudgetPeriods: Array<Record<string, unknown>> = [];
+    const userBudgetPeriods: Array<Record<string, unknown>> = [];
     if (budgetIds.length > 0) {
       for (const budgetId of budgetIds) {
         const periods = await this.db
@@ -324,7 +324,7 @@ export class DataExportService {
       .from(savingsGoals)
       .where(eq(savingsGoals.userId, userId));
 
-    let userContributions: Array<Record<string, unknown>> = [];
+    const userContributions: Array<Record<string, unknown>> = [];
     for (const goal of userSavingsGoals) {
       const contribs = await this.db
         .select()

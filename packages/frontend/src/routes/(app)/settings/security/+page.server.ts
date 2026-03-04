@@ -1,10 +1,11 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	let credentials: any[] = [];
-	let sessions: any[] = [];
+	let credentials: Array<{ id: string; deviceType?: string; backedUp?: boolean; createdAt: string }> = [];
+	let sessions: Array<{ id: string; userAgent?: string; ipAddress?: string; createdAt: string; expiresAt: string }> = [];
 	let totpEnabled = false;
 
 	try {
@@ -50,8 +51,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { passwordSuccess: true };
-		} catch (e: any) {
-			return fail(400, { passwordError: e.message || 'Failed to change password.' });
+		} catch (e: unknown) {
+			return fail(400, { passwordError: getErrorMessage(e) || 'Failed to change password.' });
 		}
 	},
 
@@ -62,8 +63,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { logoutAllSuccess: true };
-		} catch (e: any) {
-			return fail(500, { logoutAllError: e.message || 'Failed to log out all sessions.' });
+		} catch (e: unknown) {
+			return fail(500, { logoutAllError: getErrorMessage(e) || 'Failed to log out all sessions.' });
 		}
 	},
 
@@ -81,8 +82,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { passkeyDeleteSuccess: true };
-		} catch (e: any) {
-			return fail(500, { passkeyError: e.message || 'Failed to delete passkey.' });
+		} catch (e: unknown) {
+			return fail(500, { passkeyError: getErrorMessage(e) || 'Failed to delete passkey.' });
 		}
 	},
 
@@ -93,8 +94,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { totpSetup: result };
-		} catch (e: any) {
-			return fail(500, { totpError: e.message || 'Failed to start TOTP setup.' });
+		} catch (e: unknown) {
+			return fail(500, { totpError: getErrorMessage(e) || 'Failed to start TOTP setup.' });
 		}
 	},
 
@@ -114,8 +115,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { totpEnableSuccess: true };
-		} catch (e: any) {
-			return fail(400, { totpError: e.message || 'Invalid verification code.' });
+		} catch (e: unknown) {
+			return fail(400, { totpError: getErrorMessage(e) || 'Invalid verification code.' });
 		}
 	},
 
@@ -134,8 +135,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { totpDisableSuccess: true };
-		} catch (e: any) {
-			return fail(400, { totpError: e.message || 'Invalid verification code.' });
+		} catch (e: unknown) {
+			return fail(400, { totpError: getErrorMessage(e) || 'Invalid verification code.' });
 		}
 	}
 };

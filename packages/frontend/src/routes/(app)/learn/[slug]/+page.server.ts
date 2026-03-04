@@ -24,8 +24,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		}
 
 		return { article, related, progress };
-	} catch (err: any) {
-		if (err?.status === 404) {
+	} catch (err: unknown) {
+		if (err instanceof Object && 'status' in err && err.status === 404) {
 			throw error(404, 'Article not found');
 		}
 		throw error(500, 'Failed to load article');

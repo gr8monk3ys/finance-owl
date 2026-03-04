@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -67,8 +68,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to update profile' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to update profile' });
 		}
 	},
 
@@ -91,8 +92,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { feeAnalysis: result };
-		} catch (e: any) {
-			return fail(500, { feeError: e.message || 'Fee analysis failed' });
+		} catch (e: unknown) {
+			return fail(500, { feeError: getErrorMessage(e) || 'Fee analysis failed' });
 		}
 	},
 
@@ -108,8 +109,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { scenarioResults: result };
-		} catch (e: any) {
-			return fail(500, { scenarioError: e.message || 'Scenario comparison failed' });
+		} catch (e: unknown) {
+			return fail(500, { scenarioError: getErrorMessage(e) || 'Scenario comparison failed' });
 		}
 	}
 };

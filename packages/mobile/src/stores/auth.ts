@@ -54,9 +54,10 @@ export const useAuthStore = create<AuthState>((set) => ({
       await authApi.login(req);
       const user = await authApi.getMe();
       set({ user, isAuthenticated: true, isLoading: false });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } }; message?: string };
       const message =
-        err.response?.data?.message ?? err.message ?? 'Login failed';
+        error.response?.data?.message ?? error.message ?? 'Login failed';
       set({ isLoading: false, error: message });
       throw err;
     }
@@ -68,9 +69,10 @@ export const useAuthStore = create<AuthState>((set) => ({
       await authApi.register(req);
       const user = await authApi.getMe();
       set({ user, isAuthenticated: true, isLoading: false });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } }; message?: string };
       const message =
-        err.response?.data?.message ?? err.message ?? 'Registration failed';
+        error.response?.data?.message ?? error.message ?? 'Registration failed';
       set({ isLoading: false, error: message });
       throw err;
     }

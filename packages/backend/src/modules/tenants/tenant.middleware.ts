@@ -58,7 +58,7 @@ export class TenantMiddleware implements NestMiddleware {
           return;
         }
 
-        (req as any).tenant = tenant;
+        (req as unknown as Record<string, unknown>).tenant = tenant;
       }
       // If no tenant resolved, continue without one (single-tenant mode)
     } catch (error) {

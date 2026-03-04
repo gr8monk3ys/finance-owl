@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const { id } = params;
@@ -15,7 +16,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 		// Find existing cancellation request for this subscription
 		const existingRequest = cancellations.find(
-			(c: any) => c.subscriptionId === id && c.status !== 'failed'
+			(c: Record<string, unknown>) => c.subscriptionId === id && c.status !== 'failed'
 		);
 
 		return {
@@ -46,8 +47,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, cancellationRequest: result };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to request cancellation' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to request cancellation' });
 		}
 	},
 
@@ -64,8 +65,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to update status' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to update status' });
 		}
 	},
 
@@ -79,8 +80,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, confirmed: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to confirm cancellation' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to confirm cancellation' });
 		}
 	}
 };

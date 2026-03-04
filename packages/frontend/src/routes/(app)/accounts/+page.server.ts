@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -28,8 +29,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { linkToken: result.linkToken };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to create link token' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to create link token' });
 		}
 	},
 
@@ -51,8 +52,8 @@ export const actions: Actions = {
 				success: true,
 				linkedPlaidItemId: result.plaidItem?.id ?? null
 			};
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to link account' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to link account' });
 		}
 	},
 
@@ -73,8 +74,8 @@ export const actions: Actions = {
 				syncResult: result,
 				syncSuccess: true
 			};
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to sync transactions' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to sync transactions' });
 		}
 	},
 
@@ -92,8 +93,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { refreshSuccess: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to refresh balances' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to refresh balances' });
 		}
 	},
 
@@ -115,8 +116,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to create account' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to create account' });
 		}
 	},
 
@@ -130,8 +131,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { updateLinkToken: result.linkToken, updatePlaidItemId: plaidItemId };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to create update link token' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to create update link token' });
 		}
 	},
 
@@ -149,8 +150,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to unlink account' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to unlink account' });
 		}
 	},
 
@@ -161,8 +162,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { sandboxPublicToken: result.publicToken };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Sandbox test link failed' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Sandbox test link failed' });
 		}
 	}
 };

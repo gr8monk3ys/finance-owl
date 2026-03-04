@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
 import { error } from '@sveltejs/kit';
+import { getErrorStatus } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const accessToken = locals.accessToken;
@@ -20,8 +21,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			tenant,
 			members: members ?? []
 		};
-	} catch (e: any) {
-		if (e?.status === 404) {
+	} catch (e: unknown) {
+		if (getErrorStatus(e) === 404) {
 			throw error(404, 'Tenant not found');
 		}
 		throw error(500, 'Failed to load tenant details');

@@ -16,7 +16,7 @@ export interface RagQueryResult {
 
 interface SqlQueryResult {
   answer: string;
-  data: Record<string, any>[];
+  data: Record<string, unknown>[];
 }
 
 @Injectable()
@@ -219,7 +219,7 @@ SQL:`;
 
     // Execute with parameterized query and a timeout
     try {
-      const rawDb = (this.db as any)._.session.client;
+      const rawDb = (this.db as unknown as { _: { session: { client: { prepare: (sql: string) => { all: (...params: unknown[]) => Record<string, unknown>[]; }; interrupt: () => void } } } })._.session.client;
       const stmt = rawDb.prepare(sql);
 
       // Set execution timeout (5 seconds)
@@ -228,9 +228,9 @@ SQL:`;
         rawDb.interrupt();
       }, timeoutMs);
 
-      let rows: Record<string, any>[];
+      let rows: Record<string, unknown>[];
       try {
-        rows = stmt.all(...params) as Record<string, any>[];
+        rows = stmt.all(...params) as Record<string, unknown>[];
       } finally {
         clearTimeout(timer);
       }

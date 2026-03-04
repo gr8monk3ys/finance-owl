@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -43,8 +44,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, adjustments: results };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to auto-adjust budgets' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to auto-adjust budgets' });
 		}
 	},
 
@@ -64,8 +65,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, accepted: categoryId };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to create budget' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to create budget' });
 		}
 	}
 };

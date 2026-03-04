@@ -76,8 +76,8 @@ export class EducationService {
 
     // Check user's financial situation to personalize (with graceful fallbacks)
     let latestCreditScore: { score: number } | undefined;
-    let userDebts: any[] = [];
-    let userSavings: any[] = [];
+    let userDebts: Record<string, unknown>[] = [];
+    let userSavings: Record<string, unknown>[] = [];
 
     try {
       const [score] = await this.db
