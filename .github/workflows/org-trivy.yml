@@ -3,12 +3,9 @@ name: org-trivy
 on:
   push:
     branches:
-      - "**"
+      - main
   pull_request:
   workflow_dispatch:
-
-env:
-  FREEZE_BRANCH: ${{ startsWith(github.head_ref || github.ref_name, 'chore/freeze-vercel-deploys-') }}
 
 permissions: read-all
 
@@ -16,21 +13,5 @@ jobs:
   trivy:
     runs-on: ubuntu-latest
     steps:
-      - name: Skip on Vercel freeze branch
-        if: env.FREEZE_BRANCH == 'true'
-        run: echo "Skipping Trivy on the emergency Vercel freeze branch."
-
-      - name: Checkout
-        if: env.FREEZE_BRANCH != 'true'
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-
-      - name: Run Trivy filesystem scan
-        if: env.FREEZE_BRANCH != 'true'
-        uses: aquasecurity/trivy-action@97e0b3872f55f89b95b2f65b3dbab56962816478
-        with:
-          scan-type: fs
-          scan-ref: .
-          format: table
-          severity: HIGH,CRITICAL
-          exit-code: '0'
-          ignore-unfixed: true
+      - name: Cost guard
+        run: echo "Trivy scanning is handled by security.yml on scheduled and default-branch runs."

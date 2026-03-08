@@ -3,7 +3,7 @@ name: security-baseline
 on:
   push:
     branches:
-      - "**"
+      - main
   pull_request:
 
 permissions: read-all
@@ -12,8 +12,5 @@ jobs:
   security-baseline:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - name: Baseline CI check
-        run: |
-          echo "Security baseline workflow is active"
+        run: echo "Security baseline workflow is active"

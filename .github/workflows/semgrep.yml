@@ -3,11 +3,8 @@ name: semgrep
 on:
   push:
     branches:
-      - "**"
+      - main
   pull_request:
-
-env:
-  FREEZE_BRANCH: ${{ startsWith(github.head_ref || github.ref_name, 'chore/freeze-vercel-deploys-') }}
 
 permissions: read-all
 
@@ -15,16 +12,5 @@ jobs:
   semgrep:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        if: env.FREEZE_BRANCH != 'true'
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-
-      - name: Skip on Vercel freeze branch
-        if: env.FREEZE_BRANCH == 'true'
-        run: echo "Skipping Semgrep on the emergency Vercel freeze branch."
-
-      - name: Run Semgrep
-        if: env.FREEZE_BRANCH != 'true'
-        uses: returntocorp/semgrep-action@713efdd345f3035192eaa63f56867b88e63e4e5d
-        with:
-          config: auto
+      - name: Cost guard
+        run: echo "Semgrep is handled by security.yml on scheduled and default-branch runs."
