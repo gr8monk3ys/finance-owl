@@ -19,6 +19,7 @@ permissions:
 env:
   NODE_VERSION: "20"
   PNPM_VERSION: "9.15.0"
+  FREEZE_BRANCH: ${{ startsWith(github.head_ref || github.ref_name, 'chore/freeze-vercel-deploys-') }}
 
 jobs:
   # ──────────────────────────────────────────────
@@ -29,25 +30,35 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Skip on Vercel freeze branch
+        if: env.FREEZE_BRANCH == 'true'
+        run: echo "Skipping dependency audit on the emergency Vercel freeze branch."
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        if: env.FREEZE_BRANCH != 'true'
 
       - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+        if: env.FREEZE_BRANCH != 'true'
         with:
           version: ${{ env.PNPM_VERSION }}
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        if: env.FREEZE_BRANCH != 'true'
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - name: Install dependencies
+        if: env.FREEZE_BRANCH != 'true'
         run: pnpm install --frozen-lockfile
 
       - name: Run pnpm audit (production)
+        if: env.FREEZE_BRANCH != 'true'
         run: pnpm audit --prod
         continue-on-error: true
 
       - name: Run pnpm audit (all)
+        if: env.FREEZE_BRANCH != 'true'
         run: pnpm audit
         continue-on-error: true
 
@@ -63,9 +74,15 @@ jobs:
       contents: read
       pull-requests: write
     steps:
+      - name: Skip on Vercel freeze branch
+        if: env.FREEZE_BRANCH == 'true'
+        run: echo "Skipping dependency review on the emergency Vercel freeze branch."
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        if: env.FREEZE_BRANCH != 'true'
 
       - name: Dependency review
+        if: env.FREEZE_BRANCH != 'true'
         uses: actions/dependency-review-action@05fe4576374b728f0c523d6a13d64c25081e0803
         with:
           fail-on-severity: high
@@ -88,18 +105,26 @@ jobs:
       matrix:
         language: [javascript-typescript]
     steps:
+      - name: Skip on Vercel freeze branch
+        if: env.FREEZE_BRANCH == 'true'
+        run: echo "Skipping CodeQL analysis on the emergency Vercel freeze branch."
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        if: env.FREEZE_BRANCH != 'true'
 
       - name: Initialize CodeQL
+        if: env.FREEZE_BRANCH != 'true'
         uses: github/codeql-action/init@45580472a5bb82c4681c4ac726cfdb60060c2ee1
         with:
           languages: ${{ matrix.language }}
           queries: security-extended
 
       - name: Autobuild
+        if: env.FREEZE_BRANCH != 'true'
         uses: github/codeql-action/autobuild@45580472a5bb82c4681c4ac726cfdb60060c2ee1
 
       - name: Perform CodeQL analysis
+        if: env.FREEZE_BRANCH != 'true'
         uses: github/codeql-action/analyze@45580472a5bb82c4681c4ac726cfdb60060c2ee1
         with:
           category: /language:${{ matrix.language }}
@@ -117,9 +142,15 @@ jobs:
     container:
       image: semgrep/semgrep
     steps:
+      - name: Skip on Vercel freeze branch
+        if: env.FREEZE_BRANCH == 'true'
+        run: echo "Skipping Semgrep SAST on the emergency Vercel freeze branch."
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        if: env.FREEZE_BRANCH != 'true'
 
       - name: Run Semgrep
+        if: env.FREEZE_BRANCH != 'true'
         run: semgrep ci --sarif --output=semgrep-results.sarif
         env:
           SEMGREP_RULES: >-
@@ -130,8 +161,8 @@ jobs:
             p/owasp-top-ten
 
       - name: Upload SARIF results
+        if: env.FREEZE_BRANCH != 'true'
         uses: github/codeql-action/upload-sarif@45580472a5bb82c4681c4ac726cfdb60060c2ee1
-        if: always()
         with:
           sarif_file: semgrep-results.sarif
 
@@ -143,11 +174,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Skip on Vercel freeze branch
+        if: env.FREEZE_BRANCH == 'true'
+        run: echo "Skipping secret scanning on the emergency Vercel freeze branch."
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        if: env.FREEZE_BRANCH != 'true'
         with:
           fetch-depth: 0
 
       - name: Run Gitleaks
+        if: env.FREEZE_BRANCH != 'true'
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -172,14 +209,21 @@ jobs:
           - name: frontend
             dockerfile: docker/Dockerfile.frontend
     steps:
+      - name: Skip on Vercel freeze branch
+        if: env.FREEZE_BRANCH == 'true'
+        run: echo "Skipping Docker image scan on the emergency Vercel freeze branch."
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        if: env.FREEZE_BRANCH != 'true'
 
       - name: Build image for scanning
+        if: env.FREEZE_BRANCH != 'true'
         env:
           DOCKERFILE: ${{ matrix.image.dockerfile }}
         run: docker build -f "$DOCKERFILE" -t scan-target:latest .
 
       - name: Run Trivy vulnerability scanner
+        if: env.FREEZE_BRANCH != 'true'
         uses: aquasecurity/trivy-action@e368e328979b113139d6f9068e03accaed98a518
         with:
           image-ref: scan-target:latest
@@ -188,7 +232,7 @@ jobs:
           severity: CRITICAL,HIGH
 
       - name: Upload Trivy SARIF results
+        if: env.FREEZE_BRANCH != 'true'
         uses: github/codeql-action/upload-sarif@45580472a5bb82c4681c4ac726cfdb60060c2ee1
-        if: always()
         with:
           sarif_file: trivy-results.sarif

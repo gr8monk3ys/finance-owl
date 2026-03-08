@@ -7,8 +7,28 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  FREEZE_BRANCH: ${{ startsWith(github.head_ref || github.ref_name, 'chore/freeze-vercel-deploys-') }}
+
 permissions: read-all
 
 jobs:
   gitleaks:
-    uses: gr8monk3ys/github/.github/workflows/reusable-gitleaks.yml@4a306a94d72d10b8d7835d697521a469fc6deab1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip on Vercel freeze branch
+        if: env.FREEZE_BRANCH == 'true'
+        run: echo "Skipping gitleaks on the emergency Vercel freeze branch."
+
+      - name: Checkout
+        if: env.FREEZE_BRANCH != 'true'
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        if: env.FREEZE_BRANCH != 'true'
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: false

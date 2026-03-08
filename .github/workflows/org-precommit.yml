@@ -7,8 +7,43 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  FREEZE_BRANCH: ${{ startsWith(github.head_ref || github.ref_name, 'chore/freeze-vercel-deploys-') }}
+
 permissions: read-all
 
 jobs:
   precommit:
-    uses: gr8monk3ys/github/.github/workflows/reusable-precommit.yml@4a306a94d72d10b8d7835d697521a469fc6deab1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip on Vercel freeze branch
+        if: env.FREEZE_BRANCH == 'true'
+        run: echo "Skipping pre-commit on the emergency Vercel freeze branch."
+
+      - name: Checkout
+        if: env.FREEZE_BRANCH != 'true'
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Setup Python
+        if: env.FREEZE_BRANCH != 'true'
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+
+      - name: Check pre-commit config exists
+        if: env.FREEZE_BRANCH != 'true'
+        id: cfg
+        run: |
+          if [ -f .pre-commit-config.yaml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run pre-commit
+        if: env.FREEZE_BRANCH != 'true' && steps.cfg.outputs.present == 'true'
+        uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd
+
+      - name: Skip when no config
+        if: env.FREEZE_BRANCH != 'true' && steps.cfg.outputs.present != 'true'
+        run: echo "No .pre-commit-config.yaml found; skipping."

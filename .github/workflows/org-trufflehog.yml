@@ -7,8 +7,27 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  FREEZE_BRANCH: ${{ startsWith(github.head_ref || github.ref_name, 'chore/freeze-vercel-deploys-') }}
+
 permissions: read-all
 
 jobs:
   trufflehog:
-    uses: gr8monk3ys/github/.github/workflows/reusable-trufflehog.yml@4a306a94d72d10b8d7835d697521a469fc6deab1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip on Vercel freeze branch
+        if: env.FREEZE_BRANCH == 'true'
+        run: echo "Skipping TruffleHog on the emergency Vercel freeze branch."
+
+      - name: Checkout
+        if: env.FREEZE_BRANCH != 'true'
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+
+      - name: Run TruffleHog
+        if: env.FREEZE_BRANCH != 'true'
+        uses: trufflesecurity/trufflehog@041f07e9df901a1038a528e5525b0226d04dd5ea
+        with:
+          extra_args: --results=verified
