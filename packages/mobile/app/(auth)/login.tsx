@@ -18,12 +18,17 @@ export default function LoginScreen() {
   const { login, isLoading, error, clearError } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [totpCode, setTotpCode] = useState('');
 
   async function handleLogin() {
     if (!email.trim() || !password.trim()) return;
     clearError();
     try {
-      await login({ email: email.trim(), password });
+      await login({
+        email: email.trim(),
+        password,
+        totpCode: totpCode.trim() || undefined,
+      });
     } catch {
       // Error is handled by the store
     }
@@ -82,6 +87,23 @@ export default function LoginScreen() {
               placeholderTextColor={colors.surface[500]}
               secureTextEntry
               textContentType="password"
+              returnKeyType="done"
+              onSubmitEditing={handleLogin}
+            />
+          </View>
+
+          <View style={styles.fieldGroup}>
+            <Text style={styles.label}>Authenticator Code (Optional)</Text>
+            <TextInput
+              style={styles.input}
+              value={totpCode}
+              onChangeText={setTotpCode}
+              placeholder="000000"
+              placeholderTextColor={colors.surface[500]}
+              keyboardType="number-pad"
+              textContentType="oneTimeCode"
+              autoComplete="one-time-code"
+              maxLength={8}
               returnKeyType="done"
               onSubmitEditing={handleLogin}
             />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Platform } from 'react-native';
-import Svg, { Path, Circle, Rect, Line, Polyline } from 'react-native-svg';
+import Svg, { Path, Circle } from 'react-native-svg';
 import { colors, fontSize, fontWeight } from '../../src/utils/theme';
 
 interface TabIconProps {

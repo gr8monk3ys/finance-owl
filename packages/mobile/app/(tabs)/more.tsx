@@ -6,7 +6,10 @@ import {
   StyleSheet,
   Pressable,
   Alert,
+  type AlertButton,
+  Linking,
 } from 'react-native';
+import Constants from 'expo-constants';
 import Svg, { Path, Rect, Circle, Line } from 'react-native-svg';
 import { useAuthStore } from '../../src/stores/auth';
 import { colors, fontSize, fontWeight, borderRadius, spacing } from '../../src/utils/theme';
@@ -154,6 +157,103 @@ function SettingsIcon({
 
 export default function MoreScreen() {
   const { user, logout } = useAuthStore();
+  const webUrl = process.env.EXPO_PUBLIC_WEB_URL?.replace(/\/$/, '') ?? null;
+  const appVersion = Constants.expoConfig?.version ?? '1.0.0';
+
+  async function openUrl(url: string, title: string) {
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (!supported) {
+        Alert.alert(title, 'Unable to open that link on this device.');
+        return;
+      }
+
+      await Linking.openURL(url);
+    } catch {
+      Alert.alert(title, 'Unable to open that link right now.');
+    }
+  }
+
+  function openWebOnlySetting(title: string, path?: string) {
+    const buttons: AlertButton[] = [];
+
+    if (webUrl && path) {
+      buttons.push({
+        text: 'Open Web App',
+        onPress: () => {
+          void openUrl(`${webUrl}${path}`, title);
+        },
+      });
+    }
+
+    buttons.push({ text: 'Not Now', style: 'cancel' as const });
+
+    Alert.alert(
+      title,
+      webUrl && path
+        ? 'This feature is available in the web app for now.'
+        : 'This feature is available on the web app for now. Set EXPO_PUBLIC_WEB_URL to open it from mobile.',
+      buttons,
+    );
+  }
+
+  function handleHelpAndSupport() {
+    const buttons: AlertButton[] = [
+      {
+        text: 'Email Support',
+        onPress: () => {
+          void openUrl(
+            'mailto:support@financeowl.com?subject=FinanceOwl%20Support',
+            'Help & Support',
+          );
+        },
+      },
+    ];
+
+    if (webUrl) {
+      buttons.push({
+        text: 'Help Center',
+        onPress: () => {
+          void openUrl(`${webUrl}/help`, 'Help & Support');
+        },
+      });
+    }
+
+    buttons.push({ text: 'Cancel', style: 'cancel' as const });
+
+    Alert.alert(
+      'Help & Support',
+      'Need help with billing, security, or a bug report?',
+      buttons,
+    );
+  }
+
+  function handleAbout() {
+    const buttons: AlertButton[] = [];
+
+    if (webUrl) {
+      buttons.push({
+        text: 'Privacy',
+        onPress: () => {
+          void openUrl(`${webUrl}/privacy`, 'About');
+        },
+      });
+      buttons.push({
+        text: 'Terms',
+        onPress: () => {
+          void openUrl(`${webUrl}/terms`, 'About');
+        },
+      });
+    }
+
+    buttons.push({ text: 'OK', style: 'cancel' as const });
+
+    Alert.alert(
+      'About FinanceOwl',
+      `Version ${appVersion}${webUrl ? `\n${webUrl}` : ''}`,
+      buttons,
+    );
+  }
 
   function handleLogout() {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
@@ -172,42 +272,50 @@ export default function MoreScreen() {
       subtitle: 'Password, 2FA, and sessions',
       icon: 'shield',
       accentColor: colors.primary[400],
+      onPress: () => openWebOnlySetting('Security', '/settings/security'),
     },
     {
       title: 'Notifications',
       subtitle: 'Email alerts and push notification settings',
       icon: 'bell',
       accentColor: '#fbbf24',
+      onPress: () =>
+        openWebOnlySetting('Notifications', '/settings/notifications'),
     },
     {
       title: 'Billing',
       subtitle: 'Subscription plan and payment details',
       icon: 'creditcard',
       accentColor: colors.primary[500],
+      onPress: () => openWebOnlySetting('Billing', '/settings/billing'),
     },
     {
       title: 'Connected Accounts',
       subtitle: 'Manage linked bank accounts',
       icon: 'link',
       accentColor: '#06b6d4',
+      onPress: () => openWebOnlySetting('Connected Accounts', '/accounts'),
     },
     {
       title: 'Data Export',
       subtitle: 'Download your financial data',
       icon: 'download',
       accentColor: '#8b5cf6',
+      onPress: () => openWebOnlySetting('Data Export', '/settings/privacy'),
     },
     {
       title: 'Help & Support',
       subtitle: 'FAQs, contact us, report a bug',
       icon: 'help',
       accentColor: '#f97316',
+      onPress: handleHelpAndSupport,
     },
     {
       title: 'About',
       subtitle: 'Version, terms, and privacy policy',
       icon: 'info',
       accentColor: colors.surface[400],
+      onPress: handleAbout,
     },
   ];
 
@@ -286,7 +394,7 @@ export default function MoreScreen() {
       </Pressable>
 
       {/* App version */}
-      <Text style={styles.versionText}>FinanceOwl v1.0.0</Text>
+      <Text style={styles.versionText}>FinanceOwl v{appVersion}</Text>
     </ScrollView>
   );
 }
