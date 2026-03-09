@@ -110,9 +110,28 @@ export interface CreateTransactionRequest {
   notes?: string;
 }
 
+// ── Categories ───────────────────────────────────────────────────────────────
+
+export interface Category {
+  id: string;
+  userId: string | null;
+  parentId: string | null;
+  name: string;
+  icon: string | null;
+  color: string | null;
+  isSystem: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
 // ── Budgets ──────────────────────────────────────────────────────────────────
 
-export type BudgetPeriod = 'monthly' | 'quarterly' | 'yearly';
+export type BudgetPeriod =
+  | 'weekly'
+  | 'biweekly'
+  | 'monthly'
+  | 'quarterly'
+  | 'annual';
 
 export interface Budget {
   id: string;

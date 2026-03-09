@@ -23,6 +23,16 @@ import { BudgetsService } from './budgets.service';
 import { IsString, IsNumber, IsOptional, IsBoolean, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 
+const DOCUMENTED_BUDGET_PERIODS = [
+  'weekly',
+  'biweekly',
+  'monthly',
+  'quarterly',
+  'annual',
+] as const;
+
+const ACCEPTED_BUDGET_PERIODS = [...DOCUMENTED_BUDGET_PERIODS, 'yearly'] as const;
+
 class CreateBudgetDto {
   @ApiProperty({ description: 'Category ID to budget for', example: 'cat_food' })
   @IsString()
@@ -35,11 +45,11 @@ class CreateBudgetDto {
 
   @ApiProperty({
     description: 'Budget period',
-    enum: ['monthly', 'quarterly', 'yearly'],
+    enum: DOCUMENTED_BUDGET_PERIODS,
     example: 'monthly',
   })
   @IsString()
-  @IsIn(['monthly', 'quarterly', 'yearly'])
+  @IsIn(ACCEPTED_BUDGET_PERIODS)
   period!: string;
 
   @ApiPropertyOptional({ description: 'Enable rollover of unused budget to next period', default: false })
@@ -63,11 +73,11 @@ class UpdateBudgetDto {
 
   @ApiPropertyOptional({
     description: 'Updated budget period',
-    enum: ['monthly', 'quarterly', 'yearly'],
+    enum: DOCUMENTED_BUDGET_PERIODS,
   })
   @IsOptional()
   @IsString()
-  @IsIn(['monthly', 'quarterly', 'yearly'])
+  @IsIn(ACCEPTED_BUDGET_PERIODS)
   period?: string;
 
   @ApiPropertyOptional({ description: 'Enable or disable rollover' })
