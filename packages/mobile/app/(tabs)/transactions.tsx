@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   Text,
@@ -8,10 +14,12 @@ import {
   StyleSheet,
   Pressable,
   ActivityIndicator,
+  Alert,
+  Linking,
 } from 'react-native';
-import { listTransactions, updateTransaction } from '../../src/api/transactions';
+import { listTransactions } from '../../src/api/transactions';
 import TransactionItem from '../../src/components/TransactionItem';
-import type { Transaction, PaginatedResponse } from '../../src/types';
+import type { Transaction } from '../../src/types';
 import { getDateGroupLabel } from '../../src/utils/format';
 import { useAppStore } from '../../src/stores/app';
 import { colors, fontSize, fontWeight, borderRadius, spacing } from '../../src/utils/theme';
@@ -22,7 +30,9 @@ type GroupedItem =
 
 export default function TransactionsScreen() {
   const { searchQuery, setSearchQuery, filterCategoryId } = useAppStore();
+  const webUrl = process.env.EXPO_PUBLIC_WEB_URL?.replace(/\/$/, '') ?? null;
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -30,6 +40,34 @@ export default function TransactionsScreen() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [localSearch, setLocalSearch] = useState(searchQuery);
+  const hasLoadedRef = useRef(false);
+  const deferredSearch = useDeferredValue(localSearch.trim());
+
+  async function openUrl(url: string, title: string) {
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (!supported) {
+        Alert.alert(title, 'Unable to open that link on this device.');
+        return;
+      }
+
+      await Linking.openURL(url);
+    } catch {
+      Alert.alert(title, 'Unable to open that link right now.');
+    }
+  }
+
+  function handleOpenAccounts() {
+    if (!webUrl) {
+      Alert.alert(
+        'Link Accounts',
+        'Set EXPO_PUBLIC_WEB_URL to open account linking from mobile.',
+      );
+      return;
+    }
+
+    void openUrl(`${webUrl}/accounts`, 'Link Accounts');
+  }
 
   const fetchTransactions = useCallback(
     async (pageNum: number, reset: boolean = false) => {
@@ -56,8 +94,48 @@ export default function TransactionsScreen() {
   );
 
   useEffect(() => {
-    setLoading(true);
-    fetchTransactions(1, true).finally(() => setLoading(false));
+    setLocalSearch(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (deferredSearch !== searchQuery) {
+        setSearchQuery(deferredSearch);
+      }
+    }, 250);
+
+    return () => clearTimeout(timeoutId);
+  }, [deferredSearch, searchQuery, setSearchQuery]);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadTransactions() {
+      if (hasLoadedRef.current) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+
+      await fetchTransactions(1, true);
+
+      if (!isActive) {
+        return;
+      }
+
+      if (!hasLoadedRef.current) {
+        hasLoadedRef.current = true;
+        setLoading(false);
+      }
+
+      setSearching(false);
+    }
+
+    void loadTransactions();
+
+    return () => {
+      isActive = false;
+    };
   }, [fetchTransactions]);
 
   const onRefresh = useCallback(async () => {
@@ -74,7 +152,14 @@ export default function TransactionsScreen() {
   }, [loadingMore, page, totalPages, fetchTransactions]);
 
   function handleSearch() {
-    setSearchQuery(localSearch);
+    const nextSearch = localSearch.trim();
+    setLocalSearch(nextSearch);
+    setSearchQuery(nextSearch);
+  }
+
+  function clearSearch() {
+    setLocalSearch('');
+    setSearchQuery('');
   }
 
   // Group transactions by date
@@ -127,25 +212,39 @@ export default function TransactionsScreen() {
             placeholderTextColor={colors.surface[500]}
             returnKeyType="search"
             onSubmitEditing={handleSearch}
+            autoCorrect={false}
+            autoCapitalize="none"
+            clearButtonMode="while-editing"
           />
         </View>
-        <Pressable
-          style={({ pressed }) => [
-            styles.searchButton,
-            pressed && styles.searchButtonPressed,
-          ]}
-          onPress={handleSearch}
-        >
-          <Text style={styles.searchButtonText}>Search</Text>
-        </Pressable>
+        {searching ? (
+          <View style={styles.searchStatus}>
+            <ActivityIndicator size="small" color={colors.primary[500]} />
+          </View>
+        ) : searchQuery || localSearch ? (
+          <Pressable
+            style={({ pressed }) => [
+              styles.clearButton,
+              pressed && styles.clearButtonPressed,
+            ]}
+            onPress={clearSearch}
+          >
+            <Text style={styles.clearButtonText}>Clear</Text>
+          </Pressable>
+        ) : null}
       </View>
 
       {/* Results count */}
-      {total > 0 && (
+      {(total > 0 || !!searchQuery || searching) && (
         <View style={styles.countRow}>
           <Text style={styles.countText}>
-            {total.toLocaleString()} transaction
-            {total !== 1 ? 's' : ''}
+            {searching
+              ? 'Updating results...'
+              : total > 0
+              ? `${total.toLocaleString()} transaction${total !== 1 ? 's' : ''}${
+                  searchQuery ? ` for "${searchQuery}"` : ''
+                }`
+              : `No matches for "${searchQuery}"`}
           </Text>
         </View>
       )}
@@ -156,9 +255,37 @@ export default function TransactionsScreen() {
           <Text style={styles.emptyTitle}>No transactions</Text>
           <Text style={styles.emptySubtitle}>
             {searchQuery
-              ? 'Try a different search term'
+              ? 'Try a different search term or clear the current search.'
               : 'Link a bank account or add transactions manually'}
           </Text>
+          {searchQuery ? (
+            <Pressable
+              style={({ pressed }) => [
+                styles.emptyPrimaryButton,
+                pressed && styles.emptyPrimaryButtonPressed,
+              ]}
+              onPress={clearSearch}
+            >
+              <Text style={styles.emptyPrimaryButtonText}>Clear Search</Text>
+            </Pressable>
+          ) : (
+            <>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.emptyPrimaryButton,
+                  pressed && styles.emptyPrimaryButtonPressed,
+                ]}
+                onPress={handleOpenAccounts}
+              >
+                <Text style={styles.emptyPrimaryButtonText}>
+                  Link Accounts on Web
+                </Text>
+              </Pressable>
+              <Text style={styles.emptyFootnote}>
+                Account linking is handled in the web app for now.
+              </Text>
+            </>
+          )}
         </View>
       ) : (
         <FlatList
@@ -226,20 +353,27 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.white,
   },
-  searchButton: {
-    backgroundColor: colors.primary[600],
-    borderRadius: borderRadius.lg,
-    paddingHorizontal: spacing.lg,
+  searchStatus: {
+    width: 48,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  searchButtonPressed: {
-    backgroundColor: colors.primary[500],
+  clearButton: {
+    backgroundColor: colors.surface[750],
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.surface[600] + '80',
   },
-  searchButtonText: {
+  clearButtonPressed: {
+    backgroundColor: colors.surface[700],
+  },
+  clearButtonText: {
     fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
-    color: colors.white,
+    color: colors.surface[200],
   },
   countRow: {
     paddingHorizontal: spacing.lg,
@@ -291,6 +425,30 @@ const styles = StyleSheet.create({
     color: colors.surface[400],
     textAlign: 'center',
     marginTop: spacing.sm,
+    lineHeight: 20,
+  },
+  emptyPrimaryButton: {
+    marginTop: spacing.xl,
+    backgroundColor: colors.primary[600],
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+  },
+  emptyPrimaryButtonPressed: {
+    backgroundColor: colors.primary[500],
+  },
+  emptyPrimaryButtonText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.white,
+  },
+  emptyFootnote: {
+    fontSize: fontSize.xs,
+    color: colors.surface[500],
+    textAlign: 'center',
+    lineHeight: 18,
+    marginTop: spacing.md,
   },
   loadingMore: {
     paddingVertical: spacing.xl,

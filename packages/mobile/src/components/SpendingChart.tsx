@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import Svg, { Rect, Line, Text as SvgText } from 'react-native-svg';
 import type { CategorySpending } from '../types';
 import { formatCurrencyCompact } from '../utils/format';
-import { colors, fontSize, fontWeight, borderRadius, spacing } from '../utils/theme';
+import { colors, fontSize, fontWeight, spacing } from '../utils/theme';
 
 interface SpendingChartProps {
   data: CategorySpending[];

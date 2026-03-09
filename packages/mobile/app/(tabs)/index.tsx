@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Pressable,
   ActivityIndicator,
+  Alert,
+  Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getNetWorth, listAccounts } from '../../src/api/accounts';
@@ -20,21 +22,19 @@ import type {
   Budget,
   BudgetSummary,
   HealthScore,
-  CategorySpending,
 } from '../../src/types';
 import AccountCard from '../../src/components/AccountCard';
 import TransactionItem from '../../src/components/TransactionItem';
 import HealthScoreCircle from '../../src/components/HealthScoreCircle';
-import SpendingChart from '../../src/components/SpendingChart';
 import {
   formatCurrency,
   formatCurrencyCompact,
-  formatPercent,
 } from '../../src/utils/format';
 import { colors, fontSize, fontWeight, borderRadius, spacing } from '../../src/utils/theme';
 
 export default function DashboardScreen() {
   const router = useRouter();
+  const webUrl = process.env.EXPO_PUBLIC_WEB_URL?.replace(/\/$/, '') ?? null;
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -45,8 +45,33 @@ export default function DashboardScreen() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [budgetSummary, setBudgetSummary] = useState<BudgetSummary | null>(null);
   const [healthScore, setHealthScore] = useState<HealthScore | null>(null);
-  const [categoryBreakdown, setCategoryBreakdown] = useState<CategorySpending[]>([]);
   const [monthlySpending, setMonthlySpending] = useState(0);
+
+  async function openUrl(url: string, title: string) {
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (!supported) {
+        Alert.alert(title, 'Unable to open that link on this device.');
+        return;
+      }
+
+      await Linking.openURL(url);
+    } catch {
+      Alert.alert(title, 'Unable to open that link right now.');
+    }
+  }
+
+  function handleOpenAccounts() {
+    if (!webUrl) {
+      Alert.alert(
+        'Link Accounts',
+        'Set EXPO_PUBLIC_WEB_URL to open account linking from mobile.',
+      );
+      return;
+    }
+
+    void openUrl(`${webUrl}/accounts`, 'Link Accounts');
+  }
 
   const fetchData = useCallback(async () => {
     try {
@@ -100,7 +125,9 @@ export default function DashboardScreen() {
   }
 
   const hasData =
-    (netWorth?.accountCount ?? 0) > 0 || recentTransactions.length > 0;
+    (netWorth?.accountCount ?? 0) > 0 ||
+    recentTransactions.length > 0 ||
+    budgets.length > 0;
 
   return (
     <ScrollView
@@ -291,10 +318,38 @@ export default function DashboardScreen() {
           <View style={styles.emptyIcon}>
             <Text style={styles.emptyIconText}>$</Text>
           </View>
+          <Text style={styles.emptyEyebrow}>Set up your money view</Text>
           <Text style={styles.emptyTitle}>Welcome to FinanceOwl</Text>
           <Text style={styles.emptySubtitle}>
             Get started by linking your bank accounts. We will automatically
             track your spending, net worth, and budget progress.
+          </Text>
+          <View style={styles.emptyActionRow}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.emptyPrimaryButton,
+                pressed && styles.emptyPrimaryButtonPressed,
+              ]}
+              onPress={handleOpenAccounts}
+            >
+              <Text style={styles.emptyPrimaryButtonText}>
+                Link Accounts on Web
+              </Text>
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [
+                styles.emptySecondaryButton,
+                pressed && styles.emptySecondaryButtonPressed,
+              ]}
+              onPress={() => router.push('/(tabs)/budgets')}
+            >
+              <Text style={styles.emptySecondaryButtonText}>
+                Create a Budget
+              </Text>
+            </Pressable>
+          </View>
+          <Text style={styles.emptyFootnote}>
+            Account linking is handled in the web app for now.
           </Text>
         </View>
       )}
@@ -524,6 +579,14 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.bold,
     color: colors.primary[400] + '99',
   },
+  emptyEyebrow: {
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.semibold,
+    color: colors.primary[400],
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+    marginBottom: spacing.sm,
+  },
   emptyTitle: {
     fontSize: fontSize.xl,
     fontWeight: fontWeight.semibold,
@@ -536,5 +599,48 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     lineHeight: 20,
     maxWidth: 320,
+  },
+  emptyActionRow: {
+    width: '100%',
+    gap: spacing.sm,
+    marginTop: spacing.xl,
+  },
+  emptyPrimaryButton: {
+    backgroundColor: colors.primary[600],
+    borderRadius: borderRadius.lg,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+  },
+  emptyPrimaryButtonPressed: {
+    backgroundColor: colors.primary[500],
+  },
+  emptyPrimaryButtonText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.white,
+  },
+  emptySecondaryButton: {
+    backgroundColor: colors.surface[750],
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.surface[600] + '80',
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+  },
+  emptySecondaryButtonPressed: {
+    backgroundColor: colors.surface[700],
+  },
+  emptySecondaryButtonText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.surface[200],
+  },
+  emptyFootnote: {
+    fontSize: fontSize.xs,
+    color: colors.surface[500],
+    textAlign: 'center',
+    lineHeight: 18,
+    marginTop: spacing.md,
+    maxWidth: 280,
   },
 });
