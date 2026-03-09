@@ -1,7 +1,10 @@
 import { create } from 'zustand';
-import * as SecureStore from 'expo-secure-store';
 import * as authApi from '../api/auth';
-import { getAccessToken } from '../api/client';
+import {
+  clearTokens,
+  getAccessToken,
+  getApiErrorMessage,
+} from '../api/client';
 import type { User, LoginRequest, RegisterRequest } from '../types';
 
 interface AuthState {
@@ -44,6 +47,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user, isAuthenticated: true, isLoading: false });
     } catch {
       // Token expired or invalid -- clear and show login
+      await clearTokens();
       set({ isLoading: false, isAuthenticated: false, user: null });
     }
   },
@@ -54,10 +58,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       await authApi.login(req);
       const user = await authApi.getMe();
       set({ user, isAuthenticated: true, isLoading: false });
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } }; message?: string };
-      const message =
-        error.response?.data?.message ?? error.message ?? 'Login failed';
+    } catch (err) {
+      const message = getApiErrorMessage(err, 'Login failed');
       set({ isLoading: false, error: message });
       throw err;
     }
@@ -69,10 +71,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       await authApi.register(req);
       const user = await authApi.getMe();
       set({ user, isAuthenticated: true, isLoading: false });
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } }; message?: string };
-      const message =
-        error.response?.data?.message ?? error.message ?? 'Registration failed';
+    } catch (err) {
+      const message = getApiErrorMessage(err, 'Registration failed');
       set({ isLoading: false, error: message });
       throw err;
     }

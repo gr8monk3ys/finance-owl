@@ -364,6 +364,45 @@ jobs:
           retention-days: 7
 
   # ──────────────────────────────────────────────
+  # Mobile verification
+  # ──────────────────────────────────────────────
+  mobile:
+    name: Mobile
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [install]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Restore node_modules
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Typecheck mobile app
+        run: pnpm --filter @finance-owl/mobile typecheck
+
+      - name: Lint mobile app
+        run: pnpm --filter @finance-owl/mobile lint
+
+      - name: Validate Expo configuration
+        run: pnpm --filter @finance-owl/mobile run check:expo
+
+      - name: Export iOS bundle
+        run: pnpm --filter @finance-owl/mobile export:ios
+
+  # ──────────────────────────────────────────────
   # Docker build verification (main branch only)
   # ──────────────────────────────────────────────
   docker:
@@ -405,7 +444,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: always()
-    needs: [format, lint, typecheck, test-backend, test-frontend, build]
+    needs: [format, lint, typecheck, test-backend, test-frontend, build, test-e2e, mobile]
     steps:
       - name: Check all required jobs passed
         run: |
