@@ -128,7 +128,7 @@ export class BudgetsService {
   // ── CRUD ──────────────────────────────────────────────────────────
 
   async create(userId: string, data: CreateBudgetInput) {
-    this.validatePeriod(data.period);
+    const normalizedPeriod = this.validatePeriod(data.period);
     this.validateAmount(data.amount);
 
     const budgetType = (data.budgetType as BudgetType) || 'category';
@@ -153,7 +153,7 @@ export class BudgetsService {
           and(
             eq(schema.budgets.userId, userId),
             eq(schema.budgets.categoryId, data.categoryId),
-            eq(schema.budgets.period, data.period),
+            eq(schema.budgets.period, normalizedPeriod),
             eq(schema.budgets.isActive, true),
           ),
         )
@@ -177,7 +177,7 @@ export class BudgetsService {
         name: data.name ?? null,
         budgetType,
         amount: data.amount,
-        period: data.period,
+        period: normalizedPeriod,
         rollover: data.rollover ?? false,
         rolloverCap: data.rolloverCap ?? null,
         isActive: true,
@@ -206,7 +206,9 @@ export class BudgetsService {
   async update(userId: string, id: string, data: UpdateBudgetInput) {
     await this.findById(userId, id);
 
-    if (data.period) this.validatePeriod(data.period);
+    const normalizedPeriod = data.period
+      ? this.validatePeriod(data.period)
+      : undefined;
     if (data.amount !== undefined) this.validateAmount(data.amount);
 
     const updatePayload: Record<string, unknown> = {
@@ -214,7 +216,7 @@ export class BudgetsService {
     };
     if (data.name !== undefined) updatePayload.name = data.name;
     if (data.amount !== undefined) updatePayload.amount = data.amount;
-    if (data.period !== undefined) updatePayload.period = data.period;
+    if (normalizedPeriod !== undefined) updatePayload.period = normalizedPeriod;
     if (data.rollover !== undefined) updatePayload.rollover = data.rollover;
     if (data.rolloverCap !== undefined)
       updatePayload.rolloverCap = data.rolloverCap;
@@ -290,8 +292,9 @@ export class BudgetsService {
     const results: BudgetWithSpent[] = [];
 
     for (const budget of budgets) {
+      const normalizedPeriod = this.normalizePeriod(budget.period);
       const { start, end } = this.getPeriodDates(
-        budget.period,
+        normalizedPeriod,
         now,
         budget.startDate ?? undefined,
       );
@@ -371,7 +374,7 @@ export class BudgetsService {
         categoryIcon: budget.categoryIcon,
         householdId: budget.householdId,
         amount: budget.amount,
-        period: budget.period,
+        period: normalizedPeriod,
         rollover: budget.rollover,
         rolloverCap: budget.rolloverCap,
         isActive: budget.isActive,
@@ -493,10 +496,11 @@ export class BudgetsService {
     const now = new Date();
 
     for (const budget of budgets) {
+      const normalizedPeriod = this.normalizePeriod(budget.period);
       const { start: prevStart, end: prevEnd } =
-        this.getPreviousPeriodDates(budget.period, now);
+        this.getPreviousPeriodDates(normalizedPeriod, now);
       const { start: currStart, end: currEnd } = this.getPeriodDates(
-        budget.period,
+        normalizedPeriod,
         now,
       );
 
@@ -620,8 +624,9 @@ export class BudgetsService {
     const results: BudgetWithSpent[] = [];
 
     for (const budget of budgets) {
+      const normalizedPeriod = this.normalizePeriod(budget.period);
       const { start, end } = this.getPeriodDates(
-        budget.period,
+        normalizedPeriod,
         now,
         budget.startDate ?? undefined,
       );
@@ -696,7 +701,7 @@ export class BudgetsService {
         categoryIcon: budget.categoryIcon,
         householdId: budget.householdId,
         amount: budget.amount,
-        period: budget.period,
+        period: normalizedPeriod,
         rollover: budget.rollover,
         rolloverCap: budget.rolloverCap,
         isActive: budget.isActive,
@@ -961,11 +966,23 @@ export class BudgetsService {
   // ── Private: Validation ───────────────────────────────────────────
 
   private validatePeriod(period: string) {
-    if (!VALID_PERIODS.includes(period as BudgetPeriod)) {
+    const normalizedPeriod = this.normalizePeriod(period);
+
+    if (!VALID_PERIODS.includes(normalizedPeriod)) {
       throw new BadRequestException(
         `Invalid period. Must be one of: ${VALID_PERIODS.join(', ')}`,
       );
     }
+
+    return normalizedPeriod;
+  }
+
+  private normalizePeriod(period: string): BudgetPeriod {
+    if (period === 'yearly') {
+      return 'annual';
+    }
+
+    return period as BudgetPeriod;
   }
 
   private validateAmount(amount: number) {

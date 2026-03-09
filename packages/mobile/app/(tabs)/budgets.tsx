@@ -6,102 +6,271 @@ import {
   RefreshControl,
   StyleSheet,
   Pressable,
-  TextInput,
   Modal,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  TextInput,
 } from 'react-native';
 import {
   listBudgets,
   getBudgetSummary,
   createBudget,
 } from '../../src/api/budgets';
+import { listCategories } from '../../src/api/categories';
+import { getApiErrorMessage } from '../../src/api/client';
 import BudgetCard from '../../src/components/BudgetCard';
-import type { Budget, BudgetSummary, BudgetPeriod } from '../../src/types';
-import { formatCurrency, formatCurrencyCompact } from '../../src/utils/format';
-import { colors, fontSize, fontWeight, borderRadius, spacing } from '../../src/utils/theme';
+import { hapticFeedback } from '../../src/native';
+import type {
+  Budget,
+  BudgetSummary,
+  BudgetPeriod,
+  Category,
+} from '../../src/types';
+import { formatCurrencyCompact } from '../../src/utils/format';
+import {
+  colors,
+  fontSize,
+  fontWeight,
+  borderRadius,
+  spacing,
+} from '../../src/utils/theme';
+
+const CREATE_PERIOD_OPTIONS: Array<{
+  value: BudgetPeriod;
+  label: string;
+  hint: string;
+}> = [
+  { value: 'weekly', label: 'Weekly', hint: 'Reset every 7 days' },
+  { value: 'biweekly', label: 'Biweekly', hint: 'Reset every 2 weeks' },
+  { value: 'monthly', label: 'Monthly', hint: 'Best for most spending plans' },
+  { value: 'quarterly', label: 'Quarterly', hint: 'Useful for seasonal bills' },
+  { value: 'annual', label: 'Annual', hint: 'For long-term spending targets' },
+];
+
+function sortCategories(categories: Category[]): Category[] {
+  return [...categories].sort((left, right) => {
+    if (left.sortOrder !== right.sortOrder) {
+      return left.sortOrder - right.sortOrder;
+    }
+
+    return left.name.localeCompare(right.name);
+  });
+}
+
+function normalizeAmountInput(value: string): string {
+  const sanitized = value.replace(/[^0-9.]/g, '');
+
+  if (!sanitized) {
+    return '';
+  }
+
+  const [whole, ...fractionParts] = sanitized.split('.');
+  if (fractionParts.length === 0) {
+    return whole;
+  }
+
+  return `${whole || '0'}.${fractionParts.join('').slice(0, 2)}`;
+}
+
+function getCategorySubtitle(
+  category: Category,
+  categories: Category[],
+): string {
+  if (category.parentId) {
+    const parent = categories.find((item) => item.id === category.parentId);
+    return parent ? `Part of ${parent.name}` : 'Selected subcategory';
+  }
+
+  const childCount = categories.filter(
+    (item) => item.parentId === category.id,
+  ).length;
+
+  if (childCount === 0) {
+    return 'Track this category total';
+  }
+
+  return `${childCount} subcategor${childCount === 1 ? 'y' : 'ies'} included`;
+}
 
 export default function BudgetsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [summary, setSummary] = useState<BudgetSummary | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  // Create form state
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [categoryId, setCategoryId] = useState('');
   const [amount, setAmount] = useState('');
   const [period, setPeriod] = useState<BudgetPeriod>('monthly');
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState('');
 
-  const fetchData = useCallback(async () => {
+  const sortedCategories = sortCategories(categories);
+  const selectedCategory =
+    sortedCategories.find((category) => category.id === categoryId) ?? null;
+  const topLevelCategories = sortedCategories.filter(
+    (category) => !category.parentId,
+  );
+  const existingBudget =
+    budgets.find(
+      (budget) => budget.categoryId === categoryId && budget.period === period,
+    ) ?? null;
+
+  const fetchBudgets = useCallback(async () => {
     try {
       const [budgetList, budgetSummary] = await Promise.all([
-        listBudgets(),
+        listBudgets().catch(() => []),
         getBudgetSummary().catch(() => null),
       ]);
+
       setBudgets(budgetList);
       setSummary(budgetSummary);
     } catch {
-      // Handle silently
+      setBudgets([]);
+      setSummary(null);
+    }
+  }, []);
+
+  const fetchCategories = useCallback(async () => {
+    setCategoriesLoading(true);
+
+    try {
+      const categoryList = await listCategories().catch(() => []);
+      setCategories(categoryList);
+    } catch {
+      setCategories([]);
+    } finally {
+      setCategoriesLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchData().finally(() => setLoading(false));
-  }, [fetchData]);
+    Promise.all([fetchBudgets(), fetchCategories()]).finally(() =>
+      setLoading(false),
+    );
+  }, [fetchBudgets, fetchCategories]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchData();
+    await Promise.all([fetchBudgets(), fetchCategories()]);
     setRefreshing(false);
-  }, [fetchData]);
+  }, [fetchBudgets, fetchCategories]);
+
+  function resetCreateForm() {
+    setCategoryId('');
+    setAmount('');
+    setPeriod('monthly');
+    setCreateError('');
+    setShowCategoryPicker(false);
+  }
+
+  function closeCreateModal() {
+    setShowCreateModal(false);
+    resetCreateForm();
+  }
+
+  async function handleSelectCategory(category: Category) {
+    setCategoryId(category.id);
+    setCreateError('');
+    setShowCategoryPicker(false);
+    await hapticFeedback('light');
+  }
 
   async function handleCreate() {
     setCreateError('');
+
     if (!categoryId.trim()) {
-      setCreateError('Category ID is required');
+      setCreateError('Select a category to budget.');
       return;
     }
-    const amountNum = parseFloat(amount);
-    if (isNaN(amountNum) || amountNum <= 0) {
-      setCreateError('Enter a valid amount');
+
+    if (existingBudget) {
+      setCreateError(
+        `A ${period} budget already exists for ${selectedCategory?.name ?? 'this category'}.`,
+      );
+      return;
+    }
+
+    const amountNum = Number.parseFloat(amount);
+    if (Number.isNaN(amountNum) || amountNum <= 0) {
+      setCreateError('Enter a valid amount greater than zero.');
       return;
     }
 
     setCreating(true);
+
     try {
       await createBudget({
         categoryId: categoryId.trim(),
         amount: amountNum,
         period,
       });
-      setShowCreateModal(false);
-      setCategoryId('');
-      setAmount('');
-      setPeriod('monthly');
-      await fetchData();
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      setCreateError(error.response?.data?.message ?? 'Failed to create budget');
+      await hapticFeedback('medium');
+      closeCreateModal();
+      await fetchBudgets();
+    } catch (error) {
+      setCreateError(getApiErrorMessage(error, 'Failed to create budget'));
     } finally {
       setCreating(false);
     }
   }
 
-  const onTrackCount = budgets.filter((b) => b.percentUsed < 80).length;
+  const onTrackCount = budgets.filter((budget) => budget.percentUsed < 80).length;
   const nearLimitCount = budgets.filter(
-    (b) => b.percentUsed >= 80 && b.percentUsed < 100,
+    (budget) => budget.percentUsed >= 80 && budget.percentUsed < 100,
   ).length;
-  const overBudgetCount = budgets.filter((b) => b.percentUsed >= 100).length;
+  const overBudgetCount = budgets.filter((budget) => budget.percentUsed >= 100).length;
+
+  function getChildCategories(parentId: string): Category[] {
+    return sortedCategories.filter((category) => category.parentId === parentId);
+  }
 
   function getOverallProgressColor(): string {
     if (!summary) return colors.primary[500];
     if (summary.percentUsed >= 100) return colors.danger[500];
     if (summary.percentUsed >= 80) return colors.accent[500];
     return colors.primary[500];
+  }
+
+  function renderCategoryOption(category: Category, indentLevel: 0 | 1 = 0) {
+    const isSelected = category.id === selectedCategory?.id;
+
+    return (
+      <Pressable
+        key={category.id}
+        style={({ pressed }) => [
+          styles.categoryOption,
+          indentLevel === 1 && styles.categoryOptionChild,
+          isSelected && styles.categoryOptionSelected,
+          pressed && styles.categoryOptionPressed,
+        ]}
+        onPress={() => {
+          void handleSelectCategory(category);
+        }}
+      >
+        <View
+          style={[
+            styles.categorySwatch,
+            { backgroundColor: category.color ?? colors.surface[500] },
+          ]}
+        />
+        <View style={styles.categoryOptionCopy}>
+          <Text style={styles.categoryOptionTitle}>{category.name}</Text>
+          <Text style={styles.categoryOptionSubtitle}>
+            {getCategorySubtitle(category, sortedCategories)}
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.categorySelectionIndicator,
+            isSelected && styles.categorySelectionIndicatorActive,
+          ]}
+        />
+      </Pressable>
+    );
   }
 
   if (loading) {
@@ -125,7 +294,6 @@ export default function BudgetsScreen() {
           />
         }
       >
-        {/* Summary strip */}
         {summary && (
           <View style={styles.summaryRow}>
             <View style={styles.summaryCard}>
@@ -169,9 +337,7 @@ export default function BudgetsScreen() {
             </View>
             <View style={styles.overallStats}>
               {onTrackCount > 0 && (
-                <Text style={styles.statOnTrack}>
-                  {onTrackCount} on track
-                </Text>
+                <Text style={styles.statOnTrack}>{onTrackCount} on track</Text>
               )}
               {nearLimitCount > 0 && (
                 <Text style={styles.statNearLimit}>
@@ -187,7 +353,6 @@ export default function BudgetsScreen() {
           </View>
         )}
 
-        {/* Create button */}
         <Pressable
           style={({ pressed }) => [
             styles.createButton,
@@ -195,17 +360,28 @@ export default function BudgetsScreen() {
           ]}
           onPress={() => setShowCreateModal(true)}
         >
-          <Text style={styles.createButtonText}>+ Create Budget</Text>
+          <Text style={styles.createButtonText}>Create Budget</Text>
         </Pressable>
 
-        {/* Budget cards */}
         {budgets.length === 0 ? (
           <View style={styles.emptyState}>
+            <Text style={styles.emptyEyebrow}>Start with one focused category</Text>
             <Text style={styles.emptyTitle}>No budgets yet</Text>
             <Text style={styles.emptySubtitle}>
-              Create budgets to track your spending by category and stay on top
-              of your finances.
+              Create your first budget by picking a category and setting a limit.
+              Parent categories cover all subcategories automatically.
             </Text>
+            <Pressable
+              style={({ pressed }) => [
+                styles.emptyActionButton,
+                pressed && styles.emptyActionButtonPressed,
+              ]}
+              onPress={() => setShowCreateModal(true)}
+            >
+              <Text style={styles.emptyActionButtonText}>
+                Create Your First Budget
+              </Text>
+            </Pressable>
           </View>
         ) : (
           <View style={styles.budgetList}>
@@ -216,106 +392,249 @@ export default function BudgetsScreen() {
         )}
       </ScrollView>
 
-      {/* Create Budget Modal */}
       <Modal
         visible={showCreateModal}
         animationType="slide"
         transparent
-        onRequestClose={() => setShowCreateModal(false)}
+        onRequestClose={closeCreateModal}
       >
         <KeyboardAvoidingView
           style={styles.modalOverlay}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <Pressable
-            style={styles.modalBackdrop}
-            onPress={() => setShowCreateModal(false)}
-          />
+          <Pressable style={styles.modalBackdrop} onPress={closeCreateModal} />
           <View style={styles.modalContent}>
             <View style={styles.modalHandle} />
-            <Text style={styles.modalTitle}>Create Budget</Text>
-
-            {createError ? (
-              <View style={styles.errorBox}>
-                <Text style={styles.errorText}>{createError}</Text>
+            <ScrollView
+              contentContainerStyle={styles.modalBody}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Create Budget</Text>
+                <Text style={styles.modalSubtitle}>
+                  Choose a category, set a limit, and pick how often it resets.
+                </Text>
               </View>
-            ) : null}
 
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Category ID</Text>
-              <TextInput
-                style={styles.formInput}
-                value={categoryId}
-                onChangeText={setCategoryId}
-                placeholder="Enter category ID"
-                placeholderTextColor={colors.surface[500]}
-              />
-            </View>
+              {createError ? (
+                <View style={styles.errorBox}>
+                  <Text style={styles.errorText}>{createError}</Text>
+                </View>
+              ) : null}
 
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Amount</Text>
-              <TextInput
-                style={styles.formInput}
-                value={amount}
-                onChangeText={setAmount}
-                placeholder="500.00"
-                placeholderTextColor={colors.surface[500]}
-                keyboardType="decimal-pad"
-              />
-            </View>
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Category</Text>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.categoryTrigger,
+                    pressed && styles.categoryTriggerPressed,
+                  ]}
+                  onPress={() => setShowCategoryPicker(true)}
+                >
+                  <View style={styles.categoryTriggerContent}>
+                    {selectedCategory ? (
+                      <>
+                        <View
+                          style={[
+                            styles.categorySwatch,
+                            {
+                              backgroundColor:
+                                selectedCategory.color ?? colors.surface[500],
+                            },
+                          ]}
+                        />
+                        <View style={styles.categoryTriggerCopy}>
+                          <Text style={styles.categoryTriggerLabel}>
+                            {selectedCategory.name}
+                          </Text>
+                          <Text style={styles.categoryTriggerHint}>
+                            {getCategorySubtitle(selectedCategory, sortedCategories)}
+                          </Text>
+                        </View>
+                      </>
+                    ) : (
+                      <View style={styles.categoryTriggerCopy}>
+                        <Text style={styles.categoryTriggerPlaceholder}>
+                          {categoriesLoading
+                            ? 'Loading categories...'
+                            : 'Choose a category'}
+                        </Text>
+                        <Text style={styles.categoryTriggerHint}>
+                          Pick a broad category or a subcategory.
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={styles.categoryTriggerAction}>Browse</Text>
+                </Pressable>
+              </View>
 
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Period</Text>
-              <View style={styles.periodRow}>
-                {(['monthly', 'quarterly', 'yearly'] as BudgetPeriod[]).map(
-                  (p) => (
-                    <Pressable
-                      key={p}
-                      style={[
-                        styles.periodChip,
-                        period === p && styles.periodChipActive,
-                      ]}
-                      onPress={() => setPeriod(p)}
-                    >
-                      <Text
-                        style={[
-                          styles.periodChipText,
-                          period === p && styles.periodChipTextActive,
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Amount</Text>
+                <View style={styles.amountField}>
+                  <Text style={styles.amountPrefix}>$</Text>
+                  <TextInput
+                    style={styles.amountInput}
+                    value={amount}
+                    onChangeText={(nextValue) => {
+                      setAmount(normalizeAmountInput(nextValue));
+                      setCreateError('');
+                    }}
+                    placeholder="500.00"
+                    placeholderTextColor={colors.surface[500]}
+                    keyboardType="decimal-pad"
+                    returnKeyType="done"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Period</Text>
+                <View style={styles.periodGrid}>
+                  {CREATE_PERIOD_OPTIONS.map((option) => {
+                    const isSelected = option.value === period;
+
+                    return (
+                      <Pressable
+                        key={option.value}
+                        style={({ pressed }) => [
+                          styles.periodChip,
+                          isSelected && styles.periodChipSelected,
+                          pressed && styles.periodChipPressed,
                         ]}
+                        onPress={() => {
+                          setPeriod(option.value);
+                          setCreateError('');
+                        }}
                       >
-                        {p.charAt(0).toUpperCase() + p.slice(1)}
-                      </Text>
-                    </Pressable>
-                  ),
-                )}
+                        <Text
+                          style={[
+                            styles.periodChipLabel,
+                            isSelected && styles.periodChipLabelSelected,
+                          ]}
+                        >
+                          {option.label}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.periodChipHint,
+                            isSelected && styles.periodChipHintSelected,
+                          ]}
+                        >
+                          {option.hint}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
               </View>
-            </View>
 
-            <View style={styles.modalActions}>
-              <Pressable
-                style={styles.modalCancelButton}
-                onPress={() => setShowCreateModal(false)}
-              >
-                <Text style={styles.modalCancelText}>Cancel</Text>
-              </Pressable>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.modalCreateButton,
-                  pressed && styles.modalCreateButtonPressed,
-                  creating && styles.modalCreateButtonDisabled,
-                ]}
-                onPress={handleCreate}
-                disabled={creating}
-              >
-                {creating ? (
-                  <ActivityIndicator size="small" color={colors.white} />
-                ) : (
-                  <Text style={styles.modalCreateText}>Create</Text>
-                )}
-              </Pressable>
-            </View>
+              {existingBudget ? (
+                <View style={styles.noticeBox}>
+                  <Text style={styles.noticeText}>
+                    You already have a {period} budget for{' '}
+                    {selectedCategory?.name ?? 'this category'}. Update the
+                    existing budget instead of creating a duplicate.
+                  </Text>
+                </View>
+              ) : null}
+
+              <View style={styles.modalActions}>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.secondaryButton,
+                    pressed && styles.secondaryButtonPressed,
+                  ]}
+                  onPress={closeCreateModal}
+                >
+                  <Text style={styles.secondaryButtonText}>Cancel</Text>
+                </Pressable>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.primaryButton,
+                    (creating || categoriesLoading || !!existingBudget) &&
+                      styles.primaryButtonDisabled,
+                    pressed &&
+                      !(creating || categoriesLoading || !!existingBudget) &&
+                      styles.primaryButtonPressed,
+                  ]}
+                  onPress={() => {
+                    void handleCreate();
+                  }}
+                  disabled={creating || categoriesLoading || !!existingBudget}
+                >
+                  <Text style={styles.primaryButtonText}>
+                    {creating ? 'Creating...' : 'Create Budget'}
+                  </Text>
+                </Pressable>
+              </View>
+            </ScrollView>
           </View>
         </KeyboardAvoidingView>
+      </Modal>
+
+      <Modal
+        visible={showCategoryPicker}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowCategoryPicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <Pressable
+            style={styles.modalBackdrop}
+            onPress={() => setShowCategoryPicker(false)}
+          />
+          <View style={styles.pickerContent}>
+            <View style={styles.modalHandle} />
+            <View style={styles.pickerHeader}>
+              <View style={styles.pickerHeaderCopy}>
+                <Text style={styles.modalTitle}>Choose Category</Text>
+                <Text style={styles.modalSubtitle}>
+                  Pick a parent category for broad coverage or a subcategory for
+                  tighter control.
+                </Text>
+              </View>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.pickerDoneButton,
+                  pressed && styles.pickerDoneButtonPressed,
+                ]}
+                onPress={() => setShowCategoryPicker(false)}
+              >
+                <Text style={styles.pickerDoneButtonText}>Done</Text>
+              </Pressable>
+            </View>
+
+            {categoriesLoading ? (
+              <View style={styles.pickerLoadingState}>
+                <ActivityIndicator size="small" color={colors.primary[500]} />
+                <Text style={styles.pickerLoadingText}>Loading categories...</Text>
+              </View>
+            ) : topLevelCategories.length === 0 ? (
+              <View style={styles.pickerEmptyState}>
+                <Text style={styles.pickerEmptyTitle}>No categories available</Text>
+                <Text style={styles.pickerEmptySubtitle}>
+                  Pull to refresh the budgets screen and try again.
+                </Text>
+              </View>
+            ) : (
+              <ScrollView
+                contentContainerStyle={styles.pickerList}
+                showsVerticalScrollIndicator={false}
+              >
+                {topLevelCategories.map((category) => (
+                  <View key={category.id} style={styles.pickerSection}>
+                    {renderCategoryOption(category)}
+                    {getChildCategories(category.id).map((childCategory) =>
+                      renderCategoryOption(childCategory, 1),
+                    )}
+                  </View>
+                ))}
+              </ScrollView>
+            )}
+          </View>
+        </View>
       </Modal>
     </View>
   );
@@ -337,8 +656,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.surface[900],
   },
-
-  // Summary
   summaryRow: {
     flexDirection: 'row',
     gap: spacing.md,
@@ -363,8 +680,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     fontVariant: ['tabular-nums'],
   },
-
-  // Overall card
   overallCard: {
     backgroundColor: colors.surface[800],
     borderRadius: borderRadius.xl,
@@ -400,6 +715,7 @@ const styles = StyleSheet.create({
   overallStats: {
     flexDirection: 'row',
     gap: spacing.md,
+    flexWrap: 'wrap',
   },
   statOnTrack: {
     fontSize: fontSize.xs,
@@ -413,8 +729,6 @@ const styles = StyleSheet.create({
     fontSize: fontSize.xs,
     color: colors.danger[400],
   },
-
-  // Create button
   createButton: {
     backgroundColor: colors.primary[600],
     borderRadius: borderRadius.lg,
@@ -429,17 +743,25 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.semibold,
     color: colors.white,
   },
-
-  // Budget list
   budgetList: {
     gap: spacing.md,
   },
-
-  // Empty state
   emptyState: {
     alignItems: 'center',
     paddingVertical: spacing['5xl'],
     paddingHorizontal: spacing['2xl'],
+    backgroundColor: colors.surface[800],
+    borderRadius: borderRadius.xl,
+    borderWidth: 1,
+    borderColor: colors.surface[700] + '80',
+  },
+  emptyEyebrow: {
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.semibold,
+    color: colors.primary[400],
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
+    marginBottom: spacing.sm,
   },
   emptyTitle: {
     fontSize: fontSize.lg,
@@ -452,10 +774,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.sm,
     lineHeight: 20,
-    maxWidth: 300,
+    maxWidth: 320,
   },
-
-  // Modal
+  emptyActionButton: {
+    marginTop: spacing.lg,
+    backgroundColor: colors.primary[600],
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+  },
+  emptyActionButtonPressed: {
+    backgroundColor: colors.primary[500],
+  },
+  emptyActionButtonText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.white,
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -465,12 +800,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.6)',
   },
   modalContent: {
+    maxHeight: '90%',
     backgroundColor: colors.surface[800],
     borderTopLeftRadius: borderRadius['2xl'],
     borderTopRightRadius: borderRadius['2xl'],
-    padding: spacing['2xl'],
-    paddingBottom: spacing['5xl'],
+    paddingHorizontal: spacing['2xl'],
+    paddingTop: spacing.lg,
+    paddingBottom: spacing['4xl'],
+  },
+  modalBody: {
     gap: spacing.lg,
+    paddingBottom: spacing.lg,
   },
   modalHandle: {
     width: 40,
@@ -478,12 +818,20 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: colors.surface[600],
     alignSelf: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: spacing.lg,
+  },
+  modalHeader: {
+    gap: spacing.xs,
   },
   modalTitle: {
     fontSize: fontSize.xl,
     fontWeight: fontWeight.bold,
     color: colors.white,
+  },
+  modalSubtitle: {
+    fontSize: fontSize.sm,
+    color: colors.surface[400],
+    lineHeight: 20,
   },
   errorBox: {
     backgroundColor: colors.danger[500] + '15',
@@ -495,6 +843,19 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: fontSize.sm,
     color: colors.danger[400],
+    lineHeight: 20,
+  },
+  noticeBox: {
+    backgroundColor: colors.accent[500] + '12',
+    borderWidth: 1,
+    borderColor: colors.accent[500] + '30',
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+  },
+  noticeText: {
+    fontSize: fontSize.sm,
+    color: colors.accent[400],
+    lineHeight: 20,
   },
   formGroup: {
     gap: spacing.sm,
@@ -504,75 +865,267 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.medium,
     color: colors.surface[300],
   },
-  formInput: {
+  categoryTrigger: {
     backgroundColor: colors.surface[750],
     borderWidth: 1,
     borderColor: colors.surface[600] + '80',
     borderRadius: borderRadius.lg,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+  },
+  categoryTriggerPressed: {
+    backgroundColor: colors.surface[700],
+  },
+  categoryTriggerContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  categoryTriggerCopy: {
+    flex: 1,
+    gap: 2,
+  },
+  categoryTriggerLabel: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+    color: colors.white,
+  },
+  categoryTriggerHint: {
+    fontSize: fontSize.xs,
+    color: colors.surface[400],
+  },
+  categoryTriggerPlaceholder: {
+    fontSize: fontSize.base,
+    color: colors.surface[500],
+  },
+  categoryTriggerAction: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.primary[400],
+  },
+  categorySwatch: {
+    width: 12,
+    height: 12,
+    borderRadius: borderRadius.full,
+  },
+  amountField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface[750],
+    borderWidth: 1,
+    borderColor: colors.surface[600] + '80',
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.lg,
+  },
+  amountPrefix: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+    color: colors.surface[300],
+    marginRight: spacing.sm,
+  },
+  amountInput: {
+    flex: 1,
+    paddingVertical: spacing.md,
     fontSize: fontSize.base,
     color: colors.white,
   },
-  periodRow: {
+  periodGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.sm,
   },
   periodChip: {
-    flex: 1,
-    paddingVertical: spacing.sm + 2,
-    borderRadius: borderRadius.lg,
+    minWidth: '48%',
+    flexGrow: 1,
+    backgroundColor: colors.surface[750],
     borderWidth: 1,
     borderColor: colors.surface[600] + '80',
-    backgroundColor: colors.surface[750],
-    alignItems: 'center',
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    gap: 4,
   },
-  periodChipActive: {
-    borderColor: colors.primary[500] + '60',
-    backgroundColor: colors.primary[600] + '20',
+  periodChipSelected: {
+    borderColor: colors.primary[500] + '99',
+    backgroundColor: colors.primary[600] + '14',
   },
-  periodChipText: {
+  periodChipPressed: {
+    backgroundColor: colors.surface[700],
+  },
+  periodChipLabel: {
     fontSize: fontSize.sm,
-    color: colors.surface[400],
-  },
-  periodChipTextActive: {
-    color: colors.primary[400],
     fontWeight: fontWeight.semibold,
+    color: colors.white,
+  },
+  periodChipLabelSelected: {
+    color: colors.primary[300],
+  },
+  periodChipHint: {
+    fontSize: fontSize.xs,
+    color: colors.surface[400],
+    lineHeight: 16,
+  },
+  periodChipHintSelected: {
+    color: colors.primary[200],
   },
   modalActions: {
     flexDirection: 'row',
     gap: spacing.md,
     marginTop: spacing.sm,
   },
-  modalCancelButton: {
+  secondaryButton: {
     flex: 1,
-    paddingVertical: spacing.md,
     alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.surface[600],
-  },
-  modalCancelText: {
-    fontSize: fontSize.base,
-    fontWeight: fontWeight.medium,
-    color: colors.surface[400],
-  },
-  modalCreateButton: {
-    flex: 1,
-    backgroundColor: colors.primary[600],
+    borderColor: colors.surface[600] + '80',
     paddingVertical: spacing.md,
-    alignItems: 'center',
-    borderRadius: borderRadius.lg,
+    backgroundColor: colors.surface[750],
   },
-  modalCreateButtonPressed: {
+  secondaryButtonPressed: {
+    backgroundColor: colors.surface[700],
+  },
+  secondaryButtonText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.surface[200],
+  },
+  primaryButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: borderRadius.lg,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.primary[600],
+  },
+  primaryButtonDisabled: {
+    backgroundColor: colors.surface[600],
+  },
+  primaryButtonPressed: {
     backgroundColor: colors.primary[500],
   },
-  modalCreateButtonDisabled: {
-    opacity: 0.7,
+  primaryButtonText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.white,
   },
-  modalCreateText: {
+  pickerContent: {
+    maxHeight: '82%',
+    backgroundColor: colors.surface[800],
+    borderTopLeftRadius: borderRadius['2xl'],
+    borderTopRightRadius: borderRadius['2xl'],
+    paddingHorizontal: spacing['2xl'],
+    paddingTop: spacing.lg,
+    paddingBottom: spacing['4xl'],
+  },
+  pickerHeader: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  pickerHeaderCopy: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  pickerDoneButton: {
+    alignSelf: 'flex-start',
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.surface[750],
+    borderWidth: 1,
+    borderColor: colors.surface[600] + '80',
+  },
+  pickerDoneButtonPressed: {
+    backgroundColor: colors.surface[700],
+  },
+  pickerDoneButtonText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.primary[300],
+  },
+  pickerLoadingState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing['4xl'],
+    gap: spacing.md,
+  },
+  pickerLoadingText: {
+    fontSize: fontSize.sm,
+    color: colors.surface[400],
+  },
+  pickerEmptyState: {
+    alignItems: 'center',
+    paddingVertical: spacing['4xl'],
+    gap: spacing.sm,
+  },
+  pickerEmptyTitle: {
     fontSize: fontSize.base,
     fontWeight: fontWeight.semibold,
     color: colors.white,
+  },
+  pickerEmptySubtitle: {
+    fontSize: fontSize.sm,
+    color: colors.surface[400],
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  pickerList: {
+    gap: spacing.md,
+    paddingBottom: spacing.lg,
+  },
+  pickerSection: {
+    gap: spacing.sm,
+  },
+  categoryOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.surface[750],
+    borderWidth: 1,
+    borderColor: colors.surface[700] + '80',
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  categoryOptionChild: {
+    marginLeft: spacing.lg,
+  },
+  categoryOptionSelected: {
+    borderColor: colors.primary[500] + '90',
+    backgroundColor: colors.primary[600] + '16',
+  },
+  categoryOptionPressed: {
+    backgroundColor: colors.surface[700],
+  },
+  categoryOptionCopy: {
+    flex: 1,
+  },
+  categoryOptionTitle: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.white,
+  },
+  categoryOptionSubtitle: {
+    fontSize: fontSize.xs,
+    color: colors.surface[400],
+    marginTop: 2,
+  },
+  categorySelectionIndicator: {
+    width: 14,
+    height: 14,
+    borderRadius: borderRadius.full,
+    borderWidth: 2,
+    borderColor: colors.surface[500],
+  },
+  categorySelectionIndicatorActive: {
+    backgroundColor: colors.primary[500],
+    borderColor: colors.primary[500],
   },
 });
