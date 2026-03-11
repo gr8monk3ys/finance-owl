@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@finance-owl/shared": "workspace:*",
-    "@sentry/sveltekit": "^9.0.0",
+    "@sentry/sveltekit": "^10.43.0",
     "chart.js": "^4.5.1"
   },
   "devDependencies": {
