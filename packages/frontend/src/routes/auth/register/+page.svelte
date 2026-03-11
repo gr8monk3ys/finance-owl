@@ -57,7 +57,10 @@
 			<div class="space-y-3">
 				<button
 					type="button"
-					class="flex w-full items-center justify-center gap-3 rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-sm font-medium text-white transition hover:border-surface-500 hover:bg-surface-700"
+					class="flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-xl border border-surface-600 bg-surface-700/30 px-4 py-2.5 text-sm font-medium text-surface-400"
+					disabled
+					aria-disabled="true"
+					title="Google sign-up is coming soon"
 				>
 					<svg class="h-5 w-5" viewBox="0 0 24 24">
 						<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -66,17 +69,25 @@
 						<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
 					</svg>
 					Continue with Google
+					<span class="rounded-full border border-surface-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-surface-500">Soon</span>
 				</button>
 				<button
 					type="button"
-					class="flex w-full items-center justify-center gap-3 rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-sm font-medium text-white transition hover:border-surface-500 hover:bg-surface-700"
+					class="flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-xl border border-surface-600 bg-surface-700/30 px-4 py-2.5 text-sm font-medium text-surface-400"
+					disabled
+					aria-disabled="true"
+					title="Apple sign-up is coming soon"
 				>
 					<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
 						<path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.53-3.23 0-1.44.62-2.2.44-3.06-.4C3.79 16.18 4.36 9.22 8.87 9c1.27.07 2.15.72 2.91.76.98-.2 1.92-.81 3-.86 1.46.07 2.56.63 3.27 1.63-2.98 1.81-2.27 5.78.5 6.88-.6 1.57-1.37 3.13-2.5 4.87zM12.03 8.94c-.17-2.27 1.65-4.18 3.87-4.44.29 2.55-2.33 4.55-3.87 4.44z"/>
 					</svg>
 					Continue with Apple
+					<span class="rounded-full border border-surface-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-surface-500">Soon</span>
 				</button>
 			</div>
+			<p class="mt-3 text-center text-xs text-surface-500">
+				Google and Apple sign-up are not available yet. Create your account with email for now.
+			</p>
 
 			<!-- Divider -->
 			<div class="my-6 flex items-center gap-3">
@@ -96,9 +107,10 @@
 					};
 				}}
 				class="space-y-5"
+				aria-busy={loading}
 			>
 				{#if form?.error}
-					<div class="flex items-center gap-2 rounded-lg bg-red-900/30 border border-red-800/30 p-3 text-sm text-red-300">
+					<div role="alert" aria-live="polite" class="flex items-center gap-2 rounded-lg bg-red-900/30 border border-red-800/30 p-3 text-sm text-red-300">
 						<svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
 						</svg>
@@ -114,6 +126,7 @@
 						type="text"
 						required
 						value={form?.name ?? ''}
+						autocomplete="name"
 						class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
 						placeholder="Jane Doe"
 					/>
@@ -127,6 +140,9 @@
 						type="email"
 						required
 						value={form?.email ?? ''}
+						autocomplete="email"
+						autocapitalize="off"
+						spellcheck="false"
 						class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
 						placeholder="you@example.com"
 					/>
@@ -141,6 +157,7 @@
 						required
 						minlength={8}
 						bind:value={password}
+						autocomplete="new-password"
 						class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
 						placeholder="Min. 8 characters"
 					/>
@@ -167,6 +184,7 @@
 						type="password"
 						required
 						minlength={8}
+						autocomplete="new-password"
 						class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
 						placeholder="Repeat your password"
 					/>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,13 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [totpCode, setTotpCode] = useState('');
+  const [showTotp, setShowTotp] = useState(false);
+
+  useEffect(() => {
+    if (error?.toLowerCase().includes('totp')) {
+      setShowTotp(true);
+    }
+  }, [error]);
 
   async function handleLogin() {
     if (!email.trim() || !password.trim()) return;
@@ -72,6 +79,7 @@ export default function LoginScreen() {
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="email-address"
+              autoComplete="email"
               textContentType="emailAddress"
               returnKeyType="next"
             />
@@ -86,28 +94,46 @@ export default function LoginScreen() {
               placeholder="Enter your password"
               placeholderTextColor={colors.surface[500]}
               secureTextEntry
+              autoComplete="current-password"
               textContentType="password"
-              returnKeyType="done"
-              onSubmitEditing={handleLogin}
+              returnKeyType={showTotp ? 'next' : 'done'}
+              onSubmitEditing={showTotp ? undefined : handleLogin}
             />
           </View>
 
-          <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Authenticator Code (Optional)</Text>
-            <TextInput
-              style={styles.input}
-              value={totpCode}
-              onChangeText={setTotpCode}
-              placeholder="000000"
-              placeholderTextColor={colors.surface[500]}
-              keyboardType="number-pad"
-              textContentType="oneTimeCode"
-              autoComplete="one-time-code"
-              maxLength={8}
-              returnKeyType="done"
-              onSubmitEditing={handleLogin}
-            />
-          </View>
+          {showTotp ? (
+            <View style={styles.fieldGroup}>
+              <Text style={styles.label}>Authenticator Code</Text>
+              <TextInput
+                style={styles.input}
+                value={totpCode}
+                onChangeText={setTotpCode}
+                placeholder="000000"
+                placeholderTextColor={colors.surface[500]}
+                keyboardType="number-pad"
+                textContentType="oneTimeCode"
+                autoComplete="one-time-code"
+                maxLength={6}
+                returnKeyType="done"
+                onSubmitEditing={handleLogin}
+              />
+              <Text style={styles.helperText}>
+                Enter the 6-digit code from your authenticator app.
+              </Text>
+            </View>
+          ) : (
+            <Pressable
+              onPress={() => setShowTotp(true)}
+              style={({ pressed }) => [
+                styles.secondaryAction,
+                pressed && styles.secondaryActionPressed,
+              ]}
+            >
+              <Text style={styles.secondaryActionText}>
+                Use an authenticator code
+              </Text>
+            </Pressable>
+          )}
 
           <Pressable
             style={({ pressed }) => [
@@ -215,6 +241,25 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md + 2,
     fontSize: fontSize.base,
     color: colors.white,
+  },
+  helperText: {
+    fontSize: fontSize.xs,
+    color: colors.surface[400],
+    lineHeight: 18,
+  },
+  secondaryAction: {
+    alignSelf: 'flex-start',
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  secondaryActionPressed: {
+    backgroundColor: colors.surface[800],
+  },
+  secondaryActionText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.medium,
+    color: colors.primary[400],
   },
   button: {
     backgroundColor: colors.primary[600],

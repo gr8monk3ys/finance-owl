@@ -30,6 +30,7 @@
 
 	// Mobile nav state
 	let mobileNavOpen = $state(false);
+	const currentYear = new Date().getFullYear();
 </script>
 
 <svelte:head>
@@ -43,6 +44,12 @@
 <!-- =====================================================
      NAVIGATION
      ===================================================== -->
+<a
+	href="#main-content"
+	class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-emerald-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+>
+	Skip to content
+</a>
 <nav
 	class="fixed top-0 z-50 w-full border-b border-white/5 bg-gray-950/80 backdrop-blur-xl"
 >
@@ -62,9 +69,9 @@
 
 		<!-- Desktop nav links -->
 		<div class="hidden items-center gap-8 md:flex">
-			<button onclick={() => scrollTo('features')} class="text-sm text-gray-400 transition hover:text-white">Features</button>
-			<button onclick={() => scrollTo('how-it-works')} class="text-sm text-gray-400 transition hover:text-white">How It Works</button>
-			<button onclick={() => scrollTo('pricing')} class="text-sm text-gray-400 transition hover:text-white">Pricing</button>
+			<button type="button" onclick={() => scrollTo('features')} class="rounded-lg px-2 py-1 text-sm text-gray-400 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70">Features</button>
+			<button type="button" onclick={() => scrollTo('how-it-works')} class="rounded-lg px-2 py-1 text-sm text-gray-400 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70">How It Works</button>
+			<button type="button" onclick={() => scrollTo('pricing')} class="rounded-lg px-2 py-1 text-sm text-gray-400 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70">Pricing</button>
 		</div>
 
 		<!-- Desktop CTA -->
@@ -74,7 +81,7 @@
 			</a>
 			<a
 				href="/auth/register"
-				class="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:bg-emerald-500 hover:shadow-emerald-900/50"
+				class="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:bg-emerald-500 hover:shadow-emerald-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
 			>
 				Get Started Free
 			</a>
@@ -85,6 +92,9 @@
 			class="rounded-lg p-2 text-gray-400 hover:bg-white/5 hover:text-white md:hidden"
 			onclick={() => (mobileNavOpen = !mobileNavOpen)}
 			aria-label="Toggle menu"
+			aria-expanded={mobileNavOpen}
+			aria-controls="mobile-nav"
+			type="button"
 		>
 			{#if mobileNavOpen}
 				<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -100,11 +110,11 @@
 
 	<!-- Mobile menu -->
 	{#if mobileNavOpen}
-		<div class="border-t border-white/5 bg-gray-950/95 backdrop-blur-xl md:hidden">
+		<div id="mobile-nav" class="border-t border-white/5 bg-gray-950/95 backdrop-blur-xl md:hidden">
 			<div class="space-y-1 px-4 pb-4 pt-2">
-				<button onclick={() => { scrollTo('features'); mobileNavOpen = false; }} class="block w-full rounded-lg px-3 py-2.5 text-left text-sm text-gray-300 hover:bg-white/5 hover:text-white">Features</button>
-				<button onclick={() => { scrollTo('how-it-works'); mobileNavOpen = false; }} class="block w-full rounded-lg px-3 py-2.5 text-left text-sm text-gray-300 hover:bg-white/5 hover:text-white">How It Works</button>
-				<button onclick={() => { scrollTo('pricing'); mobileNavOpen = false; }} class="block w-full rounded-lg px-3 py-2.5 text-left text-sm text-gray-300 hover:bg-white/5 hover:text-white">Pricing</button>
+				<button type="button" onclick={() => { scrollTo('features'); mobileNavOpen = false; }} class="block w-full rounded-lg px-3 py-2.5 text-left text-sm text-gray-300 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70">Features</button>
+				<button type="button" onclick={() => { scrollTo('how-it-works'); mobileNavOpen = false; }} class="block w-full rounded-lg px-3 py-2.5 text-left text-sm text-gray-300 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70">How It Works</button>
+				<button type="button" onclick={() => { scrollTo('pricing'); mobileNavOpen = false; }} class="block w-full rounded-lg px-3 py-2.5 text-left text-sm text-gray-300 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70">Pricing</button>
 				<div class="border-t border-white/5 pt-2">
 					<a href="/auth/login" class="block rounded-lg px-3 py-2.5 text-sm text-gray-300 hover:bg-white/5 hover:text-white">Sign In</a>
 					<a href="/auth/register" class="mt-1 block rounded-lg bg-emerald-600 px-3 py-2.5 text-center text-sm font-semibold text-white">Get Started Free</a>
@@ -114,6 +124,7 @@
 	{/if}
 </nav>
 
+<main id="main-content">
 <!-- =====================================================
      HERO SECTION
      ===================================================== -->
@@ -155,7 +166,7 @@
 		<div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
 			<a
 				href="/auth/register"
-				class="group relative inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition-all duration-200 hover:bg-emerald-500 hover:shadow-2xl hover:shadow-emerald-900/50 hover:-translate-y-0.5"
+				class="group relative inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition-all duration-200 hover:bg-emerald-500 hover:shadow-2xl hover:shadow-emerald-900/50 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
 			>
 				Get Started Free
 				<svg class="h-5 w-5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -163,8 +174,9 @@
 				</svg>
 			</a>
 			<button
+				type="button"
 				onclick={() => scrollTo('how-it-works')}
-				class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-base font-medium text-gray-300 transition-all duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white"
+				class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-base font-medium text-gray-300 transition-all duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
 			>
 				<svg class="h-5 w-5 text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
 					<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
@@ -674,11 +686,11 @@
 
 			<!-- Company -->
 			<div>
-				<h4 class="text-sm font-semibold text-white">Company</h4>
+				<h4 class="text-sm font-semibold text-white">Resources</h4>
 				<ul class="mt-4 space-y-2.5">
-					<li><a href="/about" class="text-sm text-gray-400 transition hover:text-white">About</a></li>
-					<li><a href="/blog" class="text-sm text-gray-400 transition hover:text-white">Blog</a></li>
-					<li><a href="/contact" class="text-sm text-gray-400 transition hover:text-white">Contact</a></li>
+					<li><a href="/security" class="text-sm text-gray-400 transition hover:text-white">Security</a></li>
+					<li><a href="https://github.com/gr8monk3ys/finance-owl" class="text-sm text-gray-400 transition hover:text-white">GitHub</a></li>
+					<li><a href="mailto:support@financeowl.com" class="text-sm text-gray-400 transition hover:text-white">Support</a></li>
 				</ul>
 			</div>
 
@@ -695,16 +707,16 @@
 
 		<!-- Bottom bar -->
 		<div class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 sm:flex-row">
-			<p class="text-sm text-gray-500">2025 Finance Owl. All rights reserved.</p>
+			<p class="text-sm text-gray-500">{currentYear} Finance Owl. All rights reserved.</p>
 			<div class="flex gap-4">
-				<!-- Twitter/X -->
-				<a href="https://x.com" class="text-gray-500 transition hover:text-white" aria-label="Twitter">
-					<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-						<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+				<!-- Support -->
+				<a href="mailto:support@financeowl.com" class="text-gray-500 transition hover:text-white" aria-label="Email support">
+					<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M21.75 7.5v9A2.25 2.25 0 0119.5 18.75h-15A2.25 2.25 0 012.25 16.5v-9m19.5 0A2.25 2.25 0 0019.5 5.25h-15A2.25 2.25 0 002.25 7.5m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 9.659A2.25 2.25 0 012.25 7.743V7.5" />
 					</svg>
 				</a>
 				<!-- GitHub -->
-				<a href="https://github.com" class="text-gray-500 transition hover:text-white" aria-label="GitHub">
+				<a href="https://github.com/gr8monk3ys/finance-owl" class="text-gray-500 transition hover:text-white" aria-label="GitHub">
 					<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
 						<path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
 					</svg>
@@ -713,6 +725,7 @@
 		</div>
 	</div>
 </footer>
+</main>
 
 <style>
 	/* Scroll animation styles */

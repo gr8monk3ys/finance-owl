@@ -145,6 +145,7 @@
 	const hasActiveFilters = $derived(
 		!!filterAccountId || !!filterCategoryId || !!filterStartDate || !!filterEndDate
 	);
+	const hasSearchQuery = $derived(!!searchInput.trim());
 </script>
 
 <svelte:head>
@@ -192,16 +193,23 @@
 						/>
 					</svg>
 					<input
-						type="text"
+						type="search"
 						bind:value={searchInput}
 						placeholder="Search by name, merchant, or amount..."
+						autocomplete="off"
+						spellcheck="false"
 						class="w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-surface-500 transition-colors focus:border-primary-500/50 focus:bg-surface-700 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
 						onkeydown={(e) => e.key === 'Enter' && applyFilters()}
 					/>
 				</div>
 				<Button onclick={applyFilters}>Search</Button>
+				{#if hasActiveFilters || hasSearchQuery}
+					<Button variant="ghost" onclick={clearFilters}>Clear</Button>
+				{/if}
 				<Button
 					variant="secondary"
+					aria-label={showFilters ? 'Hide filters' : 'Show filters'}
+					aria-pressed={showFilters}
 					onclick={() => (showFilters = !showFilters)}
 				>
 					<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -266,7 +274,7 @@
 				</div>
 				<div class="flex gap-2">
 					<Button size="sm" onclick={applyFilters}>Apply Filters</Button>
-					{#if hasActiveFilters}
+					{#if hasActiveFilters || hasSearchQuery}
 						<Button size="sm" variant="ghost" onclick={clearFilters}>Clear All</Button>
 					{/if}
 				</div>
