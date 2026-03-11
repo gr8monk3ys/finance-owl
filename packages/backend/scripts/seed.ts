@@ -2,7 +2,8 @@
  * Database Seed Script
  *
  * Populates the database with realistic demo data for development and testing.
- * Creates a demo user, bank accounts, 6 months of transactions, budgets,
+ * Creates a demo user, bank accounts, 6 months of transactions including the
+ * current month, budgets,
  * savings goals, and notification preferences.
  *
  * Usage:
@@ -284,9 +285,9 @@ async function seed(): Promise<void> {
     console.log('  Created: Sapphire Preferred (-$1,840)');
 
     // ── 4. Generate 6 months of transactions ─────────────────────
-    console.log('[4/8] Generating transactions (6 months)...');
+    console.log('[4/8] Generating transactions (last 6 months, including this month)...');
     const now = new Date();
-    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
     const transactionValues: Array<{
       id: string;
       userId: string;
@@ -435,7 +436,7 @@ async function seed(): Promise<void> {
       await db.insert(transactions).values(batch);
       insertedCount += batch.length;
     }
-    console.log(`  Generated ${insertedCount} transactions across 6 months`);
+    console.log(`  Generated ${insertedCount} transactions across the last 6 months`);
 
     // ── 5. Create budgets ────────────────────────────────────────
     console.log('[5/8] Creating budgets...');

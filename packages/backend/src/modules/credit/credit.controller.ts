@@ -39,6 +39,11 @@ export class CreditController {
     return this.creditService.getCurrentScore(userId);
   }
 
+  @Get('latest')
+  getLatestScore(@CurrentUser('id') userId: string) {
+    return this.creditService.getCurrentScore(userId);
+  }
+
   @Get('report')
   getCreditReport(@CurrentUser('id') userId: string) {
     return this.creditService.getCreditReport(userId);

@@ -1,4 +1,10 @@
-import { Controller, Get, Inject, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Inject,
+  Logger,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { SkipThrottle } from '@nestjs/throttler';
@@ -71,9 +77,9 @@ export class HealthController {
     const dbStatus = await this.checkDatabase();
     const redisStatus = await this.checkRedis();
 
-    const isReady = dbStatus.status === 'ok';
+    const isReady = dbStatus.status === 'ok' && redisStatus.status !== 'error';
 
-    return {
+    const response = {
       status: isReady ? 'ok' : 'unhealthy',
       timestamp: new Date().toISOString(),
       services: {
@@ -81,6 +87,12 @@ export class HealthController {
         redis: redisStatus,
       },
     };
+
+    if (!isReady) {
+      throw new ServiceUnavailableException(response);
+    }
+
+    return response;
   }
 
   @ApiOperation({ summary: 'Liveness check (confirms the process is alive)' })

@@ -50,7 +50,13 @@ export class SpendingAnalyticsService {
           eq(schema.transactions.pending, false),
         ),
       )
-      .groupBy(schema.transactions.categoryId)
+      .groupBy(
+        schema.transactions.categoryId,
+        schema.categories.name,
+        schema.categories.color,
+        schema.categories.icon,
+        schema.categories.parentId,
+      )
       .orderBy(desc(sql`total`));
 
     return rows.map((r) => ({
@@ -59,8 +65,8 @@ export class SpendingAnalyticsService {
       categoryColor: r.categoryColor || '#71717a',
       categoryIcon: r.categoryIcon,
       parentId: r.parentId,
-      total: Math.abs(r.total),
-      count: r.count,
+      total: Math.abs(this.toNumber(r.total)),
+      count: this.toNumber(r.count),
     }));
   }
 
@@ -80,11 +86,11 @@ export class SpendingAnalyticsService {
     const start = startDate.toISOString().split('T')[0];
     const end = endDate.toISOString().split('T')[0];
 
+    const monthBucket = sql<string>`left(${schema.transactions.date}, 7)`;
+
     const rows = await this.db
       .select({
-        month: sql<string>`strftime('%Y-%m', ${schema.transactions.date})`.as(
-          'month',
-        ),
+        month: monthBucket.as('month'),
         income: sql<number>`SUM(CASE WHEN ${schema.transactions.amount} < 0 THEN ABS(${schema.transactions.amount}) ELSE 0 END)`.as(
           'income',
         ),
@@ -101,10 +107,14 @@ export class SpendingAnalyticsService {
           eq(schema.transactions.pending, false),
         ),
       )
-      .groupBy(sql`strftime('%Y-%m', ${schema.transactions.date})`)
+      .groupBy(monthBucket)
       .orderBy(sql`month`);
 
-    return rows;
+    return rows.map((row) => ({
+      month: row.month,
+      income: this.toNumber(row.income),
+      spending: this.toNumber(row.spending),
+    }));
   }
 
   async getTopMerchants(
@@ -140,8 +150,8 @@ export class SpendingAnalyticsService {
 
     return rows.map((r) => ({
       merchantName: r.merchantName,
-      total: r.total,
-      count: r.count,
+      total: this.toNumber(r.total),
+      count: this.toNumber(r.count),
     }));
   }
 
@@ -165,7 +175,7 @@ export class SpendingAnalyticsService {
         ),
       );
 
-    return result?.total ?? 0;
+    return this.toNumber(result?.total);
   }
 
   async getDashboardSummary(userId: string) {
@@ -214,7 +224,7 @@ export class SpendingAnalyticsService {
   }
 
   private async getRecentTransactions(userId: string, limit: number) {
-    return this.db
+    const rows = await this.db
       .select({
         id: schema.transactions.id,
         name: schema.transactions.name,
@@ -242,5 +252,16 @@ export class SpendingAnalyticsService {
         desc(schema.transactions.createdAt),
       )
       .limit(limit);
+
+    return rows.map((row) => ({
+      ...row,
+      amount: this.toNumber(row.amount),
+    }));
+  }
+
+  private toNumber(value: number | string | null | undefined): number {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') return Number(value);
+    return 0;
   }
 }

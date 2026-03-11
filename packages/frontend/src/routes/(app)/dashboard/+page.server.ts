@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			),
 			api('/savings-goals', { accessToken: locals.accessToken }).catch(() => []),
 			api('/accounts', { accessToken: locals.accessToken }).catch(() => []),
-			api('/credit/latest', { accessToken: locals.accessToken }).catch(() => null),
+			api('/credit/score', { accessToken: locals.accessToken }).catch(() => null),
 			api('/dashboard/layout', { accessToken: locals.accessToken }).catch(() => null),
 			api('/analytics/safe-to-spend', { accessToken: locals.accessToken }).catch(() => null)
 		]);

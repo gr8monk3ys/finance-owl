@@ -88,9 +88,8 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Logout and invalidate a refresh token' })
-  @ApiBearerAuth('bearer')
   @ApiResponse({ status: 200, description: 'Logged out successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @Public()
   @Throttle({ default: { ttl: 60000, limit: 10 } })
   @Post('logout')
   @HttpCode(HttpStatus.OK)

@@ -61,6 +61,7 @@ import { TenantsModule } from './modules/tenants/tenants.module';
 import { BankingModule } from './modules/banking/banking.module';
 import { DataExportModule } from './modules/data-export/data-export.module';
 import { AccountDeletionModule } from './modules/account-deletion/account-deletion.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -130,6 +131,7 @@ import { AccountDeletionModule } from './modules/account-deletion/account-deleti
     BankingModule,
     DataExportModule,
     AccountDeletionModule,
+    DashboardModule,
   ],
   providers: [
     // Global throttle guard (NestJS @nestjs/throttler)
