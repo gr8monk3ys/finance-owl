@@ -21,6 +21,7 @@ import { listCategories } from '../../src/api/categories';
 import { getApiErrorMessage } from '../../src/api/client';
 import BudgetCard from '../../src/components/BudgetCard';
 import { hapticFeedback } from '../../src/native';
+import { useAuthStore } from '../../src/stores/auth';
 import type {
   Budget,
   BudgetSummary,
@@ -94,6 +95,7 @@ function getCategorySubtitle(
 }
 
 export default function BudgetsScreen() {
+  const { isAuthenticated } = useAuthStore();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [budgets, setBudgets] = useState<Budget[]>([]);
@@ -120,6 +122,12 @@ export default function BudgetsScreen() {
     ) ?? null;
 
   const fetchBudgets = useCallback(async () => {
+    if (!isAuthenticated) {
+      setBudgets([]);
+      setSummary(null);
+      return;
+    }
+
     try {
       const [budgetList, budgetSummary] = await Promise.all([
         listBudgets().catch(() => []),
@@ -132,9 +140,15 @@ export default function BudgetsScreen() {
       setBudgets([]);
       setSummary(null);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const fetchCategories = useCallback(async () => {
+    if (!isAuthenticated) {
+      setCategories([]);
+      setCategoriesLoading(false);
+      return;
+    }
+
     setCategoriesLoading(true);
 
     try {
@@ -145,13 +159,18 @@ export default function BudgetsScreen() {
     } finally {
       setCategoriesLoading(false);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
     Promise.all([fetchBudgets(), fetchCategories()]).finally(() =>
       setLoading(false),
     );
-  }, [fetchBudgets, fetchCategories]);
+  }, [fetchBudgets, fetchCategories, isAuthenticated]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

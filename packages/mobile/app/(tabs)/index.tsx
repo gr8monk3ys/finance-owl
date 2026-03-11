@@ -15,6 +15,7 @@ import { getNetWorth, listAccounts } from '../../src/api/accounts';
 import { listTransactions } from '../../src/api/transactions';
 import { listBudgets, getBudgetSummary } from '../../src/api/budgets';
 import client from '../../src/api/client';
+import { useAuthStore } from '../../src/stores/auth';
 import type {
   NetWorth,
   Account,
@@ -34,6 +35,7 @@ import { colors, fontSize, fontWeight, borderRadius, spacing } from '../../src/u
 
 export default function DashboardScreen() {
   const router = useRouter();
+  const { isAuthenticated } = useAuthStore();
   const webUrl = process.env.EXPO_PUBLIC_WEB_URL?.replace(/\/$/, '') ?? null;
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -74,6 +76,17 @@ export default function DashboardScreen() {
   }
 
   const fetchData = useCallback(async () => {
+    if (!isAuthenticated) {
+      setNetWorth(null);
+      setAccounts([]);
+      setRecentTransactions([]);
+      setBudgets([]);
+      setBudgetSummary(null);
+      setHealthScore(null);
+      setMonthlySpending(0);
+      return;
+    }
+
     try {
       const [nw, accts, txResult, budgetList, summary] = await Promise.all([
         getNetWorth().catch(() => null),
@@ -104,11 +117,16 @@ export default function DashboardScreen() {
     } catch {
       // Silently handle errors on dashboard
     }
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
     fetchData().finally(() => setLoading(false));
-  }, [fetchData]);
+  }, [fetchData, isAuthenticated]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 import { listTransactions } from '../../src/api/transactions';
 import TransactionItem from '../../src/components/TransactionItem';
+import { useAuthStore } from '../../src/stores/auth';
 import type { Transaction } from '../../src/types';
 import { getDateGroupLabel } from '../../src/utils/format';
 import { useAppStore } from '../../src/stores/app';
@@ -29,6 +30,7 @@ type GroupedItem =
   | { type: 'transaction'; data: Transaction };
 
 export default function TransactionsScreen() {
+  const { isAuthenticated } = useAuthStore();
   const { searchQuery, setSearchQuery, filterCategoryId } = useAppStore();
   const webUrl = process.env.EXPO_PUBLIC_WEB_URL?.replace(/\/$/, '') ?? null;
   const [loading, setLoading] = useState(true);
@@ -71,6 +73,14 @@ export default function TransactionsScreen() {
 
   const fetchTransactions = useCallback(
     async (pageNum: number, reset: boolean = false) => {
+      if (!isAuthenticated) {
+        setTransactions([]);
+        setPage(1);
+        setTotalPages(1);
+        setTotal(0);
+        return;
+      }
+
       try {
         const result = await listTransactions({
           page: pageNum,
@@ -90,7 +100,7 @@ export default function TransactionsScreen() {
         // Handle error silently
       }
     },
-    [searchQuery, filterCategoryId],
+    [filterCategoryId, isAuthenticated, searchQuery],
   );
 
   useEffect(() => {
@@ -111,6 +121,16 @@ export default function TransactionsScreen() {
     let isActive = true;
 
     async function loadTransactions() {
+      if (!isAuthenticated) {
+        setTransactions([]);
+        setPage(1);
+        setTotalPages(1);
+        setTotal(0);
+        setLoading(false);
+        setSearching(false);
+        return;
+      }
+
       if (hasLoadedRef.current) {
         setSearching(true);
       } else {
@@ -136,7 +156,7 @@ export default function TransactionsScreen() {
     return () => {
       isActive = false;
     };
-  }, [fetchTransactions]);
+  }, [fetchTransactions, isAuthenticated]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

@@ -293,6 +293,9 @@ export class BudgetsService {
 
     for (const budget of budgets) {
       const normalizedPeriod = this.normalizePeriod(budget.period);
+      const amount = this.toNumber(budget.amount);
+      const rolloverCap =
+        budget.rolloverCap === null ? null : this.toNumber(budget.rolloverCap);
       const { start, end } = this.getPeriodDates(
         normalizedPeriod,
         now,
@@ -315,7 +318,7 @@ export class BudgetsService {
         ? await this.getRolloverAmount(budget.id, start)
         : 0;
 
-      const effectiveBudget = budget.amount + rolloverAmount;
+      const effectiveBudget = amount + rolloverAmount;
       const remaining = effectiveBudget - spent;
       const percentUsed =
         effectiveBudget > 0 ? (spent / effectiveBudget) * 100 : 0;
@@ -373,10 +376,10 @@ export class BudgetsService {
         categoryColor: budget.categoryColor,
         categoryIcon: budget.categoryIcon,
         householdId: budget.householdId,
-        amount: budget.amount,
+        amount,
         period: normalizedPeriod,
         rollover: budget.rollover,
-        rolloverCap: budget.rolloverCap,
+        rolloverCap,
         isActive: budget.isActive,
         alertThresholds: thresholds,
         spent,
@@ -497,6 +500,9 @@ export class BudgetsService {
 
     for (const budget of budgets) {
       const normalizedPeriod = this.normalizePeriod(budget.period);
+      const amount = this.toNumber(budget.amount);
+      const rolloverCap =
+        budget.rolloverCap === null ? null : this.toNumber(budget.rolloverCap);
       const { start: prevStart, end: prevEnd } =
         this.getPreviousPeriodDates(normalizedPeriod, now);
       const { start: currStart, end: currEnd } = this.getPeriodDates(
@@ -518,16 +524,16 @@ export class BudgetsService {
         continue;
       }
 
-      let rollover = budget.amount - spent;
+      let rollover = amount - spent;
 
       // Apply cap if set
-      if (budget.rolloverCap !== null && rollover > budget.rolloverCap) {
-        rollover = budget.rolloverCap;
+      if (rolloverCap !== null && rollover > rolloverCap) {
+        rollover = rolloverCap;
       }
 
       // Prevent negative rollover from exceeding budget amount
-      if (rollover < -budget.amount) {
-        rollover = -budget.amount;
+      if (rollover < -amount) {
+        rollover = -amount;
       }
 
       // Upsert budget period record
@@ -555,7 +561,7 @@ export class BudgetsService {
           budgetId: budget.id,
           startDate: currStart,
           endDate: currEnd,
-          budgetedAmount: budget.amount,
+          budgetedAmount: amount,
           rolloverAmount: rollover,
           spentAmount: 0,
         });
@@ -565,7 +571,7 @@ export class BudgetsService {
         budgetId: budget.id,
         previousPeriodSpent: spent,
         rolloverAmount: rollover,
-        newEffectiveBudget: budget.amount + rollover,
+        newEffectiveBudget: amount + rollover,
       });
     }
 
@@ -625,6 +631,9 @@ export class BudgetsService {
 
     for (const budget of budgets) {
       const normalizedPeriod = this.normalizePeriod(budget.period);
+      const amount = this.toNumber(budget.amount);
+      const rolloverCap =
+        budget.rolloverCap === null ? null : this.toNumber(budget.rolloverCap);
       const { start, end } = this.getPeriodDates(
         normalizedPeriod,
         now,
@@ -650,7 +659,7 @@ export class BudgetsService {
         ? await this.getRolloverAmount(budget.id, start)
         : 0;
 
-      const effectiveBudget = budget.amount + rolloverAmount;
+      const effectiveBudget = amount + rolloverAmount;
       const remaining = effectiveBudget - totalSpent;
       const percentUsed =
         effectiveBudget > 0 ? (totalSpent / effectiveBudget) * 100 : 0;
@@ -700,10 +709,10 @@ export class BudgetsService {
         categoryColor: budget.categoryColor,
         categoryIcon: budget.categoryIcon,
         householdId: budget.householdId,
-        amount: budget.amount,
+        amount,
         period: normalizedPeriod,
         rollover: budget.rollover,
-        rolloverCap: budget.rolloverCap,
+        rolloverCap,
         isActive: budget.isActive,
         alertThresholds: thresholds,
         spent: totalSpent,
@@ -851,6 +860,12 @@ export class BudgetsService {
       .limit(1);
 
     return Number(period?.rolloverAmount) || 0;
+  }
+
+  private toNumber(value: number | string | null | undefined): number {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') return Number(value);
+    return 0;
   }
 
   // ── Private: Period date calculations ─────────────────────────────

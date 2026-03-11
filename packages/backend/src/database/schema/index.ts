@@ -33,6 +33,7 @@ export * from '../../modules/year-review/year-review.schema';
 export * from '../../modules/tax/tax.schema';
 export * from '../../modules/benchmarking/benchmarking.schema';
 export * from '../../modules/marketplace/marketplace.schema';
+export * from '../../modules/dashboard/dashboard.schema';
 export * from '../../modules/referrals/referrals.schema';
 export * from '../../modules/advisor-sharing/advisor-sharing.schema';
 export * from '../../modules/social/social.schema';

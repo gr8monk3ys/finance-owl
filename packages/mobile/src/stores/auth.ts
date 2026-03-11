@@ -4,6 +4,7 @@ import {
   clearTokens,
   getAccessToken,
   getApiErrorMessage,
+  setUnauthorizedHandler,
 } from '../api/client';
 import type { User, LoginRequest, RegisterRequest } from '../types';
 
@@ -89,3 +90,12 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   clearError: () => set({ error: null }),
 }));
+
+setUnauthorizedHandler(() => {
+  useAuthStore.setState({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    error: null,
+  });
+});

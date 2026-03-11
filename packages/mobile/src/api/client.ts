@@ -33,6 +33,8 @@ interface ErrorResponseBody {
   [key: string]: unknown;
 }
 
+type UnauthorizedHandler = (() => void | Promise<void>) | null;
+
 export class ApiError<T = ErrorResponseBody> extends Error {
   readonly status: number;
   readonly response: {
@@ -189,6 +191,15 @@ async function performFetch<T, TBody = unknown>(
 }
 
 let refreshPromise: Promise<string> | null = null;
+let unauthorizedHandler: UnauthorizedHandler = null;
+
+async function notifyUnauthorized(): Promise<void> {
+  if (!unauthorizedHandler) {
+    return;
+  }
+
+  await unauthorizedHandler();
+}
 
 async function refreshAccessToken(): Promise<string> {
   if (refreshPromise) {
@@ -251,6 +262,7 @@ async function request<T, TBody = unknown>(
       });
     } catch (refreshError) {
       await clearTokens();
+      await notifyUnauthorized();
       throw refreshError;
     }
   }
@@ -298,6 +310,10 @@ export async function setTokens(access: string, refresh: string): Promise<void> 
 export async function clearTokens(): Promise<void> {
   await SecureStore.deleteItemAsync(TOKEN_KEY);
   await SecureStore.deleteItemAsync(REFRESH_KEY);
+}
+
+export function setUnauthorizedHandler(handler: UnauthorizedHandler): void {
+  unauthorizedHandler = handler;
 }
 
 export function getApiErrorMessage(

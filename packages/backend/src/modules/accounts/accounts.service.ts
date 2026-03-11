@@ -141,7 +141,7 @@ export class AccountsService {
 
     for (const acct of accounts) {
       if (acct.isHidden) continue;
-      const balance = acct.currentBalance ?? 0;
+      const balance = this.toNumber(acct.currentBalance);
 
       if (['credit_card', 'loan', 'mortgage'].includes(acct.type)) {
         liabilities += Math.abs(balance);
@@ -156,5 +156,11 @@ export class AccountsService {
       netWorth: assets - liabilities,
       accountCount: accounts.filter((a) => !a.isHidden).length,
     };
+  }
+
+  private toNumber(value: number | string | null | undefined): number {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') return Number(value);
+    return 0;
   }
 }

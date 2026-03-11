@@ -59,12 +59,18 @@ export const DATABASE_POOL_TOKEN = 'DATABASE_POOL';
 
         const migrationsPath = path.resolve(__dirname, '../../drizzle');
         if (fs.existsSync(migrationsPath)) {
-          try {
-            await migrate(db, { migrationsFolder: migrationsPath });
-            logger.log('Database migrations applied successfully');
-          } catch (error) {
-            logger.error('Failed to apply migrations', error);
-            throw error;
+          if (isProduction) {
+            try {
+              await migrate(db, { migrationsFolder: migrationsPath });
+              logger.log('Database migrations applied successfully');
+            } catch (error) {
+              logger.error('Failed to apply migrations', error);
+              throw error;
+            }
+          } else {
+            logger.log(
+              'Skipping automatic database migrations in development. Run `pnpm --filter @finance-owl/backend db:migrate` when schema changes.',
+            );
           }
         } else {
           logger.warn(

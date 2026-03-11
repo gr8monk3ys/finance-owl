@@ -68,7 +68,7 @@ class UpdateCategoryDto {
   sortOrder?: number;
 }
 
-class CreateRuleDto {
+class CreateCategoryRuleDto {
   @ApiProperty({ description: 'Category ID to auto-assign', example: 'cat_groceries' })
   @IsString()
   categoryId!: string;
@@ -164,7 +164,7 @@ export class CategoriesController {
   @ApiResponse({ status: 400, description: 'Validation error' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Post('rules')
-  createRule(@CurrentUser('id') userId: string, @Body() dto: CreateRuleDto) {
+  createRule(@CurrentUser('id') userId: string, @Body() dto: CreateCategoryRuleDto) {
     return this.categoriesService.createRule(userId, dto);
   }
 
