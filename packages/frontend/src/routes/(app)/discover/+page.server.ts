@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -42,8 +43,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, searchResult: result };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to search for unclaimed money' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to search for unclaimed money' });
 		}
 	},
 
@@ -59,8 +60,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to update result status' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to update result status' });
 		}
 	},
 
@@ -71,8 +72,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to generate recommendations' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to generate recommendations' });
 		}
 	},
 
@@ -86,8 +87,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to dismiss recommendation' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to dismiss recommendation' });
 		}
 	}
 };

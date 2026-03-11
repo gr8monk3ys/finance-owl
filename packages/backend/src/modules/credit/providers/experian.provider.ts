@@ -61,11 +61,12 @@ export class ExperianProvider implements CreditBureauProvider {
         token,
       });
 
+      const creditProfile = response.creditProfile as Record<string, unknown> | undefined;
       return {
-        score: response.creditProfile?.score || response.score,
-        model: this.mapScoreModel(response.creditProfile?.modelType),
+        score: (creditProfile?.score || response.score) as number,
+        model: this.mapScoreModel(creditProfile?.modelType as string | undefined),
         range: { min: 300, max: 850 },
-        factors: this.mapFactors(response.creditProfile?.riskFactors || []),
+        factors: this.mapFactors((creditProfile?.riskFactors || []) as Record<string, unknown>[]),
         pulledAt: new Date(),
         bureau: 'experian',
       };
@@ -112,7 +113,7 @@ export class ExperianProvider implements CreditBureauProvider {
         token,
       });
 
-      return this.mapFactors(response.riskFactors || response.factors || []);
+      return this.mapFactors((response.riskFactors || response.factors || []) as Record<string, unknown>[]);
     } catch (error) {
       this.logger.error(`Experian getCreditFactors failed: ${error}`);
       return generateSimulatedFactors();
@@ -149,12 +150,12 @@ export class ExperianProvider implements CreditBureauProvider {
       });
 
       return {
-        disputeId: response.disputeId,
+        disputeId: response.disputeId as string,
         bureau: 'experian',
-        status: response.status || 'submitted',
-        filedAt: new Date(response.filedDate || Date.now()),
-        estimatedResolutionDate: response.estimatedResolutionDate,
-        referenceNumber: response.referenceNumber,
+        status: (response.status || 'submitted') as DisputeResult['status'],
+        filedAt: new Date((response.filedDate as string) || Date.now()),
+        estimatedResolutionDate: (response.estimatedResolutionDate || '') as string,
+        referenceNumber: (response.referenceNumber || '') as string,
       };
     } catch (error) {
       this.logger.error(`Experian fileDispute failed: ${error}`);
@@ -181,12 +182,12 @@ export class ExperianProvider implements CreditBureauProvider {
       });
 
       return {
-        disputeId: response.disputeId,
-        status: response.status,
-        filedAt: new Date(response.filedDate),
-        updatedAt: new Date(response.updatedDate),
-        resolution: response.resolution,
-        resolvedAt: response.resolvedDate ? new Date(response.resolvedDate) : undefined,
+        disputeId: response.disputeId as string,
+        status: response.status as DisputeStatus['status'],
+        filedAt: new Date(response.filedDate as string),
+        updatedAt: new Date(response.updatedDate as string),
+        resolution: response.resolution as string | undefined,
+        resolvedAt: response.resolvedDate ? new Date(response.resolvedDate as string) : undefined,
       };
     } catch (error) {
       this.logger.error(`Experian getDisputeStatus failed: ${error}`);
@@ -217,9 +218,9 @@ export class ExperianProvider implements CreditBureauProvider {
       return {
         enabled: true,
         bureau: 'experian',
-        monitoringId: response.monitoringId,
-        alertTypes: response.alertTypes || ['score_change', 'new_account', 'hard_inquiry'],
-        enrolledAt: new Date(response.enrolledAt || Date.now()),
+        monitoringId: response.monitoringId as string,
+        alertTypes: (response.alertTypes || ['score_change', 'new_account', 'hard_inquiry']) as string[],
+        enrolledAt: new Date((response.enrolledAt as string) || Date.now()),
       };
     } catch (error) {
       this.logger.error(`Experian setupMonitoring failed: ${error}`);
@@ -259,7 +260,7 @@ export class ExperianProvider implements CreditBureauProvider {
   private async makeRequest(
     path: string,
     options: { method: string; body?: Record<string, unknown>; token?: string },
-  ): Promise<any> {
+  ): Promise<Record<string, unknown>> {
     const url = `${this.baseUrl}${path}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -293,14 +294,14 @@ export class ExperianProvider implements CreditBureauProvider {
     return 'fico8';
   }
 
-  private mapFactors(rawFactors: any[]): CreditFactor[] {
+  private mapFactors(rawFactors: Record<string, unknown>[]): CreditFactor[] {
     return rawFactors.map((f) => ({
       type: f.type === 'positive' ? ('positive' as const) : ('negative' as const),
-      category: this.mapCategory(f.category || f.factorCode),
-      title: f.title || f.factorText || 'Credit Factor',
-      description: f.description || f.narrative || '',
-      impact: this.mapImpactLevel(f.weight || f.impactLevel),
-      value: f.value,
+      category: this.mapCategory((f.category || f.factorCode) as string),
+      title: (f.title || f.factorText || 'Credit Factor') as string,
+      description: (f.description || f.narrative || '') as string,
+      impact: this.mapImpactLevel((f.weight || f.impactLevel) as string | number),
+      value: f.value as string | undefined,
     }));
   }
 
@@ -328,53 +329,57 @@ export class ExperianProvider implements CreditBureauProvider {
     return 'low';
   }
 
-  private mapReport(raw: any): CreditReport {
+  private mapReport(raw: Record<string, unknown>): CreditReport {
+    const tradeLines = (raw.tradeLines || raw.accounts || []) as Record<string, unknown>[];
+    const inquiries = (raw.inquiries || []) as Record<string, unknown>[];
+    const publicRecords = (raw.publicRecords || []) as Record<string, unknown>[];
+    const consumer = raw.consumer as Record<string, unknown> | undefined;
     return {
-      accounts: (raw.tradeLines || raw.accounts || []).map((a: any) => ({
-        accountName: a.creditorName || a.subscriberName || 'Unknown',
-        accountType: this.mapAccountType(a.accountType || a.portfolioType),
-        status: this.mapAccountStatus(a.payStatus || a.accountStatus),
-        balance: a.balance || a.currentBalance || 0,
-        creditLimit: a.highCredit || a.creditLimit,
-        monthlyPayment: a.scheduledMonthlyPayment,
-        openedDate: a.dateOpened || '',
-        lastReportedDate: a.dateReported || '',
+      accounts: tradeLines.map((a: Record<string, unknown>) => ({
+        accountName: (a.creditorName || a.subscriberName || 'Unknown') as string,
+        accountType: this.mapAccountType((a.accountType || a.portfolioType) as string),
+        status: this.mapAccountStatus((a.payStatus || a.accountStatus) as string),
+        balance: (a.balance || a.currentBalance || 0) as number,
+        creditLimit: (a.highCredit || a.creditLimit) as number | undefined,
+        monthlyPayment: a.scheduledMonthlyPayment as number | undefined,
+        openedDate: (a.dateOpened || '') as string,
+        lastReportedDate: (a.dateReported || '') as string,
         paymentHistory: [],
       })),
-      inquiries: (raw.inquiries || []).map((i: any) => ({
-        creditorName: i.subscriberName || i.creditorName || 'Unknown',
-        inquiryDate: i.inquiryDate || '',
+      inquiries: inquiries.map((i: Record<string, unknown>) => ({
+        creditorName: (i.subscriberName || i.creditorName || 'Unknown') as string,
+        inquiryDate: (i.inquiryDate || '') as string,
         type: (i.type === 'soft' ? 'soft' : 'hard') as 'hard' | 'soft',
       })),
-      publicRecords: (raw.publicRecords || []).map((pr: any) => ({
+      publicRecords: publicRecords.map((pr: Record<string, unknown>) => ({
         type: 'other' as const,
         status: 'active' as const,
-        filedDate: pr.dateFiled || '',
-        amount: pr.amount,
-        description: pr.description || 'Public record',
+        filedDate: (pr.dateFiled || '') as string,
+        amount: pr.amount as number | undefined,
+        description: (pr.description || 'Public record') as string,
       })),
       personalInfo: {
-        name: raw.consumer?.name || '',
-        addresses: raw.consumer?.addresses || [],
-        employers: raw.consumer?.employers || [],
+        name: (consumer?.name || '') as string,
+        addresses: (consumer?.addresses || []) as string[],
+        employers: (consumer?.employers || []) as string[],
       },
       summary: {
-        totalAccounts: (raw.tradeLines || raw.accounts || []).length,
-        openAccounts: (raw.tradeLines || raw.accounts || []).filter(
-          (a: any) => !a.dateClosed,
+        totalAccounts: tradeLines.length,
+        openAccounts: tradeLines.filter(
+          (a: Record<string, unknown>) => !a.dateClosed,
         ).length,
-        closedAccounts: (raw.tradeLines || raw.accounts || []).filter(
-          (a: any) => a.dateClosed,
+        closedAccounts: tradeLines.filter(
+          (a: Record<string, unknown>) => !!a.dateClosed,
         ).length,
         totalBalance: 0,
         totalCreditLimit: 0,
         utilization: 0,
         oldestAccountAge: 'N/A',
-        hardInquiriesLast12Months: (raw.inquiries || []).filter(
-          (i: any) => i.type !== 'soft',
+        hardInquiriesLast12Months: inquiries.filter(
+          (i: Record<string, unknown>) => i.type !== 'soft',
         ).length,
         collectionsCount: 0,
-        publicRecordsCount: (raw.publicRecords || []).length,
+        publicRecordsCount: ((raw.publicRecords || []) as unknown[]).length,
       },
     };
   }

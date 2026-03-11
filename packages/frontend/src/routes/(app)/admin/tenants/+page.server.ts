@@ -4,8 +4,8 @@ import { api } from '$lib/server/api';
 export const load: PageServerLoad = async ({ locals }) => {
 	const accessToken = locals.accessToken;
 
-	let tenants: any[] = [];
-	let stats: any = null;
+	let tenants: Record<string, unknown>[] = [];
+	let stats: Record<string, unknown> | null = null;
 
 	try {
 		[tenants, stats] = await Promise.all([

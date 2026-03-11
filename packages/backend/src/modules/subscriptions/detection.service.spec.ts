@@ -59,12 +59,21 @@ describe('DetectionService', () => {
 
   describe('detectForUser - recurring pattern matching', () => {
     it('should detect monthly subscription (e.g., Netflix)', async () => {
+      const today = new Date();
+      const fmt = (d: Date) => d.toISOString().split('T')[0];
+      const d1 = new Date(today);
+      d1.setDate(d1.getDate() - 10);
+      const d2 = new Date(today);
+      d2.setDate(d2.getDate() - 40);
+      const d3 = new Date(today);
+      d3.setDate(d3.getDate() - 70);
+
       const transactions = [
         {
           name: 'Netflix',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: '2026-01-15',
+          date: fmt(d1),
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,
@@ -73,7 +82,7 @@ describe('DetectionService', () => {
           name: 'Netflix',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: '2025-12-15',
+          date: fmt(d2),
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,
@@ -82,7 +91,7 @@ describe('DetectionService', () => {
           name: 'Netflix',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: '2025-11-15',
+          date: fmt(d3),
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,
@@ -100,7 +109,10 @@ describe('DetectionService', () => {
         accountId: 'acc_1',
         categoryId: 'cat_1',
       });
-      expect(result[0].nextExpectedDate).toBe('2026-02-15');
+      // Next expected date = last charge + 1 month (calendar month)
+      const expectedNext = new Date(d1);
+      expectedNext.setMonth(expectedNext.getMonth() + 1);
+      expect(result[0].nextExpectedDate).toBe(fmt(expectedNext));
     });
 
     it('should detect weekly subscription', async () => {
@@ -374,12 +386,21 @@ describe('DetectionService', () => {
     });
 
     it('should tolerate small amount variations within 10%', async () => {
+      const today = new Date();
+      const fmt = (d: Date) => d.toISOString().split('T')[0];
+      const d1 = new Date(today);
+      d1.setDate(d1.getDate() - 10);
+      const d2 = new Date(today);
+      d2.setDate(d2.getDate() - 40);
+      const d3 = new Date(today);
+      d3.setDate(d3.getDate() - 70);
+
       const transactions = [
         {
           name: 'Streaming',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: '2026-01-15',
+          date: fmt(d1),
           accountId: 'acc_1',
           categoryId: null,
           pending: false,
@@ -388,7 +409,7 @@ describe('DetectionService', () => {
           name: 'Streaming',
           merchantName: 'Netflix',
           amount: 16.49,
-          date: '2025-12-15',
+          date: fmt(d2),
           accountId: 'acc_1',
           categoryId: null,
           pending: false,
@@ -397,7 +418,7 @@ describe('DetectionService', () => {
           name: 'Streaming',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: '2025-11-15',
+          date: fmt(d3),
           accountId: 'acc_1',
           categoryId: null,
           pending: false,
@@ -412,12 +433,21 @@ describe('DetectionService', () => {
     });
 
     it('should detect biweekly subscription', async () => {
+      const today = new Date();
+      const fmt = (d: Date) => d.toISOString().split('T')[0];
+      const d1 = new Date(today);
+      d1.setDate(d1.getDate() - 3);
+      const d2 = new Date(today);
+      d2.setDate(d2.getDate() - 17);
+      const d3 = new Date(today);
+      d3.setDate(d3.getDate() - 31);
+
       const transactions = [
         {
           name: 'Cleaning',
           merchantName: 'Maid Service',
           amount: 120.0,
-          date: '2026-01-28',
+          date: fmt(d1),
           accountId: 'acc_1',
           categoryId: null,
           pending: false,
@@ -426,7 +456,7 @@ describe('DetectionService', () => {
           name: 'Cleaning',
           merchantName: 'Maid Service',
           amount: 120.0,
-          date: '2026-01-14',
+          date: fmt(d2),
           accountId: 'acc_1',
           categoryId: null,
           pending: false,
@@ -435,7 +465,7 @@ describe('DetectionService', () => {
           name: 'Cleaning',
           merchantName: 'Maid Service',
           amount: 120.0,
-          date: '2025-12-31',
+          date: fmt(d3),
           accountId: 'acc_1',
           categoryId: null,
           pending: false,
@@ -932,12 +962,21 @@ describe('DetectionService', () => {
 
   describe('detectForUser - enhanced fields', () => {
     it('should include confidence, category, and trial fields in results', async () => {
+      const today = new Date();
+      const fmt = (d: Date) => d.toISOString().split('T')[0];
+      const d1 = new Date(today);
+      d1.setDate(d1.getDate() - 10);
+      const d2 = new Date(today);
+      d2.setDate(d2.getDate() - 40);
+      const d3 = new Date(today);
+      d3.setDate(d3.getDate() - 70);
+
       const transactions = [
         {
           name: 'Netflix',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: '2026-01-15',
+          date: fmt(d1),
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,
@@ -946,7 +985,7 @@ describe('DetectionService', () => {
           name: 'Netflix',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: '2025-12-15',
+          date: fmt(d2),
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,
@@ -955,7 +994,7 @@ describe('DetectionService', () => {
           name: 'Netflix',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: '2025-11-15',
+          date: fmt(d3),
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,

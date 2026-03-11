@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -54,8 +55,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to add email' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to add email' });
 		}
 	},
 
@@ -73,8 +74,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to remove email' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to remove email' });
 		}
 	},
 
@@ -93,8 +94,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, checkResult: result };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to check email' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to check email' });
 		}
 	},
 
@@ -113,8 +114,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, passwordResult: result };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to check password' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to check password' });
 		}
 	},
 
@@ -132,8 +133,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to acknowledge breach' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to acknowledge breach' });
 		}
 	},
 
@@ -144,8 +145,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, runResult: result };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to run check' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to run check' });
 		}
 	}
 };

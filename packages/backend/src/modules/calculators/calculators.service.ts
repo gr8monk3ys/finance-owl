@@ -211,7 +211,7 @@ export class CalculatorsService {
       const ratePerPeriod = r / n;
       const monthsPerPeriod = 12 / n;
 
-      let yearStart = balance;
+      const yearStart = balance;
 
       for (let period = 0; period < periodsPerYear; period++) {
         // Add monthly contributions for this period

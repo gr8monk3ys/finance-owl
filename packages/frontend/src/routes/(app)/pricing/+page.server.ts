@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage, getErrorStatus } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -41,9 +42,9 @@ export const actions: Actions = {
 			if (result?.url) {
 				throw redirect(303, result.url);
 			}
-		} catch (e: any) {
-			if (e?.status === 303) throw e;
-			return { error: e.message || 'Failed to create checkout session' };
+		} catch (e: unknown) {
+			if (getErrorStatus(e) === 303) throw e;
+			return { error: getErrorMessage(e) || 'Failed to create checkout session' };
 		}
 	}
 };

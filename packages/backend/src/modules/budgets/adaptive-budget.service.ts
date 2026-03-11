@@ -632,7 +632,7 @@ export class AdaptiveBudgetService {
         ),
       );
 
-    return Number(result?.total) ?? 0;
+    return Number(result?.total) || 0;
   }
 
   // ── Private: Statistical Helpers ───────────────────────────────────

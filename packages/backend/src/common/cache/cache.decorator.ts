@@ -40,18 +40,18 @@ export function Cacheable(keyTemplate: string, ttlSeconds: number) {
   return function (
     _target: object,
     _propertyKey: string | symbol,
-    descriptor: TypedPropertyDescriptor<any>,
+    descriptor: PropertyDescriptor,
   ) {
-    const originalMethod = descriptor.value;
+    const originalMethod = descriptor.value as (...args: unknown[]) => unknown;
 
-    descriptor.value = async function (this: any, ...args: any[]) {
-      const cache: CacheService | undefined = this.cacheService;
+    descriptor.value = async function (this: Record<string, unknown>, ...args: unknown[]) {
+      const cache: CacheService | undefined = this.cacheService as CacheService | undefined;
       if (!cache) {
         return originalMethod.apply(this, args);
       }
 
       const key = resolveKey(keyTemplate, originalMethod, args);
-      return cache.wrap(key, ttlSeconds, () => originalMethod.apply(this, args));
+      return cache.wrap(key, ttlSeconds, () => originalMethod.apply(this, args) as Promise<unknown>);
     };
 
     // Preserve the original name for debugging
@@ -81,14 +81,14 @@ export function CacheEvict(keyPattern: string) {
   return function (
     _target: object,
     _propertyKey: string | symbol,
-    descriptor: TypedPropertyDescriptor<any>,
+    descriptor: PropertyDescriptor,
   ) {
-    const originalMethod = descriptor.value;
+    const originalMethod = descriptor.value as (...args: unknown[]) => unknown;
 
-    descriptor.value = async function (this: any, ...args: any[]) {
+    descriptor.value = async function (this: Record<string, unknown>, ...args: unknown[]) {
       const result = await originalMethod.apply(this, args);
 
-      const cache: CacheService | undefined = this.cacheService;
+      const cache: CacheService | undefined = this.cacheService as CacheService | undefined;
       if (cache) {
         const pattern = resolveKey(keyPattern, originalMethod, args);
         await cache.delPattern(pattern);
@@ -117,8 +117,8 @@ export function CacheEvict(keyPattern: string) {
  */
 function resolveKey(
   template: string,
-  fn: Function,
-  args: any[],
+  fn: (...args: unknown[]) => unknown,
+  args: unknown[],
 ): string {
   const paramNames = extractParamNames(fn);
 
@@ -148,7 +148,7 @@ function resolveKey(
  *   - Methods:           `foo(a, b, c) { ... }`
  *   - Async variants of all the above
  */
-function extractParamNames(fn: Function): string[] {
+function extractParamNames(fn: (...args: unknown[]) => unknown): string[] {
   const src = fn.toString();
 
   // Match the parameter list between the first pair of parentheses

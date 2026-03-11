@@ -104,7 +104,7 @@ export class AssetsService {
   ) {
     await this.findPropertyById(userId, id);
 
-    const updateData: Record<string, any> = {
+    const updateData: Record<string, unknown> = {
       ...data,
       updatedAt: new Date(),
     };
@@ -228,7 +228,7 @@ export class AssetsService {
   ) {
     await this.findVehicleById(userId, id);
 
-    const updateData: Record<string, any> = {
+    const updateData: Record<string, unknown> = {
       ...data,
       updatedAt: new Date(),
     };

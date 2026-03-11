@@ -178,7 +178,7 @@ export class CancellationService {
   ) {
     await this.getCancellationRequest(userId, id);
 
-    const updateData: Record<string, any> = {
+    const updateData: Record<string, unknown> = {
       status,
       updatedAt: new Date(),
     };

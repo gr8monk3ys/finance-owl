@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const year = url.searchParams.get('year') || String(new Date().getFullYear());
@@ -55,8 +56,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to add document' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to add document' });
 		}
 	},
 
@@ -78,8 +79,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to update document' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to update document' });
 		}
 	},
 
@@ -93,8 +94,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to delete document' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to delete document' });
 		}
 	},
 
@@ -108,8 +109,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to generate summary' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to generate summary' });
 		}
 	}
 };

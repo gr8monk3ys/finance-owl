@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const params = new URLSearchParams();
@@ -63,8 +64,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to create transaction' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to create transaction' });
 		}
 	},
 
@@ -80,8 +81,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to update category' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to update category' });
 		}
 	},
 
@@ -97,8 +98,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to update notes' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to update notes' });
 		}
 	},
 
@@ -112,8 +113,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to delete transaction' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to delete transaction' });
 		}
 	}
 };

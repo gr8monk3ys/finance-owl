@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -50,15 +51,15 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to create subscription' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to create subscription' });
 		}
 	},
 
 	update: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
-		const data: Record<string, any> = {};
+		const data: Record<string, string | number> = {};
 
 		const name = formData.get('name') as string;
 		if (name) data.name = name;
@@ -82,8 +83,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to update subscription' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to update subscription' });
 		}
 	},
 
@@ -97,8 +98,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to confirm subscription' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to confirm subscription' });
 		}
 	},
 
@@ -112,8 +113,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to dismiss subscription' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to dismiss subscription' });
 		}
 	},
 
@@ -127,8 +128,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to delete subscription' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to delete subscription' });
 		}
 	},
 
@@ -139,8 +140,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, detected: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to detect subscriptions' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to detect subscriptions' });
 		}
 	}
 };

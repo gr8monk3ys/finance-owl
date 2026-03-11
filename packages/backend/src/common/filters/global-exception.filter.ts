@@ -15,11 +15,14 @@ import {
 import type { Request, Response } from 'express';
 import * as Sentry from '@sentry/node';
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+type ExceptionConstructor = Function;
+
 /**
  * Maps well-known NestJS exception classes to their HTTP status codes
  * for cleaner error reporting.
  */
-const KNOWN_EXCEPTION_MAP = new Map<Function, number>([
+const KNOWN_EXCEPTION_MAP = new Map<ExceptionConstructor, number>([
   [BadRequestException, HttpStatus.BAD_REQUEST],
   [UnauthorizedException, HttpStatus.UNAUTHORIZED],
   [ForbiddenException, HttpStatus.FORBIDDEN],
@@ -113,17 +116,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         typeof exceptionResponse === 'object' &&
         exceptionResponse !== null
       ) {
-        const resp = exceptionResponse as Record<string, any>;
+        const resp = exceptionResponse as Record<string, unknown>;
 
         // Handle class-validator validation errors (arrays of messages)
         if (Array.isArray(resp.message)) {
-          message = resp.message;
+          message = resp.message as string[];
         } else if (resp.message) {
-          message = resp.message;
+          message = resp.message as string;
         }
 
         if (resp.error) {
-          error = resp.error;
+          error = resp.error as string;
         }
       }
 

@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const GET: RequestHandler = async ({ locals }) => {
 	try {
@@ -8,7 +9,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 			accessToken: locals.accessToken
 		});
 		return json(options);
-	} catch (e: any) {
-		return json({ error: e.message || 'Failed to get registration options' }, { status: 500 });
+	} catch (e: unknown) {
+		return json({ error: getErrorMessage(e) || 'Failed to get registration options' }, { status: 500 });
 	}
 };

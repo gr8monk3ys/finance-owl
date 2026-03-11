@@ -132,7 +132,7 @@ export class BudgetsService {
     this.validateAmount(data.amount);
 
     const budgetType = (data.budgetType as BudgetType) || 'category';
-    if (!VALID_BUDGET_TYPES.includes(budgetType as any)) {
+    if (!(VALID_BUDGET_TYPES as readonly string[]).includes(budgetType)) {
       throw new BadRequestException(
         `Invalid budget type. Must be one of: ${VALID_BUDGET_TYPES.join(', ')}`,
       );
@@ -209,7 +209,7 @@ export class BudgetsService {
     if (data.period) this.validatePeriod(data.period);
     if (data.amount !== undefined) this.validateAmount(data.amount);
 
-    const updatePayload: Record<string, any> = {
+    const updatePayload: Record<string, unknown> = {
       updatedAt: new Date(),
     };
     if (data.name !== undefined) updatePayload.name = data.name;
@@ -801,7 +801,7 @@ export class BudgetsService {
         ),
       );
 
-    return Number(result?.total) ?? 0;
+    return Number(result?.total) || 0;
   }
 
   private async getTotalSpent(
@@ -826,7 +826,7 @@ export class BudgetsService {
         ),
       );
 
-    return Number(result?.total) ?? 0;
+    return Number(result?.total) || 0;
   }
 
   private async getRolloverAmount(
@@ -845,7 +845,7 @@ export class BudgetsService {
       .orderBy(desc(schema.budgetPeriods.startDate))
       .limit(1);
 
-    return Number(period?.rolloverAmount) ?? 0;
+    return Number(period?.rolloverAmount) || 0;
   }
 
   // ── Private: Period date calculations ─────────────────────────────

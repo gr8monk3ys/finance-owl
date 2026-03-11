@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -57,15 +58,15 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to add debt' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to add debt' });
 		}
 	},
 
 	updateDebt: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
-		const data: Record<string, any> = {};
+		const data: Record<string, string | number> = {};
 
 		const name = formData.get('name') as string;
 		if (name) data.name = name;
@@ -95,8 +96,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to update debt' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to update debt' });
 		}
 	},
 
@@ -110,8 +111,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to delete debt' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to delete debt' });
 		}
 	},
 
@@ -136,8 +137,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to record payment' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to record payment' });
 		}
 	},
 
@@ -150,8 +151,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true, payments, viewDebtId: debtId };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to load payments' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to load payments' });
 		}
 	},
 
@@ -175,8 +176,8 @@ export const actions: Actions = {
 			]);
 
 			return { success: true, plan, comparison };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to calculate payoff plan' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to calculate payoff plan' });
 		}
 	}
 };

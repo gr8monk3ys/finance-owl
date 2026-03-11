@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -12,8 +13,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 		]);
 
 		// Filter to only active subscriptions
-		const activeSubscriptions = (subscriptions as any[]).filter(
-			(s: any) => s.isActive
+		const activeSubscriptions = (subscriptions as Record<string, unknown>[]).filter(
+			(s: Record<string, unknown>) => s.isActive
 		);
 
 		return {
@@ -54,9 +55,9 @@ export const actions: Actions = {
 				body: { reason: reason || undefined },
 				accessToken: locals.accessToken
 			});
-			return { success: true, cancellationId: (result as any).id };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to initiate cancellation' });
+			return { success: true, cancellationId: (result as Record<string, unknown>).id };
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to initiate cancellation' });
 		}
 	},
 
@@ -74,8 +75,8 @@ export const actions: Actions = {
 				{ accessToken: locals.accessToken }
 			);
 			return { success: true, providerResult: result };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to look up provider' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to look up provider' });
 		}
 	}
 };

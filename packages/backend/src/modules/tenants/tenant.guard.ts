@@ -130,7 +130,7 @@ export class TenantGuard implements CanActivate {
     }
 
     // Attach membership to request for downstream use
-    (request as any).tenantMembership = membership;
+    (request as Record<string, unknown>).tenantMembership = membership;
 
     return true;
   }

@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -48,8 +49,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { profileSaved: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to save credit profile' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to save credit profile' });
 		}
 	},
 
@@ -72,8 +73,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { simulationResult: result };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to run simulation' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to run simulation' });
 		}
 	}
 };

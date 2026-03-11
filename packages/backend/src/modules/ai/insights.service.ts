@@ -126,7 +126,7 @@ export class InsightsService {
       id: string;
       title: string;
       body: string;
-      data: any;
+      data: unknown;
       read: boolean;
       createdAt: Date;
     }>

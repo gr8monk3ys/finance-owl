@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
+import { getErrorMessage } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
@@ -13,7 +14,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 		// Filter accounts for mortgage/loan linking
 		const loanAccounts = (accountsList || []).filter(
-			(a: any) => a.type === 'mortgage' || a.type === 'loan'
+			(a: Record<string, unknown>) => a.type === 'mortgage' || a.type === 'loan'
 		);
 
 		return {
@@ -51,7 +52,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions: Actions = {
 	createProperty: async ({ request, locals }) => {
 		const formData = await request.formData();
-		const data: Record<string, any> = {
+		const data: Record<string, string | number> = {
 			name: formData.get('name') as string,
 			propertyType: formData.get('propertyType') as string,
 			currentValue: parseFloat(formData.get('currentValue') as string)
@@ -80,15 +81,15 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to create property' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to create property' });
 		}
 	},
 
 	updateProperty: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
-		const data: Record<string, any> = {};
+		const data: Record<string, string | number> = {};
 
 		const optionalStrings = [
 			'name', 'address', 'city', 'state', 'zipCode', 'propertyType',
@@ -115,8 +116,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to update property' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to update property' });
 		}
 	},
 
@@ -130,8 +131,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to delete property' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to delete property' });
 		}
 	},
 
@@ -145,14 +146,14 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to estimate property value' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to estimate property value' });
 		}
 	},
 
 	createVehicle: async ({ request, locals }) => {
 		const formData = await request.formData();
-		const data: Record<string, any> = {
+		const data: Record<string, string | number> = {
 			make: formData.get('make') as string,
 			model: formData.get('model') as string,
 			year: parseInt(formData.get('year') as string),
@@ -177,7 +178,7 @@ export const actions: Actions = {
 		}
 
 		// mileage should be integer
-		if (data.mileage) data.mileage = Math.round(data.mileage);
+		if (data.mileage) data.mileage = Math.round(data.mileage as number);
 
 		try {
 			await api('/assets/vehicles', {
@@ -186,15 +187,15 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to create vehicle' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to create vehicle' });
 		}
 	},
 
 	updateVehicle: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
-		const data: Record<string, any> = {};
+		const data: Record<string, string | number> = {};
 
 		const optionalStrings = [
 			'make', 'model', 'trim', 'vin', 'condition',
@@ -226,8 +227,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to update vehicle' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to update vehicle' });
 		}
 	},
 
@@ -241,8 +242,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to delete vehicle' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to delete vehicle' });
 		}
 	},
 
@@ -256,8 +257,8 @@ export const actions: Actions = {
 				accessToken: locals.accessToken
 			});
 			return { success: true };
-		} catch (e: any) {
-			return fail(500, { error: e.message || 'Failed to estimate vehicle value' });
+		} catch (e: unknown) {
+			return fail(500, { error: getErrorMessage(e) || 'Failed to estimate vehicle value' });
 		}
 	}
 };

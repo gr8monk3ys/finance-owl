@@ -81,7 +81,7 @@ export class UnitProvider implements BaaSProvider {
     };
 
     const response = await this.request('POST', '/accounts', body);
-    return this.mapAccount(response.data);
+    return this.mapAccount(response.data as Record<string, unknown>);
   }
 
   async getAccount(externalAccountId: string): Promise<BaaSAccount> {
@@ -91,7 +91,7 @@ export class UnitProvider implements BaaSProvider {
       'GET',
       `/accounts/${externalAccountId}`,
     );
-    return this.mapAccount(response.data);
+    return this.mapAccount(response.data as Record<string, unknown>);
   }
 
   async getBalance(externalAccountId: string): Promise<BaaSBalance> {
@@ -101,11 +101,12 @@ export class UnitProvider implements BaaSProvider {
       'GET',
       `/accounts/${externalAccountId}`,
     );
-    const attrs = response.data.attributes;
+    const data = response.data as Record<string, unknown>;
+    const attrs = data.attributes as Record<string, unknown>;
 
     return {
-      available: attrs.available ?? 0,
-      pending: (attrs.balance ?? 0) - (attrs.available ?? 0),
+      available: (attrs.available as number) ?? 0,
+      pending: ((attrs.balance as number) ?? 0) - ((attrs.available as number) ?? 0),
       currency: 'USD',
     };
   }
@@ -167,14 +168,14 @@ export class UnitProvider implements BaaSProvider {
 
     const endpoint = isBook ? '/payments' : '/payments';
     const response = await this.request('POST', endpoint, body);
-    return this.mapTransfer(response.data);
+    return this.mapTransfer(response.data as Record<string, unknown>);
   }
 
   async getTransferStatus(transferId: string): Promise<BaaSTransfer> {
     this.ensureConfigured();
 
     const response = await this.request('GET', `/payments/${transferId}`);
-    return this.mapTransfer(response.data);
+    return this.mapTransfer(response.data as Record<string, unknown>);
   }
 
   async getInterestRate(
@@ -217,9 +218,8 @@ export class UnitProvider implements BaaSProvider {
       `/transactions?${params.toString()}`,
     );
 
-    return (response.data || []).map(
-      (tx: Record<string, unknown>) => this.mapTransaction(tx),
-    );
+    const txData = (response.data || []) as Record<string, unknown>[];
+    return txData.map((tx) => this.mapTransaction(tx));
   }
 
   async closeAccount(
@@ -279,9 +279,11 @@ export class UnitProvider implements BaaSProvider {
 
     const response = await this.request('POST', '/applications', body);
     // The application may auto-approve and return a customer relationship
-    const customerId =
-      response.data?.relationships?.customer?.data?.id ||
-      response.data?.id;
+    const respData = response.data as Record<string, unknown> | undefined;
+    const relationships = respData?.relationships as Record<string, unknown> | undefined;
+    const customer = relationships?.customer as Record<string, unknown> | undefined;
+    const customerData = customer?.data as Record<string, unknown> | undefined;
+    const customerId = (customerData?.id || respData?.id) as string;
 
     return customerId;
   }
@@ -290,7 +292,7 @@ export class UnitProvider implements BaaSProvider {
     method: string,
     path: string,
     body?: Record<string, unknown>,
-  ): Promise<Record<string, any>> {
+  ): Promise<Record<string, unknown>> {
     const url = `${this.baseUrl}${path}`;
     const headers: Record<string, string> = {
       Authorization: `Bearer ${this.apiToken}`,
@@ -321,21 +323,21 @@ export class UnitProvider implements BaaSProvider {
     return res.json();
   }
 
-  private mapAccount(data: Record<string, any>): BaaSAccount {
-    const attrs = data.attributes || {};
+  private mapAccount(data: Record<string, unknown>): BaaSAccount {
+    const attrs = (data.attributes || {}) as Record<string, unknown>;
     return {
-      externalAccountId: data.id,
+      externalAccountId: data.id as string,
       type: attrs.depositProduct === 'savings' ? 'savings' : 'checking',
-      status: this.mapAccountStatus(attrs.status),
-      routingNumber: attrs.routingNumber || '',
+      status: this.mapAccountStatus(attrs.status as string),
+      routingNumber: (attrs.routingNumber || '') as string,
       accountNumberMask: attrs.accountNumber
         ? String(attrs.accountNumber).slice(-4)
         : '****',
-      balance: attrs.balance ?? 0,
+      balance: (attrs.balance as number) ?? 0,
       apy: attrs.depositProduct === 'savings' ? 0.045 : 0.001,
       fdicInsured: true,
       bankName: 'Unit Bank Partner',
-      createdAt: attrs.createdAt || new Date().toISOString(),
+      createdAt: (attrs.createdAt || new Date().toISOString()) as string,
     };
   }
 
@@ -350,16 +352,16 @@ export class UnitProvider implements BaaSProvider {
     return statusMap[status] || 'pending';
   }
 
-  private mapTransfer(data: Record<string, any>): BaaSTransfer {
-    const attrs = data.attributes || {};
+  private mapTransfer(data: Record<string, unknown>): BaaSTransfer {
+    const attrs = (data.attributes || {}) as Record<string, unknown>;
     return {
-      transferId: data.id,
-      status: this.mapTransferStatus(attrs.status),
-      amount: attrs.amount ?? 0,
-      memo: attrs.description || null,
-      estimatedArrival: attrs.expectedCompletionDate || null,
-      createdAt: attrs.createdAt || new Date().toISOString(),
-      completedAt: attrs.completedAt || null,
+      transferId: data.id as string,
+      status: this.mapTransferStatus(attrs.status as string),
+      amount: (attrs.amount as number) ?? 0,
+      memo: (attrs.description as string | null) || null,
+      estimatedArrival: (attrs.expectedCompletionDate as string | null) || null,
+      createdAt: (attrs.createdAt || new Date().toISOString()) as string,
+      completedAt: (attrs.completedAt as string | null) || null,
     };
   }
 
@@ -381,17 +383,18 @@ export class UnitProvider implements BaaSProvider {
     return statusMap[status] || 'pending';
   }
 
-  private mapTransaction(data: Record<string, any>): BaaSTransaction {
-    const attrs = data.attributes || {};
-    const amount = attrs.amount ?? 0;
+  private mapTransaction(data: Record<string, unknown>): BaaSTransaction {
+    const attrs = (data.attributes || {}) as Record<string, unknown>;
+    const amount = (attrs.amount as number) ?? 0;
+    const tags = attrs.tags as Record<string, unknown> | undefined;
     return {
-      externalId: data.id,
+      externalId: data.id as string,
       amount,
       type: amount >= 0 ? 'credit' : 'debit',
-      description: attrs.summary || attrs.description || '',
-      date: attrs.createdAt || new Date().toISOString(),
+      description: (attrs.summary || attrs.description || '') as string,
+      date: (attrs.createdAt || new Date().toISOString()) as string,
       pending: attrs.status === 'Pending',
-      category: attrs.tags?.category || null,
+      category: (tags?.category as string | null) || null,
     };
   }
 }
