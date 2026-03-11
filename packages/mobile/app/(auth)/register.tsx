@@ -86,6 +86,7 @@ export default function RegisterScreen() {
               placeholder="Your full name"
               placeholderTextColor={colors.surface[500]}
               autoCapitalize="words"
+              autoComplete="name"
               textContentType="name"
               returnKeyType="next"
             />
@@ -102,6 +103,7 @@ export default function RegisterScreen() {
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="email-address"
+              autoComplete="email"
               textContentType="emailAddress"
               returnKeyType="next"
             />
@@ -116,9 +118,13 @@ export default function RegisterScreen() {
               placeholder="At least 8 characters"
               placeholderTextColor={colors.surface[500]}
               secureTextEntry
+              autoComplete="new-password"
               textContentType="newPassword"
               returnKeyType="next"
             />
+            <Text style={styles.helperText}>
+              Use 8 or more characters with a mix of letters, numbers, and symbols.
+            </Text>
           </View>
 
           <View style={styles.fieldGroup}>
@@ -130,6 +136,7 @@ export default function RegisterScreen() {
               placeholder="Re-enter your password"
               placeholderTextColor={colors.surface[500]}
               secureTextEntry
+              autoComplete="new-password"
               textContentType="newPassword"
               returnKeyType="done"
               onSubmitEditing={handleRegister}
@@ -242,6 +249,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md + 2,
     fontSize: fontSize.base,
     color: colors.white,
+  },
+  helperText: {
+    fontSize: fontSize.xs,
+    color: colors.surface[400],
+    lineHeight: 18,
   },
   button: {
     backgroundColor: colors.primary[600],

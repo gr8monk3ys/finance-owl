@@ -8,12 +8,18 @@
 
 	let showCreateModal = $state(false);
 	let editingBudget = $state<any>(null);
+	let createCategoryId = $state('');
+	let createAmount = $state('');
+	let createPeriod = $state('monthly');
 
 	$effect(() => {
 		if (form?.success) {
 			invalidateAll();
 			showCreateModal = false;
 			editingBudget = null;
+			createCategoryId = '';
+			createAmount = '';
+			createPeriod = 'monthly';
 		}
 	});
 
@@ -89,17 +95,33 @@
 		}));
 	}
 
-	// Filter out categories that already have a budget
-	const availableCategories = $derived(
-		data.categories.filter(
-			(c: any) => !data.budgets.some((b: any) => b.categoryId === c.id)
-		)
+	const existingPeriodsForSelectedCategory = $derived.by(() =>
+		createCategoryId
+			? data.budgets
+					.filter((budget: any) => budget.categoryId === createCategoryId)
+					.map((budget: any) => budget.period)
+			: []
+	);
+
+	const selectedCategoryHasDuplicatePeriod = $derived.by(() =>
+		existingPeriodsForSelectedCategory.includes(createPeriod)
 	);
 
 	// Summary stats
 	const onTrackCount = $derived(data.budgets.filter((b: any) => b.percentUsed < 80).length);
 	const nearLimitCount = $derived(data.budgets.filter((b: any) => b.percentUsed >= 80 && b.percentUsed < 100).length);
 	const overBudgetCount = $derived(data.budgets.filter((b: any) => b.percentUsed >= 100).length);
+
+	function resetCreateForm() {
+		createCategoryId = '';
+		createAmount = '';
+		createPeriod = 'monthly';
+	}
+
+	function closeCreateModal() {
+		showCreateModal = false;
+		resetCreateForm();
+	}
 </script>
 
 <svelte:head>
@@ -346,7 +368,7 @@
 </div>
 
 <!-- Create Budget Modal -->
-<Modal open={showCreateModal} onclose={() => (showCreateModal = false)} title="Create Budget">
+<Modal open={showCreateModal} onclose={closeCreateModal} title="Create Budget">
 	<form
 		method="POST"
 		action="?/create"
@@ -365,15 +387,26 @@
 				id="budgetCategory"
 				name="categoryId"
 				required
+				bind:value={createCategoryId}
 				class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
 			>
-				{#each getCategoryTree(availableCategories) as parent}
+				<option value="" disabled>Select a category</option>
+				{#each getCategoryTree(data.categories) as parent}
 					<option value={parent.id}>{parent.name}</option>
 					{#each parent.children as child}
 						<option value={child.id}>&nbsp;&nbsp;{child.name}</option>
 					{/each}
 				{/each}
 			</select>
+			<p class="mt-1.5 text-xs text-surface-500">
+				Parent categories cover all matching subcategory spending automatically.
+			</p>
+			{#if createCategoryId && existingPeriodsForSelectedCategory.length > 0}
+				<p class="mt-1.5 text-xs text-surface-400">
+					Existing budgets for this category:
+					<span class="capitalize">{existingPeriodsForSelectedCategory.join(', ')}</span>
+				</p>
+			{/if}
 		</div>
 
 		<div class="grid grid-cols-2 gap-4">
@@ -390,6 +423,7 @@
 						step="0.01"
 						min="0"
 						required
+						bind:value={createAmount}
 						class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
 						placeholder="500.00"
 					/>
@@ -403,14 +437,23 @@
 					id="budgetPeriod"
 					name="period"
 					required
+					bind:value={createPeriod}
 					class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
 				>
+					<option value="weekly">Weekly</option>
+					<option value="biweekly">Biweekly</option>
 					<option value="monthly">Monthly</option>
 					<option value="quarterly">Quarterly</option>
 					<option value="annual">Annual</option>
 				</select>
 			</div>
 		</div>
+
+		{#if selectedCategoryHasDuplicatePeriod}
+			<div class="rounded-lg border border-accent-700/40 bg-accent-950/30 px-3 py-2 text-sm text-accent-300">
+				A {createPeriod} budget already exists for this category. Choose another period or edit the current budget.
+			</div>
+		{/if}
 
 		<div class="flex items-center gap-2">
 			<input
@@ -425,10 +468,12 @@
 		</div>
 
 		<div class="flex justify-end gap-3 border-t border-surface-700/50 pt-4">
-			<Button variant="ghost" type="button" onclick={() => (showCreateModal = false)}>
+			<Button variant="ghost" type="button" onclick={closeCreateModal}>
 				Cancel
 			</Button>
-			<Button type="submit">Create Budget</Button>
+			<Button type="submit" disabled={!createCategoryId || !createAmount || selectedCategoryHasDuplicatePeriod}>
+				Create Budget
+			</Button>
 		</div>
 	</form>
 </Modal>

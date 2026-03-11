@@ -83,6 +83,13 @@
 <OfflineBanner />
 <InstallPrompt />
 
+<a
+	href="#main-content"
+	class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-primary-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+>
+	Skip to main content
+</a>
+
 <div class="flex min-h-screen bg-surface-900">
 	<!-- Mobile overlay -->
 	{#if mobileMenuOpen}
@@ -142,6 +149,7 @@
 					{@const active = isActive(item.href)}
 					<a
 						href={item.href}
+						aria-current={active ? 'page' : undefined}
 						class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium
 							transition-all duration-150
 							{active
@@ -306,33 +314,36 @@
 			<!-- Header right actions -->
 			<div class="flex items-center gap-2">
 				<!-- Notifications placeholder -->
-				<button
-					class="relative rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition-all duration-150"
-					aria-label="Notifications"
+				<a
+					href="/settings/notifications"
+					class="relative rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70"
+					aria-label="Notification settings"
 				>
 					<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
 					</svg>
 					<!-- Notification dot -->
 					<span class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary-400 ring-2 ring-surface-800"></span>
-				</button>
+				</a>
 
 				<!-- User avatar in header -->
-				<div
+				<a
+					href="/settings"
 					class="hidden sm:flex h-8 w-8 items-center justify-center rounded-full
 						bg-gradient-to-br from-primary-500 to-primary-700
 						text-xs font-semibold text-white
 						ring-2 ring-surface-700/50
-						cursor-pointer hover:ring-primary-500/30 transition-all duration-150"
-					title={data.user?.name ?? 'User'}
+						hover:ring-primary-500/30 transition-all duration-150 focus-visible:outline-none focus-visible:ring-primary-400"
+						title={data.user?.name ?? 'User'}
+						aria-label="Open settings"
 				>
 					{data.user?.name?.charAt(0).toUpperCase() ?? '?'}
-				</div>
+				</a>
 			</div>
 		</header>
 
 		<!-- Page content -->
-		<main class="flex-1 overflow-auto p-4 pb-20 lg:p-6 lg:pb-6">
+		<main id="main-content" tabindex="-1" class="flex-1 overflow-auto p-4 pb-20 lg:p-6 lg:pb-6">
 			<PullToRefresh />
 			{@render children()}
 		</main>
