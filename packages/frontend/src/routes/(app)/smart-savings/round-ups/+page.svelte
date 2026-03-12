@@ -63,7 +63,7 @@
 </script>
 
 <svelte:head>
-	<title>Round-Up Savings - FinanceOwl</title>
+	<title>Round-Up Savings - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

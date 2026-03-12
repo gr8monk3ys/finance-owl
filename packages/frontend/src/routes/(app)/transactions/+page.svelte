@@ -1,8 +1,19 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { navigating, page } from '$app/stores';
+	import { untrack } from 'svelte';
 	import { Card, Button, Modal } from '$components/ui';
+	import { getBudgetCategoryTree } from '$lib/utils/budgets';
+	import {
+		buildTransactionSearchParams,
+		formatTransactionDate,
+		getMerchantColor,
+		getMerchantInitials,
+		getTransactionDateGroupLabel,
+		isIncomeTransaction
+	} from '$lib/utils/transactions';
 	import type { PageData, ActionData } from './$types';
 
 	let { data, form } = $props<{ data: PageData; form: ActionData }>();
@@ -11,6 +22,7 @@
 	let showDetailModal = $state(false);
 	let selectedTransaction = $state<any>(null);
 	let showFilters = $state(false);
+	let autoSearchPending = $state(false);
 
 	// Filter state
 	let searchInput = $state($page.url.searchParams.get('search') || '');
@@ -37,33 +49,12 @@
 		}).format(val);
 	}
 
-	function formatDate(dateStr: string): string {
-		const date = new Date(dateStr + 'T00:00:00');
-		return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-	}
-
-	function getDateGroupLabel(dateStr: string): string {
-		const date = new Date(dateStr + 'T00:00:00');
-		const now = new Date();
-		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-		const yesterday = new Date(today);
-		yesterday.setDate(yesterday.getDate() - 1);
-		const weekAgo = new Date(today);
-		weekAgo.setDate(weekAgo.getDate() - 7);
-
-		if (date >= today) return 'Today';
-		if (date >= yesterday) return 'Yesterday';
-		if (date >= weekAgo) return 'This Week';
-		if (date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()) return 'This Month';
-		return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-	}
-
 	// Group transactions by date label
 	const groupedTransactions = $derived.by(() => {
 		const groups: Array<{ label: string; transactions: any[] }> = [];
 		let currentLabel = '';
 		for (const tx of data.transactions.data) {
-			const label = getDateGroupLabel(tx.date);
+			const label = getTransactionDateGroupLabel(tx.date);
 			if (label !== currentLabel) {
 				groups.push({ label, transactions: [] });
 				currentLabel = label;
@@ -73,44 +64,70 @@
 		return groups;
 	});
 
-	function getMerchantInitials(name: string): string {
-		if (!name) return '?';
-		const words = name.trim().split(/\s+/);
-		if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
-		return name.slice(0, 2).toUpperCase();
+	function getAppliedFilters() {
+		return {
+			accountId: $page.url.searchParams.get('accountId') || '',
+			categoryId: $page.url.searchParams.get('categoryId') || '',
+			startDate: $page.url.searchParams.get('startDate') || '',
+			endDate: $page.url.searchParams.get('endDate') || ''
+		};
 	}
 
-	function getMerchantColor(name: string): string {
-		if (!name) return '#64748b';
-		let hash = 0;
-		for (let i = 0; i < name.length; i++) {
-			hash = name.charCodeAt(i) + ((hash << 5) - hash);
-		}
-		const colors = [
-			'#6366f1', '#8b5cf6', '#a855f7', '#d946ef',
-			'#ec4899', '#f43f5e', '#ef4444', '#f97316',
-			'#f59e0b', '#eab308', '#84cc16', '#22c55e',
-			'#10b981', '#14b8a6', '#06b6d4', '#0ea5e9',
-			'#3b82f6', '#6366f1'
-		];
-		return colors[Math.abs(hash) % colors.length];
+	function buildTransactionsHref(filters: {
+		search?: string;
+		accountId?: string;
+		categoryId?: string;
+		startDate?: string;
+		endDate?: string;
+		page?: string | number | null;
+	}) {
+		const params = buildTransactionSearchParams(filters);
+		const query = params.toString();
+		return query ? `/transactions?${query}` : '/transactions';
 	}
 
-	function isIncome(tx: any): boolean {
-		const amount = ['credit_card', 'loan', 'mortgage'].includes(tx.accountType || 'checking')
-			? -tx.amount
-			: tx.amount;
-		return amount < 0;
+	function navigateToTransactions(
+		filters: {
+			search?: string;
+			accountId?: string;
+			categoryId?: string;
+			startDate?: string;
+			endDate?: string;
+			page?: string | number | null;
+		},
+		{ replaceState = false } = {}
+	) {
+		const href = buildTransactionsHref(filters);
+		const currentHref = `${$page.url.pathname}${$page.url.search}`;
+		autoSearchPending = false;
+		if (href === currentHref) return;
+		void goto(href, {
+			keepFocus: true,
+			noScroll: true,
+			replaceState
+		});
+	}
+
+	function applySearchImmediately() {
+		navigateToTransactions(
+			{
+				...getAppliedFilters(),
+				search: searchInput,
+				page: undefined
+			},
+			{ replaceState: true }
+		);
 	}
 
 	function applyFilters() {
-		const params = new URLSearchParams();
-		if (searchInput) params.set('search', searchInput);
-		if (filterAccountId) params.set('accountId', filterAccountId);
-		if (filterCategoryId) params.set('categoryId', filterCategoryId);
-		if (filterStartDate) params.set('startDate', filterStartDate);
-		if (filterEndDate) params.set('endDate', filterEndDate);
-		goto(`/transactions?${params.toString()}`);
+		navigateToTransactions({
+			search: searchInput,
+			accountId: filterAccountId,
+			categoryId: filterCategoryId,
+			startDate: filterStartDate,
+			endDate: filterEndDate,
+			page: undefined
+		});
 	}
 
 	function clearFilters() {
@@ -119,13 +136,19 @@
 		filterCategoryId = '';
 		filterStartDate = '';
 		filterEndDate = '';
-		goto('/transactions');
+		showFilters = false;
+		navigateToTransactions({});
 	}
 
 	function goToPage(pageNum: number) {
-		const params = new URLSearchParams($page.url.searchParams);
-		params.set('page', String(pageNum));
-		goto(`/transactions?${params.toString()}`);
+		navigateToTransactions({
+			search: $page.url.searchParams.get('search') || '',
+			accountId: $page.url.searchParams.get('accountId') || '',
+			categoryId: $page.url.searchParams.get('categoryId') || '',
+			startDate: $page.url.searchParams.get('startDate') || '',
+			endDate: $page.url.searchParams.get('endDate') || '',
+			page: pageNum
+		});
 	}
 
 	function openDetail(tx: any) {
@@ -133,23 +156,67 @@
 		showDetailModal = true;
 	}
 
-	// Build category hierarchy for display
-	function getCategoryTree(categories: any[]) {
-		const parents = categories.filter((c: any) => !c.parentId);
-		return parents.map((parent: any) => ({
-			...parent,
-			children: categories.filter((c: any) => c.parentId === parent.id)
-		}));
-	}
-
 	const hasActiveFilters = $derived(
 		!!filterAccountId || !!filterCategoryId || !!filterStartDate || !!filterEndDate
 	);
 	const hasSearchQuery = $derived(!!searchInput.trim());
+	const activeFilterCount = $derived(
+		[filterAccountId, filterCategoryId, filterStartDate, filterEndDate].filter(Boolean).length
+	);
+	const hasPendingFilterChanges = $derived(
+		filterAccountId !== ($page.url.searchParams.get('accountId') || '') ||
+			filterCategoryId !== ($page.url.searchParams.get('categoryId') || '') ||
+			filterStartDate !== ($page.url.searchParams.get('startDate') || '') ||
+			filterEndDate !== ($page.url.searchParams.get('endDate') || '')
+	);
+
+	$effect(() => {
+		const nextSearch = $page.url.searchParams.get('search') || '';
+		const nextAccountId = $page.url.searchParams.get('accountId') || '';
+		const nextCategoryId = $page.url.searchParams.get('categoryId') || '';
+		const nextStartDate = $page.url.searchParams.get('startDate') || '';
+		const nextEndDate = $page.url.searchParams.get('endDate') || '';
+
+		if (untrack(() => searchInput) !== nextSearch) searchInput = nextSearch;
+		if (untrack(() => filterAccountId) !== nextAccountId) filterAccountId = nextAccountId;
+		if (untrack(() => filterCategoryId) !== nextCategoryId) filterCategoryId = nextCategoryId;
+		if (untrack(() => filterStartDate) !== nextStartDate) filterStartDate = nextStartDate;
+		if (untrack(() => filterEndDate) !== nextEndDate) filterEndDate = nextEndDate;
+	});
+
+	$effect(() => {
+		if (!browser) return;
+
+		const currentSearch = ($page.url.searchParams.get('search') || '').trim();
+		const nextSearch = searchInput.trim();
+
+		if (nextSearch === currentSearch) {
+			autoSearchPending = false;
+			return;
+		}
+
+		autoSearchPending = true;
+		const appliedFilters = getAppliedFilters();
+		const timeout = window.setTimeout(() => {
+			navigateToTransactions(
+				{
+					...appliedFilters,
+					search: searchInput,
+					page: undefined
+				},
+				{ replaceState: true }
+			);
+		}, 250);
+
+		return () => {
+			autoSearchPending = false;
+			window.clearTimeout(timeout);
+		};
+	});
 </script>
 
 <svelte:head>
-	<title>Transactions - FinanceOwl</title>
+	<title>Transactions - Finance Owl</title>
 </svelte:head>
 
 <div class="page-enter space-y-6">
@@ -177,7 +244,7 @@
 	<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-4">
 		<div class="space-y-3">
 			<!-- Search bar -->
-			<div class="flex gap-2">
+			<div class="flex flex-col gap-2 sm:flex-row">
 				<div class="relative flex-1">
 					<svg
 						class="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-500"
@@ -194,15 +261,17 @@
 					</svg>
 					<input
 						type="search"
+						name="search"
 						bind:value={searchInput}
-						placeholder="Search by name, merchant, or amount..."
+						aria-describedby="transactions-search-status"
+						enterkeyhint="search"
+						placeholder="Search by name, merchant, or amount…"
 						autocomplete="off"
 						spellcheck="false"
 						class="w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-surface-500 transition-colors focus:border-primary-500/50 focus:bg-surface-700 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
-						onkeydown={(e) => e.key === 'Enter' && applyFilters()}
+						onkeydown={(e) => e.key === 'Enter' && applySearchImmediately()}
 					/>
 				</div>
-				<Button onclick={applyFilters}>Search</Button>
 				{#if hasActiveFilters || hasSearchQuery}
 					<Button variant="ghost" onclick={clearFilters}>Clear</Button>
 				{/if}
@@ -215,10 +284,28 @@
 					<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
 					</svg>
-					{#if hasActiveFilters}
-						<span class="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary-500 text-[10px] font-bold text-white">!</span>
+					{#if activeFilterCount}
+						<span class="ml-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary-500 px-1 text-[10px] font-bold text-white">
+							{activeFilterCount}
+						</span>
 					{/if}
 				</Button>
+			</div>
+			<div
+				id="transactions-search-status"
+				class="flex flex-col gap-1 text-xs text-surface-500 sm:flex-row sm:items-center sm:justify-between"
+				aria-live="polite"
+			>
+				<p>Search updates as you type. Account, category, and date filters apply when you tap Apply Filters.</p>
+				<p class="text-surface-400">
+					{#if autoSearchPending || $navigating}
+						Updating…
+					{:else if hasSearchQuery}
+						Showing results for “{searchInput.trim()}”
+					{:else}
+						Showing all transactions
+					{/if}
+				</p>
 			</div>
 
 			<!-- Filter panel -->
@@ -245,7 +332,7 @@
 							class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
 						>
 							<option value="">All categories</option>
-							{#each getCategoryTree(data.categories) as parent}
+							{#each getBudgetCategoryTree(data.categories) as parent}
 								<option value={parent.id}>{parent.name}</option>
 								{#each parent.children as child}
 									<option value={child.id}>&nbsp;&nbsp;{child.name}</option>
@@ -273,7 +360,7 @@
 					</div>
 				</div>
 				<div class="flex gap-2">
-					<Button size="sm" onclick={applyFilters}>Apply Filters</Button>
+					<Button size="sm" onclick={applyFilters} disabled={!hasPendingFilterChanges}>Apply Filters</Button>
 					{#if hasActiveFilters || hasSearchQuery}
 						<Button size="sm" variant="ghost" onclick={clearFilters}>Clear All</Button>
 					{/if}
@@ -365,7 +452,7 @@
 										{/if}
 									</div>
 									<div class="mt-0.5 flex items-center gap-2 text-xs text-surface-500">
-										<span>{formatDate(tx.date)}</span>
+										<span>{formatTransactionDate(tx.date)}</span>
 										{#if tx.categoryName}
 											<span class="text-surface-600">|</span>
 											<span class="inline-flex items-center gap-1">
@@ -388,11 +475,11 @@
 								<!-- Amount -->
 								<div class="shrink-0 text-right">
 									<span
-										class="text-sm font-semibold tabular-nums {isIncome(tx)
+										class="text-sm font-semibold tabular-nums {isIncomeTransaction(tx.amount, tx.accountType)
 											? 'text-primary-400'
 											: 'text-surface-200'}"
 									>
-										{#if isIncome(tx)}
+										{#if isIncomeTransaction(tx.amount, tx.accountType)}
 											<span class="mr-0.5 text-xs text-primary-400/60">+</span>
 										{/if}
 										{formatAmount(tx.amount, tx.accountType || 'checking')}
@@ -531,7 +618,7 @@
 				class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
 			>
 				<option value="">Auto-categorize</option>
-				{#each getCategoryTree(data.categories) as parent}
+				{#each getBudgetCategoryTree(data.categories) as parent}
 					<option value={parent.id}>{parent.name}</option>
 					{#each parent.children as child}
 						<option value={child.id}>&nbsp;&nbsp;{child.name}</option>
@@ -582,7 +669,7 @@
 						<p class="text-sm text-surface-400">{selectedTransaction.name}</p>
 					{/if}
 				</div>
-				<p class="text-xl font-bold tabular-nums {isIncome(selectedTransaction) ? 'text-primary-400' : 'text-white'}">
+				<p class="text-xl font-bold tabular-nums {isIncomeTransaction(selectedTransaction.amount, selectedTransaction.accountType) ? 'text-primary-400' : 'text-white'}">
 					{formatAmount(selectedTransaction.amount, selectedTransaction.accountType || 'checking')}
 				</p>
 			</div>
@@ -590,7 +677,7 @@
 			<div class="grid grid-cols-2 gap-4 rounded-xl border border-surface-700/30 bg-surface-750/50 p-4">
 				<div>
 					<p class="text-xs font-medium text-surface-500">Date</p>
-					<p class="mt-0.5 text-sm text-white">{formatDate(selectedTransaction.date)}</p>
+					<p class="mt-0.5 text-sm text-white">{formatTransactionDate(selectedTransaction.date)}</p>
 				</div>
 				<div>
 					<p class="text-xs font-medium text-surface-500">Account</p>
@@ -627,7 +714,7 @@
 						value={selectedTransaction.categoryId || ''}
 					>
 						<option value="">Uncategorized</option>
-						{#each getCategoryTree(data.categories) as parent}
+						{#each getBudgetCategoryTree(data.categories) as parent}
 							<option value={parent.id}>{parent.name}</option>
 							{#each parent.children as child}
 								<option value={child.id}>&nbsp;&nbsp;{child.name}</option>

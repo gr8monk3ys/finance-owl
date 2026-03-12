@@ -2,6 +2,13 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { Card, Button, Modal } from '$components/ui';
+	import {
+		getBudgetCategoryIcon,
+		getBudgetCategoryTree,
+		getBudgetProgressGradient,
+		getBudgetProgressTextColor,
+		getBudgetStatusBadge
+	} from '$lib/utils/budgets';
 	import type { PageData, ActionData } from './$types';
 
 	let { data, form } = $props<{ data: PageData; form: ActionData }>();
@@ -38,63 +45,6 @@
 		}).format(amount);
 	}
 
-	function getProgressGradient(percentUsed: number): string {
-		if (percentUsed >= 100) return 'linear-gradient(90deg, var(--fo-danger-500), var(--fo-danger-400))';
-		if (percentUsed >= 80) return 'linear-gradient(90deg, var(--fo-accent-500), var(--fo-danger-400))';
-		if (percentUsed >= 50) return 'linear-gradient(90deg, var(--fo-primary-500), var(--fo-accent-500))';
-		return 'linear-gradient(90deg, var(--fo-primary-600), var(--fo-primary-400))';
-	}
-
-	function getStatusBadge(percentUsed: number): { label: string; class: string } {
-		if (percentUsed >= 100) return {
-			label: 'Over Budget',
-			class: 'bg-red-500/10 text-red-400 ring-red-500/20'
-		};
-		if (percentUsed >= 80) return {
-			label: 'Near Limit',
-			class: 'bg-accent-500/10 text-accent-400 ring-accent-500/20'
-		};
-		if (percentUsed >= 50) return {
-			label: 'On Track',
-			class: 'bg-primary-500/10 text-primary-400 ring-primary-500/20'
-		};
-		return {
-			label: 'Under Budget',
-			class: 'bg-primary-500/10 text-primary-400 ring-primary-500/20'
-		};
-	}
-
-	function getProgressTextColor(percentUsed: number): string {
-		if (percentUsed >= 100) return 'text-red-400';
-		if (percentUsed >= 80) return 'text-accent-400';
-		return 'text-primary-400';
-	}
-
-	function getCategoryIcon(categoryName: string | null): string {
-		if (!categoryName) return '?';
-		const name = categoryName.toLowerCase();
-		if (name.includes('food') || name.includes('grocery') || name.includes('dining') || name.includes('restaurant')) return 'F';
-		if (name.includes('transport') || name.includes('gas') || name.includes('auto') || name.includes('car')) return 'T';
-		if (name.includes('shop') || name.includes('cloth') || name.includes('retail')) return 'S';
-		if (name.includes('entertainment') || name.includes('movie') || name.includes('game')) return 'E';
-		if (name.includes('health') || name.includes('medical') || name.includes('doctor')) return 'H';
-		if (name.includes('home') || name.includes('rent') || name.includes('mortgage') || name.includes('housing')) return 'R';
-		if (name.includes('util') || name.includes('electric') || name.includes('water') || name.includes('internet')) return 'U';
-		if (name.includes('travel') || name.includes('hotel') || name.includes('flight')) return 'V';
-		if (name.includes('education') || name.includes('school') || name.includes('book')) return 'B';
-		if (name.includes('subscription') || name.includes('software')) return 'W';
-		return categoryName.charAt(0).toUpperCase();
-	}
-
-	// Build category hierarchy for select dropdown
-	function getCategoryTree(categories: any[]) {
-		const parents = categories.filter((c: any) => !c.parentId);
-		return parents.map((parent: any) => ({
-			...parent,
-			children: categories.filter((c: any) => c.parentId === parent.id)
-		}));
-	}
-
 	const existingPeriodsForSelectedCategory = $derived.by(() =>
 		createCategoryId
 			? data.budgets
@@ -125,7 +75,7 @@
 </script>
 
 <svelte:head>
-	<title>Budgets - FinanceOwl</title>
+	<title>Budgets - Finance Owl</title>
 </svelte:head>
 
 <div class="page-enter space-y-6">
@@ -220,11 +170,11 @@
 					<div
 						class="progress-fill h-full rounded-full"
 						style="width: {Math.min(data.summary.percentUsed, 100)}%;
-							background: {getProgressGradient(data.summary.percentUsed)}"
+							background: {getBudgetProgressGradient(data.summary.percentUsed)}"
 					></div>
 				</div>
 				<div class="mt-1.5 flex items-center justify-between">
-					<span class="text-xs {getProgressTextColor(data.summary.percentUsed)} font-semibold">
+					<span class="text-xs {getBudgetProgressTextColor(data.summary.percentUsed)} font-semibold">
 						{data.summary.percentUsed.toFixed(0)}% used
 					</span>
 					<div class="flex gap-2 text-xs text-surface-500">
@@ -281,7 +231,7 @@
 	{:else}
 		<div class="stagger-children space-y-3">
 			{#each data.budgets as budget}
-				{@const status = getStatusBadge(budget.percentUsed)}
+				{@const status = getBudgetStatusBadge(budget.percentUsed)}
 				<div class="group relative overflow-hidden rounded-xl border border-surface-700/30 bg-surface-800 transition-all duration-200 hover:border-surface-600/50 hover:shadow-md hover:shadow-black/10">
 					<div class="p-5">
 						<div class="flex items-start justify-between gap-4">
@@ -291,7 +241,7 @@
 									class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold text-white/90"
 									style="background: linear-gradient(135deg, {budget.categoryColor || '#64748b'}66, {budget.categoryColor || '#64748b'}22)"
 								>
-									{getCategoryIcon(budget.categoryName)}
+									{getBudgetCategoryIcon(budget.categoryName)}
 								</div>
 								<div>
 									<div class="flex items-center gap-2">
@@ -326,7 +276,7 @@
 									{/if}
 								</div>
 								<div class="text-right">
-									<span class="text-sm font-semibold tabular-nums {getProgressTextColor(budget.percentUsed)}">
+									<span class="text-sm font-semibold tabular-nums {getBudgetProgressTextColor(budget.percentUsed)}">
 										{#if budget.remaining >= 0}
 											{fmt(budget.remaining)} left
 										{:else}
@@ -341,13 +291,13 @@
 								<div
 									class="progress-fill h-full rounded-full transition-all duration-500"
 									style="width: {Math.min(budget.percentUsed, 100)}%;
-										background: {getProgressGradient(budget.percentUsed)}"
+										background: {getBudgetProgressGradient(budget.percentUsed)}"
 								></div>
 							</div>
 
 							<!-- Bottom stats -->
 							<div class="mt-2 flex items-center justify-between text-xs">
-								<span class="{getProgressTextColor(budget.percentUsed)} font-medium">
+								<span class="{getBudgetProgressTextColor(budget.percentUsed)} font-medium">
 									{budget.percentUsed.toFixed(0)}% used
 								</span>
 								{#if budget.percentUsed >= 100}
@@ -391,7 +341,7 @@
 				class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
 			>
 				<option value="" disabled>Select a category</option>
-				{#each getCategoryTree(data.categories) as parent}
+				{#each getBudgetCategoryTree(data.categories) as parent}
 					<option value={parent.id}>{parent.name}</option>
 					{#each parent.children as child}
 						<option value={child.id}>&nbsp;&nbsp;{child.name}</option>
@@ -502,7 +452,7 @@
 					class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white/80"
 					style="background: linear-gradient(135deg, {editingBudget.categoryColor || '#64748b'}66, {editingBudget.categoryColor || '#64748b'}22)"
 				>
-					{getCategoryIcon(editingBudget.categoryName)}
+					{getBudgetCategoryIcon(editingBudget.categoryName)}
 				</div>
 				<div>
 					<p class="text-sm font-medium text-white">{editingBudget.categoryName}</p>

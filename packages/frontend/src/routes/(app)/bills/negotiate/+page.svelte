@@ -179,7 +179,7 @@
 </script>
 
 <svelte:head>
-	<title>Bill Negotiation - FinanceOwl</title>
+	<title>Bill Negotiation - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

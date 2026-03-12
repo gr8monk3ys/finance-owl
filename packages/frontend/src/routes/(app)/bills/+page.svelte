@@ -146,7 +146,7 @@
 </script>
 
 <svelte:head>
-	<title>Bills - FinanceOwl</title>
+	<title>Bills - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-	<title>Notification Preferences - FinanceOwl</title>
+	<title>Notification Preferences - Finance Owl</title>
 </svelte:head>
 
 <div class="mx-auto max-w-2xl space-y-6">

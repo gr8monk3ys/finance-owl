@@ -1,6 +1,6 @@
-# FinanceOwl Deployment Guide
+# Finance Owl Deployment Guide
 
-This guide covers deploying FinanceOwl to **Railway** (backend + database + Redis) and **Vercel** (frontend).
+This guide covers deploying Finance Owl to **Railway** (backend + database + Redis) and **Vercel** (frontend).
 
 ## Architecture Overview
 
@@ -31,7 +31,7 @@ This guide covers deploying FinanceOwl to **Railway** (backend + database + Redi
 
 - A [Railway](https://railway.app) account
 - Railway CLI installed: `npm install -g @railway/cli`
-- Your FinanceOwl repository pushed to GitHub
+- Your Finance Owl repository pushed to GitHub
 
 ### Step 1: Create a Railway Project
 
@@ -87,10 +87,10 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your_email
 SMTP_PASS=your_app_password
-SMTP_FROM=FinanceOwl <noreply@yourapp.com>
+SMTP_FROM=Finance Owl <noreply@yourapp.com>
 
 # WebAuthn
-WEBAUTHN_RP_NAME=FinanceOwl
+WEBAUTHN_RP_NAME=Finance Owl
 WEBAUTHN_RP_ID=yourapp.com
 WEBAUTHN_ORIGIN=https://yourapp.com
 ```
@@ -166,7 +166,12 @@ In the Vercel dashboard, go to **Settings** > **Environment Variables** and add:
 
 ```bash
 # Backend API URL (your Railway backend URL)
-PUBLIC_API_URL=https://api.yourapp.com
+API_URL=https://api.yourapp.com
+PUBLIC_SITE_URL=https://yourapp.com
+PUBLIC_SUPPORT_EMAIL=support@yourapp.com
+PUBLIC_PRIVACY_EMAIL=privacy@yourapp.com
+PUBLIC_LEGAL_EMAIL=legal@yourapp.com
+PUBLIC_SECURITY_EMAIL=security@yourapp.com
 
 # Sentry (optional)
 PUBLIC_SENTRY_DSN=https://...@sentry.io/...
@@ -257,6 +262,17 @@ Instead of using the Railway CLI in GitHub Actions, you can use Railway's native
 3. Railway will auto-deploy when you push to `main`
 4. This eliminates the need for `RAILWAY_TOKEN` and the `deploy-backend` GitHub Actions job
 
+## Launch Checklist
+
+Before a public launch, also run:
+
+```bash
+pnpm launch:check
+pnpm launch:verify
+```
+
+Use `https://yourapp.com/support` as the public support URL for store listings and customer support links.
+
 ---
 
 ## 6. Environment Checklist
@@ -286,7 +302,12 @@ Instead of using the Railway CLI in GitHub Actions, you can use Railway's native
 
 | Variable                    | Required | Notes                              |
 |-----------------------------|----------|------------------------------------|
-| `PUBLIC_API_URL`            | Yes      | Railway backend URL                |
+| `API_URL`                   | Yes      | Railway backend URL                |
+| `PUBLIC_SITE_URL`           | Yes      | Public web origin for support/legal pages |
+| `PUBLIC_SUPPORT_EMAIL`      | Yes      | Public support inbox               |
+| `PUBLIC_PRIVACY_EMAIL`      | Yes      | Public privacy inbox               |
+| `PUBLIC_LEGAL_EMAIL`        | Yes      | Public legal inbox                 |
+| `PUBLIC_SECURITY_EMAIL`     | Yes      | Public security inbox              |
 | `PUBLIC_SENTRY_DSN`         | Optional | Sentry DSN for frontend            |
 | `SENTRY_AUTH_TOKEN`         | Optional | For source map uploads             |
 

@@ -29,7 +29,22 @@ if (sentryDsn) {
 
 const API_URL = process.env.API_URL || 'http://localhost:4000';
 
-const publicPaths = ['/auth/login', '/auth/register', '/auth/setup', '/'];
+const publicPathPrefixes = [
+	'/',
+	'/auth/login',
+	'/auth/register',
+	'/auth/setup',
+	'/support',
+	'/privacy',
+	'/terms',
+	'/security',
+	'/sitemap.xml',
+	'/.well-known'
+];
+
+function isPublicPath(pathname: string) {
+	return publicPathPrefixes.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+}
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const accessToken = event.cookies.get('access_token');
@@ -101,9 +116,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	const isPublicPath = publicPaths.some((p) => event.url.pathname === p || event.url.pathname.startsWith(p + '/'));
-
-	if (!event.locals.user && !isPublicPath) {
+	if (!event.locals.user && !isPublicPath(event.url.pathname)) {
 		throw redirect(303, '/auth/login');
 	}
 

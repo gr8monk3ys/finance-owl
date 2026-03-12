@@ -59,21 +59,12 @@ describe('DetectionService', () => {
 
   describe('detectForUser - recurring pattern matching', () => {
     it('should detect monthly subscription (e.g., Netflix)', async () => {
-      const today = new Date();
-      const fmt = (d: Date) => d.toISOString().split('T')[0];
-      const d1 = new Date(today);
-      d1.setDate(d1.getDate() - 10);
-      const d2 = new Date(today);
-      d2.setDate(d2.getDate() - 40);
-      const d3 = new Date(today);
-      d3.setDate(d3.getDate() - 70);
-
       const transactions = [
         {
           name: 'Netflix',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: fmt(d1),
+          date: '2026-02-14',
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,
@@ -82,7 +73,7 @@ describe('DetectionService', () => {
           name: 'Netflix',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: fmt(d2),
+          date: '2026-01-14',
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,
@@ -91,7 +82,7 @@ describe('DetectionService', () => {
           name: 'Netflix',
           merchantName: 'Netflix',
           amount: 15.99,
-          date: fmt(d3),
+          date: '2025-12-14',
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,
@@ -109,10 +100,7 @@ describe('DetectionService', () => {
         accountId: 'acc_1',
         categoryId: 'cat_1',
       });
-      // Next expected date = last charge + 1 month (calendar month)
-      const expectedNext = new Date(d1);
-      expectedNext.setMonth(expectedNext.getMonth() + 1);
-      expect(result[0].nextExpectedDate).toBe(fmt(expectedNext));
+      expect(result[0].nextExpectedDate).toBe('2026-03-14');
     });
 
     it('should detect weekly subscription', async () => {
@@ -261,12 +249,7 @@ describe('DetectionService', () => {
         merchantName: 'State Farm',
         frequency: 'quarterly',
       });
-      const lastDate = new Date('2026-01-01');
-      const nextDate = new Date(lastDate);
-      nextDate.setDate(nextDate.getDate() + 90);
-      expect(result[0].nextExpectedDate).toBe(
-        nextDate.toISOString().split('T')[0],
-      );
+      expect(result[0].nextExpectedDate).toBe('2026-04-01');
     });
 
     it('should group transactions by merchant name correctly', async () => {

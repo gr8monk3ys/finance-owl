@@ -59,7 +59,7 @@
 						<div class="min-w-0">
 							<p class="truncate text-xs font-medium text-white">{account.name}</p>
 							{#if account.institutionName}
-								<p class="truncate text-xs text-surface-500">{account.institutionName}</p>
+								<p class="truncate text-xs text-surface-400">{account.institutionName}</p>
 							{/if}
 						</div>
 					</div>
@@ -74,7 +74,7 @@
 			{/each}
 		</div>
 		{#if accounts.length > 6}
-			<p class="mt-2 text-center text-xs text-surface-500">
+			<p class="mt-2 text-center text-xs text-surface-400">
 				+{accounts.length - 6} more accounts
 			</p>
 		{/if}
@@ -93,7 +93,7 @@
 					d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"
 				/>
 			</svg>
-			<p class="mt-2 text-xs text-surface-500">
+			<p class="mt-2 text-xs text-surface-400">
 				<a href="/accounts" class="text-primary-400 hover:text-primary-300">Link your accounts</a>
 			</p>
 		</div>

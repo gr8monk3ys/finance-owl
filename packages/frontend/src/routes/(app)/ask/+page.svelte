@@ -132,13 +132,13 @@
 </script>
 
 <svelte:head>
-	<title>Ask FinanceOwl</title>
+	<title>Ask Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">
 	<div class="flex items-center justify-between">
 		<div>
-			<h2 class="text-2xl font-bold text-white">Ask FinanceOwl</h2>
+			<h2 class="text-2xl font-bold text-white">Ask Finance Owl</h2>
 			<p class="mt-1 text-sm text-surface-400">
 				Get AI-powered insights about your finances
 			</p>

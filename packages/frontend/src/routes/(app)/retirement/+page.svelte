@@ -140,7 +140,7 @@
 </script>
 
 <svelte:head>
-	<title>Retirement Planning - FinanceOwl</title>
+	<title>Retirement Planning - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

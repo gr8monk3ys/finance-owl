@@ -1,5 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { buildForwardedClientHeaders, setAuthCookies } from '$lib/server/auth';
 
 const API_URL = process.env.API_URL || 'http://localhost:4000';
 
@@ -10,7 +11,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, cookies, getClientAddress }) => {
 		const data = await request.formData();
 		const name = data.get('name') as string;
 		const email = data.get('email') as string;
@@ -32,7 +33,10 @@ export const actions: Actions = {
 		try {
 			const res = await fetch(`${API_URL}/api/auth/register`, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					...buildForwardedClientHeaders(request.headers, getClientAddress())
+				},
 				body: JSON.stringify({ name, email, password })
 			});
 
@@ -42,22 +46,7 @@ export const actions: Actions = {
 			}
 
 			const tokens = await res.json();
-
-			cookies.set('access_token', tokens.accessToken, {
-				path: '/',
-				httpOnly: true,
-				secure: process.env.NODE_ENV === 'production',
-				sameSite: 'lax',
-				maxAge: 60 * 15
-			});
-
-			cookies.set('refresh_token', tokens.refreshToken, {
-				path: '/',
-				httpOnly: true,
-				secure: process.env.NODE_ENV === 'production',
-				sameSite: 'lax',
-				maxAge: 60 * 60 * 24 * 7
-			});
+			setAuthCookies(cookies, tokens);
 		} catch {
 			return fail(500, { error: 'Network error. Is the API running?', name, email });
 		}

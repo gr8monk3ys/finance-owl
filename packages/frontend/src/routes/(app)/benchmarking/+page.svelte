@@ -63,7 +63,7 @@
 </script>
 
 <svelte:head>
-	<title>Peer Benchmarking - FinanceOwl</title>
+	<title>Peer Benchmarking - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

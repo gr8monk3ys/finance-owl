@@ -48,7 +48,7 @@
 				</div>
 			{/each}
 			{#if categoryBreakdown.length > 5}
-				<p class="text-xs text-surface-500">+{categoryBreakdown.length - 5} more</p>
+				<p class="text-xs text-surface-400">+{categoryBreakdown.length - 5} more</p>
 			{/if}
 		</div>
 	{:else}
@@ -71,7 +71,7 @@
 					d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"
 				/>
 			</svg>
-			<p class="mt-2 text-xs text-surface-500">No spending data this month</p>
+			<p class="mt-2 text-xs text-surface-400">No spending data this month</p>
 		</div>
 	{/if}
 </Card>

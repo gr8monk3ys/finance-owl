@@ -101,7 +101,7 @@
 </script>
 
 <svelte:head>
-	<title>Fee Analyzer - FinanceOwl</title>
+	<title>Fee Analyzer - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

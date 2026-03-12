@@ -70,7 +70,7 @@
 </script>
 
 <svelte:head>
-	<title>Flagged Transactions - FinanceOwl</title>
+	<title>Flagged Transactions - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

@@ -103,7 +103,7 @@
 </script>
 
 <svelte:head>
-	<title>Savings Goals - FinanceOwl</title>
+	<title>Savings Goals - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

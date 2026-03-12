@@ -64,7 +64,7 @@
 </script>
 
 <svelte:head>
-	<title>Advisor Sharing - FinanceOwl</title>
+	<title>Advisor Sharing - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

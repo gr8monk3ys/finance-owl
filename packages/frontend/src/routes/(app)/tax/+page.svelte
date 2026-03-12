@@ -61,7 +61,7 @@
 </script>
 
 <svelte:head>
-	<title>Tax Preparation - FinanceOwl</title>
+	<title>Tax Preparation - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

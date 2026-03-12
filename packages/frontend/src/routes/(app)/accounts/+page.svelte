@@ -173,7 +173,7 @@
 </script>
 
 <svelte:head>
-	<title>Accounts - FinanceOwl</title>
+	<title>Accounts - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

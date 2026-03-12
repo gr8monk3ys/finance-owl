@@ -109,7 +109,7 @@
 </script>
 
 <svelte:head>
-	<title>Categories - FinanceOwl</title>
+	<title>Categories - Finance Owl</title>
 </svelte:head>
 
 <div class="mx-auto max-w-3xl space-y-6">

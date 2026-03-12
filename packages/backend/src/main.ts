@@ -98,11 +98,18 @@ async function bootstrap() {
     rawBody: true, // Required for Stripe/Plaid webhook signature verification
   });
 
-  // Trust proxy — required for Railway / Vercel reverse proxy.
-  // Ensures correct client IP in rate limiting, logging, and X-Forwarded-* headers.
-  if (isProduction) {
+  const shouldTrustProxy =
+    isProduction || process.env.TRUST_PROXY === '1' || process.env.TRUST_PROXY === 'true';
+
+  // Trust proxy when explicitly requested locally, or by default in production.
+  // This keeps local QA and Playwright rate-limiting behavior aligned with deployed environments.
+  if (shouldTrustProxy) {
     app.set('trust proxy', 1);
-    logger.log('Trust proxy enabled for reverse proxy (Railway)');
+    logger.log(
+      isProduction
+        ? 'Trust proxy enabled for reverse proxy (Railway)'
+        : 'Trust proxy enabled via TRUST_PROXY for local/test traffic',
+    );
   }
 
   // Security headers via helmet

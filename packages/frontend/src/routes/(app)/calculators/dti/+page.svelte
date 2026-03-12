@@ -81,7 +81,7 @@
 </script>
 
 <svelte:head>
-	<title>DTI Calculator - FinanceOwl</title>
+	<title>DTI Calculator - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

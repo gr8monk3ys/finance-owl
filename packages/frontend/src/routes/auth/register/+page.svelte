@@ -25,7 +25,11 @@
 </script>
 
 <svelte:head>
-	<title>Create Account - FinanceOwl</title>
+	<title>Create Account - Finance Owl</title>
+	<meta
+		name="description"
+		content="Create your Finance Owl account to start tracking spending, budgets, subscriptions, and savings in one place."
+	/>
 </svelte:head>
 
 <div class="relative flex min-h-screen items-center justify-center bg-surface-900 px-4 py-8">
@@ -38,7 +42,7 @@
 	<div class="relative w-full max-w-md space-y-8">
 		<!-- Logo & branding -->
 		<div class="text-center">
-			<a aria-label="FinanceOwl home" href="/" class="inline-flex items-center gap-2.5 group">
+			<a aria-label="Finance Owl home" href="/" class="inline-flex items-center gap-2.5 group">
 				<div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 shadow-lg shadow-primary-900/40 transition-transform duration-200 group-hover:scale-105">
 					<svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor">
 						<path d="M12 2C9.5 2 7.5 3.5 7 5.5C5.5 5 3.5 5.5 2.5 7C1.5 8.5 2 10.5 3 11.5C2 12.5 1.5 14.5 2.5 16C3.5 17.5 5.5 18 7 17.5C7.5 19.5 9.5 21 12 21C14.5 21 16.5 19.5 17 17.5C18.5 18 20.5 17.5 21.5 16C22.5 14.5 22 12.5 21 11.5C22 10.5 22.5 8.5 21.5 7C20.5 5.5 18.5 5 17 5.5C16.5 3.5 14.5 2 12 2Z"/>

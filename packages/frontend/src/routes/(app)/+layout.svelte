@@ -140,7 +140,7 @@
 			{#each groups as group}
 				<!-- Group label -->
 				<div class="px-3 pt-4 pb-1.5 first:pt-1">
-					<p class="text-[10px] font-semibold uppercase tracking-wider text-surface-500">
+					<p class="text-[10px] font-semibold uppercase tracking-wider text-surface-400">
 						{groupLabels[group]}
 					</p>
 				</div>
@@ -268,7 +268,7 @@
 				</div>
 				<div class="flex-1 min-w-0">
 					<p class="truncate text-sm font-medium text-white leading-tight">{data.user?.name}</p>
-					<p class="truncate text-xs text-surface-500 leading-tight">{data.user?.email}</p>
+					<p class="truncate text-xs text-surface-400 leading-tight">{data.user?.email}</p>
 				</div>
 			</div>
 			<form method="POST" action="/auth/logout" class="mt-1.5">

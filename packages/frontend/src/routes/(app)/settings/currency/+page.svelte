@@ -40,7 +40,7 @@
 </script>
 
 <svelte:head>
-	<title>Currency Settings - FinanceOwl</title>
+	<title>Currency Settings - Finance Owl</title>
 </svelte:head>
 
 <div class="mx-auto max-w-2xl space-y-6">

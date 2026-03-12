@@ -161,7 +161,7 @@
 </script>
 
 <svelte:head>
-	<title>{data.article.title} - FinanceOwl Learn</title>
+	<title>{data.article.title} - Finance Owl Learn</title>
 </svelte:head>
 
 <div class="mx-auto max-w-4xl space-y-6">

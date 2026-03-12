@@ -9,6 +9,7 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { Link } from 'expo-router';
 import { useAuthStore } from '../../src/stores/auth';
@@ -59,12 +60,14 @@ export default function RegisterScreen() {
       >
         {/* Logo area */}
         <View style={styles.logoContainer}>
-          <View style={styles.logoIcon}>
-            <Text style={styles.logoIconText}>FO</Text>
-          </View>
+          <Image
+            source={require('../../assets/icon.png')}
+            style={styles.logoImage}
+            accessibilityIgnoresInvertColors
+          />
           <Text style={styles.logoTitle}>Create Account</Text>
           <Text style={styles.logoSubtitle}>
-            Get started with FinanceOwl
+            Get started with Finance Owl
           </Text>
         </View>
 
@@ -190,20 +193,13 @@ const styles = StyleSheet.create({
     marginBottom: spacing['3xl'],
   },
   logoIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: borderRadius.xl,
-    backgroundColor: colors.primary[600] + '30',
-    borderWidth: 1,
-    borderColor: colors.primary[500] + '40',
-    alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: spacing.lg,
   },
-  logoIconText: {
-    fontSize: fontSize.xl,
-    fontWeight: fontWeight.bold,
-    color: colors.primary[400],
+  logoImage: {
+    width: 72,
+    height: 72,
+    borderRadius: borderRadius.xl,
+    marginBottom: spacing.lg,
   },
   logoTitle: {
     fontSize: fontSize['2xl'],

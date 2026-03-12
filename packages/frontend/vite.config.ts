@@ -1,8 +1,9 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
+import type { PluginOption } from 'vite';
 
-async function getSentryPlugins() {
+async function getSentryPlugins(): Promise<PluginOption[]> {
 	if (!process.env.SENTRY_AUTH_TOKEN) {
 		return [];
 	}
@@ -25,13 +26,18 @@ async function getSentryPlugins() {
 	}
 }
 
-export default defineConfig(async () => ({
-	plugins: [
-		tailwindcss(),
-		...(await getSentryPlugins()),
-		sveltekit(),
-	],
+const sentryPlugins = await getSentryPlugins();
+
+export default defineConfig({
+	plugins: [tailwindcss(), ...sentryPlugins, sveltekit()],
 	test: {
-		include: ['src/**/*.{test,spec}.{js,ts}']
+		include: ['src/**/*.{test,spec}.{js,ts}'],
+		coverage: {
+			provider: 'v8' as const,
+			reporter: ['text-summary', 'json-summary'] as const,
+			all: true,
+			include: ['src/**/*.{ts,svelte}'],
+			exclude: ['src/**/*.d.ts']
+		}
 	}
-}));
+});

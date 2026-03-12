@@ -52,7 +52,7 @@
 				>
 					{netCashFlow >= 0 ? '+' : ''}{fmt(netCashFlow)}
 				</span>
-				<span class="text-xs text-surface-500">this month</span>
+				<span class="text-xs text-surface-400">this month</span>
 			</div>
 			<div class="mt-1 flex gap-4 text-xs">
 				<span class="text-green-400">{fmt(currentMonth.income)} in</span>
@@ -87,7 +87,7 @@
 					d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5-7.5L16.5 3m0 0L12 7.5M16.5 3v13.5"
 				/>
 			</svg>
-			<p class="mt-2 text-xs text-surface-500">Need more data for cash flow trends</p>
+			<p class="mt-2 text-xs text-surface-400">Need more data for cash flow trends</p>
 		</div>
 	{/if}
 </Card>

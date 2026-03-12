@@ -1,4 +1,4 @@
-# FinanceOwl Mobile
+# Finance Owl Mobile
 
 Native iOS and Android app built with Expo and `expo-router`.
 
@@ -11,6 +11,7 @@ Native iOS and Android app built with Expo and `expo-router`.
 
 ## Release Checks
 
+- Run the repo-wide launch audit: `pnpm launch:check`
 - Validate the project config: `pnpm --filter @finance-owl/mobile run check:expo`
 - Create native projects when needed: `pnpm --filter @finance-owl/mobile prebuild`
 - Export a production bundle for iOS: `pnpm --filter @finance-owl/mobile export:ios`

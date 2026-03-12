@@ -1,6 +1,6 @@
 {
-	"name": "FinanceOwl",
-	"short_name": "FinanceOwl",
+	"name": "Finance Owl",
+	"short_name": "Finance Owl",
 	"description": "Privacy-first personal finance manager",
 	"start_url": "/dashboard",
 	"display": "standalone",

@@ -62,7 +62,7 @@
 </script>
 
 <svelte:head>
-	<title>Net Worth Calculator - FinanceOwl</title>
+	<title>Net Worth Calculator - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

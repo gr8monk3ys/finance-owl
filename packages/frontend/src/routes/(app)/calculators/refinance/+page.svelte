@@ -46,7 +46,7 @@
 </script>
 
 <svelte:head>
-	<title>Refinance Calculator - FinanceOwl</title>
+	<title>Refinance Calculator - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

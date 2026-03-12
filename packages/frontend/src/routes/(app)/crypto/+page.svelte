@@ -316,7 +316,7 @@
 </script>
 
 <svelte:head>
-	<title>Crypto Portfolio - FinanceOwl</title>
+	<title>Crypto Portfolio - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

@@ -65,7 +65,7 @@
 </script>
 
 <svelte:head>
-	<title>Envelopes - FinanceOwl</title>
+	<title>Envelopes - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

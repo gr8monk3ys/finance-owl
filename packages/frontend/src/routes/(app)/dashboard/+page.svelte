@@ -186,7 +186,11 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard - FinanceOwl</title>
+	<title>Dashboard - Finance Owl</title>
+	<meta
+		name="description"
+		content="Track net worth, monthly spending, budgets, cash flow, and recent financial activity from the Finance Owl dashboard."
+	/>
 </svelte:head>
 
 <div class="page-enter space-y-8">
@@ -284,7 +288,7 @@
 						{fmtPct(data.dashboard.spendingChange)} vs last month
 					</p>
 				{:else}
-					<p class="mt-1 text-xs text-surface-500">This month</p>
+					<p class="mt-1 text-xs text-surface-400">This month</p>
 				{/if}
 			</div>
 		</div>
@@ -298,7 +302,7 @@
 							<path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
 						</svg>
 					</div>
-					<p class="text-sm font-medium text-surface-400">Budget Remaining</p>
+					<p class="text-sm font-medium text-surface-300">Budget Remaining</p>
 				</div>
 				{#if data.budgetSummary}
 					<p
@@ -320,13 +324,13 @@
 										: 'var(--fo-primary-500)'}"
 							></div>
 						</div>
-						<p class="mt-1 text-xs text-surface-500">
+						<p class="mt-1 text-xs text-surface-400">
 							{data.budgetSummary.percentUsed.toFixed(0)}% of {fmt(data.budgetSummary.totalBudgeted)}
 						</p>
 					</div>
 				{:else}
-					<p class="mt-2 text-2xl font-bold text-surface-500">--</p>
-					<p class="mt-1 text-xs text-surface-500">
+					<p class="mt-2 text-2xl font-bold text-surface-400">--</p>
+					<p class="mt-1 text-xs text-surface-400">
 						<a href="/budgets" class="text-primary-400 hover:text-primary-300 underline decoration-primary-400/30 underline-offset-2">Set up budgets</a>
 					</p>
 				{/if}
@@ -354,7 +358,7 @@
 						/>
 					</svg>
 				</div>
-				<p class="mt-6 text-xl font-semibold text-white">Welcome to FinanceOwl</p>
+				<p class="mt-6 text-xl font-semibold text-white">Welcome to Finance Owl</p>
 				<p class="mt-2 max-w-sm text-sm leading-relaxed text-surface-400">
 					Get started by linking your bank accounts. We will automatically track your spending, net worth, and budget progress.
 				</p>
@@ -441,7 +445,7 @@
 						<p class="text-sm font-medium text-white">
 							{widgetMeta[widget.type]?.label || widget.type}
 						</p>
-						<p class="text-xs text-surface-500">
+						<p class="text-xs text-surface-400">
 							{widgetMeta[widget.type]?.description || ''}
 						</p>
 					</div>

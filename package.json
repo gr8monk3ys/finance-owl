@@ -7,6 +7,8 @@
     "dev": "node ./scripts/dev.mjs",
     "dev:setup": "node ./scripts/dev.mjs --setup-only",
     "dev:turbo": "turbo dev",
+    "launch:check": "node ./scripts/check-launch-readiness.mjs",
+    "launch:verify": "node ./scripts/check-launch-readiness.mjs --verify",
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",

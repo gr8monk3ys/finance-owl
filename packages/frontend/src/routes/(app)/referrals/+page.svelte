@@ -41,9 +41,9 @@
 
 	function shareViaEmail() {
 		if (!data.code?.code) return;
-		const subject = encodeURIComponent('Join FinanceOwl with my referral code!');
+		const subject = encodeURIComponent('Join Finance Owl with my referral code!');
 		const body = encodeURIComponent(
-			`Hey! I've been using FinanceOwl to manage my finances and I think you'd love it too.\n\nUse my referral code: ${data.code.code}\n\nSign up at https://financeowl.com`
+			`Hey! I've been using Finance Owl to manage my finances and I think you'd love it too.\n\nUse my referral code: ${data.code.code}\n\nSign up at https://financeowl.com`
 		);
 		window.open(`mailto:?subject=${subject}&body=${body}`);
 	}
@@ -61,7 +61,7 @@
 </script>
 
 <svelte:head>
-	<title>Referral Program - FinanceOwl</title>
+	<title>Referral Program - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">
@@ -70,7 +70,7 @@
 		<div>
 			<h2 class="text-2xl font-bold text-white">Referral Program</h2>
 			<p class="mt-1 text-sm text-surface-400">
-				Invite friends and earn rewards when they join FinanceOwl.
+				Invite friends and earn rewards when they join Finance Owl.
 			</p>
 		</div>
 		<Button variant="secondary" onclick={() => (showApplyModal = true)}>

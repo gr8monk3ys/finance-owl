@@ -52,7 +52,7 @@
 </script>
 
 <svelte:head>
-	<title>Settings - FinanceOwl</title>
+	<title>Settings - Finance Owl</title>
 </svelte:head>
 
 <div class="mx-auto max-w-2xl space-y-6">

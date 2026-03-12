@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { publicRoutes } from '$lib/config/public';
 	import { onMount } from 'svelte';
 
 	// Intersection observer for scroll animations
@@ -37,7 +38,7 @@
 	<title>Finance Owl - Take Control of Your Money</title>
 	<meta
 		name="description"
-		content="Track subscriptions, negotiate bills, automate savings, and build wealth. All in one place. Start free."
+		content="Track spending, manage budgets, stay ahead of recurring bills, and build better money habits in one place. Start free."
 	/>
 </svelte:head>
 
@@ -64,7 +65,7 @@
 					<path d="M9 14.5C9 14.5 10 16 12 16C14 16 15 14.5 15 14.5" stroke="#064e3b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 				</svg>
 			</div>
-			<span class="text-xl font-bold text-white tracking-tight">Finance<span class="text-emerald-400">Owl</span></span>
+			<span class="text-xl font-bold text-white tracking-tight">Finance <span class="text-emerald-400">Owl</span></span>
 		</a>
 
 		<!-- Desktop nav links -->
@@ -145,7 +146,7 @@
 				<span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
 				<span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
 			</span>
-			Now in Beta - Join the Early Access
+			Budgets, spending, and savings in one place
 		</div>
 
 		<!-- Headline -->
@@ -158,8 +159,8 @@
 
 		<!-- Sub-headline -->
 		<p class="mt-6 max-w-2xl text-lg leading-relaxed text-gray-400 sm:text-xl">
-			Track subscriptions, negotiate bills, automate savings, and build wealth
-			— all in one place. Your personal finance command center.
+			Track spending, stay on top of recurring bills, and build a plan that
+			actually fits your life. Your personal finance command center.
 		</p>
 
 		<!-- CTAs -->
@@ -292,7 +293,7 @@
 				</div>
 				<h3 class="mt-4 text-lg font-semibold text-white">Subscription Tracker</h3>
 				<p class="mt-2 text-sm leading-relaxed text-gray-400">
-					Find and cancel subscriptions you forgot about. We detect recurring charges automatically and show you what you are really paying.
+					Spot recurring charges, review subscription history, and understand what is quietly draining your budget each month.
 				</p>
 			</div>
 
@@ -318,7 +319,7 @@
 				</div>
 				<h3 class="mt-4 text-lg font-semibold text-white">Smart Savings</h3>
 				<p class="mt-2 text-sm leading-relaxed text-gray-400">
-					Automate savings with round-ups and custom rules. Set it and forget it while your savings grow in the background.
+					Set up savings goals, round-up style rules, and progress tracking so it is easier to build momentum over time.
 				</p>
 			</div>
 
@@ -348,16 +349,16 @@
 				</p>
 			</div>
 
-			<!-- AI Insights -->
+			<!-- Spending Insights -->
 			<div class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80">
 				<div class="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 transition-colors group-hover:bg-cyan-500/15">
 					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
 					</svg>
 				</div>
-				<h3 class="mt-4 text-lg font-semibold text-white">AI Insights</h3>
+				<h3 class="mt-4 text-lg font-semibold text-white">Spending Insights</h3>
 				<p class="mt-2 text-sm leading-relaxed text-gray-400">
-					Smart spending analysis and predictions. Get personalized recommendations to optimize your finances and reach goals faster.
+					See trends, category changes, and practical recommendations that help you make better decisions with less guesswork.
 				</p>
 			</div>
 		</div>
@@ -375,9 +376,9 @@
 	<div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="animate-on-scroll mx-auto max-w-2xl text-center">
 			<p class="text-sm font-semibold uppercase tracking-wider text-emerald-400">Simple Setup</p>
-			<h2 class="mt-3 text-3xl font-bold text-white sm:text-4xl">Up and Running in 30 Seconds</h2>
+			<h2 class="mt-3 text-3xl font-bold text-white sm:text-4xl">Get Set Up Quickly</h2>
 			<p class="mt-4 text-lg text-gray-400">
-				No complicated setup. No spreadsheets. Just connect and go.
+				Start with manual tracking right away, then connect more pieces as your setup grows.
 			</p>
 		</div>
 
@@ -392,7 +393,7 @@
 					<div class="absolute left-[calc(50%+2rem)] top-7 hidden h-px w-[calc(100%-4rem)] bg-gradient-to-r from-emerald-500/30 to-transparent lg:block"></div>
 					<h3 class="mt-6 text-xl font-semibold text-white">Link Your Accounts</h3>
 					<p class="mt-3 text-sm leading-relaxed text-gray-400">
-						Securely connect your bank accounts, credit cards, and investments in seconds. We use Plaid for bank-level encryption and read-only access.
+						Connect bank accounts, credit cards, and investments when account-linking is enabled for your workspace, or begin with manual accounts immediately.
 					</p>
 				</div>
 			</div>
@@ -419,7 +420,7 @@
 					</div>
 					<h3 class="mt-6 text-xl font-semibold text-white">Save Money Automatically</h3>
 					<p class="mt-3 text-sm leading-relaxed text-gray-400">
-						Set up smart rules, round-ups, and automated transfers. Watch your savings grow while AI finds even more ways to save.
+						Use savings goals, recurring reminders, and smart rules to stay consistent and keep more of what you earn.
 					</p>
 				</div>
 			</div>
@@ -428,88 +429,49 @@
 </section>
 
 <!-- =====================================================
-     SOCIAL PROOF / STATS SECTION
+     TRUST & POSITIONING SECTION
      ===================================================== -->
 <section class="relative border-y border-white/5 bg-gray-950 py-20">
 	<div class="absolute inset-0 bg-gradient-to-b from-emerald-500/[0.02] to-transparent"></div>
 
 	<div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-		<!-- Stats -->
-		<div class="animate-on-scroll grid gap-8 sm:grid-cols-3">
-			<div class="text-center">
-				<p class="text-4xl font-bold text-white sm:text-5xl">2,847</p>
-				<p class="mt-2 text-sm text-gray-400">Beta testers and counting</p>
-			</div>
-			<div class="text-center">
-				<p class="text-4xl font-bold text-emerald-400 sm:text-5xl">$312</p>
-				<p class="mt-2 text-sm text-gray-400">Average monthly savings per user</p>
-			</div>
-			<div class="text-center">
-				<p class="text-4xl font-bold text-white sm:text-5xl">4.8/5</p>
-				<p class="mt-2 text-sm text-gray-400">Rating from early users</p>
-			</div>
+		<div class="animate-on-scroll mx-auto max-w-3xl text-center">
+			<p class="text-sm font-semibold uppercase tracking-wider text-emerald-400">Why Finance Owl</p>
+			<h2 class="mt-3 text-3xl font-bold text-white sm:text-4xl">
+				Built for clarity, control, and follow-through
+			</h2>
+			<p class="mt-4 text-lg text-gray-400">
+				Finance Owl focuses on the workflows people return to every week: reviewing spending,
+				adjusting budgets, and keeping financial decisions organized in one place.
+			</p>
 		</div>
 
-		<!-- Testimonials -->
-		<div class="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+		<div class="mt-14 grid gap-6 lg:grid-cols-3">
 			<div class="animate-on-scroll rounded-2xl border border-white/5 bg-gray-900/50 p-6">
-				<div class="flex gap-1">
-					{#each Array(5) as _}
-						<svg class="h-4 w-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-							<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-						</svg>
-					{/each}
-				</div>
-				<p class="mt-4 text-sm leading-relaxed text-gray-300">
-					"Finance Owl found $847 in subscriptions I forgot about. Cancelled three services I had not used in months. This app pays for itself."
+				<p class="text-sm font-semibold text-emerald-400">One connected view</p>
+				<h3 class="mt-3 text-xl font-semibold text-white">See balances, budgets, and transactions together.</h3>
+				<p class="mt-3 text-sm leading-relaxed text-gray-300">
+					Track the basics from one dashboard instead of bouncing between spreadsheets, banking apps,
+					and manual notes.
 				</p>
-				<div class="mt-4 flex items-center gap-3">
-					<div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600/20 text-sm font-semibold text-emerald-400">M</div>
-					<div>
-						<p class="text-sm font-medium text-white">Marcus T.</p>
-						<p class="text-xs text-gray-500">Beta user since October</p>
-					</div>
-				</div>
 			</div>
 
 			<div class="animate-on-scroll rounded-2xl border border-white/5 bg-gray-900/50 p-6">
-				<div class="flex gap-1">
-					{#each Array(5) as _}
-						<svg class="h-4 w-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-							<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-						</svg>
-					{/each}
-				</div>
-				<p class="mt-4 text-sm leading-relaxed text-gray-300">
-					"The envelope budgeting is a game-changer. I finally feel in control of my spending. The AI insights are surprisingly accurate too."
+				<p class="text-sm font-semibold text-blue-400">Fast weekly check-ins</p>
+				<h3 class="mt-3 text-xl font-semibold text-white">Search, review, and adjust without friction.</h3>
+				<p class="mt-3 text-sm leading-relaxed text-gray-300">
+					The core experience is designed for quick decision-making: recent activity, budget progress,
+					and recurring spend all stay easy to scan.
 				</p>
-				<div class="mt-4 flex items-center gap-3">
-					<div class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600/20 text-sm font-semibold text-blue-400">S</div>
-					<div>
-						<p class="text-sm font-medium text-white">Sarah K.</p>
-						<p class="text-xs text-gray-500">Beta user since November</p>
-					</div>
-				</div>
 			</div>
 
-			<div class="animate-on-scroll rounded-2xl border border-white/5 bg-gray-900/50 p-6 sm:col-span-2 lg:col-span-1">
-				<div class="flex gap-1">
-					{#each Array(5) as _}
-						<svg class="h-4 w-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-							<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-						</svg>
-					{/each}
-				</div>
-				<p class="mt-4 text-sm leading-relaxed text-gray-300">
-					"Switched from Mint after it shut down. Finance Owl is better in every way. The bill negotiation feature saved me $200/month on internet and insurance."
+			<div class="animate-on-scroll rounded-2xl border border-white/5 bg-gray-900/50 p-6">
+				<p class="text-sm font-semibold text-violet-400">Security-first posture</p>
+				<h3 class="mt-3 text-xl font-semibold text-white">Use connected finance tools without giving up control.</h3>
+				<p class="mt-3 text-sm leading-relaxed text-gray-300">
+					Read-only account access, strong authentication options, and clear privacy controls are
+					part of the product experience, not hidden footnotes.
 				</p>
-				<div class="mt-4 flex items-center gap-3">
-					<div class="flex h-9 w-9 items-center justify-center rounded-full bg-violet-600/20 text-sm font-semibold text-violet-400">J</div>
-					<div>
-						<p class="text-sm font-medium text-white">James L.</p>
-						<p class="text-xs text-gray-500">Beta user since September</p>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -524,13 +486,14 @@
 	</div>
 
 	<div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-		<div class="animate-on-scroll mx-auto max-w-2xl text-center">
-			<p class="text-sm font-semibold uppercase tracking-wider text-emerald-400">Simple Pricing</p>
-			<h2 class="mt-3 text-3xl font-bold text-white sm:text-4xl">Start Free, Upgrade When Ready</h2>
-			<p class="mt-4 text-lg text-gray-400">
-				No credit card required. No hidden fees. Just honest pricing.
-			</p>
-		</div>
+			<div class="animate-on-scroll mx-auto max-w-2xl text-center">
+				<p class="text-sm font-semibold uppercase tracking-wider text-emerald-400">Simple Pricing</p>
+				<h2 class="mt-3 text-3xl font-bold text-white sm:text-4xl">Start Free, Upgrade When Ready</h2>
+				<p class="mt-4 text-lg text-gray-400">
+					Choose the plan that fits how deeply you want to manage money, from a free account to
+					shared household planning.
+				</p>
+			</div>
 
 		<div class="mt-16 grid gap-6 lg:grid-cols-3">
 			<!-- Free tier -->
@@ -559,62 +522,62 @@
 				</a>
 			</div>
 
-			<!-- Premium tier -->
-			<div class="animate-on-scroll relative rounded-2xl border border-emerald-500/30 bg-gradient-to-b from-emerald-950/50 to-gray-900/50 p-8 shadow-xl shadow-emerald-900/20">
-				<div class="absolute -top-3 left-1/2 -translate-x-1/2">
-					<span class="rounded-full bg-emerald-500 px-4 py-1 text-xs font-semibold text-white shadow-lg shadow-emerald-900/40">
-						Most Popular
-					</span>
-				</div>
-				<h3 class="text-lg font-semibold text-white">Premium</h3>
-				<p class="mt-2 text-sm text-gray-400">For serious money managers</p>
-				<div class="mt-6">
-					<span class="text-4xl font-bold text-white">$4.99</span>
-					<span class="text-gray-500">/month</span>
-				</div>
-				<ul class="mt-8 space-y-3">
-					{#each ['Unlimited linked accounts', 'AI spending insights', 'Bill negotiation tools', 'Smart savings automation', 'Investment tracking', 'Custom budget envelopes', 'Priority support'] as feature}
-						<li class="flex items-center gap-3 text-sm text-gray-300">
-							<svg class="h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+				<!-- Pro tier -->
+				<div class="animate-on-scroll relative rounded-2xl border border-emerald-500/30 bg-gradient-to-b from-emerald-950/50 to-gray-900/50 p-8 shadow-xl shadow-emerald-900/20">
+					<div class="absolute -top-3 left-1/2 -translate-x-1/2">
+						<span class="rounded-full bg-emerald-500 px-4 py-1 text-xs font-semibold text-white shadow-lg shadow-emerald-900/40">
+							Most Popular
+						</span>
+					</div>
+					<h3 class="text-lg font-semibold text-white">Pro</h3>
+					<p class="mt-2 text-sm text-gray-400">For people who want the full toolkit</p>
+					<div class="mt-6">
+						<span class="text-4xl font-bold text-white">$9.99</span>
+						<span class="text-gray-500">/month</span>
+					</div>
+					<ul class="mt-8 space-y-3">
+						{#each ['Unlimited linked accounts', 'AI spending insights', 'Subscription tracking', 'Bill negotiation tools', 'Smart savings automation', 'Investment tracking', 'Priority support'] as feature}
+							<li class="flex items-center gap-3 text-sm text-gray-300">
+								<svg class="h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
 							</svg>
 							{feature}
 						</li>
 					{/each}
 				</ul>
-				<a
-					href="/auth/register"
-					class="mt-8 block rounded-xl bg-emerald-600 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-emerald-900/40 transition hover:bg-emerald-500"
-				>
-					Start 14-Day Free Trial
-				</a>
-			</div>
+					<a
+						href="/auth/register"
+						class="mt-8 block rounded-xl bg-emerald-600 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-emerald-900/40 transition hover:bg-emerald-500"
+					>
+						Start with Pro
+					</a>
+				</div>
 
-			<!-- Family tier -->
-			<div class="animate-on-scroll rounded-2xl border border-white/5 bg-gray-900/50 p-8">
-				<h3 class="text-lg font-semibold text-white">Family</h3>
-				<p class="mt-2 text-sm text-gray-400">Manage finances together</p>
-				<div class="mt-6">
-					<span class="text-4xl font-bold text-white">$9.99</span>
-					<span class="text-gray-500">/month</span>
-				</div>
-				<ul class="mt-8 space-y-3">
-					{#each ['Everything in Premium', 'Up to 5 family members', 'Shared budgets & goals', 'Household spending views', 'Family savings challenges', 'Allowance management'] as feature}
-						<li class="flex items-center gap-3 text-sm text-gray-300">
-							<svg class="h-5 w-5 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+				<!-- Premium tier -->
+				<div class="animate-on-scroll rounded-2xl border border-white/5 bg-gray-900/50 p-8">
+					<h3 class="text-lg font-semibold text-white">Premium</h3>
+					<p class="mt-2 text-sm text-gray-400">For households planning together</p>
+					<div class="mt-6">
+						<span class="text-4xl font-bold text-white">$19.99</span>
+						<span class="text-gray-500">/month</span>
+					</div>
+					<ul class="mt-8 space-y-3">
+						{#each ['Everything in Pro', 'Household sharing for up to 10 members', 'Shared budgets and goals', 'Advisor sharing', 'API access', 'Dedicated support'] as feature}
+							<li class="flex items-center gap-3 text-sm text-gray-300">
+								<svg class="h-5 w-5 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
 							</svg>
 							{feature}
 						</li>
 					{/each}
 				</ul>
-				<a
-					href="/auth/register"
-					class="mt-8 block rounded-xl border border-white/10 bg-white/5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
-				>
-					Start 14-Day Free Trial
-				</a>
-			</div>
+					<a
+						href="/auth/register"
+						class="mt-8 block rounded-xl border border-white/10 bg-white/5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
+					>
+						Explore Premium
+					</a>
+				</div>
 		</div>
 	</div>
 </section>
@@ -629,12 +592,13 @@
 
 	<div class="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
 		<div class="animate-on-scroll">
-			<h2 class="text-3xl font-bold text-white sm:text-4xl">
-				Ready to Take Control?
-			</h2>
-			<p class="mt-4 text-lg text-gray-400">
-				Join thousands of people who are already saving more, spending smarter, and building wealth with Finance Owl.
-			</p>
+				<h2 class="text-3xl font-bold text-white sm:text-4xl">
+					Ready to Take Control?
+				</h2>
+				<p class="mt-4 text-lg text-gray-400">
+					Start with the core workflows that already matter most: understanding where money is going,
+					what needs attention, and what to change next.
+				</p>
 			<div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
 				<a
 					href="/auth/register"
@@ -646,7 +610,7 @@
 					</svg>
 				</a>
 			</div>
-			<p class="mt-6 text-sm text-gray-500">Free forever plan available. No credit card required.</p>
+			<p class="mt-6 text-sm text-gray-400">Free forever plan available. No credit card required.</p>
 		</div>
 	</div>
 </section>
@@ -667,56 +631,56 @@
 							<circle cx="14.5" cy="10" r="1.5" fill="#064e3b"/>
 						</svg>
 					</div>
-					<span class="text-lg font-bold text-white">Finance<span class="text-emerald-400">Owl</span></span>
+						<span class="text-lg font-bold text-white">Finance <span class="text-emerald-400">Owl</span></span>
 				</a>
-				<p class="mt-3 text-sm text-gray-500">
-					Your personal finance command center. Track, save, and grow your wealth.
+				<p class="mt-3 text-sm text-gray-400">
+					Your personal finance command center for budgets, spending, and steadier money habits.
 				</p>
 			</div>
 
 			<!-- Product -->
 			<div>
-				<h4 class="text-sm font-semibold text-white">Product</h4>
+				<h3 class="text-sm font-semibold text-white">Product</h3>
 				<ul class="mt-4 space-y-2.5">
-					<li><button onclick={() => scrollTo('features')} class="text-sm text-gray-400 transition hover:text-white">Features</button></li>
-					<li><button onclick={() => scrollTo('pricing')} class="text-sm text-gray-400 transition hover:text-white">Pricing</button></li>
-					<li><a href="/auth/register" class="text-sm text-gray-400 transition hover:text-white">Get Started</a></li>
+					<li><button onclick={() => scrollTo('features')} class="text-sm text-gray-300 transition hover:text-white">Features</button></li>
+					<li><button onclick={() => scrollTo('pricing')} class="text-sm text-gray-300 transition hover:text-white">Pricing</button></li>
+					<li><a href="/auth/register" class="text-sm text-gray-300 transition hover:text-white">Get Started</a></li>
 				</ul>
 			</div>
 
 			<!-- Company -->
 			<div>
-				<h4 class="text-sm font-semibold text-white">Resources</h4>
+				<h3 class="text-sm font-semibold text-white">Resources</h3>
 				<ul class="mt-4 space-y-2.5">
-					<li><a href="/security" class="text-sm text-gray-400 transition hover:text-white">Security</a></li>
-					<li><a href="https://github.com/gr8monk3ys/finance-owl" class="text-sm text-gray-400 transition hover:text-white">GitHub</a></li>
-					<li><a href="mailto:support@financeowl.com" class="text-sm text-gray-400 transition hover:text-white">Support</a></li>
+					<li><a href="/security" class="text-sm text-gray-300 transition hover:text-white">Security</a></li>
+					<li><a href="https://github.com/gr8monk3ys/finance-owl" class="text-sm text-gray-300 transition hover:text-white">GitHub</a></li>
+					<li><a href={publicRoutes.support} class="text-sm text-gray-300 transition hover:text-white">Support</a></li>
 				</ul>
 			</div>
 
 			<!-- Legal -->
 			<div>
-				<h4 class="text-sm font-semibold text-white">Legal</h4>
+				<h3 class="text-sm font-semibold text-white">Legal</h3>
 				<ul class="mt-4 space-y-2.5">
-					<li><a href="/privacy" class="text-sm text-gray-400 transition hover:text-white">Privacy Policy</a></li>
-					<li><a href="/terms" class="text-sm text-gray-400 transition hover:text-white">Terms of Service</a></li>
-					<li><a href="/security" class="text-sm text-gray-400 transition hover:text-white">Security</a></li>
+					<li><a href="/privacy" class="text-sm text-gray-300 transition hover:text-white">Privacy Policy</a></li>
+					<li><a href="/terms" class="text-sm text-gray-300 transition hover:text-white">Terms of Service</a></li>
+					<li><a href="/security" class="text-sm text-gray-300 transition hover:text-white">Security</a></li>
 				</ul>
 			</div>
 		</div>
 
 		<!-- Bottom bar -->
 		<div class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 sm:flex-row">
-			<p class="text-sm text-gray-500">{currentYear} Finance Owl. All rights reserved.</p>
+			<p class="text-sm text-gray-400">{currentYear} Finance Owl. All rights reserved.</p>
 			<div class="flex gap-4">
 				<!-- Support -->
-				<a href="mailto:support@financeowl.com" class="text-gray-500 transition hover:text-white" aria-label="Email support">
+				<a href={publicRoutes.support} class="text-gray-400 transition hover:text-white" aria-label="Support">
 					<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M21.75 7.5v9A2.25 2.25 0 0119.5 18.75h-15A2.25 2.25 0 012.25 16.5v-9m19.5 0A2.25 2.25 0 0019.5 5.25h-15A2.25 2.25 0 002.25 7.5m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 9.659A2.25 2.25 0 012.25 7.743V7.5" />
 					</svg>
 				</a>
 				<!-- GitHub -->
-				<a href="https://github.com/gr8monk3ys/finance-owl" class="text-gray-500 transition hover:text-white" aria-label="GitHub">
+				<a href="https://github.com/gr8monk3ys/finance-owl" class="text-gray-400 transition hover:text-white" aria-label="GitHub">
 					<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
 						<path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
 					</svg>

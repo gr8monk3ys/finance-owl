@@ -97,11 +97,17 @@ describe('HealthController', () => {
       const failingDb = createMockDb({ shouldFail: true });
       const failController = new HealthController(failingDb, configService);
 
-      const result = await failController.ready();
-
-      expect(result.status).toBe('unhealthy');
-      expect(result.services.database.status).toBe('error');
-      expect(result.services.database.message).toBe('Database connection failed');
+      await expect(failController.ready()).rejects.toMatchObject({
+        response: expect.objectContaining({
+          status: 'unhealthy',
+          services: expect.objectContaining({
+            database: expect.objectContaining({
+              status: 'error',
+              message: 'Database connection failed',
+            }),
+          }),
+        }),
+      });
     });
 
     it('should return redis unavailable when REDIS_URL is not configured', async () => {

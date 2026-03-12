@@ -179,7 +179,7 @@
 </script>
 
 <svelte:head>
-	<title>Cancel Subscriptions - FinanceOwl</title>
+	<title>Cancel Subscriptions - Finance Owl</title>
 </svelte:head>
 
 <div class="mx-auto max-w-4xl space-y-6">
@@ -680,7 +680,7 @@
 				</div>
 				<p class="mt-4 text-lg font-semibold text-white">Cancellation Initiated</p>
 				<p class="mt-1 text-sm text-surface-400">
-					Follow the provider instructions to complete your cancellation, then confirm it in FinanceOwl.
+					Follow the provider instructions to complete your cancellation, then confirm it in Finance Owl.
 				</p>
 				{#if selectedSubscription}
 					<div class="mt-4">

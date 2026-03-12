@@ -120,7 +120,7 @@
 </script>
 
 <svelte:head>
-	<title>Smart Savings - FinanceOwl</title>
+	<title>Smart Savings - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

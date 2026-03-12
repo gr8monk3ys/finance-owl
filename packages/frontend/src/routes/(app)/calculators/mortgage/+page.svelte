@@ -108,7 +108,7 @@
 </script>
 
 <svelte:head>
-	<title>Mortgage Calculator - FinanceOwl</title>
+	<title>Mortgage Calculator - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

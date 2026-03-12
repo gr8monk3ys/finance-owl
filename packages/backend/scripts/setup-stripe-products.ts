@@ -1,7 +1,8 @@
 /**
  * Stripe Product & Price Setup Script
  *
- * Creates the 3 FinanceOwl products and 6 prices (monthly + yearly for each paid tier) in Stripe.
+ * Creates the Finance Owl products and recurring prices used by the app's
+ * current billing model.
  * This script is idempotent -- it checks if products already exist before creating them.
  *
  * Usage:
@@ -64,30 +65,30 @@ interface PlanConfig {
 
 const PLANS: PlanConfig[] = [
   {
-    name: 'FinanceOwl Free',
+    name: 'Finance Owl Free',
     description:
       'Basic personal finance tracking. 2 linked accounts, manual transactions, basic budgets.',
     metadata: { tier: 'free' },
     prices: {},
   },
   {
-    name: 'FinanceOwl Premium',
+    name: 'Finance Owl Pro',
     description:
-      'Unlimited accounts, subscription tracking, bill negotiation, smart savings, investment tracking, reports.',
-    metadata: { tier: 'premium' },
-    prices: {
-      monthly: 499, // $4.99
-      yearly: 4999, // $49.99
-    },
-  },
-  {
-    name: 'FinanceOwl Family',
-    description:
-      'Everything in Premium + household sharing (up to 5 members), advisor sharing, priority support.',
-    metadata: { tier: 'family' },
+      'Unlimited accounts, subscription tracking, bill negotiation, smart savings, investment tracking, and advanced reports.',
+    metadata: { tier: 'pro' },
     prices: {
       monthly: 999, // $9.99
       yearly: 9999, // $99.99
+    },
+  },
+  {
+    name: 'Finance Owl Premium',
+    description:
+      'Everything in Pro plus household sharing, advisor access, API access, and dedicated support.',
+    metadata: { tier: 'premium' },
+    prices: {
+      monthly: 1999, // $19.99
+      yearly: 19999, // $199.99
     },
   },
 ];
@@ -126,7 +127,7 @@ async function findExistingPrice(
 // ---------------------------------------------------------------------------
 
 async function main() {
-  console.log('FinanceOwl -- Stripe Product & Price Setup');
+  console.log('Finance Owl -- Stripe Product & Price Setup');
   console.log('==========================================\n');
 
   const results: Record<string, string> = {};

@@ -67,7 +67,7 @@
 </script>
 
 <svelte:head>
-	<title>Marketplace - FinanceOwl</title>
+	<title>Marketplace - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

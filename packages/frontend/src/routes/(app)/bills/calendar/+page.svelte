@@ -213,7 +213,7 @@
 </script>
 
 <svelte:head>
-	<title>Bill Calendar - FinanceOwl</title>
+	<title>Bill Calendar - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

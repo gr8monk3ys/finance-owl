@@ -90,7 +90,7 @@
 </script>
 
 <svelte:head>
-	<title>Learn - FinanceOwl</title>
+	<title>Learn - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

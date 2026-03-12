@@ -14,7 +14,7 @@ Finance Owl gives you complete control over your financial data. Track accounts,
 - **Multi-household support** with advisor sharing
 - **Retirement and debt-payoff planners**
 - **Tax preparation** helpers and data export
-- **Mobile app** (iOS/Android) and Apple Watch companion
+- **Mobile app companion** (iOS/Android)
 - **End-to-end encryption** for sensitive fields; WebAuthn/passkey and TOTP 2FA
 
 ## Tech Stack
@@ -53,6 +53,8 @@ docker compose up -d postgres redis
 
 # Set up environment variables
 cp packages/backend/.env.example packages/backend/.env
+cp packages/frontend/.env.example packages/frontend/.env
+cp packages/mobile/.env.example packages/mobile/.env
 # Edit .env with your secrets (JWT_SECRET, ENCRYPTION_KEY, etc.)
 
 # Run database migrations and seed
@@ -86,7 +88,7 @@ finance-owl/
     frontend/      # SvelteKit web application
     mobile/        # Expo / React Native mobile app
     shared/        # Zod schemas and constants shared across packages
-    watch/         # Apple Watch companion app
+    watch/         # Apple Watch package / experiments
   docker/          # Dockerfiles, Caddyfile, Redis config
   .github/         # CI/CD workflows (GitHub Actions)
   docker-compose.yml
@@ -100,6 +102,8 @@ Run from the repository root:
 | Command | Description |
 |---------|-------------|
 | `pnpm dev` | Start all packages in watch mode |
+| `pnpm launch:check` | Audit launch prerequisites, public assets, envs, and release blockers |
+| `pnpm launch:verify` | Run the launch audit plus code-level verification commands |
 | `pnpm build` | Build all packages |
 | `pnpm lint` | Lint all packages |
 | `pnpm typecheck` | Type-check all packages |
@@ -126,6 +130,8 @@ Backend-specific (run with `pnpm --filter @finance-owl/backend`):
 - [Architecture Overview](ARCHITECTURE.md)
 - [Contributing Guide](CONTRIBUTING.md)
 - [Security Policy](SECURITY.md)
+- [Launch Readiness Guide](docs/launch-readiness.md)
+- [App Store Metadata Template](docs/app-store-metadata.md)
 - [Backend README](packages/backend/README.md)
 - [Frontend README](packages/frontend/README.md)
 

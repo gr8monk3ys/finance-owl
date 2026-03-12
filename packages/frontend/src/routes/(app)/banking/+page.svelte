@@ -84,7 +84,7 @@
 </script>
 
 <svelte:head>
-	<title>Banking | FinanceOwl</title>
+	<title>Banking | Finance Owl</title>
 </svelte:head>
 
 <div class="banking-page">
@@ -346,7 +346,7 @@
 				{#each rates as rate}
 					<Card>
 						<div class="rate-card">
-							<div class="rate-provider">{rate.provider === 'default' ? 'FinanceOwl' : rate.provider}</div>
+							<div class="rate-provider">{rate.provider === 'default' ? 'Finance Owl' : rate.provider}</div>
 							<div class="rate-row">
 								<span>Savings APY</span>
 								<span class="rate-value">{(rate.savings.apy * 100).toFixed(2)}%</span>

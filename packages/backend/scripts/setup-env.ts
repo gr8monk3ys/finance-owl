@@ -225,7 +225,7 @@ const ENV_VARS: EnvVar[] = [
   },
   {
     key: 'SMTP_FROM',
-    defaultValue: 'FinanceOwl <noreply@financeowl.com>',
+    defaultValue: 'Finance Owl <noreply@financeowl.com>',
     comment: 'From address for emails',
     required: false,
     category: 'email',
@@ -234,7 +234,7 @@ const ENV_VARS: EnvVar[] = [
   // WebAuthn
   {
     key: 'WEBAUTHN_RP_NAME',
-    defaultValue: 'FinanceOwl',
+    defaultValue: 'Finance Owl',
     comment: 'WebAuthn relying party name',
     required: false,
     category: 'webauthn',
@@ -316,7 +316,7 @@ async function prompt(rl: readline.Interface, question: string): Promise<string>
 // ---------------------------------------------------------------------------
 async function setup(): Promise<void> {
   console.log('');
-  console.log('  FinanceOwl -- Environment Setup');
+  console.log('  Finance Owl -- Environment Setup');
   console.log('  ==========================================');
   console.log('');
   console.log('  This will generate a .env file with your configuration.');
@@ -349,7 +349,7 @@ async function setup(): Promise<void> {
 
   const envLines: string[] = [
     '# ===========================================',
-    '# FinanceOwl Environment Configuration',
+    '# Finance Owl Environment Configuration',
     `# Generated on ${new Date().toISOString().slice(0, 10)}`,
     '# ===========================================',
     '',

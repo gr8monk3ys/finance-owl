@@ -65,7 +65,7 @@
 </script>
 
 <svelte:head>
-	<title>Forecast - FinanceOwl</title>
+	<title>Forecast - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">
