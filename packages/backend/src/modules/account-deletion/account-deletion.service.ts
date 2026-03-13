@@ -10,6 +10,8 @@ import { ConfigService } from '@nestjs/config';
 import { eq, and, desc } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { EmailService } from '../email/email.service';
+import { BankSyncService } from '../bank-sync/bank-sync.service';
+import { BillingService } from '../billing/billing.service';
 import { dataDeletionRequests } from '../privacy/privacy.schema';
 import { users, sessions, webauthnCredentials } from '../../database/schema/users';
 import { accounts, plaidItems } from '../../database/schema/accounts';
@@ -51,6 +53,8 @@ export class AccountDeletionService {
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
     private emailService: EmailService,
     private configService: ConfigService,
+    private bankSyncService: BankSyncService,
+    private billingService: BillingService,
   ) {}
 
   /**
@@ -239,20 +243,29 @@ export class AccountDeletionService {
     this.logger.log(`Executing account deletion for user ${userId}`);
 
     try {
-      // 1. Revoke all Plaid access tokens (log them, actual API call would happen here)
+      // 1. Revoke all Plaid access tokens via BankSyncService
       const plaidItemsToRevoke = await this.db
         .select()
         .from(plaidItems)
         .where(eq(plaidItems.userId, userId));
 
       for (const item of plaidItemsToRevoke) {
-        this.logger.log(
-          `Revoking Plaid access token for item ${item.plaidItemId}`,
-        );
-        // In production: await plaidClient.itemRemove({ access_token: decryptedToken });
+        try {
+          this.logger.log(
+            `Revoking Plaid access token for item ${item.plaidItemId}`,
+          );
+          await this.bankSyncService.unlinkItem(userId, item.id);
+          this.logger.log(
+            `Successfully revoked Plaid item ${item.plaidItemId}`,
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Failed to revoke Plaid item ${item.plaidItemId}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
       }
 
-      // 2. Cancel Stripe subscription (log it, actual API call would happen here)
+      // 2. Cancel Stripe subscription via BillingService
       const [subscription] = await this.db
         .select()
         .from(userSubscriptions)
@@ -260,10 +273,19 @@ export class AccountDeletionService {
         .limit(1);
 
       if (subscription?.stripeSubscriptionId) {
-        this.logger.log(
-          `Cancelling Stripe subscription ${subscription.stripeSubscriptionId}`,
-        );
-        // In production: await stripe.subscriptions.cancel(subscription.stripeSubscriptionId);
+        try {
+          this.logger.log(
+            `Cancelling Stripe subscription ${subscription.stripeSubscriptionId}`,
+          );
+          await this.billingService.cancelSubscription(userId, false);
+          this.logger.log(
+            `Successfully cancelled Stripe subscription ${subscription.stripeSubscriptionId}`,
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Failed to cancel Stripe subscription ${subscription.stripeSubscriptionId}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
       }
 
       // 3. Delete all user data atomically within a transaction
