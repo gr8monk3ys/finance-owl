@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
 	import type { LayoutData } from './$types';
 	import OfflineBanner from '$components/layout/OfflineBanner.svelte';
@@ -271,7 +272,15 @@
 					<p class="truncate text-xs text-surface-400 leading-tight">{data.user?.email}</p>
 				</div>
 			</div>
-			<form method="POST" action="/auth/logout" class="mt-1.5">
+			<form
+				method="POST"
+				action="/auth/logout"
+				class="mt-1.5"
+				use:enhance={() => {
+					// Signal the service worker to clear cached API data before logout completes
+					navigator.serviceWorker?.controller?.postMessage({ type: 'LOGOUT' });
+				}}
+			>
 				<button
 					type="submit"
 					class="w-full flex items-center gap-2 rounded-lg px-4 py-1.5 text-left text-sm text-surface-400

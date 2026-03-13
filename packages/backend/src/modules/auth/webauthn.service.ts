@@ -53,7 +53,7 @@ export class WebAuthnService {
       })),
       authenticatorSelection: {
         residentKey: 'preferred',
-        userVerification: 'preferred',
+        userVerification: 'required',
       },
     });
 
@@ -116,7 +116,7 @@ export class WebAuthnService {
     const options = await generateAuthenticationOptions({
       rpID: this.rpID,
       allowCredentials,
-      userVerification: 'preferred',
+      userVerification: 'required',
     });
 
     // Store challenge keyed by a temp ID when no userId

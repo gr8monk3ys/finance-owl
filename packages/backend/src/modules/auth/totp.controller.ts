@@ -12,9 +12,6 @@ import { IsString, Length, Matches } from 'class-validator';
 
 class EnableTotpDto {
   @IsString()
-  secret!: string;
-
-  @IsString()
   @Length(6, 8)
   @Matches(/^\d+$/, { message: 'TOTP code must be numeric' })
   code!: string;
@@ -45,7 +42,7 @@ export class TotpController {
     @CurrentUser('id') userId: string,
     @Body() dto: EnableTotpDto,
   ) {
-    return this.totpService.enableTotp(userId, dto.secret, dto.code);
+    return this.totpService.enableTotp(userId, dto.code);
   }
 
   @Post('disable')

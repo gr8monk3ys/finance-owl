@@ -52,11 +52,10 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 		return;
 	}
 
-	// API data routes (SvelteKit internal data fetches): stale-while-revalidate
-	if (url.pathname.endsWith('/__data.json')) {
-		event.respondWith(staleWhileRevalidate(request, API_CACHE_NAME));
-		return;
-	}
+	// __data.json responses contain authenticated financial data and should not be
+	// cached by the service worker.  Let these requests go straight to the network.
+	// (Previously used stale-while-revalidate, which risked leaking data post-logout.)
+	// if (url.pathname.endsWith('/__data.json')) { ... }
 
 	// Navigation requests (HTML pages): network-first
 	if (request.mode === 'navigate') {
@@ -66,6 +65,13 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 
 	// Everything else: network-first
 	event.respondWith(networkFirst(request));
+});
+
+// Clear cached API data when the user logs out to prevent data leakage
+self.addEventListener('message', (event) => {
+	if (event.data?.type === 'LOGOUT') {
+		caches.delete(API_CACHE_NAME);
+	}
 });
 
 async function cacheFirst(request: Request): Promise<Response> {

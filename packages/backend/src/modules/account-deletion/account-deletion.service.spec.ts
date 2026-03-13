@@ -34,6 +34,7 @@ describe('AccountDeletionService', () => {
   let service: AccountDeletionService;
   let mockDb: any;
   let mockEmailService: any;
+  let mockConfigService: any;
 
   const mockUserId = 'user-123';
 
@@ -71,13 +72,27 @@ describe('AccountDeletionService', () => {
       insert: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
+      transaction: vi.fn(async (cb: (tx: any) => Promise<any>) => {
+        // The transaction callback receives the same mock db so all
+        // pre-configured mockReturnValueOnce calls are consumed normally.
+        return cb(mockDb);
+      }),
     };
 
     mockEmailService = {
       sendEmail: vi.fn().mockResolvedValue(true),
     };
 
-    service = new AccountDeletionService(mockDb, mockEmailService);
+    mockConfigService = {
+      get: vi.fn().mockImplementation((key: string, defaultValue?: string) => {
+        const config: Record<string, string> = {
+          FRONTEND_URL: 'http://localhost:3000',
+        };
+        return config[key] ?? defaultValue;
+      }),
+    };
+
+    service = new AccountDeletionService(mockDb, mockEmailService, mockConfigService);
   });
 
   // ---------------------------------------------------------------------------

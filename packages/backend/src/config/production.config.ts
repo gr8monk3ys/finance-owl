@@ -69,7 +69,7 @@ export function getProductionConfig(): ProductionConfig {
         idleTimeoutMillis: 30_000,
         connectionTimeoutMillis: 5_000,
       },
-      ssl: requireSsl ? { rejectUnauthorized: false } : false,
+      ssl: requireSsl ? { rejectUnauthorized: true } : false,
     },
     redis: {
       url: redisUrl,

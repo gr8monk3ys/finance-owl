@@ -34,15 +34,23 @@ class EnvironmentVariables {
   ENCRYPTION_KEY!: string;
 
   @IsString()
+  @IsNotEmpty({ message: 'ENCRYPTION_MASTER_SECRET is required' })
+  @MinLength(32, {
+    message:
+      'ENCRYPTION_MASTER_SECRET must be at least 32 characters. Generate with: openssl rand -base64 48',
+  })
+  ENCRYPTION_MASTER_SECRET!: string;
+
+  @IsString()
   @IsNotEmpty({
     message:
       'DATABASE_URL is required (e.g. postgresql://postgres:postgres@localhost:5432/finance_owl)',
   })
   DATABASE_URL!: string;
 
-  @IsOptional()
   @IsString()
-  FRONTEND_URL?: string;
+  @IsNotEmpty({ message: 'FRONTEND_URL is required for CORS configuration in production' })
+  FRONTEND_URL!: string;
 
   @IsOptional()
   @IsString()
@@ -64,9 +72,9 @@ class EnvironmentVariables {
   @IsString()
   PLAID_ENV?: string;
 
-  @IsOptional()
   @IsString()
-  REDIS_URL?: string;
+  @IsNotEmpty({ message: 'REDIS_URL is required for job queues in production' })
+  REDIS_URL!: string;
 
   @IsOptional()
   @IsString()

@@ -6,6 +6,7 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { eq, and, desc } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { EmailService } from '../email/email.service';
@@ -49,6 +50,7 @@ export class AccountDeletionService {
   constructor(
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
     private emailService: EmailService,
+    private configService: ConfigService,
   ) {}
 
   /**
@@ -106,7 +108,7 @@ export class AccountDeletionService {
       `<h2>Account Deletion Requested</h2>
       <p>We've received your request to delete your FinanceOwl account.</p>
       <p>Your account and all associated data will be permanently deleted on <strong>${new Date(scheduledAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong>.</p>
-      <p>During the 14-day grace period, you can cancel this request at any time from your <a href="http://localhost:3000/settings/data">Settings > Data page</a>.</p>
+      <p>During the 14-day grace period, you can cancel this request at any time from your <a href="${this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000')}/settings/data">Settings > Data page</a>.</p>
       <h3>What will be deleted:</h3>
       <ul>
         <li>Your user profile and login credentials</li>
@@ -166,7 +168,7 @@ export class AccountDeletionService {
     await this.db
       .update(dataDeletionRequests)
       .set({
-        status: 'completed',
+        status: 'cancelled',
         completedAt: new Date().toISOString(),
       })
       .where(eq(dataDeletionRequests.id, pending.id));
@@ -264,93 +266,95 @@ export class AccountDeletionService {
         // In production: await stripe.subscriptions.cancel(subscription.stripeSubscriptionId);
       }
 
-      // 3. Delete all user data in correct order (respecting foreign keys)
-      // Transaction splits (depend on transactions)
-      const userTxns = await this.db
-        .select({ id: transactions.id })
-        .from(transactions)
-        .where(eq(transactions.userId, userId));
+      // 3. Delete all user data atomically within a transaction
+      await this.db.transaction(async (tx) => {
+        // Transaction splits (depend on transactions)
+        const userTxns = await tx
+          .select({ id: transactions.id })
+          .from(transactions)
+          .where(eq(transactions.userId, userId));
 
-      for (const tx of userTxns) {
-        await this.db
-          .delete(transactionSplits)
-          .where(eq(transactionSplits.transactionId, tx.id));
-      }
+        for (const t of userTxns) {
+          await tx
+            .delete(transactionSplits)
+            .where(eq(transactionSplits.transactionId, t.id));
+        }
 
-      // Savings contributions (depend on savings goals)
-      const userGoals = await this.db
-        .select({ id: savingsGoals.id })
-        .from(savingsGoals)
-        .where(eq(savingsGoals.userId, userId));
+        // Savings contributions (depend on savings goals)
+        const userGoals = await tx
+          .select({ id: savingsGoals.id })
+          .from(savingsGoals)
+          .where(eq(savingsGoals.userId, userId));
 
-      for (const goal of userGoals) {
-        await this.db
-          .delete(savingsContributions)
-          .where(eq(savingsContributions.goalId, goal.id));
-      }
+        for (const goal of userGoals) {
+          await tx
+            .delete(savingsContributions)
+            .where(eq(savingsContributions.goalId, goal.id));
+        }
 
-      // Budget alerts and periods (depend on budgets)
-      const userBudgets = await this.db
-        .select({ id: budgets.id })
-        .from(budgets)
-        .where(eq(budgets.userId, userId));
+        // Budget alerts and periods (depend on budgets)
+        const userBudgets = await tx
+          .select({ id: budgets.id })
+          .from(budgets)
+          .where(eq(budgets.userId, userId));
 
-      for (const budget of userBudgets) {
-        await this.db
-          .delete(budgetAlerts)
-          .where(eq(budgetAlerts.budgetId, budget.id));
-        await this.db
-          .delete(budgetPeriods)
-          .where(eq(budgetPeriods.budgetId, budget.id));
-      }
+        for (const budget of userBudgets) {
+          await tx
+            .delete(budgetAlerts)
+            .where(eq(budgetAlerts.budgetId, budget.id));
+          await tx
+            .delete(budgetPeriods)
+            .where(eq(budgetPeriods.budgetId, budget.id));
+        }
 
-      // Now delete the main tables
-      await this.db.delete(transactions).where(eq(transactions.userId, userId));
-      await this.db.delete(accounts).where(eq(accounts.userId, userId));
-      await this.db.delete(plaidItems).where(eq(plaidItems.userId, userId));
-      await this.db.delete(budgets).where(eq(budgets.userId, userId));
-      await this.db.delete(recurringTransactions).where(eq(recurringTransactions.userId, userId));
-      await this.db.delete(savingsGoals).where(eq(savingsGoals.userId, userId));
-      await this.db.delete(notificationPreferences).where(eq(notificationPreferences.userId, userId));
-      await this.db.delete(notifications).where(eq(notifications.userId, userId));
-      await this.db.delete(netWorthHistory).where(eq(netWorthHistory.userId, userId));
-      await this.db.delete(financialHealthScores).where(eq(financialHealthScores.userId, userId));
-      await this.db.delete(financialHealthGoals).where(eq(financialHealthGoals.userId, userId));
-      await this.db.delete(financialHealthAlerts).where(eq(financialHealthAlerts.userId, userId));
-      await this.db.delete(userPreferences).where(eq(userPreferences.userId, userId));
-      await this.db.delete(privacyConsents).where(eq(privacyConsents.userId, userId));
-      await this.db.delete(dataExportRequests).where(eq(dataExportRequests.userId, userId));
-      await this.db.delete(userSubscriptions).where(eq(userSubscriptions.userId, userId));
-      await this.db.delete(billingCustomers).where(eq(billingCustomers.userId, userId));
-      await this.db.delete(invoices).where(eq(invoices.userId, userId));
-      await this.db.delete(usageTracking).where(eq(usageTracking.userId, userId));
-      await this.db.delete(categorizationRules).where(eq(categorizationRules.userId, userId));
-      await this.db.delete(categorizationCorrections).where(eq(categorizationCorrections.userId, userId));
-      await this.db.delete(budgetAlerts).where(eq(budgetAlerts.userId, userId));
+        // Now delete the main tables
+        await tx.delete(transactions).where(eq(transactions.userId, userId));
+        await tx.delete(accounts).where(eq(accounts.userId, userId));
+        await tx.delete(plaidItems).where(eq(plaidItems.userId, userId));
+        await tx.delete(budgets).where(eq(budgets.userId, userId));
+        await tx.delete(recurringTransactions).where(eq(recurringTransactions.userId, userId));
+        await tx.delete(savingsGoals).where(eq(savingsGoals.userId, userId));
+        await tx.delete(notificationPreferences).where(eq(notificationPreferences.userId, userId));
+        await tx.delete(notifications).where(eq(notifications.userId, userId));
+        await tx.delete(netWorthHistory).where(eq(netWorthHistory.userId, userId));
+        await tx.delete(financialHealthScores).where(eq(financialHealthScores.userId, userId));
+        await tx.delete(financialHealthGoals).where(eq(financialHealthGoals.userId, userId));
+        await tx.delete(financialHealthAlerts).where(eq(financialHealthAlerts.userId, userId));
+        await tx.delete(userPreferences).where(eq(userPreferences.userId, userId));
+        await tx.delete(privacyConsents).where(eq(privacyConsents.userId, userId));
+        await tx.delete(dataExportRequests).where(eq(dataExportRequests.userId, userId));
+        await tx.delete(userSubscriptions).where(eq(userSubscriptions.userId, userId));
+        await tx.delete(billingCustomers).where(eq(billingCustomers.userId, userId));
+        await tx.delete(invoices).where(eq(invoices.userId, userId));
+        await tx.delete(usageTracking).where(eq(usageTracking.userId, userId));
+        await tx.delete(categorizationRules).where(eq(categorizationRules.userId, userId));
+        await tx.delete(categorizationCorrections).where(eq(categorizationCorrections.userId, userId));
+        await tx.delete(budgetAlerts).where(eq(budgetAlerts.userId, userId));
 
-      // 4. Anonymize audit logs (keep for compliance but remove PII)
-      await this.db
-        .update(auditLog)
-        .set({
-          userId: null,
-          ipAddress: null,
-          details: JSON.stringify({ anonymized: true, reason: 'account_deletion' }),
-        })
-        .where(eq(auditLog.userId, userId));
+        // 4. Anonymize audit logs (keep for compliance but remove PII)
+        await tx
+          .update(auditLog)
+          .set({
+            userId: null,
+            ipAddress: null,
+            details: JSON.stringify({ anonymized: true, reason: 'account_deletion' }),
+          })
+          .where(eq(auditLog.userId, userId));
 
-      // 5. Delete sessions and webauthn credentials
-      await this.db.delete(sessions).where(eq(sessions.userId, userId));
-      await this.db.delete(webauthnCredentials).where(eq(webauthnCredentials.userId, userId));
+        // 5. Delete sessions and webauthn credentials
+        await tx.delete(sessions).where(eq(sessions.userId, userId));
+        await tx.delete(webauthnCredentials).where(eq(webauthnCredentials.userId, userId));
 
-      // 6. Delete the deletion request itself
-      await this.db
-        .delete(dataDeletionRequests)
-        .where(eq(dataDeletionRequests.userId, userId));
+        // 6. Delete the deletion request itself
+        await tx
+          .delete(dataDeletionRequests)
+          .where(eq(dataDeletionRequests.userId, userId));
 
-      // 7. Delete user record (last, since other tables reference it)
-      await this.db.delete(users).where(eq(users.id, userId));
+        // 7. Delete user record (last, since other tables reference it)
+        await tx.delete(users).where(eq(users.id, userId));
+      });
 
-      // 8. Send final confirmation email
+      // 8. Send final confirmation email (outside transaction — email is not rollback-able)
       if (userEmail) {
         await this.emailService.sendEmail(
           userEmail,

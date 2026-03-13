@@ -1,6 +1,7 @@
 import type { Handle } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import * as Sentry from '@sentry/sveltekit';
+import { API_URL } from '$lib/server/api';
 
 // Initialize Sentry on the server side (optional - only if DSN is provided)
 const sentryDsn = process.env.PUBLIC_SENTRY_DSN;
@@ -26,8 +27,6 @@ if (sentryDsn) {
 		},
 	});
 }
-
-const API_URL = process.env.API_URL || 'http://localhost:4000';
 
 const publicPathPrefixes = [
 	'/',

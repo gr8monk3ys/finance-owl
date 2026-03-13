@@ -1,8 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { API_URL } from '$lib/server/api';
 import { buildForwardedClientHeaders, setAuthCookies } from '$lib/server/auth';
-
-const API_URL = process.env.API_URL || 'http://localhost:4000';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user) {

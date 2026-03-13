@@ -4,6 +4,7 @@ import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CryptoService } from '../../common/crypto/crypto.service';
 import { PlaidProvider } from './plaid.provider';
 import type { BankTransaction } from './bank-sync.interface';
+import type { TransactionSyncResult } from './aggregator.interface';
 import * as schema from '../../database/schema';
 
 interface SyncStats {
@@ -63,66 +64,73 @@ export class PlaidSyncService {
     let cursor = item.cursor;
     const stats: SyncStats = { added: 0, modified: 0, removed: 0 };
 
-    // Paginate through all sync results
+    // Collect all sync pages before processing in a transaction
+    const syncPages: TransactionSyncResult[] = [];
     let hasMore = true;
     while (hasMore) {
       const result = await this.plaidProvider.syncTransactions(
         accessToken,
         cursor,
       );
-
-      // Process added transactions
-      for (const tx of result.added) {
-        const accountId = accountMap.get(tx.accountExternalId);
-        if (!accountId) {
-          this.logger.warn(
-            `No account found for Plaid account ${tx.accountExternalId}, skipping transaction`,
-          );
-          continue;
-        }
-        await this.upsertTransaction(userId, accountId, tx);
-        stats.added++;
-      }
-
-      // Process modified transactions
-      for (const tx of result.modified) {
-        const accountId = accountMap.get(tx.accountExternalId);
-        if (!accountId) continue;
-        await this.upsertTransaction(userId, accountId, tx);
-        stats.modified++;
-      }
-
-      // Process removed transactions
-      for (const externalId of result.removed) {
-        await this.db
-          .delete(schema.transactions)
-          .where(eq(schema.transactions.plaidTransactionId, externalId));
-        stats.removed++;
-      }
-
+      syncPages.push(result);
       cursor = result.cursor;
       hasMore = result.hasMore;
     }
 
-    // Update cursor on the Plaid item
-    await this.db
-      .update(schema.plaidItems)
-      .set({
-        cursor,
-        updatedAt: new Date(),
-      })
-      .where(eq(schema.plaidItems.id, plaidItemId));
+    // Process all pages atomically within a single transaction
+    await this.db.transaction(async (dbTx) => {
+      for (const result of syncPages) {
+        // Process added transactions
+        for (const tx of result.added) {
+          const accountId = accountMap.get(tx.accountExternalId);
+          if (!accountId) {
+            this.logger.warn(
+              `No account found for Plaid account ${tx.accountExternalId}, skipping transaction`,
+            );
+            continue;
+          }
+          await this.upsertTransaction(dbTx, userId, accountId, tx);
+          stats.added++;
+        }
+
+        // Process modified transactions
+        for (const tx of result.modified) {
+          const accountId = accountMap.get(tx.accountExternalId);
+          if (!accountId) continue;
+          await this.upsertTransaction(dbTx, userId, accountId, tx);
+          stats.modified++;
+        }
+
+        // Process removed transactions
+        for (const externalId of result.removed) {
+          await dbTx
+            .delete(schema.transactions)
+            .where(eq(schema.transactions.plaidTransactionId, externalId));
+          stats.removed++;
+        }
+      }
+
+      // Update cursor on the Plaid item (inside the transaction)
+      await dbTx
+        .update(schema.plaidItems)
+        .set({
+          cursor,
+          updatedAt: new Date(),
+        })
+        .where(eq(schema.plaidItems.id, plaidItemId));
+    });
 
     return stats;
   }
 
   private async upsertTransaction(
+    dbTx: DrizzleDB,
     userId: string,
     accountId: string,
     tx: BankTransaction,
   ) {
     // Check if transaction already exists
-    const existing = await this.db
+    const existing = await dbTx
       .select({ id: schema.transactions.id, categorizationSource: schema.transactions.categorizationSource })
       .from(schema.transactions)
       .where(eq(schema.transactions.plaidTransactionId, tx.externalId))
@@ -150,13 +158,13 @@ export class PlaidSyncService {
         updateData.categorizationSource = 'plaid';
       }
 
-      await this.db
+      await dbTx
         .update(schema.transactions)
         .set(updateData)
         .where(eq(schema.transactions.id, existing[0].id));
     } else {
       // Insert new transaction
-      await this.db.insert(schema.transactions).values({
+      await dbTx.insert(schema.transactions).values({
         userId,
         accountId,
         plaidTransactionId: tx.externalId,

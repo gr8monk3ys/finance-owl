@@ -99,11 +99,15 @@ export class CryptoService implements OnModuleInit {
     const decipher = createDecipheriv('aes-256-gcm', this.key, iv);
     decipher.setAuthTag(authTag);
 
-    const decrypted = Buffer.concat([
-      decipher.update(encrypted),
-      decipher.final(),
-    ]);
-    return decrypted.toString('utf8');
+    try {
+      const decrypted = Buffer.concat([
+        decipher.update(encrypted),
+        decipher.final(),
+      ]);
+      return decrypted.toString('utf8');
+    } catch {
+      throw new Error('Decryption failed: data integrity check failed');
+    }
   }
 
   /**

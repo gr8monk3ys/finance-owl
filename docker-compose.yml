@@ -21,6 +21,9 @@ services:
         limits:
           memory: 128M
           cpus: "0.25"
+    networks:
+      - public
+      - internal
 
   frontend:
     build:
@@ -45,6 +48,8 @@ services:
         limits:
           memory: 512M
           cpus: "0.50"
+    networks:
+      - internal
 
   backend:
     build:
@@ -53,7 +58,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4000
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/finance_owl
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-finance_owl}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
@@ -81,15 +86,15 @@ services:
         limits:
           memory: 512M
           cpus: "0.50"
+    networks:
+      - internal
 
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: finance_owl
-    ports:
-      - '5432:5432'
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-finance_owl}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -103,6 +108,8 @@ services:
         limits:
           memory: 256M
           cpus: "0.50"
+    networks:
+      - internal
 
   redis:
     image: redis:7-alpine
@@ -121,9 +128,12 @@ services:
         limits:
           memory: 256M
           cpus: "0.25"
+    networks:
+      - internal
 
   ollama:
-    image: ollama/ollama:latest
+    # Pin version for reproducibility; verify latest stable at https://github.com/ollama/ollama/releases
+    image: ollama/ollama:0.6.2
     volumes:
       - ollama_data:/root/.ollama
     healthcheck:
@@ -138,9 +148,12 @@ services:
         limits:
           memory: 2G
           cpus: "2.0"
+    networks:
+      - internal
 
   chromadb:
-    image: chromadb/chroma:latest
+    # Pin version for reproducibility; verify latest stable at https://github.com/chroma-core/chroma/releases
+    image: chromadb/chroma:0.6.3
     volumes:
       - chroma_data:/chroma/chroma
     environment:
@@ -156,6 +169,8 @@ services:
         limits:
           memory: 512M
           cpus: "0.50"
+    networks:
+      - internal
 
 volumes:
   postgres_data:
@@ -164,3 +179,8 @@ volumes:
   caddy_config:
   ollama_data:
   chroma_data:
+
+networks:
+  public:
+  internal:
+    internal: true

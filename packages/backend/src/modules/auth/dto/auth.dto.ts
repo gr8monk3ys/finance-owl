@@ -96,13 +96,17 @@ export class LoginDto {
 
 export class RefreshTokenDto {
   @ApiProperty({
-    description: 'JWT refresh token',
-    maxLength: 255,
-    example: 'eyJhbGciOiJIUzI1NiIs...',
+    description: 'Refresh token (64-character hex string)',
+    minLength: 64,
+    maxLength: 64,
+    example: 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',
   })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(255)
+  @Length(64, 64)
+  @Matches(/^[0-9a-f]{64}$/, {
+    message: 'refreshToken must be a 64-character lowercase hex string',
+  })
   refreshToken!: string;
 }
 

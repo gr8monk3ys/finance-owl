@@ -275,9 +275,11 @@ export class TransactionsController {
   @ApiOperation({ summary: 'Get splits for a transaction' })
   @ApiParam({ name: 'id', description: 'Transaction ID' })
   @ApiResponse({ status: 200, description: 'List of transaction splits' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Transaction not found' })
   @Get(':id/splits')
-  getSplits(@Param('id') id: string) {
-    return this.splitService.getSplits(id);
+  getSplits(@CurrentUser('id') userId: string, @Param('id') id: string) {
+    return this.splitService.getSplits(userId, id);
   }
 
   @ApiOperation({ summary: 'Replace all splits for a transaction' })

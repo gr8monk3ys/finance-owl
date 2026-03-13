@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { getErrorStatus } from '$lib/server/error';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
@@ -9,8 +9,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	try {
 		const [tenant, members] = await Promise.all([
-			api(`/tenants/${id}`, { accessToken }),
-			api(`/tenants/${id}/members`, { accessToken })
+			api(`/admin/tenants/${id}`, { accessToken }),
+			api(`/admin/tenants/${id}/members`, { accessToken })
 		]);
 
 		if (!tenant) {
@@ -22,8 +22,16 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			members: members ?? []
 		};
 	} catch (e: unknown) {
-		if (getErrorStatus(e) === 404) {
+		const status = getErrorStatus(e);
+		if (status === 404) {
 			throw error(404, 'Tenant not found');
+		}
+		if (status === 403 || status === 401) {
+			throw redirect(303, '/dashboard');
+		}
+		// Re-throw SvelteKit errors (redirects, HttpErrors) as-is
+		if (e && typeof e === 'object' && 'status' in e) {
+			throw e;
 		}
 		throw error(500, 'Failed to load tenant details');
 	}

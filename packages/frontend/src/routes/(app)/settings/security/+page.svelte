@@ -516,7 +516,6 @@
 								};
 							}}
 						>
-							<input type="hidden" name="secret" value={totpSetupData.secret} />
 							<div class="space-y-4">
 								<div>
 									<h3 class="text-sm font-medium text-white">2. Enter Verification Code</h3>
