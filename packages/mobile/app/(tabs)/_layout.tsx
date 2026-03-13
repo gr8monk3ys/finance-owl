@@ -1,8 +1,9 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { colors, fontSize, fontWeight } from '../../src/utils/theme';
+import OfflineBanner from '../../src/components/OfflineBanner';
 
 interface TabIconProps {
   color: string;
@@ -63,6 +64,8 @@ function MoreIcon({ color, size }: TabIconProps) {
 
 export default function TabsLayout() {
   return (
+    <View style={{ flex: 1 }}>
+    <OfflineBanner />
     <Tabs
       screenOptions={{
         headerStyle: {
@@ -133,5 +136,6 @@ export default function TabsLayout() {
         }}
       />
     </Tabs>
+    </View>
   );
 }

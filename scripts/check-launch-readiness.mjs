@@ -75,7 +75,7 @@ function isHttpsUrl(value) {
 }
 
 function isConfiguredSecret(value, minLength = 1) {
-	return typeof value === 'string' && value.trim().length >= minLength && !/replace-with|placeholder|00000000|your-|example\.com/i.test(value);
+	return typeof value === 'string' && value.trim().length >= minLength && !/replace-with|placeholder|00000000|your-|example\.com|CHANGE_ME/i.test(value);
 }
 
 function isHex64(value) {
@@ -447,7 +447,7 @@ addCheck(
 const sentryConfigured = isConfiguredSecret(readValue(combinedBackendEnv, 'SENTRY_DSN')) && isConfiguredSecret(readValue(combinedFrontendEnv, 'PUBLIC_SENTRY_DSN'));
 addCheck(
 	integrationSection,
-	sentryConfigured ? 'PASS' : 'WARN',
+	sentryConfigured ? 'PASS' : 'FAIL',
 	'Sentry monitoring',
 	sentryConfigured ? 'Backend and frontend Sentry DSNs are configured.' : 'Sentry is not fully configured.',
 	sentryConfigured ? undefined : 'Set backend SENTRY_DSN and frontend PUBLIC_SENTRY_DSN before broad launch.'

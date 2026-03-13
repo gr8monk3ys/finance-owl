@@ -37,7 +37,13 @@ export default defineConfig({
 			reporter: ['text-summary', 'json-summary'] as const,
 			all: true,
 			include: ['src/**/*.{ts,svelte}'],
-			exclude: ['src/**/*.d.ts']
+			exclude: ['src/**/*.d.ts'],
+			thresholds: {
+				lines: 40,
+				branches: 50,
+				functions: 40,
+				statements: 40,
+			},
 		}
 	}
 });

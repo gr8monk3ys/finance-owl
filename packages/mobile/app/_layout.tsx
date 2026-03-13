@@ -5,6 +5,11 @@ import { useAuthStore } from '../src/stores/auth';
 import { useRouter, useSegments } from 'expo-router';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { colors } from '../src/utils/theme';
+import ErrorBoundary from '../src/components/ErrorBoundary';
+import { configureSentry, Sentry } from '../src/lib/sentry';
+
+// Initialize Sentry as early as possible
+configureSentry();
 
 /**
  * Root layout. Handles:
@@ -12,7 +17,7 @@ import { colors } from '../src/utils/theme';
  * 2. Redirecting to auth screens when not authenticated
  * 3. Redirecting to tabs when authenticated
  */
-export default function RootLayout() {
+function RootLayout() {
   const { isAuthenticated, isLoading, initialize } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
@@ -60,6 +65,14 @@ export default function RootLayout() {
     </>
   );
 }
+
+export default Sentry.wrap(function App() {
+  return (
+    <ErrorBoundary>
+      <RootLayout />
+    </ErrorBoundary>
+  );
+});
 
 const styles = StyleSheet.create({
   loadingContainer: {
