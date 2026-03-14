@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { publicMailto, publicSite } from '$lib/config/public';
 	import { onMount } from 'svelte';
 
 	let activeSection = $state('');
@@ -6,7 +7,7 @@
 	const sections = [
 		{ id: 'overview', label: 'Our Commitment' },
 		{ id: 'encryption', label: 'Encryption & Protection' },
-		{ id: 'plaid-security', label: 'Plaid Security' },
+		{ id: 'plaid-security', label: 'Connected Accounts' },
 		{ id: 'infrastructure', label: 'Infrastructure' },
 		{ id: 'compliance', label: 'Compliance' },
 		{ id: 'disclosure', label: 'Responsible Disclosure' },
@@ -96,7 +97,7 @@
 							<div>
 								<h2 class="text-xl font-bold text-white">Your security is our top priority</h2>
 								<p class="mt-2 text-sm leading-relaxed text-surface-300">
-									Finance Owl employs bank-level encryption, industry-standard security protocols, and rigorous access controls to keep your financial data safe. We never store your bank credentials, and we operate with read-only access to your accounts.
+									Finance Owl is built around least-privilege access, encrypted connections in production, and straightforward controls for account security. When you connect external accounts through a supported provider, those credentials are handled in that provider flow rather than stored directly by Finance Owl.
 								</p>
 							</div>
 						</div>
@@ -107,9 +108,9 @@
 						<h2 class="text-xl font-semibold text-white">Our Security Commitment</h2>
 						<div class="mt-4 grid gap-4 sm:grid-cols-3">
 							{#each [
-								{ icon: 'lock', color: 'text-primary-400 bg-primary-600/20', title: 'Encrypted', desc: 'All data encrypted at rest and in transit using AES-256 and TLS 1.3' },
-								{ icon: 'eye', color: 'text-blue-400 bg-blue-600/20', title: 'Read-Only', desc: 'We never initiate transactions or move money from your accounts' },
-								{ icon: 'shield', color: 'text-violet-400 bg-violet-600/20', title: 'Audited', desc: 'Regular third-party security audits and penetration testing' }
+								{ icon: 'lock', color: 'text-primary-400 bg-primary-600/20', title: 'Encrypted', desc: 'Production traffic is served over HTTPS, and sensitive application data is protected at rest.' },
+								{ icon: 'eye', color: 'text-blue-400 bg-blue-600/20', title: 'Scoped Access', desc: 'Core budgeting and aggregation features are designed for visibility into data, not silent money movement.' },
+								{ icon: 'shield', color: 'text-violet-400 bg-violet-600/20', title: 'Layered Controls', desc: 'Password hashing, token-based auth, 2FA, and passkeys reduce account takeover risk.' }
 							] as item}
 								<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5 text-center">
 									<div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl {item.color}">
@@ -142,27 +143,27 @@
 							<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
 								<h3 class="text-base font-medium text-white">Data in Transit</h3>
 								<p class="mt-2 text-sm leading-relaxed text-surface-300">
-									All communication between your device and our servers is encrypted using TLS 1.3 (Transport Layer Security). We enforce HTTPS on all connections and use HSTS (HTTP Strict Transport Security) to prevent downgrade attacks. API communications use certificate pinning for additional security.
+									Production traffic is delivered over HTTPS/TLS, and we use security headers such as HSTS to reduce downgrade risk. Internal service communication and browser requests are expected to run only against trusted origins that are explicitly configured for each environment.
 								</p>
 							</div>
 							<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
 								<h3 class="text-base font-medium text-white">Data at Rest</h3>
 								<p class="mt-2 text-sm leading-relaxed text-surface-300">
-									All stored data is encrypted using AES-256 encryption, the same standard used by banks and government agencies. Database encryption keys are managed through a dedicated key management service (KMS) with automatic rotation. Backups are also encrypted at rest.
+									Sensitive application data and secrets are encrypted at rest, and production infrastructure should run with encrypted storage, controlled backups, and environment-specific secret management. Launch readiness checks in this repo explicitly require those production secrets to be in place.
 								</p>
 							</div>
 							<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
 								<h3 class="text-base font-medium text-white">Password Security</h3>
 								<p class="mt-2 text-sm leading-relaxed text-surface-300">
-									Passwords are hashed using bcrypt with unique per-user salts. We never store passwords in plain text. We support passkeys (WebAuthn/FIDO2) and two-factor authentication (TOTP) for additional account security. We recommend enabling 2FA in your security settings.
+									Passwords are hashed with bcrypt and never stored in plain text. Finance Owl also supports two-factor authentication (TOTP) and passkeys (WebAuthn/FIDO2) for accounts that want stronger protection.
 								</p>
 							</div>
 						</div>
 					</section>
 
-					<!-- Plaid Security -->
+					<!-- Connected account providers -->
 					<section id="plaid-security">
-						<h2 class="text-xl font-semibold text-white">Plaid Security</h2>
+						<h2 class="text-xl font-semibold text-white">Connected Account Providers</h2>
 						<div class="mt-4 rounded-xl border border-blue-500/20 bg-blue-950/20 p-6">
 							<div class="flex items-start gap-4">
 								<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400">
@@ -171,23 +172,23 @@
 									</svg>
 								</div>
 								<div class="flex-1">
-									<h3 class="text-base font-semibold text-white">How Plaid Protects Your Data</h3>
+									<h3 class="text-base font-semibold text-white">How linked account access works</h3>
 									<ul class="mt-3 space-y-3">
 										<li class="flex items-start gap-2 text-sm text-surface-300">
 											<svg class="mt-0.5 h-4 w-4 shrink-0 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-											<strong class="font-medium text-white">No credential storage:</strong> Your bank username and password are entered directly into Plaid's secure environment. Finance Owl never sees or stores your banking credentials.
+											<strong class="font-medium text-white">Provider-hosted authentication:</strong> When bank linking is enabled, sign-in happens through the connected provider flow rather than storing your banking credentials directly in Finance Owl.
 										</li>
 										<li class="flex items-start gap-2 text-sm text-surface-300">
 											<svg class="mt-0.5 h-4 w-4 shrink-0 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-											<strong class="font-medium text-white">Read-only access:</strong> Plaid provides read-only access tokens. We can only view your transaction data and account balances -- we cannot move money or make changes to your accounts.
+											<strong class="font-medium text-white">Scoped permissions:</strong> Core aggregation flows are intended to surface balances and transactions. If optional banking tools require broader permissions, they should be presented explicitly before you approve them.
 										</li>
 										<li class="flex items-start gap-2 text-sm text-surface-300">
 											<svg class="mt-0.5 h-4 w-4 shrink-0 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-											<strong class="font-medium text-white">SOC 2 Type II certified:</strong> Plaid undergoes regular third-party security audits and maintains SOC 2 Type II certification, demonstrating robust security controls.
+											<strong class="font-medium text-white">Provider controls:</strong> Provider-specific security, compliance, and availability details are governed by the vendor you use for account connectivity and should be reviewed alongside their own public documentation.
 										</li>
 										<li class="flex items-start gap-2 text-sm text-surface-300">
 											<svg class="mt-0.5 h-4 w-4 shrink-0 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-											<strong class="font-medium text-white">Revocable access:</strong> You can disconnect any linked account at any time through Settings &gt; Banking, which immediately revokes our access to that institution.
+											<strong class="font-medium text-white">Revocable access:</strong> You can disconnect linked accounts at any time through the app, which should revoke future sync access for that institution.
 										</li>
 									</ul>
 								</div>
@@ -200,12 +201,12 @@
 						<h2 class="text-xl font-semibold text-white">Infrastructure Security</h2>
 						<div class="mt-4 grid gap-4 sm:grid-cols-2">
 							{#each [
-								{ title: 'Cloud Hosting', desc: 'Hosted on enterprise-grade cloud infrastructure with geographic redundancy, automatic failover, and 99.9% uptime SLA.' },
-								{ title: 'Network Security', desc: 'Multi-layer firewall protection, DDoS mitigation, intrusion detection systems, and network segmentation.' },
-								{ title: 'Access Controls', desc: 'Role-based access control (RBAC), principle of least privilege, and mandatory multi-factor authentication for all team members.' },
-								{ title: 'Monitoring', desc: 'Real-time security monitoring, automated anomaly detection, and 24/7 incident response capabilities.' },
-								{ title: 'Backups', desc: 'Automated encrypted backups with point-in-time recovery. Backups are stored in geographically separate locations.' },
-								{ title: 'Dependency Management', desc: 'Automated vulnerability scanning of all dependencies with immediate patching of critical security issues.' }
+								{ title: 'Cloud Hosting', desc: 'Production deployments should use isolated environments, encrypted storage, and routine recovery checks.' },
+								{ title: 'Network Security', desc: 'Origin allowlists, secure transport, and service-level isolation reduce exposure between public and internal systems.' },
+								{ title: 'Access Controls', desc: 'Least-privilege access, environment-scoped secrets, and MFA-protected admin access reduce operational risk.' },
+								{ title: 'Monitoring', desc: 'Health checks, logs, and alerting should be enabled before launch so failures are caught quickly.' },
+								{ title: 'Backups', desc: 'Backups should be encrypted, tested, and governed by the production environment retention policy.' },
+								{ title: 'Dependency Management', desc: 'Dependencies should be reviewed regularly, with security updates and CI checks acting as part of the release gate.' }
 							] as item}
 								<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
 									<h3 class="text-sm font-semibold text-white">{item.title}</h3>
@@ -227,12 +228,12 @@
 										</svg>
 									</div>
 									<div>
-										<h3 class="text-base font-medium text-white">SOC 2 Type II</h3>
-										<span class="inline-block mt-1 rounded-full bg-accent-600/20 px-2.5 py-0.5 text-xs font-medium text-accent-400">In Progress</span>
+										<h3 class="text-base font-medium text-white">Security Program Status</h3>
+										<span class="mt-1 inline-block rounded-full bg-accent-600/20 px-2.5 py-0.5 text-xs font-medium text-accent-400">Review before launch</span>
 									</div>
 								</div>
 								<p class="mt-3 text-sm leading-relaxed text-surface-300">
-									We are actively pursuing SOC 2 Type II certification, which covers security, availability, processing integrity, confidentiality, and privacy controls. Our target completion date is Q3 2026. In the meantime, we follow SOC 2 standards in our internal security practices.
+									We are using this launch cycle to tighten operational controls, documentation, and evidence collection. If SOC 2 or a comparable audit becomes part of the public trust posture, this page should be updated with the issued report status rather than aspirational language.
 								</p>
 							</div>
 							<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
@@ -240,15 +241,15 @@
 								<ul class="mt-3 space-y-2">
 									<li class="flex items-start gap-2 text-sm text-surface-300">
 										<svg class="mt-0.5 h-4 w-4 shrink-0 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-										<strong class="font-medium text-white">GDPR:</strong> Full compliance for EU/EEA users, including data portability and right to erasure.
+										<strong class="font-medium text-white">GDPR:</strong> The product is designed to support access, export, correction, and deletion requests when those rights apply.
 									</li>
 									<li class="flex items-start gap-2 text-sm text-surface-300">
 										<svg class="mt-0.5 h-4 w-4 shrink-0 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-										<strong class="font-medium text-white">CCPA:</strong> Full compliance for California residents, including right to know and right to delete.
+										<strong class="font-medium text-white">CCPA/CPRA:</strong> The app includes workflows for disclosure and deletion requests that should be reviewed against the final production data practices.
 									</li>
 									<li class="flex items-start gap-2 text-sm text-surface-300">
 										<svg class="mt-0.5 h-4 w-4 shrink-0 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-										<strong class="font-medium text-white">PCI DSS:</strong> Payment processing is handled entirely by Stripe (PCI DSS Level 1 certified). We never handle card data directly.
+										<strong class="font-medium text-white">Payments:</strong> If paid plans are enabled, card collection should be handled by the configured payment processor rather than stored directly by Finance Owl.
 									</li>
 								</ul>
 							</div>
@@ -267,7 +268,7 @@
 								<div class="rounded-lg border border-surface-700/50 bg-surface-800/50 p-4">
 									<h3 class="text-sm font-semibold text-white">How to Report</h3>
 									<p class="mt-1 text-sm text-surface-300">
-										Email <a href="mailto:security@financeowl.com" class="text-primary-400 underline hover:text-primary-300">security@financeowl.com</a> with a detailed description of the vulnerability, steps to reproduce, and any supporting evidence. Please use our PGP key for sensitive reports.
+										Email <a href={publicMailto.security} class="text-primary-400 underline hover:text-primary-300">{publicSite.securityEmail}</a> with a detailed description of the vulnerability, steps to reproduce, and any supporting evidence. If you need an encrypted reply path, mention that in your report.
 									</p>
 								</div>
 								<div class="rounded-lg border border-surface-700/50 bg-surface-800/50 p-4">
@@ -290,7 +291,7 @@
 								<div class="rounded-lg border border-surface-700/50 bg-surface-800/50 p-4">
 									<h3 class="text-sm font-semibold text-white">Our Promise</h3>
 									<p class="mt-1 text-sm text-surface-300">
-										We will acknowledge your report within 48 hours, provide regular updates on our progress, credit you in our security acknowledgments (if desired), and will not take legal action against researchers who act in good faith.
+											We review good-faith reports as quickly as practical, keep researchers informed when follow-up is needed, credit researchers when appropriate, and will not pursue action against responsible disclosure that avoids harm.
 									</p>
 								</div>
 							</div>
@@ -307,7 +308,7 @@
 							<div class="mt-4 space-y-2">
 								<p class="flex items-center gap-2 text-sm text-surface-300">
 									<svg class="h-4 w-4 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
-									<a href="mailto:security@financeowl.com" class="text-primary-400 hover:text-primary-300">security@financeowl.com</a>
+										<a href={publicMailto.security} class="text-primary-400 hover:text-primary-300">{publicSite.securityEmail}</a>
 								</p>
 							</div>
 							<p class="mt-3 text-xs text-surface-500">

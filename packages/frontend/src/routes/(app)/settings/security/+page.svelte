@@ -157,7 +157,7 @@
 </script>
 
 <svelte:head>
-	<title>Security Settings - FinanceOwl</title>
+	<title>Security Settings - Finance Owl</title>
 </svelte:head>
 
 <div class="mx-auto max-w-2xl space-y-6">
@@ -516,7 +516,6 @@
 								};
 							}}
 						>
-							<input type="hidden" name="secret" value={totpSetupData.secret} />
 							<div class="space-y-4">
 								<div>
 									<h3 class="text-sm font-medium text-white">2. Enter Verification Code</h3>

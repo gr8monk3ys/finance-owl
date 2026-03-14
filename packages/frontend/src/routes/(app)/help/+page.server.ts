@@ -44,33 +44,19 @@ export const actions: Actions = {
 			});
 		}
 
-		try {
-			// In production, this would send to a support system (e.g., Zendesk, email API, or internal ticket system)
-			// For now, log and simulate success
-			console.log('[Support] New contact form submission:', {
-				userId: locals.user?.id,
-				userEmail: locals.user?.email,
-				subject,
-				category,
-				messageLength: message.length,
-				timestamp: new Date().toISOString()
-			});
+		console.warn('[Support] Contact form submission rejected because direct support delivery is not configured.', {
+			userId: locals.user?.id,
+			userEmail: locals.user?.email,
+			subject,
+			category,
+			messageLength: message.length
+		});
 
-			// Simulate a small delay as if sending
-			await new Promise((resolve) => setTimeout(resolve, 300));
-
-			return {
-				success: true,
-				message: 'Your message has been sent. We typically respond within 24 hours.'
-			};
-		} catch (err) {
-			console.error('[Support] Failed to send contact form:', err);
-			return fail(500, {
-				error: 'Failed to send your message. Please try again or email us at support@financeowl.com.',
-				subject,
-				category,
-				message
-			});
-		}
+		return fail(503, {
+			error: 'Direct ticket submission is not configured in this deployment. Use the public support page instead.',
+			subject,
+			category,
+			message
+		});
 	}
 };

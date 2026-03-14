@@ -123,7 +123,7 @@
 </script>
 
 <svelte:head>
-	<title>Get Started - FinanceOwl</title>
+	<title>Get Started - Finance Owl</title>
 </svelte:head>
 
 <div class="flex min-h-screen flex-col bg-surface-900">

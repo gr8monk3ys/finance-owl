@@ -48,7 +48,7 @@
 </script>
 
 <svelte:head>
-	<title>Financial Calculators - FinanceOwl</title>
+	<title>Financial Calculators - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

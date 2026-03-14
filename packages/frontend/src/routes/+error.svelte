@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { publicRoutes, publicMailto } from '$lib/config/public';
 	import { page } from '$app/stores';
 
 	const statusCode = $derived($page.status);
@@ -109,9 +110,9 @@
 
 		<!-- Help links -->
 		<div class="mt-10 flex items-center justify-center gap-4 text-xs text-surface-500">
-			<a href="/help" class="transition hover:text-surface-300">Help Center</a>
+			<a href={publicRoutes.support} class="transition hover:text-surface-300">Help Center</a>
 			<span class="text-surface-700">|</span>
-			<a href="mailto:support@financeowl.com" class="transition hover:text-surface-300">Contact Support</a>
+			<a href={publicMailto.support} class="transition hover:text-surface-300">Contact Support</a>
 		</div>
 	</div>
 </div>

@@ -9,7 +9,7 @@ test.describe('Dashboard', () => {
 
   test('should load the dashboard page', async ({ authenticatedPage: page }) => {
     await expect(page).toHaveTitle(/Dashboard/);
-    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Dashboard' })).toBeVisible();
     await expect(page.getByText('Your financial overview at a glance')).toBeVisible();
   });
 

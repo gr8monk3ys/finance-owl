@@ -101,17 +101,16 @@ export const actions: Actions = {
 
 	enableTotp: async ({ request, locals }) => {
 		const formData = await request.formData();
-		const secret = formData.get('secret') as string;
 		const code = formData.get('code') as string;
 
-		if (!secret || !code) {
-			return fail(400, { totpError: 'Secret and verification code are required.' });
+		if (!code) {
+			return fail(400, { totpError: 'Verification code is required.' });
 		}
 
 		try {
 			await api('/auth/totp/enable', {
 				method: 'POST',
-				body: { secret, code },
+				body: { code },
 				accessToken: locals.accessToken
 			});
 			return { totpEnableSuccess: true };

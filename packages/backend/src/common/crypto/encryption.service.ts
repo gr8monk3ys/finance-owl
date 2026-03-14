@@ -4,8 +4,11 @@ import {
   createCipheriv,
   createDecipheriv,
   randomBytes,
-  pbkdf2Sync,
+  pbkdf2,
 } from 'crypto';
+import { promisify } from 'util';
+
+const pbkdf2Async = promisify(pbkdf2);
 
 /**
  * Versioned AES-256-GCM encryption service for sensitive financial data
@@ -70,7 +73,7 @@ export class EncryptionService implements OnModuleInit {
    * Encrypt a plaintext string. Returns a base64-encoded ciphertext
    * that includes all metadata required for decryption.
    */
-  encrypt(plaintext: string): string {
+  async encrypt(plaintext: string): Promise<string> {
     if (typeof plaintext !== 'string') {
       throw new Error('encrypt() expects a string input');
     }
@@ -78,7 +81,7 @@ export class EncryptionService implements OnModuleInit {
     const version = EncryptionService.CURRENT_VERSION;
     const salt = randomBytes(EncryptionService.SALT_LENGTH);
     const iv = randomBytes(EncryptionService.IV_LENGTH);
-    const derivedKey = this.deriveKey(salt, version);
+    const derivedKey = await this.deriveKey(salt, version);
 
     const cipher = createCipheriv('aes-256-gcm', derivedKey, iv);
     const encrypted = Buffer.concat([
@@ -104,7 +107,7 @@ export class EncryptionService implements OnModuleInit {
    * Automatically reads the version byte to select the correct key-derivation
    * parameters, enabling transparent key rotation.
    */
-  decrypt(ciphertext: string): string {
+  async decrypt(ciphertext: string): Promise<string> {
     if (typeof ciphertext !== 'string' || ciphertext.length === 0) {
       throw new Error('decrypt() expects a non-empty string input');
     }
@@ -149,7 +152,7 @@ export class EncryptionService implements OnModuleInit {
     // 5. Encrypted payload
     const encrypted = combined.subarray(offset);
 
-    const derivedKey = this.deriveKey(salt, version);
+    const derivedKey = await this.deriveKey(salt, version);
     const decipher = createDecipheriv('aes-256-gcm', derivedKey, iv);
     decipher.setAuthTag(authTag);
 
@@ -168,9 +171,9 @@ export class EncryptionService implements OnModuleInit {
 
   // ---------- internal ----------
 
-  private deriveKey(salt: Buffer, version: number): Buffer {
+  private async deriveKey(salt: Buffer, version: number): Promise<Buffer> {
     const iterations = EncryptionService.PBKDF2_ITERATIONS[version];
-    return pbkdf2Sync(
+    return pbkdf2Async(
       this.masterSecret,
       salt,
       iterations,

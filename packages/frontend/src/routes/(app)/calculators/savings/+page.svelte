@@ -130,7 +130,7 @@
 </script>
 
 <svelte:head>
-	<title>Savings Calculator - FinanceOwl</title>
+	<title>Savings Calculator - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

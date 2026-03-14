@@ -1,14 +1,9 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { Card, Button, Input } from '$components/ui';
-	import type { ActionData } from './$types';
-
-	let { form }: { form: ActionData } = $props();
+	import { publicRoutes, publicMailto, publicSite } from '$lib/config/public';
+	import { Card } from '$components/ui';
 
 	let searchQuery = $state('');
 	let expandedItems = $state<Set<string>>(new Set());
-	let contactSubmitting = $state(false);
-	let showContactForm = $state(false);
 
 	interface FaqItem {
 		id: string;
@@ -30,32 +25,32 @@
 			title: 'Getting Started',
 			icon: 'rocket',
 			iconColor: 'text-primary-400 bg-primary-600/20',
-			items: [
-				{
-					id: 'gs-1',
-					question: 'How do I create an account?',
-					answer: 'Visit our registration page and sign up with your email address. You can also sign up using Google or Apple authentication. Once registered, you will be guided through connecting your first bank account.'
-				},
-				{
-					id: 'gs-2',
-					question: 'Is Finance Owl free to use?',
-					answer: 'Yes, we offer a free plan that includes linking up to 2 accounts, basic budget tracking, subscription detection, and monthly spending reports. Premium features like AI insights, bill negotiation tools, and unlimited accounts are available with our paid plans starting at $4.99/month.'
-				},
+				items: [
+					{
+						id: 'gs-1',
+						question: 'How do I create an account?',
+						answer: 'Visit the registration page and create your account with email and password. Google and Apple sign-in are not available yet. Once you are in, you can start with budgets and transaction review right away, then connect accounts when banking integrations are enabled for your workspace.'
+					},
+					{
+						id: 'gs-2',
+						question: 'Is Finance Owl free to use?',
+						answer: 'Yes. Finance Owl includes a free plan for core budgeting and transaction tracking. Paid plans currently start with Pro at $9.99/month and Premium at $19.99/month, with yearly billing options available in the billing area.'
+					},
 				{
 					id: 'gs-3',
 					question: 'How do I connect my bank accounts?',
-					answer: 'Go to Dashboard and click "Add Account" or navigate to Settings > Banking. We use Plaid to securely connect to your bank. Simply search for your bank, log in with your banking credentials (entered directly into Plaid\'s secure interface), and select the accounts you want to link.'
+					answer: 'Go to Dashboard and click "Add Account" or navigate to Settings > Banking. If connected-account integrations are enabled for your workspace, you will be guided through the supported provider flow and can choose which accounts to link. If not, you can still add manual accounts and keep using budgets and transaction review.'
 				},
 				{
 					id: 'gs-4',
 					question: 'Which banks and institutions are supported?',
-					answer: 'We support over 12,000 financial institutions in the US, Canada, and UK through Plaid, including major banks (Chase, Bank of America, Wells Fargo, Citi), credit unions, investment brokerages, and credit card companies. If your bank is not listed, contact us and we will look into adding support.'
+					answer: 'Coverage depends on the connected provider and the region enabled for your workspace. The account-link flow will show the institutions currently available to you. If your institution is missing, contact support so we can confirm whether it is on the current provider roadmap.'
 				},
-				{
-					id: 'gs-5',
-					question: 'Can I use Finance Owl on my phone?',
-					answer: 'Yes. Finance Owl is a progressive web app (PWA) that works beautifully on mobile browsers. You can add it to your home screen for a native app-like experience on both iOS and Android. Look for the "Add to Home Screen" prompt when visiting in your mobile browser.'
-				},
+					{
+						id: 'gs-5',
+						question: 'Can I use Finance Owl on my phone?',
+						answer: 'Yes. The web app works well on mobile browsers, and the current mobile experience focuses on dashboard, transactions, budgets, and account access. Some advanced settings and admin-style flows still open in the web app.'
+					},
 				{
 					id: 'gs-6',
 					question: 'How do I set up my first budget?',
@@ -72,17 +67,17 @@
 				{
 					id: 'bc-1',
 					question: 'Is it safe to connect my bank account?',
-					answer: 'Absolutely. We use Plaid, a trusted service used by thousands of financial apps. Your bank credentials are entered directly into Plaid\'s secure interface -- we never see or store them. We only have read-only access to your account data, meaning we cannot move money or make changes to your accounts. All data is encrypted with AES-256 encryption.'
+					answer: 'When connected-account access is enabled, authentication is handled by the linked provider rather than by Finance Owl directly. The core aggregation flows are designed for budgeting and transaction review, and sensitive credentials are not stored in the app itself. See the Security page for the current deployment and provider details.'
 				},
 				{
 					id: 'bc-2',
 					question: 'Why is my bank connection showing an error?',
-					answer: 'Connection errors can occur when your bank changes its login flow, requires additional verification, or experiences temporary outages. Try reconnecting the account from Settings > Banking. If the issue persists, it may be a temporary issue with your bank\'s connection to Plaid. Wait a few hours and try again.'
+					answer: 'Connection errors can happen when an institution changes its login flow, requires additional verification, or has a temporary outage. Try reconnecting the account from Settings > Banking. If the issue persists, wait a bit and try again or contact support with the institution name and any error details.'
 				},
 				{
 					id: 'bc-3',
 					question: 'How often does transaction data sync?',
-					answer: 'Transaction data syncs automatically every 6-12 hours. You can also manually trigger a sync by pulling down on the dashboard (pull-to-refresh) or clicking the refresh button. Note that some banks may have a 1-2 day delay before transactions appear.'
+					answer: 'Sync timing varies by institution and provider. Many connections refresh several times per day, but some banks delay posting transactions by a day or more. You can also trigger a manual refresh from the app when that action is available.'
 				},
 				{
 					id: 'bc-4',
@@ -117,11 +112,11 @@
 					question: 'Can I roll over unused budget amounts?',
 					answer: 'Yes. In your budget settings, you can enable "rollover" for individual envelopes. Unused amounts will carry forward to the next month. This is great for savings categories or variable expenses like car maintenance.'
 				},
-				{
-					id: 'b-4',
-					question: 'How do I handle shared expenses?',
-					answer: 'With the Family plan, you can create shared budgets visible to all household members. You can split transactions between categories, assign expenses to specific family members, and track household spending together.'
-				},
+					{
+						id: 'b-4',
+						question: 'How do I handle shared expenses?',
+						answer: 'Household and shared-finance workflows live in the Premium tier. Use shared budgets, goals, and household views when multiple people need visibility into the same plan.'
+					},
 				{
 					id: 'b-5',
 					question: 'Can I create custom categories?',
@@ -145,16 +140,16 @@
 					question: 'How does subscription detection work?',
 					answer: 'We analyze your transaction history to automatically detect recurring charges. Our AI identifies patterns in merchant names, amounts, and billing intervals to surface subscriptions you may not be tracking. Detected subscriptions appear in your Subscriptions dashboard.'
 				},
-				{
-					id: 's-2',
-					question: 'Can Finance Owl cancel subscriptions for me?',
-					answer: 'We provide cancellation guides with step-by-step instructions, direct cancellation links, and phone numbers for each detected subscription. Some cancellations can be initiated through our platform, but most require you to contact the provider directly. We make the process as easy as possible.'
-				},
-				{
-					id: 's-3',
-					question: 'How does bill negotiation work?',
-					answer: 'Our bill negotiation feature provides you with guided scripts, comparison rates from other providers, and tips for negotiating lower rates on services like internet, cable, insurance, and phone plans. Premium users get access to advanced negotiation playbooks and success rate data.'
-				},
+					{
+						id: 's-2',
+						question: 'Can Finance Owl cancel subscriptions for me?',
+						answer: 'Finance Owl helps you identify recurring charges, review subscription history, and keep track of cancellation steps. Some providers include direct handoff links, but most cancellations are still completed with the provider.'
+					},
+					{
+						id: 's-3',
+						question: 'How does bill negotiation work?',
+						answer: 'The bill negotiation workflow gives you structured prompts, prep notes, and a place to track the outcome when you call or message a provider. It is designed to help you run the conversation well, not to guarantee a lower rate.'
+					},
 				{
 					id: 's-4',
 					question: 'Can I set up bill reminders?',
@@ -173,11 +168,11 @@
 			icon: 'credit-card',
 			iconColor: 'text-green-400 bg-green-600/20',
 			items: [
-				{
-					id: 'bp-1',
-					question: 'How do I upgrade to Premium?',
-					answer: 'Go to Settings > Billing and select your preferred plan. You can choose between monthly ($4.99/mo) or annual ($49.99/yr, save 17%) billing. We accept all major credit cards through our secure payment processor, Stripe.'
-				},
+					{
+						id: 'bp-1',
+						question: 'How do I upgrade to Pro or Premium?',
+						answer: 'Go to Settings > Billing and choose the plan that fits your workflow. Pro is $9.99/month or $99.99/year, and Premium is $19.99/month or $199.99/year. Billing is processed securely through Stripe when it is configured for your workspace.'
+					},
 				{
 					id: 'bp-2',
 					question: 'Can I cancel my subscription anytime?',
@@ -186,20 +181,20 @@
 				{
 					id: 'bp-3',
 					question: 'Do you offer refunds?',
-					answer: 'We do not offer prorated refunds for partial billing periods. However, if you are unsatisfied within the first 14 days of a new subscription, contact support and we will work with you on a resolution. Trial periods are always free with no obligation.'
+					answer: 'We do not offer prorated refunds for partial billing periods. Any introductory pricing or trial terms will be shown during checkout, and subscription-specific issues should be handled through support.'
 				},
 				{
 					id: 'bp-4',
 					question: 'What happens to my data if I downgrade?',
 					answer: 'Your data is never deleted when downgrading. All your transaction history, budgets, and settings are preserved. However, some premium features (like AI insights and advanced reports) will become read-only until you upgrade again.'
 				},
-				{
-					id: 'bp-5',
-					question: 'How does the Family plan work?',
-					answer: 'The Family plan ($9.99/mo) includes everything in Premium plus support for up to 5 family members, each with their own account. Members can share budgets, savings goals, and household spending views while maintaining privacy over personal transactions.'
-				}
-			]
-		},
+					{
+						id: 'bp-5',
+						question: 'How does Premium household sharing work?',
+						answer: 'Premium includes household sharing for up to 10 members, along with shared budgets, shared goals, and advisor access. It is the plan to choose when multiple people need a coordinated financial view.'
+					}
+				]
+			},
 		{
 			id: 'security-faq',
 			title: 'Security & Privacy',
@@ -209,12 +204,12 @@
 				{
 					id: 'sec-1',
 					question: 'How is my financial data protected?',
-					answer: 'All data is encrypted using AES-256 encryption at rest and TLS 1.3 in transit. We use the same security standards as banks. Your bank credentials are never stored on our servers -- they are handled exclusively by Plaid. We also support two-factor authentication and passkeys for account security.'
+					answer: 'Finance Owl uses encrypted transport in production, hashed passwords, signed auth tokens, and optional two-factor authentication or passkeys for account protection. If you connect external accounts, authentication happens through the linked provider flow rather than storing those credentials in the app.'
 				},
 				{
 					id: 'sec-2',
 					question: 'Can Finance Owl access my money?',
-					answer: 'No. We have read-only access to your account data. We can see your transactions and balances, but we cannot initiate transfers, make payments, or modify your accounts in any way. This is enforced at the API level through Plaid.'
+					answer: 'Core budgeting and account-aggregation flows are intended for visibility into balances and transactions, not moving money. If optional banking features are enabled for your workspace, they will ask for separate permissions and show the action clearly before any money movement is possible.'
 				},
 				{
 					id: 'sec-3',
@@ -234,7 +229,7 @@
 				{
 					id: 'sec-6',
 					question: 'What should I do if I suspect unauthorized access?',
-					answer: 'Immediately change your password and enable 2FA from Settings > Security. Review your recent account activity and disconnect any suspicious sessions. Contact us at security@financeowl.com if you need additional assistance. We can help you secure your account and investigate any unauthorized access.'
+					answer: `Immediately change your password and enable 2FA from Settings > Security. Review your recent account activity and disconnect any suspicious sessions. Contact us at ${publicSite.securityEmail} if you need additional assistance. We can help you secure your account and investigate unauthorized access.`
 				}
 			]
 		}
@@ -271,17 +266,6 @@
 		return expandedItems.has(id);
 	}
 
-	// Contact form state
-	let contactSubject = $state('');
-	let contactCategory = $state('');
-	let contactMessage = $state('');
-
-	// Sync form data when server action returns values
-	$effect(() => {
-		if (form?.subject) contactSubject = form.subject;
-		if (form?.category) contactCategory = form.category;
-		if (form?.message) contactMessage = form.message;
-	});
 </script>
 
 <svelte:head>
@@ -340,7 +324,7 @@
 				</svg>
 				<h3 class="mt-4 text-lg font-medium text-white">No results found</h3>
 				<p class="mt-2 text-sm text-surface-400">
-					Try different keywords, or <button onclick={() => (showContactForm = true)} class="text-primary-400 underline hover:text-primary-300">contact our support team</button> for help.
+					Try different keywords, or <a href={publicRoutes.support} class="text-primary-400 underline hover:text-primary-300">visit support</a> for help.
 				</p>
 			</div>
 		</Card>
@@ -431,128 +415,27 @@
 		<div class="text-center">
 			<h2 class="text-xl font-semibold text-white">Still need help?</h2>
 			<p class="mt-2 text-sm text-surface-400">
-				Our support team typically responds within 24 hours.
+				Use the public support page for the current contact paths and self-serve resources.
 			</p>
 		</div>
-
-		{#if form?.success}
-			<Card class="mt-6">
-				<div class="py-6 text-center">
-					<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-600/20 text-primary-400">
-						<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-						</svg>
-					</div>
-					<h3 class="mt-4 text-lg font-semibold text-white">Message Sent</h3>
-					<p class="mt-2 text-sm text-surface-400">{form.message}</p>
-					<button
-						onclick={() => { showContactForm = false; contactSubject = ''; contactCategory = ''; contactMessage = ''; }}
-						class="mt-4 text-sm text-primary-400 underline hover:text-primary-300"
-					>
-						Send another message
-					</button>
-				</div>
-			</Card>
-		{:else}
-			<div class="mt-6 flex flex-col gap-4 sm:flex-row sm:justify-center">
-				{#if !showContactForm}
-					<button
-						onclick={() => (showContactForm = true)}
-						class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500"
-					>
-						<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-						</svg>
-						Contact Support
-					</button>
-					<a
-						href="mailto:support@financeowl.com"
-						class="inline-flex items-center justify-center gap-2 rounded-xl border border-surface-600 bg-surface-800 px-6 py-3 text-sm font-medium text-surface-200 transition hover:border-surface-500 hover:bg-surface-700 hover:text-white"
-					>
-						Email: support@financeowl.com
-					</a>
-				{/if}
-			</div>
-
-			{#if showContactForm}
-				<Card class="mt-6">
-					<form
-						method="POST"
-						action="?/contact"
-						use:enhance={() => {
-							contactSubmitting = true;
-							return async ({ update }) => {
-								contactSubmitting = false;
-								await update();
-							};
-						}}
-					>
-						<div class="space-y-4">
-							<h3 class="text-lg font-semibold text-white">Contact Support</h3>
-
-							{#if form?.error}
-								<div class="rounded-lg border border-red-500/30 bg-red-950/30 px-4 py-3 text-sm text-red-400">
-									{form.error}
-								</div>
-							{/if}
-
-							<div>
-								<label for="category" class="mb-1.5 block text-sm font-medium text-surface-300">Category</label>
-								<select
-									id="category"
-									name="category"
-									bind:value={contactCategory}
-									class="w-full rounded-lg border border-surface-600/80 bg-surface-700/50 px-3 py-2.5 text-white transition focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
-								>
-									<option value="">Select a category...</option>
-									<option value="account">Account Issues</option>
-									<option value="billing">Billing & Subscription</option>
-									<option value="bank-connection">Bank Connection</option>
-									<option value="bug">Bug Report</option>
-									<option value="feature">Feature Request</option>
-									<option value="security">Security Concern</option>
-									<option value="other">Other</option>
-								</select>
-							</div>
-
-							<Input
-								id="subject"
-								name="subject"
-								label="Subject"
-								placeholder="Brief description of your issue"
-								bind:value={contactSubject}
-								maxlength={200}
-							/>
-
-							<div>
-								<label for="message" class="mb-1.5 block text-sm font-medium text-surface-300">Message</label>
-								<textarea
-									id="message"
-									name="message"
-									bind:value={contactMessage}
-									rows="5"
-									maxlength="5000"
-									placeholder="Describe your issue in detail. Include any error messages, steps to reproduce, or relevant information..."
-									class="w-full rounded-lg border border-surface-600/80 bg-surface-700/50 px-3 py-2.5 text-white placeholder:text-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 resize-y"
-								></textarea>
-								<p class="mt-1 text-xs text-surface-500">{contactMessage.length}/5000 characters</p>
-							</div>
-
-							<div class="flex items-center gap-3 pt-2">
-								<Button type="submit" loading={contactSubmitting}>Send Message</Button>
-								<button
-									type="button"
-									onclick={() => (showContactForm = false)}
-									class="rounded-lg px-4 py-2 text-sm font-medium text-surface-400 transition hover:bg-surface-700 hover:text-white"
-								>
-									Cancel
-								</button>
-							</div>
-						</div>
-					</form>
-				</Card>
-			{/if}
-		{/if}
+		<div class="mt-6 grid gap-4 sm:grid-cols-2">
+			<a
+				href={publicRoutes.support}
+				class="rounded-2xl border border-surface-600 bg-surface-800 px-6 py-5 text-left transition hover:border-surface-500 hover:bg-surface-700"
+			>
+				<h3 class="text-sm font-semibold text-white">Open Support</h3>
+				<p class="mt-2 text-sm leading-relaxed text-surface-400">
+					View the current support contacts, legal links, and security reporting path.
+				</p>
+			</a>
+			<a
+				href={publicMailto.support}
+				class="rounded-2xl border border-surface-600 bg-surface-800 px-6 py-5 text-left transition hover:border-surface-500 hover:bg-surface-700"
+			>
+				<h3 class="text-sm font-semibold text-white">Email Support</h3>
+				<p class="mt-2 text-sm leading-relaxed text-surface-400">{publicSite.supportEmail}</p>
+			</a>
+		</div>
 	</div>
 
 	<!-- Quick Links -->

@@ -158,6 +158,8 @@ function SettingsIcon({
 export default function MoreScreen() {
   const { user, logout } = useAuthStore();
   const webUrl = process.env.EXPO_PUBLIC_WEB_URL?.replace(/\/$/, '') ?? null;
+  const supportEmail =
+    process.env.EXPO_PUBLIC_SUPPORT_EMAIL?.trim() || 'support@financeowl.com';
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   async function openUrl(url: string, title: string) {
@@ -203,7 +205,7 @@ export default function MoreScreen() {
         text: 'Email Support',
         onPress: () => {
           void openUrl(
-            'mailto:support@financeowl.com?subject=FinanceOwl%20Support',
+            `mailto:${supportEmail}?subject=Finance%20Owl%20Support`,
             'Help & Support',
           );
         },
@@ -214,7 +216,7 @@ export default function MoreScreen() {
       buttons.push({
         text: 'Help Center',
         onPress: () => {
-          void openUrl(`${webUrl}/help`, 'Help & Support');
+          void openUrl(`${webUrl}/support`, 'Help & Support');
         },
       });
     }
@@ -249,7 +251,7 @@ export default function MoreScreen() {
     buttons.push({ text: 'OK', style: 'cancel' as const });
 
     Alert.alert(
-      'About FinanceOwl',
+      'About Finance Owl',
       `Version ${appVersion}${webUrl ? `\n${webUrl}` : ''}`,
       buttons,
     );
@@ -394,7 +396,7 @@ export default function MoreScreen() {
       </Pressable>
 
       {/* App version */}
-      <Text style={styles.versionText}>FinanceOwl v{appVersion}</Text>
+      <Text style={styles.versionText}>Finance Owl v{appVersion}</Text>
     </ScrollView>
   );
 }

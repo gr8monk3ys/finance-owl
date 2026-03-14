@@ -8,14 +8,14 @@ import * as Sentry from '@sentry/node';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters';
 import { SentryExceptionFilter } from './common/sentry';
-import { LoggingInterceptor, PerformanceInterceptor } from './common/interceptors';
+import { PerformanceInterceptor } from './common/interceptors';
 import { SentryInterceptor } from './common/sentry';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
 const APP_VERSION = process.env.npm_package_version || '0.1.0';
 
 function validateRequiredSecrets(logger: Logger) {
-  const required = ['JWT_SECRET', 'JWT_REFRESH_SECRET', 'ENCRYPTION_KEY'];
+  const required = ['JWT_SECRET', 'JWT_REFRESH_SECRET', 'ENCRYPTION_KEY', 'ENCRYPTION_MASTER_SECRET'];
   const missing = required.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {
@@ -98,25 +98,45 @@ async function bootstrap() {
     rawBody: true, // Required for Stripe/Plaid webhook signature verification
   });
 
-  // Trust proxy — required for Railway / Vercel reverse proxy.
-  // Ensures correct client IP in rate limiting, logging, and X-Forwarded-* headers.
-  if (isProduction) {
+  const shouldTrustProxy =
+    isProduction || process.env.TRUST_PROXY === '1' || process.env.TRUST_PROXY === 'true';
+
+  // Trust proxy when explicitly requested locally, or by default in production.
+  // This keeps local QA and Playwright rate-limiting behavior aligned with deployed environments.
+  if (shouldTrustProxy) {
     app.set('trust proxy', 1);
-    logger.log('Trust proxy enabled for reverse proxy (Railway)');
+    logger.log(
+      isProduction
+        ? 'Trust proxy enabled for reverse proxy (Railway)'
+        : 'Trust proxy enabled via TRUST_PROXY for local/test traffic',
+    );
   }
 
   // Security headers via helmet
-  // Note: CSP allows 'unsafe-inline' for scripts/styles to support Swagger UI
+  // CSP 'unsafe-inline' for scripts/styles is only needed when Swagger UI is enabled (non-production)
+  const swaggerEnabled = !isProduction;
+  const scriptSrc: string[] = ["'self'"];
+  const styleSrc: string[] = ["'self'"];
+  const imgSrc: string[] = ["'self'", 'data:'];
+  const fontSrc: string[] = ["'self'"];
+
+  if (swaggerEnabled) {
+    scriptSrc.push("'unsafe-inline'");
+    styleSrc.push("'unsafe-inline'");
+    imgSrc.push('https://cdn.jsdelivr.net');
+    fontSrc.push('https://cdn.jsdelivr.net');
+  }
+
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", 'data:', 'https://cdn.jsdelivr.net'],
+          scriptSrc,
+          styleSrc,
+          imgSrc,
           connectSrc: ["'self'"],
-          fontSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+          fontSrc,
           objectSrc: ["'none'"],
           mediaSrc: ["'self'"],
           frameSrc: ["'none'"],
@@ -168,11 +188,11 @@ async function bootstrap() {
   );
 
   // Global interceptors
-  // Order: Sentry (breadcrumbs/context) -> Performance (timing/headers) -> Logging (request log)
+  // Order: Sentry (breadcrumbs/context) -> Performance (timing/headers)
+  // Note: LoggingInterceptor is registered via APP_INTERCEPTOR in ObservabilityModule
   app.useGlobalInterceptors(
     new SentryInterceptor(),
     new PerformanceInterceptor(),
-    new LoggingInterceptor(),
   );
 
   // Global validation pipe with security-focused options
@@ -188,47 +208,49 @@ async function bootstrap() {
     }),
   );
 
-  // ── Swagger / OpenAPI documentation ──────────────────────────────
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('FinanceOwl API')
-    .setDescription('Personal finance management platform API')
-    .setVersion('1.0')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'Enter your JWT access token',
+  // ── Swagger / OpenAPI documentation (disabled in production) ─────
+  if (swaggerEnabled) {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('FinanceOwl API')
+      .setDescription('Personal finance management platform API')
+      .setVersion('1.0')
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Enter your JWT access token',
+        },
+        'bearer',
+      )
+      .addTag('Auth', 'Authentication and session management')
+      .addTag('Accounts', 'Bank account management')
+      .addTag('Transactions', 'Transaction CRUD and filtering')
+      .addTag('Budgets', 'Budget management and rollovers')
+      .addTag('Analytics', 'Spending analytics, forecasting, and insights')
+      .addTag('Billing', 'Subscription billing and Stripe integration')
+      .addTag('Plaid', 'Plaid Link integration for bank connections')
+      .addTag('Notifications', 'In-app notifications and SSE streaming')
+      .addTag('Categories', 'Transaction category management')
+      .addTag('Bank Sync', 'Bank synchronization management')
+      .addTag('Dashboard', 'Dashboard summaries')
+      .addTag('Reports', 'Financial reports')
+      .addTag('Health', 'Application health checks')
+      .build();
+
+    const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, swaggerDocument, {
+      swaggerOptions: {
+        persistAuthorization: true,
+        docExpansion: 'none',
+        filter: true,
+        tagsSorter: 'alpha',
+        operationsSorter: 'method',
       },
-      'bearer',
-    )
-    .addTag('Auth', 'Authentication and session management')
-    .addTag('Accounts', 'Bank account management')
-    .addTag('Transactions', 'Transaction CRUD and filtering')
-    .addTag('Budgets', 'Budget management and rollovers')
-    .addTag('Analytics', 'Spending analytics, forecasting, and insights')
-    .addTag('Billing', 'Subscription billing and Stripe integration')
-    .addTag('Plaid', 'Plaid Link integration for bank connections')
-    .addTag('Notifications', 'In-app notifications and SSE streaming')
-    .addTag('Categories', 'Transaction category management')
-    .addTag('Bank Sync', 'Bank synchronization management')
-    .addTag('Dashboard', 'Dashboard summaries')
-    .addTag('Reports', 'Financial reports')
-    .addTag('Health', 'Application health checks')
-    .build();
+    });
 
-  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, swaggerDocument, {
-    swaggerOptions: {
-      persistAuthorization: true,
-      docExpansion: 'none',
-      filter: true,
-      tagsSorter: 'alpha',
-      operationsSorter: 'method',
-    },
-  });
-
-  logger.log('Swagger documentation available at /api/docs');
+    logger.log('Swagger documentation available at /api/docs');
+  }
 
   // Graceful shutdown hooks — NestJS will call onModuleDestroy / beforeApplicationShutdown
   app.enableShutdownHooks();

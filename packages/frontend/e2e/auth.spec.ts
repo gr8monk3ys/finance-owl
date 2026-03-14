@@ -1,15 +1,18 @@
 import { test, expect, login, TEST_USER, uniqueEmail } from './fixtures';
 
+test.describe.configure({ mode: 'serial' });
+
 test.describe('Authentication — Login page', () => {
   test('should load the login page with all expected elements', async ({ page }) => {
     await page.goto('/auth/login');
 
-    await expect(page).toHaveTitle(/Login/);
-    await expect(page.getByText('Sign in to your account')).toBeVisible();
+    await expect(page).toHaveTitle(/Sign In/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Welcome back' })).toBeVisible();
+    await expect(page.getByText('Sign in to your Finance Owl account')).toBeVisible();
     await expect(page.getByLabel('Email')).toBeVisible();
     await expect(page.getByLabel('Password')).toBeVisible();
     await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: /register/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /create one free/i })).toBeVisible();
   });
 
   test('should submit valid credentials and redirect to dashboard', async ({ page }) => {
@@ -26,8 +29,8 @@ test.describe('Authentication — Login page', () => {
     await page.getByLabel('Password').fill('WrongPassword999!');
     await page.getByRole('button', { name: /sign in/i }).click();
 
-    // The app renders errors inside a .bg-red-900\/50 container
-    await expect(page.locator('.bg-red-900\\/50')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('alert')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('alert')).toContainText(/invalid|failed/i);
   });
 
   test('should redirect unauthenticated users away from protected routes', async ({ page }) => {
@@ -40,12 +43,12 @@ test.describe('Authentication — Registration page', () => {
   test('should load the registration page with all expected elements', async ({ page }) => {
     await page.goto('/auth/register');
 
-    await expect(page).toHaveTitle(/Register/);
-    await expect(page.getByText('Create your account')).toBeVisible();
-    await expect(page.getByLabel('Name')).toBeVisible();
+    await expect(page).toHaveTitle(/Create Account/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Create your account' })).toBeVisible();
+    await expect(page.getByLabel('Full name')).toBeVisible();
     await expect(page.getByLabel('Email')).toBeVisible();
     await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
-    await expect(page.getByLabel('Confirm Password')).toBeVisible();
+    await expect(page.getByLabel(/confirm password/i)).toBeVisible();
     await expect(page.getByRole('button', { name: /create account/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /sign in/i })).toBeVisible();
   });
@@ -54,10 +57,10 @@ test.describe('Authentication — Registration page', () => {
     const email = uniqueEmail();
 
     await page.goto('/auth/register');
-    await page.getByLabel('Name').fill('Test New User');
+    await page.getByLabel('Full name').fill('Test New User');
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password', { exact: true }).fill('NewUserSecure123!');
-    await page.getByLabel('Confirm Password').fill('NewUserSecure123!');
+    await page.getByLabel(/confirm password/i).fill('NewUserSecure123!');
     await page.getByRole('button', { name: /create account/i }).click();
 
     await expect(page).toHaveURL(/\/(dashboard|auth\/setup)/, { timeout: 15_000 });
@@ -68,7 +71,7 @@ test.describe('Authentication — Navigation between auth pages', () => {
   test('should navigate from login to register and back', async ({ page }) => {
     await page.goto('/auth/login');
 
-    await page.getByRole('link', { name: /register/i }).click();
+    await page.getByRole('link', { name: /create one free/i }).click();
     await expect(page).toHaveURL(/\/auth\/register/);
 
     await page.getByRole('link', { name: /sign in/i }).click();

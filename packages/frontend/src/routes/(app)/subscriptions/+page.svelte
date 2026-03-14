@@ -252,7 +252,7 @@
 </script>
 
 <svelte:head>
-	<title>Subscriptions - FinanceOwl</title>
+	<title>Subscriptions - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

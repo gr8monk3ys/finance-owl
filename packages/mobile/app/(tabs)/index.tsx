@@ -337,7 +337,7 @@ export default function DashboardScreen() {
             <Text style={styles.emptyIconText}>$</Text>
           </View>
           <Text style={styles.emptyEyebrow}>Set up your money view</Text>
-          <Text style={styles.emptyTitle}>Welcome to FinanceOwl</Text>
+          <Text style={styles.emptyTitle}>Welcome to Finance Owl</Text>
           <Text style={styles.emptySubtitle}>
             Get started by linking your bank accounts. We will automatically
             track your spending, net worth, and budget progress.

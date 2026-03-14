@@ -239,7 +239,7 @@ const checks = [
 
 const failingChecks = checks.filter((item) => !item.ok);
 
-console.log('\nFinanceOwl iOS release readiness\n');
+console.log('\nFinance Owl iOS release readiness\n');
 
 for (const item of checks) {
   console.log(`${item.ok ? 'PASS' : 'FAIL'}  ${item.label}`);

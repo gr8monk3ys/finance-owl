@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { publicMailto, publicSite } from '$lib/config/public';
 	import { onMount } from 'svelte';
 
 	let activeSection = $state('');
@@ -98,7 +99,7 @@
 							By creating an account or using Finance Owl (the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you must not use the Service.
 						</p>
 						<p class="mt-3 text-sm leading-relaxed text-surface-300">
-							These Terms constitute a legally binding agreement between you and Finance Owl, Inc. ("Company," "we," "us," or "our"). You must be at least 18 years old to use the Service. By using the Service, you represent and warrant that you meet this age requirement.
+							These Terms constitute a legally binding agreement between you and {publicSite.legalEntityName} ("Company," "we," "us," or "our"). You must be at least 18 years old to use the Service. By using the Service, you represent and warrant that you meet this age requirement.
 						</p>
 					</section>
 
@@ -106,7 +107,7 @@
 					<section id="description">
 						<h2 class="text-xl font-semibold text-white">2. Description of Service</h2>
 						<p class="mt-3 text-sm leading-relaxed text-surface-300">
-							Finance Owl is a personal finance management platform that provides tools to:
+							Finance Owl is a personal finance management platform that may provide tools to:
 						</p>
 						<ul class="mt-3 space-y-2">
 							{#each [
@@ -126,7 +127,7 @@
 							{/each}
 						</ul>
 						<p class="mt-3 text-sm leading-relaxed text-surface-300">
-							The Service connects to third-party financial institutions through Plaid to retrieve your financial data. Availability of connections may vary by institution and region.
+							Feature availability may vary by plan, platform, region, and connected provider. External account connections rely on the providers configured for the workspace at the time of use.
 						</p>
 					</section>
 
@@ -143,13 +144,13 @@
 							<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
 								<h3 class="text-base font-medium text-white">Account Security</h3>
 								<p class="mt-2 text-sm leading-relaxed text-surface-300">
-									You are responsible for safeguarding your password and any other credentials used to access the Service. You must notify us immediately at <a href="mailto:security@financeowl.com" class="text-primary-400 underline hover:text-primary-300">security@financeowl.com</a> if you become aware of any unauthorized use of your account.
+										You are responsible for safeguarding your password and any other credentials used to access the Service. You must notify us immediately at <a href={publicMailto.security} class="text-primary-400 underline hover:text-primary-300">{publicSite.securityEmail}</a> if you become aware of any unauthorized use of your account.
 								</p>
 							</div>
 							<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
 								<h3 class="text-base font-medium text-white">One Person Per Account</h3>
 								<p class="mt-2 text-sm leading-relaxed text-surface-300">
-									Each account is for a single individual. Sharing login credentials is prohibited. Family plans provide separate linked accounts for each member with shared budgets and views.
+									Each account is for a single individual. Sharing login credentials is prohibited. Premium household sharing provides separate linked access for invited members with shared budgets and views.
 								</p>
 							</div>
 						</div>
@@ -168,7 +169,7 @@
 							<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
 								<h3 class="text-base font-medium text-white">Paid Subscriptions</h3>
 								<p class="mt-2 text-sm leading-relaxed text-surface-300">
-									Premium and Family plans are billed on a recurring monthly or annual basis. By subscribing, you authorize us to charge your payment method on file at the beginning of each billing cycle. All fees are quoted in USD.
+									Pro and Premium plans are billed on a recurring monthly or annual basis. By subscribing, you authorize us to charge your payment method on file at the beginning of each billing cycle. All fees are quoted in USD.
 								</p>
 							</div>
 							<div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
@@ -190,10 +191,10 @@
 					<section id="intellectual-property">
 						<h2 class="text-xl font-semibold text-white">5. Intellectual Property</h2>
 						<p class="mt-3 text-sm leading-relaxed text-surface-300">
-							The Service, including its original content, features, functionality, branding, and design, is and remains the exclusive property of Finance Owl, Inc. and its licensors. The Service is protected by copyright, trademark, and other laws of the United States and foreign countries.
+							The Service, including its original content, features, functionality, branding, and design, is and remains the exclusive property of {publicSite.legalEntityName} and its licensors. The Service is protected by copyright, trademark, and other laws of the United States and foreign countries.
 						</p>
 						<p class="mt-3 text-sm leading-relaxed text-surface-300">
-							Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of Finance Owl, Inc.
+							Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of {publicSite.legalEntityName}.
 						</p>
 					</section>
 
@@ -238,7 +239,7 @@
 						<h2 class="text-xl font-semibold text-white">8. Limitation of Liability</h2>
 						<div class="mt-4 rounded-xl border border-accent-500/20 bg-accent-950/20 p-5">
 							<p class="text-sm leading-relaxed text-surface-300">
-								TO THE MAXIMUM EXTENT PERMITTED BY LAW, FINANCE OWL, INC. AND ITS OFFICERS, DIRECTORS, EMPLOYEES, AND AGENTS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM:
+								TO THE MAXIMUM EXTENT PERMITTED BY LAW, {publicSite.legalEntityName.toUpperCase()} AND ITS OFFICERS, DIRECTORS, EMPLOYEES, AND AGENTS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM:
 							</p>
 							<ul class="mt-3 space-y-2">
 								<li class="text-sm text-surface-300">(a) Your access to, use of, or inability to use the Service;</li>
@@ -296,7 +297,7 @@
 							</li>
 						</ul>
 						<p class="mt-3 text-sm leading-relaxed text-surface-300">
-							You may terminate your account at any time by going to Settings &gt; Privacy &gt; Delete Account, or by contacting us at <a href="mailto:support@financeowl.com" class="text-primary-400 underline hover:text-primary-300">support@financeowl.com</a>.
+							You may terminate your account at any time by going to Settings &gt; Privacy &gt; Delete Account, or by contacting us at <a href={publicMailto.support} class="text-primary-400 underline hover:text-primary-300">{publicSite.supportEmail}</a>.
 						</p>
 					</section>
 
@@ -332,15 +333,21 @@
 							<div class="mt-4 space-y-2">
 								<p class="flex items-center gap-2 text-sm text-surface-300">
 									<svg class="h-4 w-4 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
-									<a href="mailto:legal@financeowl.com" class="text-primary-400 hover:text-primary-300">legal@financeowl.com</a>
-								</p>
-								<p class="flex items-center gap-2 text-sm text-surface-300">
-									<svg class="h-4 w-4 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-									Finance Owl, Inc.
-								</p>
+										<a href={publicMailto.legal} class="text-primary-400 hover:text-primary-300">{publicSite.legalEmail}</a>
+									</p>
+									<p class="flex items-center gap-2 text-sm text-surface-300">
+										<svg class="h-4 w-4 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+										{publicSite.legalEntityName}
+									</p>
+									{#if publicSite.companyAddress}
+										<p class="flex items-center gap-2 text-sm text-surface-300">
+											<svg class="h-4 w-4 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.243-4.243a8 8 0 1111.313 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+											{publicSite.companyAddress}
+										</p>
+									{/if}
+								</div>
 							</div>
-						</div>
-					</section>
+						</section>
 
 					<!-- Footer links -->
 					<div class="flex flex-wrap gap-4 border-t border-surface-700/50 pt-8 text-sm">

@@ -30,7 +30,7 @@ module.exports = () => {
   }
 
   return {
-    name: 'FinanceOwl',
+    name: 'Finance Owl',
     slug: 'finance-owl',
     version: '1.0.0',
     runtimeVersion: {
@@ -50,6 +50,9 @@ module.exports = () => {
       supportsTablet: true,
       bundleIdentifier: 'com.financeowl.app',
       buildNumber: '1',
+      config: {
+        usesNonExemptEncryption: false,
+      },
     },
     android: {
       adaptiveIcon: {

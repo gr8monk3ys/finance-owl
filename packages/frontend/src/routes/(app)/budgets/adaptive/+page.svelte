@@ -128,7 +128,7 @@
 </script>
 
 <svelte:head>
-	<title>Smart Budget Assistant - FinanceOwl</title>
+	<title>Smart Budget Assistant - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

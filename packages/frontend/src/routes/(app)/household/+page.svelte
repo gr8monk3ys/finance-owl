@@ -77,7 +77,7 @@
 </script>
 
 <svelte:head>
-	<title>Household - FinanceOwl</title>
+	<title>Household - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

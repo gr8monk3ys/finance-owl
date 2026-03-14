@@ -151,7 +151,7 @@
 </script>
 
 <svelte:head>
-	<title>Receipts - FinanceOwl</title>
+	<title>Receipts - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

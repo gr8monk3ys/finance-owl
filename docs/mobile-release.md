@@ -4,26 +4,30 @@ This project now includes a basic iOS TestFlight path for the Expo mobile app in
 
 ## One-time setup
 
-1. Create the app in App Store Connect and note the Apple app record.
-2. Link the Expo project from `packages/mobile/`:
+1. Make sure Apple Developer Program membership is active and the latest App Store Connect agreement has been accepted.
+2. If paid plans are part of launch, finish Agreements, Tax, and Banking in App Store Connect.
+3. Create the app in App Store Connect and note the Apple app record.
+4. Link the Expo project from `packages/mobile/`:
    - `cd packages/mobile`
    - `npx eas-cli login`
    - `npx eas-cli init`
-3. Create Expo environments named `development`, `preview`, and `production`.
-4. Set the mobile environment variables in Expo:
+5. Create Expo environments named `development`, `preview`, and `production`.
+6. Set the mobile environment variables in Expo:
    - `EXPO_PUBLIC_API_URL`
    - `EXPO_PUBLIC_WEB_URL`
    - `EXPO_OWNER`
    - `EXPO_PROJECT_ID`
    - `EXPO_ASC_APP_ID`
-5. Create or connect an App Store Connect API key for EAS Submit.
-6. Add the App Store Connect app identifier to the production submit profile in `packages/mobile/eas.json` once it exists.
+7. Create or connect an App Store Connect API key for EAS Submit.
+8. Add the App Store Connect app identifier to the production submit profile in `packages/mobile/eas.json` once it exists.
+9. Confirm `packages/mobile/app.config.js` still has the correct bundle/package identifiers, version numbers, and `ios.config.usesNonExemptEncryption` setting for export compliance.
 
 ## Local validation
 
 Run these before any release:
 
 ```bash
+pnpm launch:check
 pnpm --filter @finance-owl/mobile release:check
 pnpm --filter @finance-owl/mobile typecheck
 pnpm --filter @finance-owl/mobile lint
@@ -67,9 +71,11 @@ Before inviting testers or submitting for review, confirm:
 4. Age rating is set.
 5. Export compliance is answered.
 6. Support URL, privacy policy URL, and screenshots are ready.
+7. The reviewer account and review notes are ready in [app-store-metadata.md](./app-store-metadata.md).
 
 ## Notes
 
 - The mobile CI job validates Expo config and exports an iOS bundle, but it does not produce a signed archive.
 - The app still needs real production metadata and Apple credentials before it can be fully submitted end to end.
 - `packages/mobile/app.config.js` injects `EXPO_OWNER`, `EXPO_PROJECT_ID`, and `EXPO_ASC_APP_ID` at build time so the repo does not need hardcoded account-specific identifiers.
+- Fill in [app-store-metadata.md](./app-store-metadata.md) before the first TestFlight submission.

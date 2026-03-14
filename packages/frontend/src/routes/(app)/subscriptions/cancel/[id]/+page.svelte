@@ -93,7 +93,7 @@
 </script>
 
 <svelte:head>
-	<title>Cancel Subscription - FinanceOwl</title>
+	<title>Cancel Subscription - Finance Owl</title>
 </svelte:head>
 
 <div class="mx-auto max-w-3xl space-y-6">
@@ -539,7 +539,7 @@
 											<p class="text-sm font-medium text-green-300">Confirm Cancellation</p>
 											<p class="mt-1 text-xs text-green-400/80">
 												Click below once you have successfully cancelled the subscription.
-												This will mark the subscription as inactive in FinanceOwl.
+												This will mark the subscription as inactive in Finance Owl.
 											</p>
 										</div>
 									</div>

@@ -87,7 +87,7 @@
 </script>
 
 <svelte:head>
-	<title>Community - FinanceOwl</title>
+	<title>Community - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

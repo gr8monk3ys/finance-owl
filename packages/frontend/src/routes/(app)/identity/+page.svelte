@@ -150,7 +150,7 @@
 </script>
 
 <svelte:head>
-	<title>Identity Monitoring - FinanceOwl</title>
+	<title>Identity Monitoring - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

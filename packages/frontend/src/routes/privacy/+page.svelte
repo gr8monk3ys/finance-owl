@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { publicMailto, publicSite } from '$lib/config/public';
 	import { onMount } from 'svelte';
 
 	let activeSection = $state('');
@@ -119,7 +120,7 @@
 									</li>
 									<li class="flex items-start gap-2 text-sm text-surface-300">
 										<svg class="mt-0.5 h-4 w-4 shrink-0 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-										Billing information (managed securely through Stripe)
+										Billing information when paid plans are enabled
 									</li>
 								</ul>
 							</div>
@@ -129,7 +130,7 @@
 								<ul class="mt-3 space-y-2">
 									<li class="flex items-start gap-2 text-sm text-surface-300">
 										<svg class="mt-0.5 h-4 w-4 shrink-0 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-										Bank account and credit card transaction data (retrieved via Plaid)
+										Bank account and card transaction data when you connect accounts through a supported provider
 									</li>
 									<li class="flex items-start gap-2 text-sm text-surface-300">
 										<svg class="mt-0.5 h-4 w-4 shrink-0 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
@@ -191,7 +192,7 @@
 					<section id="third-party">
 						<h2 class="text-xl font-semibold text-white">Third-Party Services</h2>
 						<p class="mt-3 text-sm leading-relaxed text-surface-300">
-							We integrate with the following third-party services to provide our platform:
+							We may integrate with the following third-party services when those features are enabled for your workspace:
 						</p>
 
 						<div class="mt-4 space-y-4">
@@ -203,12 +204,12 @@
 										</svg>
 									</div>
 									<div>
-										<h3 class="text-base font-medium text-white">Plaid</h3>
-										<p class="text-xs text-surface-400">Bank account connectivity</p>
+										<h3 class="text-base font-medium text-white">Connected account providers</h3>
+										<p class="text-xs text-surface-400">Bank and card connectivity</p>
 									</div>
 								</div>
 								<p class="mt-3 text-sm leading-relaxed text-surface-300">
-									Plaid connects your bank accounts to Finance Owl using read-only access. We never store your bank login credentials. Plaid uses bank-level encryption (AES-256) and is regularly audited for security compliance. See <a href="https://plaid.com/legal" target="_blank" rel="noopener noreferrer" class="text-primary-400 underline hover:text-primary-300">Plaid's Privacy Policy</a>.
+									When account linking is enabled, Finance Owl may rely on a provider such as Plaid to connect external accounts. Provider-specific authentication, security, and retention details are governed by that vendor's terms and policies. See <a href="https://plaid.com/legal" target="_blank" rel="noopener noreferrer" class="text-primary-400 underline hover:text-primary-300">Plaid's legal resources</a> for an example of a supported provider policy.
 								</p>
 							</div>
 
@@ -220,12 +221,12 @@
 										</svg>
 									</div>
 									<div>
-										<h3 class="text-base font-medium text-white">Stripe</h3>
+										<h3 class="text-base font-medium text-white">Billing provider</h3>
 										<p class="text-xs text-surface-400">Payment processing</p>
 									</div>
 								</div>
 								<p class="mt-3 text-sm leading-relaxed text-surface-300">
-									Stripe handles all subscription billing and payment processing. Your credit card information is stored and processed entirely by Stripe, and never touches our servers. Stripe is PCI DSS Level 1 certified. See <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" class="text-primary-400 underline hover:text-primary-300">Stripe's Privacy Policy</a>.
+									If you subscribe to a paid plan, billing is handled by the configured payment processor rather than storing full card details directly in Finance Owl. See <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" class="text-primary-400 underline hover:text-primary-300">Stripe's Privacy Policy</a> for an example of a supported billing provider.
 								</p>
 							</div>
 						</div>
@@ -242,11 +243,11 @@
 								</li>
 								<li class="flex items-start gap-2 text-sm text-surface-300">
 									<svg class="mt-0.5 h-4 w-4 shrink-0 text-accent-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-									<strong class="font-medium text-white">Transaction history</strong> is retained for up to 24 months for active accounts, or as required for legal compliance.
+									<strong class="font-medium text-white">Transaction history</strong> is retained according to the product plan, connected providers, and any legal or accounting obligations that apply.
 								</li>
 								<li class="flex items-start gap-2 text-sm text-surface-300">
 									<svg class="mt-0.5 h-4 w-4 shrink-0 text-accent-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-									<strong class="font-medium text-white">Deleted account data</strong> is purged from our systems within 30 days of account deletion, except where retention is required by law.
+									<strong class="font-medium text-white">Deleted account data</strong> is removed according to the deletion workflow and any retention period required by law, fraud prevention, or billing records.
 								</li>
 								<li class="flex items-start gap-2 text-sm text-surface-300">
 									<svg class="mt-0.5 h-4 w-4 shrink-0 text-accent-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -278,7 +279,7 @@
 							{/each}
 						</div>
 						<p class="mt-4 text-sm text-surface-300">
-							To exercise any of these rights, visit <a href="/settings/privacy" class="text-primary-400 underline hover:text-primary-300">Settings &gt; Privacy</a> or contact us at <a href="mailto:privacy@financeowl.com" class="text-primary-400 underline hover:text-primary-300">privacy@financeowl.com</a>.
+							To exercise any of these rights, visit <a href="/settings/privacy" class="text-primary-400 underline hover:text-primary-300">Settings &gt; Privacy</a> or contact us at <a href={publicMailto.privacy} class="text-primary-400 underline hover:text-primary-300">{publicSite.privacyEmail}</a>.
 						</p>
 					</section>
 
@@ -381,7 +382,7 @@
 					<section id="children">
 						<h2 class="text-xl font-semibold text-white">Children's Privacy</h2>
 						<p class="mt-3 text-sm leading-relaxed text-surface-300">
-							The Service is not intended for users under the age of 18. We do not knowingly collect personal information from children. If we become aware that we have collected data from a child under 18, we will take steps to delete that information promptly. If you believe we have collected information from a minor, please contact us at <a href="mailto:privacy@financeowl.com" class="text-primary-400 underline hover:text-primary-300">privacy@financeowl.com</a>.
+							The Service is not intended for users under the age of 18. We do not knowingly collect personal information from children. If we become aware that we have collected data from a child under 18, we will take steps to delete that information promptly. If you believe we have collected information from a minor, please contact us at <a href={publicMailto.privacy} class="text-primary-400 underline hover:text-primary-300">{publicSite.privacyEmail}</a>.
 						</p>
 					</section>
 
@@ -403,12 +404,18 @@
 							<div class="mt-4 space-y-2">
 								<p class="flex items-center gap-2 text-sm text-surface-300">
 									<svg class="h-4 w-4 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
-									<a href="mailto:privacy@financeowl.com" class="text-primary-400 hover:text-primary-300">privacy@financeowl.com</a>
+									<a href={publicMailto.privacy} class="text-primary-400 hover:text-primary-300">{publicSite.privacyEmail}</a>
 								</p>
 								<p class="flex items-center gap-2 text-sm text-surface-300">
 									<svg class="h-4 w-4 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-									Finance Owl, Inc.
+									{publicSite.legalEntityName}
 								</p>
+								{#if publicSite.companyAddress}
+									<p class="flex items-center gap-2 text-sm text-surface-300">
+										<svg class="h-4 w-4 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.243-4.243a8 8 0 1111.313 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+										{publicSite.companyAddress}
+									</p>
+								{/if}
 							</div>
 						</div>
 					</section>

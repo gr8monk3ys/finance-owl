@@ -1,8 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { api } from '$lib/server/api';
-
-const API_URL = process.env.API_URL || 'http://localhost:4000';
+import { api, API_URL } from '$lib/server/api';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	try {

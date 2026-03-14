@@ -51,7 +51,7 @@
 </script>
 
 <svelte:head>
-	<title>Year in Review - FinanceOwl</title>
+	<title>Year in Review - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

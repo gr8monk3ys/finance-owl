@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { enhance } from '$app/forms';
 
 	let { data } = $props<{ data: PageData }>();
 
@@ -28,24 +29,6 @@
 				return 'text-blue-400 bg-blue-400/10 border-blue-400/20';
 			default:
 				return 'text-surface-400 bg-surface-400/10 border-surface-400/20';
-		}
-	}
-
-	async function handleSuspend(tenantId: string) {
-		try {
-			await fetch(`/api/admin/tenants/${tenantId}/suspend`, { method: 'POST' });
-			window.location.reload();
-		} catch (e) {
-			// Handle error
-		}
-	}
-
-	async function handleActivate(tenantId: string) {
-		try {
-			await fetch(`/api/admin/tenants/${tenantId}/activate`, { method: 'POST' });
-			window.location.reload();
-		} catch (e) {
-			// Handle error
 		}
 	}
 </script>
@@ -150,21 +133,27 @@
 						<!-- Actions -->
 						<div class="flex items-center gap-2 shrink-0">
 							{#if tenant.status === 'active'}
-								<button
-									onclick={() => handleSuspend(tenant.id)}
-									class="rounded-lg px-3 py-1.5 text-xs font-medium text-red-400
-										border border-red-400/20 hover:bg-red-400/10 transition-colors duration-150"
-								>
-									Suspend
-								</button>
+								<form method="POST" action="?/suspendTenant" use:enhance>
+									<input type="hidden" name="tenantId" value={tenant.id} />
+									<button
+										type="submit"
+										class="rounded-lg px-3 py-1.5 text-xs font-medium text-red-400
+											border border-red-400/20 hover:bg-red-400/10 transition-colors duration-150"
+									>
+										Suspend
+									</button>
+								</form>
 							{:else if tenant.status === 'suspended'}
-								<button
-									onclick={() => handleActivate(tenant.id)}
-									class="rounded-lg px-3 py-1.5 text-xs font-medium text-emerald-400
-										border border-emerald-400/20 hover:bg-emerald-400/10 transition-colors duration-150"
-								>
-									Activate
-								</button>
+								<form method="POST" action="?/activateTenant" use:enhance>
+									<input type="hidden" name="tenantId" value={tenant.id} />
+									<button
+										type="submit"
+										class="rounded-lg px-3 py-1.5 text-xs font-medium text-emerald-400
+											border border-emerald-400/20 hover:bg-emerald-400/10 transition-colors duration-150"
+									>
+										Activate
+									</button>
+								</form>
 							{/if}
 							<a
 								href="/admin/tenants/{tenant.id}"
@@ -194,17 +183,22 @@
 
 			<form
 				method="POST"
-				action="/api/tenants"
+				action="?/createTenant"
 				class="space-y-4"
-				onsubmit={(e) => {
-					e.preventDefault();
-					// Handle form submission via API
+				use:enhance={() => {
+					return async ({ update }) => {
+						await update();
+						showCreateModal = false;
+						newTenantName = '';
+						newTenantSlug = '';
+					};
 				}}
 			>
 				<div>
 					<label for="name" class="block text-sm font-medium text-surface-300 mb-1.5">Name</label>
 					<input
 						id="name"
+						name="name"
 						type="text"
 						bind:value={newTenantName}
 						placeholder="Acme Corp"
@@ -218,6 +212,7 @@
 					<div class="flex items-center rounded-lg border border-surface-600/50 bg-surface-700/50">
 						<input
 							id="slug"
+							name="slug"
 							type="text"
 							bind:value={newTenantSlug}
 							placeholder="acme"

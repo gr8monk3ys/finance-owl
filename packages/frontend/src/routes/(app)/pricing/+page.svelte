@@ -145,7 +145,7 @@
 </script>
 
 <svelte:head>
-	<title>Pricing - FinanceOwl</title>
+	<title>Pricing - Finance Owl</title>
 </svelte:head>
 
 <div class="mx-auto max-w-6xl space-y-12 pb-12">
@@ -157,8 +157,7 @@
 			Simple, transparent pricing
 		</h1>
 		<p class="mx-auto mt-4 max-w-2xl text-lg text-surface-400">
-			Start free, upgrade when you need more. All plans include a 14-day free trial of premium
-			features.
+			Start free, upgrade when you need more, and choose monthly or yearly billing on paid plans.
 		</p>
 	</div>
 
@@ -361,11 +360,11 @@
 								>
 									{#if currentPlanName === 'free'}
 										Get Started
-									{:else if plan.name === 'premium'}
-										Upgrade to Premium
-									{:else}
-										Switch to {plan.title}
-									{/if}
+										{:else if plan.name === 'premium'}
+											Upgrade to Premium
+										{:else}
+											Switch to {plan.title}
+										{/if}
 								</Button>
 							</form>
 						{/if}
@@ -486,13 +485,13 @@
 					per year instead of twelve times.
 				</p>
 			</div>
-			<div>
-				<h3 class="text-sm font-semibold text-white">Do you offer a free trial?</h3>
-				<p class="mt-2 text-sm text-surface-400">
-					Yes! All paid plans include a 14-day free trial. You can cancel at any time during the
-					trial without being charged.
-				</p>
+				<div>
+					<h3 class="text-sm font-semibold text-white">Do you offer a free trial?</h3>
+					<p class="mt-2 text-sm text-surface-400">
+						Trials can vary by workspace and billing setup. The checkout flow will show any active
+						introductory offer before you confirm a paid plan.
+					</p>
+				</div>
 			</div>
-		</div>
-	</Card>
-</div>
+		</Card>
+	</div>

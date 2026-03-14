@@ -120,7 +120,7 @@
 </script>
 
 <svelte:head>
-	<title>Credit Score Simulator - FinanceOwl</title>
+	<title>Credit Score Simulator - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

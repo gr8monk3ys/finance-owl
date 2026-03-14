@@ -1,6 +1,7 @@
 import type { Handle } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import * as Sentry from '@sentry/sveltekit';
+import { API_URL } from '$lib/server/api';
 
 // Initialize Sentry on the server side (optional - only if DSN is provided)
 const sentryDsn = process.env.PUBLIC_SENTRY_DSN;
@@ -27,9 +28,22 @@ if (sentryDsn) {
 	});
 }
 
-const API_URL = process.env.API_URL || 'http://localhost:4000';
+const publicPathPrefixes = [
+	'/',
+	'/auth/login',
+	'/auth/register',
+	'/auth/setup',
+	'/support',
+	'/privacy',
+	'/terms',
+	'/security',
+	'/sitemap.xml',
+	'/.well-known'
+];
 
-const publicPaths = ['/auth/login', '/auth/register', '/auth/setup', '/'];
+function isPublicPath(pathname: string) {
+	return publicPathPrefixes.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+}
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const accessToken = event.cookies.get('access_token');
@@ -101,9 +115,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	const isPublicPath = publicPaths.some((p) => event.url.pathname === p || event.url.pathname.startsWith(p + '/'));
-
-	if (!event.locals.user && !isPublicPath) {
+	if (!event.locals.user && !isPublicPath(event.url.pathname)) {
 		throw redirect(303, '/auth/login');
 	}
 

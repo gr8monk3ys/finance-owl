@@ -139,7 +139,7 @@
 </script>
 
 <svelte:head>
-	<title>Reports - FinanceOwl</title>
+	<title>Reports - Finance Owl</title>
 	<style>
 		@media print {
 			body { background: white !important; color: black !important; }

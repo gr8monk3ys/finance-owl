@@ -34,6 +34,9 @@ describe('AccountDeletionService', () => {
   let service: AccountDeletionService;
   let mockDb: any;
   let mockEmailService: any;
+  let mockConfigService: any;
+  let mockBankSyncService: any;
+  let mockBillingService: any;
 
   const mockUserId = 'user-123';
 
@@ -71,13 +74,41 @@ describe('AccountDeletionService', () => {
       insert: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
+      transaction: vi.fn(async (cb: (tx: any) => Promise<any>) => {
+        // The transaction callback receives the same mock db so all
+        // pre-configured mockReturnValueOnce calls are consumed normally.
+        return cb(mockDb);
+      }),
     };
 
     mockEmailService = {
       sendEmail: vi.fn().mockResolvedValue(true),
     };
 
-    service = new AccountDeletionService(mockDb, mockEmailService);
+    mockConfigService = {
+      get: vi.fn().mockImplementation((key: string, defaultValue?: string) => {
+        const config: Record<string, string> = {
+          FRONTEND_URL: 'http://localhost:3000',
+        };
+        return config[key] ?? defaultValue;
+      }),
+    };
+
+    mockBankSyncService = {
+      unlinkItem: vi.fn().mockResolvedValue(undefined),
+    };
+
+    mockBillingService = {
+      cancelSubscription: vi.fn().mockResolvedValue({ canceled: true, effectiveDate: new Date().toISOString() }),
+    };
+
+    service = new AccountDeletionService(
+      mockDb,
+      mockEmailService,
+      mockConfigService,
+      mockBankSyncService,
+      mockBillingService,
+    );
   });
 
   // ---------------------------------------------------------------------------
@@ -239,6 +270,192 @@ describe('AccountDeletionService', () => {
 
       await service.executeDeletion(mockUserId);
 
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        'test@example.com',
+        expect.stringContaining('Account Deleted'),
+        expect.any(String),
+        expect.any(String),
+      );
+    });
+
+    it('should call bankSyncService.unlinkItem for each Plaid item', async () => {
+      const readyDeletion = {
+        ...mockPendingDeletion,
+        scheduledAt: pastDate,
+      };
+
+      const mockPlaidItems = [
+        { id: 'pi-1', plaidItemId: 'plaid-item-1', userId: mockUserId, accessToken: 'enc-token-1' },
+        { id: 'pi-2', plaidItemId: 'plaid-item-2', userId: mockUserId, accessToken: 'enc-token-2' },
+      ];
+
+      // Find pending deletion
+      mockDb.select.mockReturnValueOnce(mockQuery([readyDeletion]));
+      // Mark as processing
+      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
+      // Get user
+      mockDb.select.mockReturnValueOnce(mockQuery([mockUser]));
+      // Plaid items
+      mockDb.select.mockReturnValueOnce(mockQuery(mockPlaidItems));
+      // Stripe subscription
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+
+      // Transaction IDs for splits
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      // Savings goal IDs for contributions
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      // Budget IDs for alerts/periods
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+
+      for (let i = 0; i < 30; i++) {
+        mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
+      }
+      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
+
+      await service.executeDeletion(mockUserId);
+
+      expect(mockBankSyncService.unlinkItem).toHaveBeenCalledTimes(2);
+      expect(mockBankSyncService.unlinkItem).toHaveBeenCalledWith(mockUserId, 'pi-1');
+      expect(mockBankSyncService.unlinkItem).toHaveBeenCalledWith(mockUserId, 'pi-2');
+    });
+
+    it('should continue deletion when Plaid revocation fails', async () => {
+      const readyDeletion = {
+        ...mockPendingDeletion,
+        scheduledAt: pastDate,
+      };
+
+      const mockPlaidItems = [
+        { id: 'pi-1', plaidItemId: 'plaid-item-1', userId: mockUserId, accessToken: 'enc-token-1' },
+      ];
+
+      mockBankSyncService.unlinkItem.mockRejectedValueOnce(
+        new Error('Plaid API error'),
+      );
+
+      // Find pending deletion
+      mockDb.select.mockReturnValueOnce(mockQuery([readyDeletion]));
+      // Mark as processing
+      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
+      // Get user
+      mockDb.select.mockReturnValueOnce(mockQuery([mockUser]));
+      // Plaid items
+      mockDb.select.mockReturnValueOnce(mockQuery(mockPlaidItems));
+      // Stripe subscription
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+
+      // Transaction IDs for splits
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      // Savings goal IDs for contributions
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      // Budget IDs for alerts/periods
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+
+      for (let i = 0; i < 30; i++) {
+        mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
+      }
+      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
+
+      // Should not throw despite Plaid failure
+      await service.executeDeletion(mockUserId);
+
+      expect(mockBankSyncService.unlinkItem).toHaveBeenCalledTimes(1);
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        'test@example.com',
+        expect.stringContaining('Account Deleted'),
+        expect.any(String),
+        expect.any(String),
+      );
+    });
+
+    it('should call billingService.cancelSubscription for active subscriptions', async () => {
+      const readyDeletion = {
+        ...mockPendingDeletion,
+        scheduledAt: pastDate,
+      };
+
+      const mockSubscription = {
+        id: 'sub-1',
+        userId: mockUserId,
+        stripeSubscriptionId: 'sub_stripe_123',
+        status: 'active',
+      };
+
+      // Find pending deletion
+      mockDb.select.mockReturnValueOnce(mockQuery([readyDeletion]));
+      // Mark as processing
+      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
+      // Get user
+      mockDb.select.mockReturnValueOnce(mockQuery([mockUser]));
+      // Plaid items
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      // Stripe subscription
+      mockDb.select.mockReturnValueOnce(mockQuery([mockSubscription]));
+
+      // Transaction IDs for splits
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      // Savings goal IDs for contributions
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      // Budget IDs for alerts/periods
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+
+      for (let i = 0; i < 30; i++) {
+        mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
+      }
+      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
+
+      await service.executeDeletion(mockUserId);
+
+      expect(mockBillingService.cancelSubscription).toHaveBeenCalledWith(
+        mockUserId,
+        false,
+      );
+    });
+
+    it('should continue deletion when Stripe cancellation fails', async () => {
+      const readyDeletion = {
+        ...mockPendingDeletion,
+        scheduledAt: pastDate,
+      };
+
+      const mockSubscription = {
+        id: 'sub-1',
+        userId: mockUserId,
+        stripeSubscriptionId: 'sub_stripe_123',
+        status: 'active',
+      };
+
+      mockBillingService.cancelSubscription.mockRejectedValueOnce(
+        new Error('Stripe API error'),
+      );
+
+      // Find pending deletion
+      mockDb.select.mockReturnValueOnce(mockQuery([readyDeletion]));
+      // Mark as processing
+      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
+      // Get user
+      mockDb.select.mockReturnValueOnce(mockQuery([mockUser]));
+      // Plaid items
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      // Stripe subscription
+      mockDb.select.mockReturnValueOnce(mockQuery([mockSubscription]));
+
+      // Transaction IDs for splits
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      // Savings goal IDs for contributions
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      // Budget IDs for alerts/periods
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+
+      for (let i = 0; i < 30; i++) {
+        mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
+      }
+      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
+
+      // Should not throw despite Stripe failure
+      await service.executeDeletion(mockUserId);
+
+      expect(mockBillingService.cancelSubscription).toHaveBeenCalledTimes(1);
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         'test@example.com',
         expect.stringContaining('Account Deleted'),

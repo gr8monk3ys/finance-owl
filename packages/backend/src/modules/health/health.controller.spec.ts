@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ConfigService } from '@nestjs/config';
 import { HealthController } from './health.controller';
 import type { DrizzleDB } from '../../database/database.module';
+import type { CacheService } from '../../common/cache';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -30,6 +31,21 @@ function createMockConfig(overrides: Record<string, string | undefined> = {}): C
   } as unknown as ConfigService;
 }
 
+function createMockCacheService(opts?: {
+  usingFallback?: boolean;
+  pingFails?: boolean;
+}): CacheService {
+  return {
+    isUsingFallback: vi.fn().mockReturnValue(opts?.usingFallback ?? true),
+    ping: vi.fn().mockImplementation(() => {
+      if (opts?.pingFails) {
+        return Promise.reject(new Error('Connection refused'));
+      }
+      return Promise.resolve('PONG');
+    }),
+  } as unknown as CacheService;
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -38,11 +54,13 @@ describe('HealthController', () => {
   let controller: HealthController;
   let db: DrizzleDB;
   let configService: ConfigService;
+  let cacheService: CacheService;
 
   beforeEach(() => {
     db = createMockDb();
     configService = createMockConfig();
-    controller = new HealthController(db, configService);
+    cacheService = createMockCacheService();
+    controller = new HealthController(db, configService, cacheService);
   });
 
   // ---------- GET /health ----------
@@ -95,30 +113,59 @@ describe('HealthController', () => {
 
     it('should return unhealthy when database is down', async () => {
       const failingDb = createMockDb({ shouldFail: true });
-      const failController = new HealthController(failingDb, configService);
+      const failController = new HealthController(failingDb, configService, cacheService);
 
-      const result = await failController.ready();
-
-      expect(result.status).toBe('unhealthy');
-      expect(result.services.database.status).toBe('error');
-      expect(result.services.database.message).toBe('Database connection failed');
+      await expect(failController.ready()).rejects.toMatchObject({
+        response: expect.objectContaining({
+          status: 'unhealthy',
+          services: expect.objectContaining({
+            database: expect.objectContaining({
+              status: 'error',
+              message: 'Database connection failed',
+            }),
+          }),
+        }),
+      });
     });
 
-    it('should return redis unavailable when REDIS_URL is not configured', async () => {
+    it('should return redis unavailable when using in-memory fallback', async () => {
       const result = await controller.ready();
 
       expect(result.services.redis.status).toBe('unavailable');
-      expect(result.services.redis.message).toBe('Redis not configured');
+      expect(result.services.redis.message).toBe(
+        'Redis not connected (using in-memory fallback)',
+      );
     });
 
-    it('should return redis ok when REDIS_URL is configured', async () => {
-      const configWithRedis = createMockConfig({ REDIS_URL: 'redis://localhost:6379' });
-      const redisController = new HealthController(db, configWithRedis);
+    it('should return redis ok when ping succeeds', async () => {
+      const connectedCache = createMockCacheService({ usingFallback: false });
+      const redisController = new HealthController(db, configService, connectedCache);
 
       const result = await redisController.ready();
 
       expect(result.services.redis.status).toBe('ok');
       expect(result.services.redis.responseTimeMs).toBeDefined();
+      expect(connectedCache.ping).toHaveBeenCalled();
+    });
+
+    it('should return redis error when ping fails', async () => {
+      const failingCache = createMockCacheService({
+        usingFallback: false,
+        pingFails: true,
+      });
+      const failController = new HealthController(db, configService, failingCache);
+
+      await expect(failController.ready()).rejects.toMatchObject({
+        response: expect.objectContaining({
+          status: 'unhealthy',
+          services: expect.objectContaining({
+            redis: expect.objectContaining({
+              status: 'error',
+              message: 'Redis connection failed',
+            }),
+          }),
+        }),
+      });
     });
   });
 
@@ -157,7 +204,7 @@ describe('HealthController', () => {
 
     it('should report unhealthy when database is down', async () => {
       const failingDb = createMockDb({ shouldFail: true });
-      const failController = new HealthController(failingDb, configService);
+      const failController = new HealthController(failingDb, configService, cacheService);
 
       const result = await failController.detailed();
 
@@ -169,7 +216,7 @@ describe('HealthController', () => {
       const versionedConfig = createMockConfig({
         npm_package_version: '2.5.0',
       });
-      const versionedController = new HealthController(db, versionedConfig);
+      const versionedController = new HealthController(db, versionedConfig, cacheService);
 
       const result = await versionedController.detailed();
 
@@ -178,7 +225,7 @@ describe('HealthController', () => {
 
     it('should report the configured environment', async () => {
       const prodConfig = createMockConfig({ NODE_ENV: 'production' });
-      const prodController = new HealthController(db, prodConfig);
+      const prodController = new HealthController(db, prodConfig, cacheService);
 
       const result = await prodController.detailed();
 

@@ -72,7 +72,10 @@ export class TransactionSplitService {
   /**
    * Get splits for a transaction
    */
-  async getSplits(transactionId: string): Promise<Split[]> {
+  async getSplits(userId: string, transactionId: string): Promise<Split[]> {
+    // Verify the transaction belongs to the requesting user
+    await this.getTransaction(userId, transactionId);
+
     return this.getSplitsWithCategories(transactionId);
   }
 

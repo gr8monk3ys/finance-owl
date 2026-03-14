@@ -14,7 +14,11 @@
 </script>
 
 <svelte:head>
-	<title>Sign In - FinanceOwl</title>
+	<title>Sign In - Finance Owl</title>
+	<meta
+		name="description"
+		content="Sign in to Finance Owl to review your dashboard, transactions, budgets, and account activity."
+	/>
 </svelte:head>
 
 <div class="relative flex min-h-screen items-center justify-center bg-surface-900 px-4">
@@ -27,7 +31,7 @@
 	<div class="relative w-full max-w-md space-y-8">
 		<!-- Logo & branding -->
 		<div class="text-center">
-			<a aria-label="FinanceOwl home" href="/" class="inline-flex items-center gap-2.5 group">
+			<a aria-label="Finance Owl home" href="/" class="inline-flex items-center gap-2.5 group">
 				<div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 shadow-lg shadow-primary-900/40 transition-transform duration-200 group-hover:scale-105">
 					<svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor">
 						<path d="M12 2C9.5 2 7.5 3.5 7 5.5C5.5 5 3.5 5.5 2.5 7C1.5 8.5 2 10.5 3 11.5C2 12.5 1.5 14.5 2.5 16C3.5 17.5 5.5 18 7 17.5C7.5 19.5 9.5 21 12 21C14.5 21 16.5 19.5 17 17.5C18.5 18 20.5 17.5 21.5 16C22.5 14.5 22 12.5 21 11.5C22 10.5 22.5 8.5 21.5 7C20.5 5.5 18.5 5 17 5.5C16.5 3.5 14.5 2 12 2Z"/>
@@ -38,7 +42,7 @@
 				</div>
 			</a>
 			<h1 class="mt-5 text-2xl font-bold text-white">Welcome back</h1>
-			<p class="mt-2 text-surface-400">Sign in to your FinanceOwl account</p>
+			<p class="mt-2 text-surface-300">Sign in to your Finance Owl account</p>
 		</div>
 
 		<div class="rounded-2xl border border-surface-700/50 bg-surface-800/80 p-8 shadow-xl backdrop-blur-sm">
@@ -46,7 +50,7 @@
 			<div class="space-y-3">
 				<button
 					type="button"
-					class="flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-xl border border-surface-600 bg-surface-700/30 px-4 py-2.5 text-sm font-medium text-surface-400"
+					class="flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-xl border border-surface-600 bg-surface-700/30 px-4 py-2.5 text-sm font-medium text-surface-300"
 					disabled
 					aria-disabled="true"
 					title="Google sign-in is coming soon"
@@ -58,11 +62,11 @@
 						<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
 					</svg>
 					Continue with Google
-					<span class="rounded-full border border-surface-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-surface-500">Soon</span>
+					<span class="rounded-full border border-surface-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-surface-300">Soon</span>
 				</button>
 				<button
 					type="button"
-					class="flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-xl border border-surface-600 bg-surface-700/30 px-4 py-2.5 text-sm font-medium text-surface-400"
+					class="flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-xl border border-surface-600 bg-surface-700/30 px-4 py-2.5 text-sm font-medium text-surface-300"
 					disabled
 					aria-disabled="true"
 					title="Apple sign-in is coming soon"
@@ -71,17 +75,17 @@
 						<path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.53-3.23 0-1.44.62-2.2.44-3.06-.4C3.79 16.18 4.36 9.22 8.87 9c1.27.07 2.15.72 2.91.76.98-.2 1.92-.81 3-.86 1.46.07 2.56.63 3.27 1.63-2.98 1.81-2.27 5.78.5 6.88-.6 1.57-1.37 3.13-2.5 4.87zM12.03 8.94c-.17-2.27 1.65-4.18 3.87-4.44.29 2.55-2.33 4.55-3.87 4.44z"/>
 					</svg>
 					Continue with Apple
-					<span class="rounded-full border border-surface-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-surface-500">Soon</span>
+					<span class="rounded-full border border-surface-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-surface-300">Soon</span>
 				</button>
 			</div>
-			<p class="mt-3 text-center text-xs text-surface-500">
+			<p class="mt-3 text-center text-xs text-surface-400">
 				Google and Apple sign-in are not available yet. Use email and password for now.
 			</p>
 
 			<!-- Divider -->
 			<div class="my-6 flex items-center gap-3">
 				<div class="h-px flex-1 bg-surface-700"></div>
-				<span class="text-xs text-surface-500">or continue with email</span>
+				<span class="text-xs text-surface-400">or continue with email</span>
 				<div class="h-px flex-1 bg-surface-700"></div>
 			</div>
 
@@ -155,7 +159,7 @@
 							class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-center text-lg tracking-[0.3em] text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
 							placeholder="000000"
 						/>
-						<p id="totp-help" class="mt-1.5 text-xs text-surface-500">
+						<p id="totp-help" class="mt-1.5 text-xs text-surface-400">
 							Enter the 6-digit code from your authenticator app.
 						</p>
 					</div>
@@ -175,7 +179,7 @@
 		</div>
 
 		<!-- Footer -->
-		<p class="text-center text-sm text-surface-400">
+		<p class="text-center text-sm text-surface-300">
 			Don't have an account?
 			<a href="/auth/register" class="font-medium text-primary-400 transition hover:text-primary-300">Create one free</a>
 		</p>

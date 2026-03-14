@@ -1,4 +1,4 @@
-const API_URL = process.env.API_URL || 'http://localhost:4000';
+export const API_URL = process.env.API_URL || 'http://localhost:4000';
 const REQUEST_TIMEOUT_MS = 30_000;
 const MAX_RETRIES = 1;
 const RETRY_DELAY_MS = 1_000;

@@ -107,7 +107,7 @@
 		</div>
 
 		<p class="text-center text-xs text-surface-500">
-			Cancel anytime. 14-day free trial included.
+			Cancel anytime. Paid-plan offers are shown before checkout.
 		</p>
 	</div>
 </Modal>

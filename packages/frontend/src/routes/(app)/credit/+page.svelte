@@ -271,7 +271,7 @@
 </script>
 
 <svelte:head>
-	<title>Credit Score - FinanceOwl</title>
+	<title>Credit Score - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

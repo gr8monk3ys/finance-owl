@@ -108,6 +108,8 @@ interface AmountCluster {
   transactions: { date: string; amount: number }[];
 }
 
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const FREQUENCY_RANGES: { min: number; max: number; label: string; nominalDays: number }[] = [
@@ -805,7 +807,7 @@ export class DetectionService {
       return false;
     }
 
-    const firstChargeDate = new Date(sortedTransactions[0].date);
+    const firstChargeDate = this.parseTransactionDate(sortedTransactions[0].date);
     const daysSinceFirst = Math.round(
       (now.getTime() - firstChargeDate.getTime()) / (1000 * 60 * 60 * 24),
     );
@@ -1130,13 +1132,17 @@ export class DetectionService {
     | null {
     const sorted = cluster.transactions
       .slice()
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      .sort(
+        (a, b) =>
+          this.parseTransactionDate(a.date).getTime() -
+          this.parseTransactionDate(b.date).getTime(),
+      );
 
     // Calculate intervals between consecutive transactions (in days)
     const intervals: number[] = [];
     for (let i = 1; i < sorted.length; i++) {
-      const prev = new Date(sorted[i - 1].date).getTime();
-      const curr = new Date(sorted[i].date).getTime();
+      const prev = this.parseTransactionDate(sorted[i - 1].date).getTime();
+      const curr = this.parseTransactionDate(sorted[i].date).getTime();
       const diffDays = Math.round((curr - prev) / (1000 * 60 * 60 * 24));
       if (diffDays > 0) {
         intervals.push(diffDays);
@@ -1173,7 +1179,7 @@ export class DetectionService {
     }
 
     // Check for cancellation
-    const lastChargeDate = new Date(sorted[sorted.length - 1].date);
+    const lastChargeDate = this.parseTransactionDate(sorted[sorted.length - 1].date);
     const isCancelled = this.detectCancellation(lastChargeDate, frequencyDays, referenceDate);
 
     if (isCancelled) {
@@ -1237,7 +1243,7 @@ export class DetectionService {
         name: group.name,
         estimatedAmount: currentAmount,
         frequency,
-        nextExpectedDate: nextDate.toISOString().split('T')[0],
+        nextExpectedDate: this.formatDateOnly(nextDate),
         accountId: group.accountId,
         categoryId: group.categoryId,
         confidence,
@@ -1296,31 +1302,44 @@ export class DetectionService {
 
     switch (frequency) {
       case 'weekly':
-        next.setDate(next.getDate() + 7);
+        next.setUTCDate(next.getUTCDate() + 7);
         break;
       case 'biweekly':
-        next.setDate(next.getDate() + 14);
+        next.setUTCDate(next.getUTCDate() + 14);
         break;
       case 'monthly':
-        next.setMonth(next.getMonth() + 1);
+        next.setUTCMonth(next.getUTCMonth() + 1);
         break;
       case 'bimonthly':
-        next.setMonth(next.getMonth() + 2);
+        next.setUTCMonth(next.getUTCMonth() + 2);
         break;
       case 'quarterly':
-        next.setMonth(next.getMonth() + 3);
+        next.setUTCMonth(next.getUTCMonth() + 3);
         break;
       case 'semiannual':
-        next.setMonth(next.getMonth() + 6);
+        next.setUTCMonth(next.getUTCMonth() + 6);
         break;
       case 'annual':
-        next.setFullYear(next.getFullYear() + 1);
+        next.setUTCFullYear(next.getUTCFullYear() + 1);
         break;
       default:
-        next.setDate(next.getDate() + (FREQUENCY_DAYS[frequency] ?? 30));
+        next.setUTCDate(next.getUTCDate() + (FREQUENCY_DAYS[frequency] ?? 30));
     }
 
     return next;
+  }
+
+  private parseTransactionDate(value: string): Date {
+    if (DATE_ONLY_PATTERN.test(value)) {
+      const [year, month, day] = value.split('-').map(Number);
+      return new Date(Date.UTC(year, month - 1, day));
+    }
+
+    return new Date(value);
+  }
+
+  private formatDateOnly(value: Date): string {
+    return value.toISOString().split('T')[0];
   }
 
   // ─── Private: Persistence ─────────────────────────────────────────────────

@@ -221,6 +221,18 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     return this.usingFallback;
   }
 
+  /**
+   * Ping the Redis server.  Returns `'PONG'` on success.
+   * When running in fallback mode, returns `'PONG'` immediately (in-memory
+   * store is always available).  Throws on connection failure.
+   */
+  async ping(): Promise<string> {
+    if (this.usingFallback) {
+      return 'PONG';
+    }
+    return this.redis!.ping();
+  }
+
   // ── In-memory fallback internals ──────────────────────────────────
 
   private enableFallback(): void {

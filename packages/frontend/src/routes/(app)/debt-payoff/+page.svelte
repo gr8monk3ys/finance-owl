@@ -166,7 +166,7 @@
 </script>
 
 <svelte:head>
-	<title>Debt Payoff Planner - FinanceOwl</title>
+	<title>Debt Payoff Planner - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

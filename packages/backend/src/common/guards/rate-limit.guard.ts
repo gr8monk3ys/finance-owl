@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { Request, Response } from 'express';
+import { CacheService } from '../cache/cache.service';
 
 // ---------------------------------------------------------------------------
 // Metadata key & decorator
@@ -66,34 +67,21 @@ interface Bucket {
 }
 
 /**
- * In-memory token-bucket rate limiter.
+ * Redis-backed token-bucket rate limiter.
  *
- * The store is a `Map<string, Bucket>` keyed by a composite of the
- * client IP and the handler identifier. Expired buckets are periodically
- * pruned to prevent unbounded memory growth.
+ * Bucket state is stored in Redis (via CacheService) with TTLs that handle
+ * expiration automatically, eliminating the need for a background sweep.
  */
 @Injectable()
 export class RateLimitGuard implements CanActivate {
   private readonly logger = new Logger(RateLimitGuard.name);
-  private readonly buckets = new Map<string, Bucket>();
 
-  /** How often (ms) the background sweep removes stale buckets. */
-  private static readonly SWEEP_INTERVAL_MS = 60_000;
-  private sweepTimer: ReturnType<typeof setInterval> | null = null;
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly cacheService: CacheService,
+  ) {}
 
-  constructor(private readonly reflector: Reflector) {
-    // Start background sweep
-    this.sweepTimer = setInterval(
-      () => this.sweep(),
-      RateLimitGuard.SWEEP_INTERVAL_MS,
-    );
-    // Ensure the timer does not prevent Node from exiting.
-    if (this.sweepTimer && typeof this.sweepTimer === 'object' && 'unref' in this.sweepTimer) {
-      this.sweepTimer.unref();
-    }
-  }
-
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const opts = this.reflector.getAllAndOverride<RateLimitOptions | undefined>(
       RATE_LIMIT_KEY,
       [context.getHandler(), context.getClass()],
@@ -109,16 +97,19 @@ export class RateLimitGuard implements CanActivate {
 
     const ip = this.extractIp(request);
     const handlerId = `${context.getClass().name}#${context.getHandler().name}`;
-    const bucketKey = `${ip}:${handlerId}`;
+    const bucketKey = `ratelimit:${handlerId}:${ip}`;
 
     const now = Date.now();
-    const bucket = this.getOrCreateBucket(bucketKey, opts, now);
+    const bucket = await this.getOrCreateBucket(bucketKey, opts, now);
 
     // Refill tokens based on elapsed time
     this.refill(bucket, opts, now);
 
     if (bucket.tokens >= 1) {
       bucket.tokens -= 1;
+
+      // Persist updated bucket state to Redis
+      await this.cacheService.set(bucketKey, bucket, opts.windowSeconds * 2);
 
       // Expose remaining tokens in response headers (non-standard but useful)
       response.setHeader('X-RateLimit-Limit', String(opts.maxRequests));
@@ -134,6 +125,9 @@ export class RateLimitGuard implements CanActivate {
       );
       return true;
     }
+
+    // Persist updated bucket state to Redis
+    await this.cacheService.set(bucketKey, bucket, opts.windowSeconds * 2);
 
     // Calculate seconds until at least 1 token is available
     const tokensNeeded = 1 - bucket.tokens;
@@ -165,35 +159,16 @@ export class RateLimitGuard implements CanActivate {
 
   // ---------- helpers ----------
 
-  /** Visible for testing. */
-  _getBuckets(): Map<string, Bucket> {
-    return this.buckets;
-  }
-
-  /** Visible for testing. */
-  _clearBuckets(): void {
-    this.buckets.clear();
-  }
-
-  /** Stop the background sweep timer (useful in tests). */
-  _destroy(): void {
-    if (this.sweepTimer) {
-      clearInterval(this.sweepTimer);
-      this.sweepTimer = null;
-    }
-  }
-
-  private getOrCreateBucket(
+  private async getOrCreateBucket(
     key: string,
     opts: RateLimitOptions,
     now: number,
-  ): Bucket {
-    let bucket = this.buckets.get(key);
-    if (!bucket) {
-      bucket = { tokens: opts.maxRequests, lastRefill: now };
-      this.buckets.set(key, bucket);
+  ): Promise<Bucket> {
+    const bucket = await this.cacheService.get<Bucket>(key);
+    if (bucket) {
+      return bucket;
     }
-    return bucket;
+    return { tokens: opts.maxRequests, lastRefill: now };
   }
 
   private refill(bucket: Bucket, opts: RateLimitOptions, now: number): void {
@@ -206,31 +181,6 @@ export class RateLimitGuard implements CanActivate {
   }
 
   private extractIp(request: Request): string {
-    // Trust X-Forwarded-For behind a reverse proxy (first entry is the client)
-    const forwarded = request.headers['x-forwarded-for'];
-    if (typeof forwarded === 'string') {
-      return forwarded.split(',')[0].trim();
-    }
     return request.ip || request.socket?.remoteAddress || 'unknown';
-  }
-
-  /**
-   * Remove buckets that have been fully refilled for longer than their window.
-   * This prevents unbounded memory growth from short-lived clients.
-   */
-  private sweep(): void {
-    const now = Date.now();
-    let removed = 0;
-    for (const [key, bucket] of this.buckets) {
-      const ageSec = (now - bucket.lastRefill) / 1000;
-      // If the bucket has not been touched for 2x the window, remove it
-      if (ageSec > 120) {
-        this.buckets.delete(key);
-        removed++;
-      }
-    }
-    if (removed > 0) {
-      this.logger.debug(`Swept ${removed} stale rate-limit bucket(s)`);
-    }
   }
 }

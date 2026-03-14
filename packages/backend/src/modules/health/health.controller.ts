@@ -9,6 +9,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Public } from '../../common/decorators';
+import { CacheService } from '../../common/cache';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { sql } from 'drizzle-orm';
 
@@ -54,6 +55,7 @@ export class HealthController {
   constructor(
     @Inject(DATABASE_TOKEN) private readonly db: DrizzleDB,
     private readonly configService: ConfigService,
+    private readonly cacheService: CacheService,
   ) {}
 
   @ApiOperation({ summary: 'Basic health check' })
@@ -185,17 +187,15 @@ export class HealthController {
   private async checkRedis(): Promise<ServiceStatus> {
     const start = Date.now();
     try {
-      const redisUrl = this.configService.get<string>('REDIS_URL');
-      if (!redisUrl) {
+      if (this.cacheService.isUsingFallback()) {
         return {
           status: 'unavailable',
-          message: 'Redis not configured',
+          responseTimeMs: Date.now() - start,
+          message: 'Redis not connected (using in-memory fallback)',
         };
       }
 
-      // BullMQ manages its own Redis connections. If the REDIS_URL is configured,
-      // we consider Redis available. A deeper ping-based check can be added
-      // when a shared Redis client is introduced.
+      await this.cacheService.ping();
       return {
         status: 'ok',
         responseTimeMs: Date.now() - start,

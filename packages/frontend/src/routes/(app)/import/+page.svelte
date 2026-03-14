@@ -175,7 +175,7 @@
 </script>
 
 <svelte:head>
-	<title>Import Transactions - FinanceOwl</title>
+	<title>Import Transactions - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

@@ -147,7 +147,7 @@
 </script>
 
 <svelte:head>
-	<title>Loan Amortization - FinanceOwl</title>
+	<title>Loan Amortization - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

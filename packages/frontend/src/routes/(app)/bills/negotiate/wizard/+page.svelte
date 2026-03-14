@@ -220,7 +220,7 @@
 </script>
 
 <svelte:head>
-	<title>Negotiation Wizard - FinanceOwl</title>
+	<title>Negotiation Wizard - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">

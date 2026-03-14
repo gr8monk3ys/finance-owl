@@ -61,7 +61,7 @@
 </script>
 
 <svelte:head>
-	<title>Savings Challenges - FinanceOwl</title>
+	<title>Savings Challenges - Finance Owl</title>
 </svelte:head>
 
 <div class="space-y-6">
