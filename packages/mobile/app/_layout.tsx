@@ -7,9 +7,6 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { colors } from '../src/utils/theme';
 import ErrorBoundary from '../src/components/ErrorBoundary';
 import { configureSentry, Sentry } from '../src/lib/sentry';
-import BiometricLockScreen from '../src/components/BiometricLockScreen';
-import { useBiometricAuth } from '../src/hooks/useBiometricAuth';
-import { useAppStateTimeout } from '../src/hooks/useAppStateTimeout';
 
 // Initialize Sentry as early as possible
 configureSentry();

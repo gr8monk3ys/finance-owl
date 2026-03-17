@@ -2,7 +2,6 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { eq, and, gte, lte, like, desc, sql, count } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
-import { CategorizationService } from '../ai/categorization.service';
 import * as schema from '../../database/schema';
 
 interface TransactionFilters {
@@ -22,7 +21,7 @@ interface TransactionFilters {
 export class TransactionsService {
   constructor(
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
-    private categorizationService: CategorizationService,
+
     private readonly cacheService: CacheService,
   ) {}
 
@@ -242,29 +241,7 @@ export class TransactionsService {
       })
       .returning();
 
-    // If no category was specified, try auto-categorization
-    if (!data.categoryId) {
-      const result = await this.categorizationService.categorize(userId, {
-        id: transaction.id,
-        name: data.name,
-        merchantName: data.merchantName ?? null,
-        description: data.description ?? null,
-        amount: data.amount,
-      });
-
-      if (result.categoryId) {
-        await this.db
-          .update(schema.transactions)
-          .set({
-            categoryId: result.categoryId,
-            categorizationSource: result.source,
-          })
-          .where(eq(schema.transactions.id, transaction.id));
-
-        await this.invalidateUserCaches(userId);
-        return { ...transaction, categoryId: result.categoryId, categorizationSource: result.source };
-      }
-    }
+    // TODO: re-add auto-categorization when rule-based categorizer is implemented
 
     await this.invalidateUserCaches(userId);
     return transaction;

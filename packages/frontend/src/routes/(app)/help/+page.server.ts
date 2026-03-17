@@ -45,30 +45,19 @@ export const actions: Actions = {
 			});
 		}
 
-		try {
-			const result = await api('/support/tickets', {
-				method: 'POST',
-				body: {
-					email: locals.user?.email ?? '',
-					subject,
-					category,
-					message
-				},
-				accessToken: locals.accessToken
-			});
+		console.warn('[Support] Contact form submission rejected because direct support delivery is not configured.', {
+			userId: locals.user?.id,
+			userEmail: locals.user?.email,
+			subject,
+			category,
+			messageLength: message.length
+		});
 
-			return {
-				success: true,
-				message: result?.message ?? "Your request has been submitted. We'll respond via email."
-			};
-		} catch (err) {
-			console.error('[Support] Failed to submit ticket:', err);
-			return fail(500, {
-				error: 'Something went wrong submitting your request. Please try again later.',
-				subject,
-				category,
-				message
-			});
-		}
+		return fail(503, {
+			error: 'Direct ticket submission is not configured in this deployment. Use the public support page instead.',
+			subject,
+			category,
+			message
+		});
 	}
 };

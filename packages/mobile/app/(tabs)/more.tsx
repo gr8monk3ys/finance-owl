@@ -912,10 +912,6 @@ export default function MoreScreen() {
 
       {/* App version */}
       <Text style={styles.versionText}>Finance Owl v{appVersion}</Text>
-
-      {/* Security & Notifications inline screens */}
-      <SecurityScreen visible={showSecurity} onClose={() => setShowSecurity(false)} />
-      <NotificationsScreen visible={showNotifications} onClose={() => setShowNotifications(false)} />
     </ScrollView>
   );
 }

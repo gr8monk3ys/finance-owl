@@ -52,7 +52,7 @@ describe('ImportService', () => {
       categorize: vi.fn(),
     };
 
-    service = new ImportService(mockDb, mockCategorizationService);
+    service = new ImportService(mockDb);
   });
 
   // ===========================================================================
@@ -987,49 +987,6 @@ DATA:OFXSGML
       ).rejects.toThrow(BadRequestException);
     });
 
-    it('should auto-categorize imported transactions', async () => {
-      // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
-
-      // No existing transactions
-      mockDb.select.mockReturnValueOnce(mockQuery([]));
-
-      // Insert transaction
-      mockDb.insert.mockReturnValueOnce(mockQuery([{ id: 'txn-1' }]));
-
-      // Categorization succeeds
-      mockCategorizationService.categorize.mockResolvedValue({
-        categoryId: 'cat-food',
-        source: 'ai',
-      });
-
-      // Update with category
-      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
-
-      // Import history
-      mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
-
-      const transactions = [
-        { date: '2026-01-15', name: 'Coffee', amount: 4.50 },
-      ];
-
-      await service.executeImport(
-        mockUserId,
-        transactions,
-        mockAccountId,
-        baseOptions,
-        'test.csv',
-        'csv',
-      );
-
-      expect(mockCategorizationService.categorize).toHaveBeenCalledWith(
-        mockUserId,
-        expect.objectContaining({ name: 'Coffee' }),
-      );
-      expect(mockDb.update).toHaveBeenCalled();
-    });
 
     it('should continue import when auto-categorization fails', async () => {
       // Account lookup
