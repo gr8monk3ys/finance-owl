@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Inject,
   Logger,
   OnModuleInit,
   OnModuleDestroy,
@@ -7,6 +8,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
+import {
+  DATABASE_TOKEN,
+  type DrizzleDB,
+} from '../../database/database.module';
+import { emailQueue } from './email-queue.schema';
 import {
   billReminderHtml,
   billReminderText,
@@ -68,7 +74,10 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
   /** Counter for queue IDs */
   private idCounter = 0;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    @Inject(DATABASE_TOKEN) private readonly db: DrizzleDB,
+  ) {
     this.fromAddress = this.configService.get<string>(
       'SMTP_FROM',
       'FinanceOwl <noreply@financeowl.app>',
@@ -103,6 +112,17 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
         `Module destroying with ${this.queue.size} unsent email(s) in queue`,
       );
     }
+  }
+
+  // ── Public status check ──────────────────────────────────────────────
+
+  /**
+   * Returns `true` if SMTP is configured and the email transport is
+   * available. Other services can use this to check before attempting
+   * email delivery.
+   */
+  isConfigured(): boolean {
+    return this.transporter !== null;
   }
 
   // ── Transport initialisation ───────────────────────────────────────
@@ -150,9 +170,27 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
     text?: string,
   ): Promise<boolean> {
     if (!this.transporter) {
-      this.logger.debug(
-        `Email not sent (transport disabled): "${subject}" -> ${to}`,
+      this.logger.warn(
+        `Email not sent (SMTP not configured): ${subject} to ${to}`,
       );
+
+      // Persist to the email_queue table so it can be sent later
+      try {
+        await this.db.insert(emailQueue).values({
+          to,
+          subject,
+          body: html,
+          status: 'pending',
+        });
+        this.logger.debug(
+          `Unsent email queued in database: "${subject}" -> ${to}`,
+        );
+      } catch (err) {
+        this.logger.error(
+          `Failed to queue unsent email to database: ${err}`,
+        );
+      }
+
       return false;
     }
 
