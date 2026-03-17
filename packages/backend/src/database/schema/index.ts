@@ -41,3 +41,5 @@ export * from '../../modules/bill-negotiation/negotiation-tracking.schema';
 export * from '../../modules/budgets/envelopes.schema';
 export * from '../../modules/tenants/tenants.schema';
 export * from '../../modules/banking/banking.schema';
+export * from '../../modules/support/support.schema';
+export * from '../../modules/email/email-queue.schema';

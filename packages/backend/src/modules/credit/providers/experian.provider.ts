@@ -69,6 +69,7 @@ export class ExperianProvider implements CreditBureauProvider {
         factors: this.mapFactors((creditProfile?.riskFactors || []) as Record<string, unknown>[]),
         pulledAt: new Date(),
         bureau: 'experian',
+        isSimulated: false,
       };
     } catch (error) {
       this.logger.error(`Experian getCreditScore failed: ${error}`);
@@ -91,7 +92,7 @@ export class ExperianProvider implements CreditBureauProvider {
         token,
       });
 
-      return this.mapReport(response);
+      return { ...this.mapReport(response), isSimulated: false };
     } catch (error) {
       this.logger.error(`Experian getCreditReport failed: ${error}`);
       this.logger.warn('Falling back to simulated data');
@@ -132,6 +133,7 @@ export class ExperianProvider implements CreditBureauProvider {
           Date.now() + 30 * 24 * 60 * 60 * 1000,
         ).toISOString().split('T')[0],
         referenceNumber: `EX-SIM-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
+        isSimulated: true,
       };
     }
 
@@ -156,6 +158,7 @@ export class ExperianProvider implements CreditBureauProvider {
         filedAt: new Date((response.filedDate as string) || Date.now()),
         estimatedResolutionDate: (response.estimatedResolutionDate || '') as string,
         referenceNumber: (response.referenceNumber || '') as string,
+        isSimulated: false,
       };
     } catch (error) {
       this.logger.error(`Experian fileDispute failed: ${error}`);
@@ -171,6 +174,7 @@ export class ExperianProvider implements CreditBureauProvider {
         status: 'under_review',
         filedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
         updatedAt: new Date(),
+        isSimulated: true,
       };
     }
 
@@ -188,6 +192,7 @@ export class ExperianProvider implements CreditBureauProvider {
         updatedAt: new Date(response.updatedDate as string),
         resolution: response.resolution as string | undefined,
         resolvedAt: response.resolvedDate ? new Date(response.resolvedDate as string) : undefined,
+        isSimulated: false,
       };
     } catch (error) {
       this.logger.error(`Experian getDisputeStatus failed: ${error}`);
@@ -204,6 +209,7 @@ export class ExperianProvider implements CreditBureauProvider {
         monitoringId: `sim-mon-ex-${Date.now()}`,
         alertTypes: ['score_change', 'new_account', 'hard_inquiry', 'address_change'],
         enrolledAt: new Date(),
+        isSimulated: true,
       };
     }
 
@@ -221,6 +227,7 @@ export class ExperianProvider implements CreditBureauProvider {
         monitoringId: response.monitoringId as string,
         alertTypes: (response.alertTypes || ['score_change', 'new_account', 'hard_inquiry']) as string[],
         enrolledAt: new Date((response.enrolledAt as string) || Date.now()),
+        isSimulated: false,
       };
     } catch (error) {
       this.logger.error(`Experian setupMonitoring failed: ${error}`);
@@ -329,7 +336,7 @@ export class ExperianProvider implements CreditBureauProvider {
     return 'low';
   }
 
-  private mapReport(raw: Record<string, unknown>): CreditReport {
+  private mapReport(raw: Record<string, unknown>): Omit<CreditReport, 'isSimulated'> {
     const tradeLines = (raw.tradeLines || raw.accounts || []) as Record<string, unknown>[];
     const inquiries = (raw.inquiries || []) as Record<string, unknown>[];
     const publicRecords = (raw.publicRecords || []) as Record<string, unknown>[];

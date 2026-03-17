@@ -1,4 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  Logger,
+  OnModuleInit,
+  OnModuleDestroy,
+} from '@nestjs/common';
 import { eq, and, desc } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
@@ -8,6 +14,21 @@ export interface SupportedCurrency {
   code: string;
   name: string;
   symbol: string;
+}
+
+export interface ExchangeRateEntry {
+  baseCurrency: string;
+  targetCurrency: string;
+  rate: number;
+  source: string;
+  fetchedAt: string;
+}
+
+export interface ExchangeRatesResponse {
+  base: string;
+  rates: ExchangeRateEntry[];
+  lastUpdated: Date | null;
+  source: 'live' | 'cached' | 'fallback';
 }
 
 const SUPPORTED_CURRENCIES: SupportedCurrency[] = [
@@ -33,8 +54,8 @@ const SUPPORTED_CURRENCIES: SupportedCurrency[] = [
   { code: 'PLN', name: 'Polish Zloty', symbol: 'z\u0142' },
 ];
 
-// Stubbed exchange rates relative to USD
-const STUBBED_RATES: Record<string, number> = {
+/** Hardcoded fallback exchange rates relative to USD (ECB-approximate) */
+const FALLBACK_RATES: Record<string, number> = {
   EUR: 0.92,
   GBP: 0.79,
   JPY: 149.5,
@@ -56,33 +77,61 @@ const STUBBED_RATES: Record<string, number> = {
   PLN: 4.02,
 };
 
+const FRANKFURTER_API_URL = 'https://api.frankfurter.dev/v1/latest?base=USD';
+
+/** 6 hours in milliseconds */
+const REFRESH_INTERVAL_MS = 6 * 60 * 60 * 1000;
+
+/** Timeout for API requests in milliseconds */
+const API_TIMEOUT_MS = 10_000;
+
 @Injectable()
-export class CurrencyService {
+export class CurrencyService implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(CurrencyService.name);
+  private refreshTimer: ReturnType<typeof setInterval> | null = null;
+
   constructor(
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
     private readonly cacheService: CacheService,
   ) {}
 
-  async getExchangeRates(base: string = 'USD') {
+  // ── Lifecycle ───────────────────────────────────────────────────
+
+  onModuleInit() {
+    // Refresh rates on startup (non-blocking), then every 6 hours
+    this.refreshRates().catch((err) =>
+      this.logger.error('Initial currency rate refresh failed', err),
+    );
+
+    this.refreshTimer = setInterval(() => {
+      this.refreshRates().catch((err) =>
+        this.logger.error('Scheduled currency rate refresh failed', err),
+      );
+    }, REFRESH_INTERVAL_MS);
+
+    // Allow the Node process to exit even if the interval is still active
+    if (this.refreshTimer.unref) {
+      this.refreshTimer.unref();
+    }
+
+    this.logger.log('Currency rate refresh scheduler started (6 h interval)');
+  }
+
+  onModuleDestroy() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+      this.refreshTimer = null;
+    }
+    this.logger.log('Currency rate refresh scheduler stopped');
+  }
+
+  // ── Public API ──────────────────────────────────────────────────
+
+  async getExchangeRates(base: string = 'USD'): Promise<ExchangeRatesResponse> {
     const cacheKey = `currency:rates:${base.toUpperCase()}`;
     return this.cacheService.wrap(cacheKey, 3600, () =>
       this._getExchangeRates(base),
     );
-  }
-
-  private async _getExchangeRates(base: string = 'USD') {
-    const rates = await this.db
-      .select()
-      .from(schema.exchangeRates)
-      .where(eq(schema.exchangeRates.baseCurrency, base.toUpperCase()))
-      .orderBy(schema.exchangeRates.targetCurrency);
-
-    if (rates.length > 0) {
-      return { base: base.toUpperCase(), rates };
-    }
-
-    // Fall back to stubbed rates if no rates exist in the database
-    return this.getStubbedRates(base.toUpperCase());
   }
 
   async convert(
@@ -152,11 +201,35 @@ export class CurrencyService {
     return SUPPORTED_CURRENCIES;
   }
 
-  async refreshRates(): Promise<{ base: string; ratesCount: number }> {
-    // Stub implementation: insert hardcoded rates for USD base
+  /**
+   * Fetch live exchange rates from the Frankfurter API and persist them
+   * to the database. Falls back to hardcoded rates on API failure.
+   */
+  async refreshRates(): Promise<{
+    base: string;
+    ratesCount: number;
+    source: 'live' | 'fallback';
+  }> {
+    let rates: Record<string, number>;
+    let source: 'live' | 'fallback';
+
+    try {
+      rates = await this.fetchLiveRates();
+      source = 'live';
+      this.logger.log(
+        `Fetched ${Object.keys(rates).length} live exchange rates from Frankfurter API`,
+      );
+    } catch (err) {
+      this.logger.warn(
+        `Frankfurter API call failed, falling back to hardcoded rates: ${(err as Error).message}`,
+      );
+      rates = FALLBACK_RATES;
+      source = 'fallback';
+    }
+
     const now = new Date().toISOString();
 
-    for (const [target, rate] of Object.entries(STUBBED_RATES)) {
+    for (const [target, rate] of Object.entries(rates)) {
       const existing = await this.db
         .select({ id: schema.exchangeRates.id })
         .from(schema.exchangeRates)
@@ -171,14 +244,14 @@ export class CurrencyService {
       if (existing.length > 0) {
         await this.db
           .update(schema.exchangeRates)
-          .set({ rate, fetchedAt: now, source: 'stub' })
+          .set({ rate, fetchedAt: now, source })
           .where(eq(schema.exchangeRates.id, existing[0].id));
       } else {
         await this.db.insert(schema.exchangeRates).values({
           baseCurrency: 'USD',
           targetCurrency: target,
           rate,
-          source: 'stub',
+          source,
           fetchedAt: now,
         });
       }
@@ -187,7 +260,73 @@ export class CurrencyService {
     // Invalidate all cached exchange rates
     await this.cacheService.delPattern('currency:rates:*');
 
-    return { base: 'USD', ratesCount: Object.keys(STUBBED_RATES).length };
+    return { base: 'USD', ratesCount: Object.keys(rates).length, source };
+  }
+
+  // ── Private helpers ─────────────────────────────────────────────
+
+  private async _getExchangeRates(base: string = 'USD'): Promise<ExchangeRatesResponse> {
+    const rates = await this.db
+      .select()
+      .from(schema.exchangeRates)
+      .where(eq(schema.exchangeRates.baseCurrency, base.toUpperCase()))
+      .orderBy(schema.exchangeRates.targetCurrency);
+
+    if (rates.length > 0) {
+      // Determine source and lastUpdated from the stored rates
+      const mostRecent = rates.reduce((latest, r) =>
+        r.fetchedAt > latest.fetchedAt ? r : latest,
+      );
+      const dbSource = mostRecent.source;
+      const rateSource: 'live' | 'cached' | 'fallback' =
+        dbSource === 'live' ? 'cached' : 'fallback';
+
+      return {
+        base: base.toUpperCase(),
+        rates: rates.map((r) => ({
+          baseCurrency: r.baseCurrency,
+          targetCurrency: r.targetCurrency,
+          rate: r.rate,
+          source: r.source ?? 'unknown',
+          fetchedAt: r.fetchedAt,
+        })),
+        lastUpdated: new Date(mostRecent.fetchedAt),
+        source: rateSource,
+      };
+    }
+
+    // No rates in DB -- return fallback stubs
+    return this.getFallbackRates(base.toUpperCase());
+  }
+
+  /**
+   * Call the Frankfurter API and return a map of currency -> rate (base USD).
+   */
+  private async fetchLiveRates(): Promise<Record<string, number>> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(FRANKFURTER_API_URL, {
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Frankfurter API returned ${response.status}: ${response.statusText}`,
+        );
+      }
+
+      const data = (await response.json()) as {
+        base: string;
+        date: string;
+        rates: Record<string, number>;
+      };
+
+      return data.rates;
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
   private async getRate(from: string, to: string): Promise<number> {
@@ -228,38 +367,38 @@ export class CurrencyService {
       return fromToUsd * usdToTarget;
     }
 
-    // Fall back to stubbed rates
-    if (from === 'USD' && STUBBED_RATES[to]) return STUBBED_RATES[to];
-    if (to === 'USD' && STUBBED_RATES[from]) return 1 / STUBBED_RATES[from];
+    // Fall back to hardcoded rates
+    if (from === 'USD' && FALLBACK_RATES[to]) return FALLBACK_RATES[to];
+    if (to === 'USD' && FALLBACK_RATES[from]) return 1 / FALLBACK_RATES[from];
 
     return 1;
   }
 
-  private getStubbedRates(base: string) {
+  private getFallbackRates(base: string): ExchangeRatesResponse {
     if (base === 'USD') {
-      const rates = Object.entries(STUBBED_RATES).map(([target, rate]) => ({
+      const rates = Object.entries(FALLBACK_RATES).map(([target, rate]) => ({
         baseCurrency: 'USD',
         targetCurrency: target,
         rate,
-        source: 'stub',
+        source: 'fallback',
         fetchedAt: new Date().toISOString(),
       }));
-      return { base: 'USD', rates };
+      return { base: 'USD', rates, lastUpdated: null, source: 'fallback' };
     }
 
-    // Convert stubbed USD rates to the requested base
-    const baseToUsd = STUBBED_RATES[base];
+    // Convert fallback USD rates to the requested base
+    const baseToUsd = FALLBACK_RATES[base];
     if (!baseToUsd) {
-      return { base, rates: [] };
+      return { base, rates: [], lastUpdated: null, source: 'fallback' };
     }
 
-    const rates = Object.entries(STUBBED_RATES)
+    const rates = Object.entries(FALLBACK_RATES)
       .filter(([target]) => target !== base)
       .map(([target, usdToTarget]) => ({
         baseCurrency: base,
         targetCurrency: target,
         rate: Math.round((usdToTarget / baseToUsd) * 10000) / 10000,
-        source: 'stub',
+        source: 'fallback',
         fetchedAt: new Date().toISOString(),
       }));
 
@@ -268,10 +407,10 @@ export class CurrencyService {
       baseCurrency: base,
       targetCurrency: 'USD',
       rate: Math.round((1 / baseToUsd) * 10000) / 10000,
-      source: 'stub',
+      source: 'fallback',
       fetchedAt: new Date().toISOString(),
     });
 
-    return { base, rates };
+    return { base, rates, lastUpdated: null, source: 'fallback' };
   }
 }

@@ -42,6 +42,7 @@ export interface CreditScoreResult {
   factors: CreditFactor[];
   pulledAt: Date;
   bureau: string;
+  isSimulated: boolean;
 }
 
 export interface CreditReport {
@@ -50,6 +51,7 @@ export interface CreditReport {
   publicRecords: PublicRecord[];
   personalInfo: PersonalInfo;
   summary: ReportSummary;
+  isSimulated: boolean;
 }
 
 export interface CreditFactor {
@@ -144,6 +146,7 @@ export interface DisputeResult {
   filedAt: Date;
   estimatedResolutionDate: string;
   referenceNumber: string;
+  isSimulated: boolean;
 }
 
 export interface DisputeStatus {
@@ -153,6 +156,7 @@ export interface DisputeStatus {
   updatedAt: Date;
   resolution?: string;
   resolvedAt?: Date;
+  isSimulated: boolean;
 }
 
 export interface MonitoringSetup {
@@ -161,4 +165,5 @@ export interface MonitoringSetup {
   monitoringId: string;
   alertTypes: string[];
   enrolledAt: Date;
+  isSimulated: boolean;
 }

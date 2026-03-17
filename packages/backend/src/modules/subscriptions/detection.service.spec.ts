@@ -340,12 +340,17 @@ describe('DetectionService', () => {
     });
 
     it('should handle transactions with null merchantName', async () => {
+      const today = new Date();
+      const fmt = (d: Date) => d.toISOString().split('T')[0];
+      const d1 = new Date(today); d1.setDate(d1.getDate() - 5);
+      const d2 = new Date(today); d2.setDate(d2.getDate() - 35);
+      const d3 = new Date(today); d3.setDate(d3.getDate() - 65);
       const transactions = [
         {
           name: 'Recurring Service',
           merchantName: null,
           amount: 25.0,
-          date: '2026-01-30',
+          date: fmt(d1),
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,
@@ -354,7 +359,16 @@ describe('DetectionService', () => {
           name: 'Recurring Service',
           merchantName: null,
           amount: 25.0,
-          date: '2025-12-30',
+          date: fmt(d2),
+          accountId: 'acc_1',
+          categoryId: 'cat_1',
+          pending: false,
+        },
+        {
+          name: 'Recurring Service',
+          merchantName: null,
+          amount: 25.0,
+          date: fmt(d3),
           accountId: 'acc_1',
           categoryId: 'cat_1',
           pending: false,

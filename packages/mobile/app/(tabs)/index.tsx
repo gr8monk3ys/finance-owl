@@ -23,10 +23,12 @@ import type {
   Budget,
   BudgetSummary,
   HealthScore,
+  CategorySpending,
 } from '../../src/types';
 import AccountCard from '../../src/components/AccountCard';
 import TransactionItem from '../../src/components/TransactionItem';
 import HealthScoreCircle from '../../src/components/HealthScoreCircle';
+import SpendingChart from '../../src/components/SpendingChart';
 import {
   formatCurrency,
   formatCurrencyCompact,
@@ -48,6 +50,7 @@ export default function DashboardScreen() {
   const [budgetSummary, setBudgetSummary] = useState<BudgetSummary | null>(null);
   const [healthScore, setHealthScore] = useState<HealthScore | null>(null);
   const [monthlySpending, setMonthlySpending] = useState(0);
+  const [categorySpending, setCategorySpending] = useState<CategorySpending[]>([]);
 
   async function openUrl(url: string, title: string) {
     try {
@@ -84,6 +87,7 @@ export default function DashboardScreen() {
       setBudgetSummary(null);
       setHealthScore(null);
       setMonthlySpending(0);
+      setCategorySpending([]);
       return;
     }
 
@@ -113,6 +117,27 @@ export default function DashboardScreen() {
       // Calculate monthly spending from budget summary or default
       if (summary) {
         setMonthlySpending(summary.totalSpent);
+      }
+
+      // Build category spending from budgets for the spending chart
+      if (budgetList.length > 0) {
+        const spending: CategorySpending[] = budgetList
+          .filter((b) => b.spent > 0)
+          .sort((a, b) => b.spent - a.spent)
+          .slice(0, 8)
+          .map((b) => {
+            const totalSpent = budgetList.reduce((sum, bgt) => sum + bgt.spent, 0);
+            return {
+              categoryId: b.categoryId,
+              categoryName: b.categoryName ?? 'Other',
+              categoryColor: b.categoryColor ?? '',
+              amount: b.spent,
+              percentage: totalSpent > 0 ? (b.spent / totalSpent) * 100 : 0,
+            };
+          });
+        setCategorySpending(spending);
+      } else {
+        setCategorySpending([]);
       }
     } catch {
       // Silently handle errors on dashboard
@@ -240,6 +265,16 @@ export default function DashboardScreen() {
           )}
         </View>
       </View>
+
+      {/* ── Spending by Category ──────────────────────────────────────── */}
+      {categorySpending.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Spending by Category</Text>
+          <View style={styles.chartCard}>
+            <SpendingChart data={categorySpending} height={200} />
+          </View>
+        </View>
+      )}
 
       {/* ── Health Score ────────────────────────────────────────────────── */}
       {healthScore && (
@@ -517,6 +552,16 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
     color: colors.primary[400],
+  },
+
+  // Chart
+  chartCard: {
+    backgroundColor: colors.surface[800],
+    borderRadius: borderRadius.xl,
+    borderWidth: 1,
+    borderColor: colors.surface[700] + '80',
+    padding: spacing.xl,
+    alignItems: 'center',
   },
 
   // Health

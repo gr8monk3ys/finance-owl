@@ -32,6 +32,7 @@ export const taxSummaries = pgTable('tax_summaries', {
   estimatedFederalTax: numeric('estimated_federal_tax', { precision: 19, scale: 4 }).$type<number>().notNull().default(0),
   estimatedStateTax: numeric('estimated_state_tax', { precision: 19, scale: 4 }).$type<number>().notNull().default(0),
   filingStatus: text('filing_status').notNull().default('single'), // single, married_joint, married_separate, head_of_household
+  state: text('state'), // 2-letter US state code (e.g. CA, TX, NY)
   generatedAt: text('generated_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
