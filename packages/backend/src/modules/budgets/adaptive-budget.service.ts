@@ -1,7 +1,6 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { eq, and, gte, lte, sql, desc, asc } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
-import { OllamaClient } from '../ai/ollama.client';
 import * as schema from '../../database/schema';
 
 // ── Types ──────────────────────────────────────────────────────────────
@@ -78,7 +77,6 @@ export class AdaptiveBudgetService {
 
   constructor(
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
-    private readonly ollamaClient: OllamaClient,
   ) {}
 
   // ── Public Methods ─────────────────────────────────────────────────
@@ -146,8 +144,6 @@ export class AdaptiveBudgetService {
       });
     }
 
-    // Try to enhance reasoning with AI if available
-    await this.enrichSuggestionsWithAI(suggestions);
 
     return suggestions.sort((a, b) => b.averageSpending - a.averageSpending);
   }
@@ -806,58 +802,5 @@ export class AdaptiveBudgetService {
       recommendation: (cat, inc) =>
         `${cat} spending typically increases by ${inc}% during ${affectedNames}. Consider budgeting extra during these months.`,
     };
-  }
-
-  // ── Private: AI Enhancement (optional) ─────────────────────────────
-
-  private async enrichSuggestionsWithAI(
-    suggestions: BudgetSuggestion[],
-  ): Promise<void> {
-    if (!this.ollamaClient.isAvailable() || suggestions.length === 0) return;
-
-    try {
-      const summaryText = suggestions
-        .map(
-          (s) =>
-            `${s.categoryName}: avg=$${s.averageSpending.toFixed(0)}, median=$${s.medianSpending.toFixed(0)}, max=$${s.maxSpending.toFixed(0)}, suggested=$${s.suggestedAmount}`,
-        )
-        .join('\n');
-
-      const prompt = `You are a personal finance assistant. Given these budget category spending patterns, provide a brief, actionable one-sentence tip for each category. Be specific and practical.
-
-Spending data:
-${summaryText}
-
-Respond with one line per category in format: CategoryName: tip
-Keep each tip under 30 words.`;
-
-      const response = await this.ollamaClient.generate(prompt, {
-        temperature: 0.3,
-      });
-
-      if (!response) return;
-
-      // Parse AI response and merge into suggestions
-      const lines = response.split('\n').filter((l) => l.trim());
-      for (const line of lines) {
-        const colonIdx = line.indexOf(':');
-        if (colonIdx === -1) continue;
-
-        const name = line.substring(0, colonIdx).trim();
-        const tip = line.substring(colonIdx + 1).trim();
-
-        const match = suggestions.find(
-          (s) =>
-            s.categoryName.toLowerCase() === name.toLowerCase() ||
-            name.toLowerCase().includes(s.categoryName.toLowerCase()),
-        );
-
-        if (match && tip.length > 10) {
-          match.reasoning += ` AI tip: ${tip}`;
-        }
-      }
-    } catch (error) {
-      this.logger.debug(`AI enrichment skipped: ${error}`);
-    }
   }
 }

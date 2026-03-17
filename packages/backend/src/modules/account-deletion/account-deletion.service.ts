@@ -12,7 +12,7 @@ import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { EmailService } from '../email/email.service';
 import { BankSyncService } from '../bank-sync/bank-sync.service';
 import { BillingService } from '../billing/billing.service';
-import { dataDeletionRequests } from '../privacy/privacy.schema';
+import { dataDeletionRequests } from './account-deletion.schema';
 import { users, sessions, webauthnCredentials } from '../../database/schema/users';
 import { accounts, plaidItems } from '../../database/schema/accounts';
 import { transactions, transactionSplits } from '../../database/schema/transactions';
@@ -30,9 +30,7 @@ import {
   notifications,
   netWorthHistory,
 } from '../../database/schema/audit';
-import { financialHealthScores, financialHealthGoals, financialHealthAlerts } from '../financial-health/financial-health.schema';
 import { billingCustomers, userSubscriptions, invoices, usageTracking } from '../billing/billing.schema';
-import { privacyConsents, dataExportRequests } from '../privacy/privacy.schema';
 import { categories, categorizationRules, categorizationCorrections } from '../../database/schema/categories';
 
 /** Grace period before actual deletion: 14 days. */
@@ -339,12 +337,7 @@ export class AccountDeletionService {
         await tx.delete(notificationPreferences).where(eq(notificationPreferences.userId, userId));
         await tx.delete(notifications).where(eq(notifications.userId, userId));
         await tx.delete(netWorthHistory).where(eq(netWorthHistory.userId, userId));
-        await tx.delete(financialHealthScores).where(eq(financialHealthScores.userId, userId));
-        await tx.delete(financialHealthGoals).where(eq(financialHealthGoals.userId, userId));
-        await tx.delete(financialHealthAlerts).where(eq(financialHealthAlerts.userId, userId));
         await tx.delete(userPreferences).where(eq(userPreferences.userId, userId));
-        await tx.delete(privacyConsents).where(eq(privacyConsents.userId, userId));
-        await tx.delete(dataExportRequests).where(eq(dataExportRequests.userId, userId));
         await tx.delete(userSubscriptions).where(eq(userSubscriptions.userId, userId));
         await tx.delete(billingCustomers).where(eq(billingCustomers.userId, userId));
         await tx.delete(invoices).where(eq(invoices.userId, userId));

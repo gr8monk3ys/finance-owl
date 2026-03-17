@@ -86,7 +86,7 @@ describe('TransactionsService', () => {
       ),
     };
 
-    service = new TransactionsService(mockDb, mockCategorizationService, mockCacheService as any);
+    service = new TransactionsService(mockDb, mockCacheService as any);
   });
 
   // ---------------------------------------------------------------------------
@@ -257,40 +257,6 @@ describe('TransactionsService', () => {
       expect(mockCategorizationService.categorize).not.toHaveBeenCalled();
     });
 
-    it('should auto-categorize when no categoryId is provided', async () => {
-      const createData = {
-        accountId: 'account-1',
-        amount: 15.0,
-        name: 'Uber Ride',
-        date: '2026-02-10',
-      };
-
-      const insertedTx = {
-        id: 'txn-new',
-        userId: mockUserId,
-        ...createData,
-        categoryId: null,
-        isManual: true,
-        pending: false,
-        categorizationSource: null,
-      };
-
-      mockDb.insert.mockReturnValueOnce(mockQuery([insertedTx]));
-      mockCategorizationService.categorize.mockResolvedValue({
-        categoryId: 'cat-transport',
-        source: 'ai',
-      });
-      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
-
-      const result = await service.createManual(mockUserId, createData);
-
-      expect(mockCategorizationService.categorize).toHaveBeenCalledWith(
-        mockUserId,
-        expect.objectContaining({ name: 'Uber Ride' }),
-      );
-      expect(result.categoryId).toBe('cat-transport');
-      expect(result.categorizationSource).toBe('ai');
-    });
 
     it('should return transaction without category when auto-categorization fails', async () => {
       const createData = {

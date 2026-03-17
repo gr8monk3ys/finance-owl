@@ -1,7 +1,6 @@
 import { Injectable, Inject, Logger, BadRequestException } from '@nestjs/common';
 import { eq, and, desc } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
-import { CategorizationService } from '../ai/categorization.service';
 import * as schema from '../../database/schema';
 import { importHistory } from './import.schema';
 
@@ -44,7 +43,7 @@ export class ImportService {
 
   constructor(
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
-    private categorizationService: CategorizationService,
+
   ) {}
 
   // ── CSV Parsing ─────────────────────────────────────────────────────────
@@ -613,32 +612,7 @@ export class ImportService {
           })
           .returning();
 
-        // Try auto-categorization
-        try {
-          const catResult = await this.categorizationService.categorize(
-            userId,
-            {
-              id: inserted.id,
-              name: tx.name,
-              merchantName: tx.merchantName || null,
-              description: tx.memo || null,
-              amount: tx.amount,
-            },
-          );
-
-          if (catResult.categoryId) {
-            await this.db
-              .update(schema.transactions)
-              .set({
-                categoryId: catResult.categoryId,
-                categorizationSource: catResult.source,
-              })
-              .where(eq(schema.transactions.id, inserted.id));
-          }
-        } catch {
-          // Categorization failure is non-fatal
-          this.logger.debug(`Auto-categorization failed for "${tx.name}"`);
-        }
+        // TODO: re-add auto-categorization when rule-based categorizer is implemented
 
         importedCount++;
         existingSet.add(key); // Prevent duplicates within the same import

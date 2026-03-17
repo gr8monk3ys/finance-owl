@@ -4,9 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 export const QUEUES = {
   TRANSACTION_SYNC: 'transaction-sync',
-  AI_CATEGORIZE: 'ai-categorize',
   SUBSCRIPTION_DETECT: 'subscription-detect',
-  INVESTMENT_SYNC: 'investment-sync',
   ALERTS: 'alerts',
   BACKUP: 'backup',
 } as const;
@@ -32,9 +30,7 @@ export const QUEUES = {
     }),
     BullModule.registerQueue(
       { name: QUEUES.TRANSACTION_SYNC },
-      { name: QUEUES.AI_CATEGORIZE },
       { name: QUEUES.SUBSCRIPTION_DETECT },
-      { name: QUEUES.INVESTMENT_SYNC },
       { name: QUEUES.ALERTS },
       { name: QUEUES.BACKUP },
     ),
