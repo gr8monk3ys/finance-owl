@@ -122,8 +122,13 @@ export class TaxController {
   generateSummary(
     @CurrentUser('id') userId: string,
     @Param('year') year: string,
+    @Query('state') state?: string,
   ) {
-    return this.taxService.generateSummary(userId, parseInt(year, 10));
+    return this.taxService.generateSummary(
+      userId,
+      parseInt(year, 10),
+      state,
+    );
   }
 
   @Get('deductions/:year')

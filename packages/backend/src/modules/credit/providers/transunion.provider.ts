@@ -65,6 +65,7 @@ export class TransUnionProvider implements CreditBureauProvider {
         factors: this.mapFactors((response.factors || []) as Record<string, unknown>[]),
         pulledAt: new Date(),
         bureau: 'transunion',
+        isSimulated: false,
       };
     } catch (error) {
       this.logger.error(`TransUnion getCreditScore failed: ${error}`);
@@ -85,7 +86,7 @@ export class TransUnionProvider implements CreditBureauProvider {
         body: { consumerId: userId },
       });
 
-      return this.mapReport(response);
+      return { ...this.mapReport(response), isSimulated: false };
     } catch (error) {
       this.logger.error(`TransUnion getCreditReport failed: ${error}`);
       this.logger.warn('Falling back to simulated data');
@@ -124,6 +125,7 @@ export class TransUnionProvider implements CreditBureauProvider {
           Date.now() + 30 * 24 * 60 * 60 * 1000,
         ).toISOString().split('T')[0],
         referenceNumber: `TU-SIM-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
+        isSimulated: true,
       };
     }
 
@@ -146,6 +148,7 @@ export class TransUnionProvider implements CreditBureauProvider {
         filedAt: new Date((response.filedAt as string) || Date.now()),
         estimatedResolutionDate: (response.estimatedResolutionDate || '') as string,
         referenceNumber: (response.referenceNumber || '') as string,
+        isSimulated: false,
       };
     } catch (error) {
       this.logger.error(`TransUnion fileDispute failed: ${error}`);
@@ -161,6 +164,7 @@ export class TransUnionProvider implements CreditBureauProvider {
         status: 'under_review',
         filedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
         updatedAt: new Date(),
+        isSimulated: true,
       };
     }
 
@@ -176,6 +180,7 @@ export class TransUnionProvider implements CreditBureauProvider {
         updatedAt: new Date(response.updatedAt as string),
         resolution: response.resolution as string | undefined,
         resolvedAt: response.resolvedAt ? new Date(response.resolvedAt as string) : undefined,
+        isSimulated: false,
       };
     } catch (error) {
       this.logger.error(`TransUnion getDisputeStatus failed: ${error}`);
@@ -192,6 +197,7 @@ export class TransUnionProvider implements CreditBureauProvider {
         monitoringId: `sim-mon-tu-${Date.now()}`,
         alertTypes: ['score_change', 'new_account', 'hard_inquiry', 'address_change'],
         enrolledAt: new Date(),
+        isSimulated: true,
       };
     }
 
@@ -207,6 +213,7 @@ export class TransUnionProvider implements CreditBureauProvider {
         monitoringId: response.monitoringId as string,
         alertTypes: (response.alertTypes || ['score_change', 'new_account', 'hard_inquiry']) as string[],
         enrolledAt: new Date((response.enrolledAt as string) || Date.now()),
+        isSimulated: false,
       };
     } catch (error) {
       this.logger.error(`TransUnion setupMonitoring failed: ${error}`);
@@ -332,6 +339,7 @@ export class TransUnionProvider implements CreditBureauProvider {
         collectionsCount: (summary?.collections || 0) as number,
         publicRecordsCount: (summary?.publicRecords || 0) as number,
       },
+      isSimulated: false,
     };
   }
 

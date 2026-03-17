@@ -216,36 +216,55 @@
 				<div bind:this={chatContainer} class="h-full overflow-y-auto p-4 space-y-4">
 					{#if messages.length === 0}
 						<div class="flex h-full flex-col items-center justify-center text-center px-4">
-							<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600/20">
-								<svg
-									class="h-8 w-8 text-primary-400"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									stroke-width="1.5"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-									/>
-								</svg>
-							</div>
-							<p class="mt-4 text-lg font-semibold text-white">Ask about your finances</p>
-							<p class="mt-1 text-sm text-surface-400 max-w-md">
-								Ask questions about your spending, budgets, transactions, or financial trends.
-							</p>
-
 							{#if !isAvailable}
-								<div class="mt-4 flex items-center gap-2 rounded-lg border border-yellow-500/25 bg-yellow-900/20 px-4 py-3">
-									<svg class="h-5 w-5 flex-shrink-0 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-										<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+								<!-- AI unavailable: prominent, helpful state -->
+								<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-500/15">
+									<svg
+										class="h-8 w-8 text-yellow-400"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+										/>
 									</svg>
-									<p class="text-sm text-yellow-300">
-										AI is currently offline. Ensure Ollama is running to use this feature.
+								</div>
+								<p class="mt-4 text-lg font-semibold text-white">AI Chat Requires Ollama</p>
+								<p class="mt-2 text-sm text-surface-400 max-w-md">
+									The AI advisor is an optional feature that requires Ollama to be running locally.
+								</p>
+								<div class="mt-4 w-full max-w-sm rounded-lg border border-surface-700 bg-surface-800/70 p-4 text-left">
+									<p class="text-xs font-medium uppercase tracking-wider text-surface-500 mb-2">To enable AI features:</p>
+									<code class="block rounded bg-surface-900 px-3 py-2 text-sm text-primary-400 font-mono">docker compose up ollama</code>
+									<p class="mt-2 text-xs text-surface-500">
+										Other features like budgets, transactions, and anomaly detection work without AI.
 									</p>
 								</div>
 							{:else}
+								<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600/20">
+									<svg
+										class="h-8 w-8 text-primary-400"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+										/>
+									</svg>
+								</div>
+								<p class="mt-4 text-lg font-semibold text-white">Ask about your finances</p>
+								<p class="mt-1 text-sm text-surface-400 max-w-md">
+									Ask questions about your spending, budgets, transactions, or financial trends.
+								</p>
+
 								<!-- Suggested questions -->
 								<div class="mt-6 w-full max-w-lg">
 									<p class="mb-3 text-xs font-medium uppercase tracking-wider text-surface-500">
@@ -367,6 +386,19 @@
 	<!-- Insights tab -->
 	{#if activeTab === 'insights'}
 		<div class="space-y-4">
+			{#if !isAvailable}
+				<div class="flex items-start gap-3 rounded-lg border border-yellow-500/20 bg-yellow-900/15 px-4 py-3">
+					<svg class="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<div>
+						<p class="text-sm font-medium text-yellow-300">AI insights require Ollama</p>
+						<p class="mt-0.5 text-xs text-yellow-400/70">
+							Run <code class="rounded bg-yellow-900/40 px-1 py-0.5 font-mono">docker compose up ollama</code> to enable AI-generated analysis. Basic weekly summaries are still generated without AI.
+						</p>
+					</div>
+				</div>
+			{/if}
 			{#if data.insights.length === 0}
 				<Card>
 					<div class="flex flex-col items-center justify-center py-12 text-center">
@@ -387,7 +419,11 @@
 						</div>
 						<p class="mt-4 text-lg text-surface-300">No insights yet</p>
 						<p class="mt-1 text-sm text-surface-500">
-							Weekly insights are generated automatically every Monday. Check back soon.
+							{#if isAvailable}
+								Weekly insights are generated automatically every Monday. Check back soon.
+							{:else}
+								Insights will appear here once generated. Enable Ollama for richer AI-powered analysis, or check back Monday for basic weekly summaries.
+							{/if}
 						</p>
 					</div>
 				</Card>

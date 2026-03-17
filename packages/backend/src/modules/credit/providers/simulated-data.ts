@@ -56,6 +56,7 @@ export function generateSimulatedScore(
     factors: generateSimulatedFactors(userId),
     pulledAt: new Date(),
     bureau,
+    isSimulated: true,
   };
 }
 
@@ -254,5 +255,6 @@ export function generateSimulatedReport(bureau: string): CreditReport {
       employers: ['Acme Corporation'],
     },
     summary,
+    isSimulated: true,
   };
 }

@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { publicRoutes, publicMailto, publicSite } from '$lib/config/public';
 	import { Card } from '$components/ui';
+	import { enhance } from '$app/forms';
+
+	let { form } = $props();
 
 	let searchQuery = $state('');
 	let expandedItems = $state<Set<string>>(new Set());
+	let isSubmitting = $state(false);
 
 	interface FaqItem {
 		id: string;
@@ -415,9 +419,103 @@
 		<div class="text-center">
 			<h2 class="text-xl font-semibold text-white">Still need help?</h2>
 			<p class="mt-2 text-sm text-surface-400">
-				Use the public support page for the current contact paths and self-serve resources.
+				Submit a support request below or use the external contact paths.
 			</p>
 		</div>
+
+		<!-- Contact Form -->
+		<Card>
+			{#if form && !('error' in form)}
+				<div class="py-8 text-center">
+					<svg class="mx-auto h-12 w-12 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<h3 class="mt-4 text-lg font-medium text-white">Request submitted</h3>
+					<p class="mt-2 text-sm text-surface-400">{form.message}</p>
+				</div>
+			{:else}
+				<form
+					method="POST"
+					action="?/contact"
+					use:enhance={() => {
+						isSubmitting = true;
+						return async ({ update }) => {
+							isSubmitting = false;
+							await update();
+						};
+					}}
+					class="space-y-5"
+				>
+					<h3 class="text-base font-semibold text-white">Contact Support</h3>
+
+					{#if form?.error}
+						<div class="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3">
+							<p class="text-sm text-red-400">{form.error}</p>
+						</div>
+					{/if}
+
+					<div>
+						<label for="contact-subject" class="mb-1.5 block text-sm font-medium text-surface-300">Subject</label>
+						<input
+							id="contact-subject"
+							name="subject"
+							type="text"
+							required
+							minlength="3"
+							maxlength="200"
+							value={form?.subject ?? ''}
+							placeholder="Brief description of your issue"
+							class="w-full rounded-lg border border-surface-600 bg-surface-800 px-3.5 py-2.5 text-sm text-white placeholder:text-surface-500 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+						/>
+					</div>
+
+					<div>
+						<label for="contact-category" class="mb-1.5 block text-sm font-medium text-surface-300">Category</label>
+						<select
+							id="contact-category"
+							name="category"
+							required
+							class="w-full rounded-lg border border-surface-600 bg-surface-800 px-3.5 py-2.5 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+						>
+							<option value="" disabled selected={!form?.category}>Select a category</option>
+							<option value="account" selected={form?.category === 'account'}>Account Issue</option>
+							<option value="billing" selected={form?.category === 'billing'}>Billing & Payments</option>
+							<option value="bank-connection" selected={form?.category === 'bank-connection'}>Bank Connection</option>
+							<option value="budgets" selected={form?.category === 'budgets'}>Budgets & Categories</option>
+							<option value="bug" selected={form?.category === 'bug'}>Bug Report</option>
+							<option value="feature" selected={form?.category === 'feature'}>Feature Request</option>
+							<option value="security" selected={form?.category === 'security'}>Security Concern</option>
+							<option value="other" selected={form?.category === 'other'}>Other</option>
+						</select>
+					</div>
+
+					<div>
+						<label for="contact-message" class="mb-1.5 block text-sm font-medium text-surface-300">Message</label>
+						<textarea
+							id="contact-message"
+							name="message"
+							required
+							minlength="10"
+							maxlength="5000"
+							rows="5"
+							placeholder="Describe your issue or question in detail..."
+							class="w-full rounded-lg border border-surface-600 bg-surface-800 px-3.5 py-2.5 text-sm text-white placeholder:text-surface-500 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+						>{form?.message ?? ''}</textarea>
+					</div>
+
+					<div class="flex justify-end">
+						<button
+							type="submit"
+							disabled={isSubmitting}
+							class="rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							{isSubmitting ? 'Submitting...' : 'Submit Request'}
+						</button>
+					</div>
+				</form>
+			{/if}
+		</Card>
+
 		<div class="mt-6 grid gap-4 sm:grid-cols-2">
 			<a
 				href={publicRoutes.support}

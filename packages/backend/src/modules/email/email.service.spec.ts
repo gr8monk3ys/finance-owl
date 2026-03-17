@@ -53,7 +53,7 @@ describe('EmailService', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     configService = createMockConfigService();
-    service = new EmailService(configService);
+    service = new EmailService(configService, {} as any);
     mockSendMail = vi.fn().mockResolvedValue({ messageId: 'msg-123' });
     // Simulate onModuleInit without starting the real interval
     setPrivateField(service, 'transporter', createMockTransporter(mockSendMail));
@@ -134,7 +134,7 @@ describe('EmailService', () => {
 
     it('should not attempt to send mail when SMTP_HOST is missing', () => {
       const noSmtpConfig = createMockConfigService({ SMTP_HOST: undefined });
-      const svc = new EmailService(noSmtpConfig);
+      const svc = new EmailService(noSmtpConfig, {} as any);
       svc.onModuleInit();
 
       expect(getPrivateField(svc, 'transporter')).toBeNull();
@@ -424,7 +424,7 @@ describe('EmailService', () => {
 
   describe('lifecycle', () => {
     it('onModuleInit should initialise transport when SMTP_HOST is set', () => {
-      const svc = new EmailService(configService);
+      const svc = new EmailService(configService, {} as any);
       svc.onModuleInit();
 
       expect(getPrivateField(svc, 'transporter')).not.toBeNull();
@@ -433,7 +433,7 @@ describe('EmailService', () => {
     });
 
     it('onModuleDestroy should clear the queue interval', () => {
-      const svc = new EmailService(configService);
+      const svc = new EmailService(configService, {} as any);
       svc.onModuleInit();
 
       const timer = getPrivateField(svc, 'queueTimer');

@@ -16,11 +16,19 @@ import {
   ActivityIndicator,
   Alert,
   Linking,
+  Modal,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
-import { listTransactions } from '../../src/api/transactions';
+import Svg, { Path, Line } from 'react-native-svg';
+import { listTransactions, createTransaction } from '../../src/api/transactions';
+import { listAccounts } from '../../src/api/accounts';
+import { listCategories } from '../../src/api/categories';
 import TransactionItem from '../../src/components/TransactionItem';
 import { useAuthStore } from '../../src/stores/auth';
-import type { Transaction } from '../../src/types';
+import type { Transaction, Account, Category } from '../../src/types';
 import { getDateGroupLabel } from '../../src/utils/format';
 import { useAppStore } from '../../src/stores/app';
 import { colors, fontSize, fontWeight, borderRadius, spacing } from '../../src/utils/theme';
@@ -44,6 +52,19 @@ export default function TransactionsScreen() {
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const hasLoadedRef = useRef(false);
   const deferredSearch = useDeferredValue(localSearch.trim());
+
+  // Add Transaction modal state
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
+  const [addName, setAddName] = useState('');
+  const [addAmount, setAddAmount] = useState('');
+  const [addDate, setAddDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [addAccountId, setAddAccountId] = useState('');
+  const [addCategoryId, setAddCategoryId] = useState('');
+  const [accountsList, setAccountsList] = useState<Account[]>([]);
+  const [categoriesList, setCategoriesList] = useState<Category[]>([]);
+  const [showAccountPicker, setShowAccountPicker] = useState(false);
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
 
   async function openUrl(url: string, title: string) {
     try {
@@ -182,6 +203,65 @@ export default function TransactionsScreen() {
     setSearchQuery('');
   }
 
+  async function openAddModal() {
+    setShowAddModal(true);
+    setAddName('');
+    setAddAmount('');
+    setAddDate(new Date().toISOString().slice(0, 10));
+    setAddAccountId('');
+    setAddCategoryId('');
+    try {
+      const [accts, cats] = await Promise.all([
+        listAccounts().catch(() => []),
+        listCategories().catch(() => []),
+      ]);
+      setAccountsList(accts);
+      setCategoriesList(cats);
+      if (accts.length > 0) {
+        setAddAccountId(accts[0].id);
+      }
+    } catch {
+      // silently handle
+    }
+  }
+
+  async function handleAddTransaction() {
+    if (!addName.trim()) {
+      Alert.alert('Validation', 'Please enter a description.');
+      return;
+    }
+    const parsedAmount = parseFloat(addAmount);
+    if (isNaN(parsedAmount) || parsedAmount === 0) {
+      Alert.alert('Validation', 'Please enter a valid amount.');
+      return;
+    }
+    if (!addAccountId) {
+      Alert.alert('Validation', 'Please select an account.');
+      return;
+    }
+    if (!addDate || !/^\d{4}-\d{2}-\d{2}$/.test(addDate)) {
+      Alert.alert('Validation', 'Please enter a valid date (YYYY-MM-DD).');
+      return;
+    }
+
+    setAddLoading(true);
+    try {
+      await createTransaction({
+        accountId: addAccountId,
+        amount: parsedAmount,
+        name: addName.trim(),
+        date: addDate,
+        categoryId: addCategoryId || undefined,
+      });
+      setShowAddModal(false);
+      await fetchTransactions(1, true);
+    } catch {
+      Alert.alert('Error', 'Failed to create transaction. Please try again.');
+    } finally {
+      setAddLoading(false);
+    }
+  }
+
   // Group transactions by date
   const groupedItems: GroupedItem[] = [];
   let lastLabel = '';
@@ -210,6 +290,9 @@ export default function TransactionsScreen() {
     if (item.type === 'header') return `header-${item.label}-${index}`;
     return item.data.id;
   }
+
+  const selectedAccount = accountsList.find((a) => a.id === addAccountId);
+  const selectedCategory = categoriesList.find((c) => c.id === addCategoryId);
 
   if (loading) {
     return (
@@ -336,6 +419,209 @@ export default function TransactionsScreen() {
           }
         />
       )}
+
+      {/* Floating Action Button */}
+      <TouchableOpacity
+        style={styles.fab}
+        activeOpacity={0.8}
+        onPress={openAddModal}
+      >
+        <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+          <Line x1={12} y1={5} x2={12} y2={19} stroke={colors.white} strokeWidth={2} strokeLinecap="round" />
+          <Line x1={5} y1={12} x2={19} y2={12} stroke={colors.white} strokeWidth={2} strokeLinecap="round" />
+        </Svg>
+      </TouchableOpacity>
+
+      {/* Add Transaction Modal */}
+      <Modal
+        visible={showAddModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowAddModal(false)}
+      >
+        <KeyboardAvoidingView
+          style={styles.modalContainer}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          {/* Modal Header */}
+          <View style={styles.modalHeader}>
+            <Pressable onPress={() => setShowAddModal(false)}>
+              <Text style={styles.modalCancelText}>Cancel</Text>
+            </Pressable>
+            <Text style={styles.modalTitle}>Add Transaction</Text>
+            <Pressable onPress={handleAddTransaction} disabled={addLoading}>
+              {addLoading ? (
+                <ActivityIndicator size="small" color={colors.primary[400]} />
+              ) : (
+                <Text style={styles.modalSaveText}>Save</Text>
+              )}
+            </Pressable>
+          </View>
+
+          <ScrollView style={styles.modalBody} contentContainerStyle={styles.modalBodyContent}>
+            {/* Description */}
+            <View style={styles.modalField}>
+              <Text style={styles.modalLabel}>Description</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={addName}
+                onChangeText={setAddName}
+                placeholder="e.g., Coffee at Starbucks"
+                placeholderTextColor={colors.surface[500]}
+                autoFocus
+              />
+            </View>
+
+            {/* Amount */}
+            <View style={styles.modalField}>
+              <Text style={styles.modalLabel}>Amount</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={addAmount}
+                onChangeText={setAddAmount}
+                placeholder="0.00"
+                placeholderTextColor={colors.surface[500]}
+                keyboardType="decimal-pad"
+              />
+            </View>
+
+            {/* Date */}
+            <View style={styles.modalField}>
+              <Text style={styles.modalLabel}>Date</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={addDate}
+                onChangeText={setAddDate}
+                placeholder="YYYY-MM-DD"
+                placeholderTextColor={colors.surface[500]}
+              />
+            </View>
+
+            {/* Account Picker */}
+            <View style={styles.modalField}>
+              <Text style={styles.modalLabel}>Account</Text>
+              <Pressable
+                style={styles.modalPickerButton}
+                onPress={() => setShowAccountPicker(!showAccountPicker)}
+              >
+                <Text
+                  style={[
+                    styles.modalPickerText,
+                    !selectedAccount && styles.modalPickerPlaceholder,
+                  ]}
+                >
+                  {selectedAccount?.name ?? 'Select an account'}
+                </Text>
+                <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+                  <Path d="M6 9l6 6 6-6" stroke={colors.surface[400]} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                </Svg>
+              </Pressable>
+              {showAccountPicker && (
+                <View style={styles.pickerDropdown}>
+                  {accountsList.map((acct) => (
+                    <Pressable
+                      key={acct.id}
+                      style={[
+                        styles.pickerOption,
+                        acct.id === addAccountId && styles.pickerOptionSelected,
+                      ]}
+                      onPress={() => {
+                        setAddAccountId(acct.id);
+                        setShowAccountPicker(false);
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.pickerOptionText,
+                          acct.id === addAccountId && styles.pickerOptionTextSelected,
+                        ]}
+                      >
+                        {acct.name}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              )}
+            </View>
+
+            {/* Category Picker */}
+            <View style={styles.modalField}>
+              <Text style={styles.modalLabel}>Category (optional)</Text>
+              <Pressable
+                style={styles.modalPickerButton}
+                onPress={() => setShowCategoryPicker(!showCategoryPicker)}
+              >
+                <Text
+                  style={[
+                    styles.modalPickerText,
+                    !selectedCategory && styles.modalPickerPlaceholder,
+                  ]}
+                >
+                  {selectedCategory?.name ?? 'Select a category'}
+                </Text>
+                <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+                  <Path d="M6 9l6 6 6-6" stroke={colors.surface[400]} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                </Svg>
+              </Pressable>
+              {showCategoryPicker && (
+                <View style={styles.pickerDropdown}>
+                  <Pressable
+                    style={[
+                      styles.pickerOption,
+                      !addCategoryId && styles.pickerOptionSelected,
+                    ]}
+                    onPress={() => {
+                      setAddCategoryId('');
+                      setShowCategoryPicker(false);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.pickerOptionText,
+                        !addCategoryId && styles.pickerOptionTextSelected,
+                      ]}
+                    >
+                      None
+                    </Text>
+                  </Pressable>
+                  {categoriesList.map((cat) => (
+                    <Pressable
+                      key={cat.id}
+                      style={[
+                        styles.pickerOption,
+                        cat.id === addCategoryId && styles.pickerOptionSelected,
+                      ]}
+                      onPress={() => {
+                        setAddCategoryId(cat.id);
+                        setShowCategoryPicker(false);
+                      }}
+                    >
+                      <View style={styles.pickerOptionRow}>
+                        {cat.color && (
+                          <View
+                            style={[
+                              styles.pickerOptionDot,
+                              { backgroundColor: cat.color },
+                            ]}
+                          />
+                        )}
+                        <Text
+                          style={[
+                            styles.pickerOptionText,
+                            cat.id === addCategoryId && styles.pickerOptionTextSelected,
+                          ]}
+                        >
+                          {cat.name}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  ))}
+                </View>
+              )}
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
@@ -473,5 +759,132 @@ const styles = StyleSheet.create({
   loadingMore: {
     paddingVertical: spacing.xl,
     alignItems: 'center',
+  },
+
+  // FAB
+  fab: {
+    position: 'absolute',
+    right: spacing.xl,
+    bottom: spacing.xl,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primary[600],
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+
+  // Modal
+  modalContainer: {
+    flex: 1,
+    backgroundColor: colors.surface[900],
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surface[700] + '80',
+    backgroundColor: colors.surface[800],
+  },
+  modalTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.semibold,
+    color: colors.white,
+  },
+  modalCancelText: {
+    fontSize: fontSize.base,
+    color: colors.surface[400],
+  },
+  modalSaveText: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+    color: colors.primary[400],
+  },
+  modalBody: {
+    flex: 1,
+  },
+  modalBodyContent: {
+    padding: spacing.lg,
+    gap: spacing.xl,
+    paddingBottom: spacing['5xl'],
+  },
+  modalField: {
+    gap: spacing.sm,
+  },
+  modalLabel: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.medium,
+    color: colors.surface[400],
+  },
+  modalInput: {
+    backgroundColor: colors.surface[800],
+    borderWidth: 1,
+    borderColor: colors.surface[700] + '80',
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    fontSize: fontSize.base,
+    color: colors.white,
+  },
+  modalPickerButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.surface[800],
+    borderWidth: 1,
+    borderColor: colors.surface[700] + '80',
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  modalPickerText: {
+    fontSize: fontSize.base,
+    color: colors.white,
+  },
+  modalPickerPlaceholder: {
+    color: colors.surface[500],
+  },
+  pickerDropdown: {
+    backgroundColor: colors.surface[800],
+    borderWidth: 1,
+    borderColor: colors.surface[700] + '80',
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
+    maxHeight: 200,
+  },
+  pickerOption: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surface[700] + '40',
+  },
+  pickerOptionSelected: {
+    backgroundColor: colors.primary[600] + '20',
+  },
+  pickerOptionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  pickerOptionDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  pickerOptionText: {
+    fontSize: fontSize.sm,
+    color: colors.surface[300],
+  },
+  pickerOptionTextSelected: {
+    color: colors.primary[400],
+    fontWeight: fontWeight.semibold,
   },
 });
