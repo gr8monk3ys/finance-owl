@@ -1,5 +1,9 @@
 # Finance Owl
 
+<p align="center">
+  <img src="docs/assets/hero.png" alt="finance-owl preview" width="640">
+</p>
+
 Privacy-first, self-hosted personal finance manager.
 
 Finance Owl gives you complete control over your financial data. Track accounts, transactions, budgets, investments, credit scores, and more -- all running on your own infrastructure with no data leaving your servers.
