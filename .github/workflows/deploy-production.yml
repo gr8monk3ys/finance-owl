@@ -28,7 +28,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Wait for CI workflow
-        uses: lewagon/wait-on-check-action@ccfb013c15c8afb7bf2b7c028fb74dc5a068cccc
+        uses: lewagon/wait-on-check-action@9312864dfbc9fd208e9c0417843430751c042800
         with:
           ref: ${{ github.sha }}
           check-name: CI Passed
