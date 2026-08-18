@@ -20,24 +20,17 @@ export class TransactionSyncProcessor extends WorkerHost {
 
   async process(job: Job<TransactionSyncJobData>): Promise<void> {
     const { plaidItemId, userId, trigger } = job.data;
-    this.logger.log(
-      `Processing transaction sync for item ${plaidItemId} (trigger: ${trigger})`,
-    );
+    this.logger.log(`Processing transaction sync for item ${plaidItemId} (trigger: ${trigger})`);
 
     try {
-      const result = await this.plaidSyncService.syncTransactionsForItem(
-        plaidItemId,
-        userId,
-      );
+      const result = await this.plaidSyncService.syncTransactionsForItem(plaidItemId, userId);
 
       this.logger.log(
         `Sync complete for item ${plaidItemId}: ` +
           `${result.added} added, ${result.modified} modified, ${result.removed} removed`,
       );
     } catch (error) {
-      this.logger.error(
-        `Transaction sync failed for item ${plaidItemId}: ${error}`,
-      );
+      this.logger.error(`Transaction sync failed for item ${plaidItemId}: ${error}`);
       throw error;
     }
   }

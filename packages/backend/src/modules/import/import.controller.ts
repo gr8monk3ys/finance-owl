@@ -9,11 +9,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from '../../common/decorators';
-import {
-  ImportService,
-  type ParsedTransaction,
-  type ColumnMapping,
-} from './import.service';
+import { ImportService, type ParsedTransaction, type ColumnMapping } from './import.service';
 import {
   IsString,
   IsOptional,
@@ -145,22 +141,12 @@ export class ImportController {
         ];
 
         const allowedExts = ['.csv', '.ofx', '.qfx'];
-        const ext = file.originalname
-          .toLowerCase()
-          .substring(file.originalname.lastIndexOf('.'));
+        const ext = file.originalname.toLowerCase().substring(file.originalname.lastIndexOf('.'));
 
-        if (
-          allowedMimes.includes(file.mimetype) ||
-          allowedExts.includes(ext)
-        ) {
+        if (allowedMimes.includes(file.mimetype) || allowedExts.includes(ext)) {
           cb(null, true);
         } else {
-          cb(
-            new BadRequestException(
-              'Only .csv, .ofx, and .qfx files are supported',
-            ),
-            false,
-          );
+          cb(new BadRequestException('Only .csv, .ofx, and .qfx files are supported'), false);
         }
       },
     }),
@@ -174,9 +160,7 @@ export class ImportController {
       throw new BadRequestException('No file uploaded');
     }
 
-    const ext = file.originalname
-      .toLowerCase()
-      .substring(file.originalname.lastIndexOf('.'));
+    const ext = file.originalname.toLowerCase().substring(file.originalname.lastIndexOf('.'));
 
     if (ext === '.ofx' || ext === '.qfx') {
       const transactions = this.importService.parseOFX(file.buffer);
@@ -207,22 +191,12 @@ export class ImportController {
   }
 
   @Post('preview')
-  async preview(
-    @CurrentUser('id') userId: string,
-    @Body() body: PreviewDto,
-  ) {
-    return this.importService.previewImport(
-      userId,
-      body.transactions,
-      body.accountId,
-    );
+  async preview(@CurrentUser('id') userId: string, @Body() body: PreviewDto) {
+    return this.importService.previewImport(userId, body.transactions, body.accountId);
   }
 
   @Post('execute')
-  async execute(
-    @CurrentUser('id') userId: string,
-    @Body() body: ExecuteImportDto,
-  ) {
+  async execute(@CurrentUser('id') userId: string, @Body() body: ExecuteImportDto) {
     return this.importService.executeImport(
       userId,
       body.transactions,

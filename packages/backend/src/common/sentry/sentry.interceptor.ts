@@ -75,11 +75,7 @@ export class SentryInterceptor implements NestInterceptor {
     );
   }
 
-  private captureException(
-    exception: unknown,
-    request: Request,
-    startTime: number,
-  ): void {
+  private captureException(exception: unknown, request: Request, startTime: number): void {
     // Don't report expected HTTP errors
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
@@ -95,10 +91,7 @@ export class SentryInterceptor implements NestInterceptor {
       // Add request context
       scope.setTag('http.method', request.method);
       scope.setTag('http.url', request.url);
-      scope.setTag(
-        'transaction',
-        `${request.method} ${request.route?.path || request.url}`,
-      );
+      scope.setTag('transaction', `${request.method} ${request.route?.path || request.url}`);
 
       // Add user context (userId and email for identification)
       if (user?.id) {

@@ -4,7 +4,11 @@ import { eq, and } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
 import * as schema from '../../database/schema';
-import type { RegistrationResponseJSON, AuthenticationResponseJSON, AuthenticatorTransportFuture } from '@simplewebauthn/types';
+import type {
+  RegistrationResponseJSON,
+  AuthenticationResponseJSON,
+  AuthenticatorTransportFuture,
+} from '@simplewebauthn/types';
 
 // SimpleWebAuthn is ESM-only -- use dynamic imports
 async function loadWebAuthn() {
@@ -26,10 +30,7 @@ export class WebAuthnService {
   ) {
     this.rpName = this.configService.get('WEBAUTHN_RP_NAME', 'FinanceOwl');
     this.rpID = this.configService.get('WEBAUTHN_RP_ID', 'localhost');
-    this.origin = this.configService.get(
-      'WEBAUTHN_ORIGIN',
-      'http://localhost:3000',
-    );
+    this.origin = this.configService.get('WEBAUTHN_ORIGIN', 'http://localhost:3000');
   }
 
   async generateRegistrationOptions(userId: string, userName: string) {
@@ -47,9 +48,7 @@ export class WebAuthnService {
       attestationType: 'none',
       excludeCredentials: existingCreds.map((cred) => ({
         id: cred.id,
-        transports: cred.transports
-          ? JSON.parse(cred.transports)
-          : undefined,
+        transports: cred.transports ? JSON.parse(cred.transports) : undefined,
       })),
       authenticatorSelection: {
         residentKey: 'preferred',
@@ -78,8 +77,7 @@ export class WebAuthnService {
       throw new BadRequestException('WebAuthn verification failed');
     }
 
-    const { credential, credentialDeviceType, credentialBackedUp } =
-      verification.registrationInfo;
+    const { credential, credentialDeviceType, credentialBackedUp } = verification.registrationInfo;
 
     await this.db.insert(schema.webauthnCredentials).values({
       id: credential.id,
@@ -88,9 +86,7 @@ export class WebAuthnService {
       counter: credential.counter,
       deviceType: credentialDeviceType,
       backedUp: credentialBackedUp,
-      transports: regBody.response?.transports
-        ? JSON.stringify(regBody.response.transports)
-        : null,
+      transports: regBody.response?.transports ? JSON.stringify(regBody.response.transports) : null,
     });
 
     return { verified: true };
@@ -109,7 +105,9 @@ export class WebAuthnService {
 
       allowCredentials = creds.map((cred) => ({
         id: cred.id,
-        transports: cred.transports ? JSON.parse(cred.transports) as AuthenticatorTransportFuture[] : undefined,
+        transports: cred.transports
+          ? (JSON.parse(cred.transports) as AuthenticatorTransportFuture[])
+          : undefined,
       }));
     }
 
@@ -152,12 +150,10 @@ export class WebAuthnService {
       expectedRPID: this.rpID,
       credential: {
         id: credential.id,
-        publicKey: new Uint8Array(
-          Buffer.from(credential.publicKey, 'base64'),
-        ),
+        publicKey: new Uint8Array(Buffer.from(credential.publicKey, 'base64')),
         counter: credential.counter,
         transports: credential.transports
-          ? JSON.parse(credential.transports) as AuthenticatorTransportFuture[]
+          ? (JSON.parse(credential.transports) as AuthenticatorTransportFuture[])
           : undefined,
       },
     });
@@ -211,9 +207,7 @@ export class WebAuthnService {
     const cacheKey = `webauthn:challenge:${key}`;
     const challenge = await this.cacheService.get<string>(cacheKey);
     if (!challenge) {
-      throw new BadRequestException(
-        'No challenge found. Please request a new challenge.',
-      );
+      throw new BadRequestException('No challenge found. Please request a new challenge.');
     }
 
     // Always delete the challenge (single-use)

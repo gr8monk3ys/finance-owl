@@ -23,13 +23,7 @@ import { BudgetsService } from './budgets.service';
 import { IsString, IsNumber, IsOptional, IsBoolean, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 
-const DOCUMENTED_BUDGET_PERIODS = [
-  'weekly',
-  'biweekly',
-  'monthly',
-  'quarterly',
-  'annual',
-] as const;
+const DOCUMENTED_BUDGET_PERIODS = ['weekly', 'biweekly', 'monthly', 'quarterly', 'annual'] as const;
 
 const ACCEPTED_BUDGET_PERIODS = [...DOCUMENTED_BUDGET_PERIODS, 'yearly'] as const;
 
@@ -38,7 +32,7 @@ class CreateBudgetDto {
   @IsString()
   categoryId!: string;
 
-  @ApiProperty({ description: 'Budget amount limit', example: 500.00 })
+  @ApiProperty({ description: 'Budget amount limit', example: 500.0 })
   @IsNumber()
   @Type(() => Number)
   amount!: number;
@@ -52,12 +46,15 @@ class CreateBudgetDto {
   @IsIn(ACCEPTED_BUDGET_PERIODS)
   period!: string;
 
-  @ApiPropertyOptional({ description: 'Enable rollover of unused budget to next period', default: false })
+  @ApiPropertyOptional({
+    description: 'Enable rollover of unused budget to next period',
+    default: false,
+  })
   @IsOptional()
   @IsBoolean()
   rollover?: boolean;
 
-  @ApiPropertyOptional({ description: 'Maximum rollover cap amount', example: 200.00 })
+  @ApiPropertyOptional({ description: 'Maximum rollover cap amount', example: 200.0 })
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
@@ -65,7 +62,7 @@ class CreateBudgetDto {
 }
 
 class UpdateBudgetDto {
-  @ApiPropertyOptional({ description: 'Updated budget amount', example: 600.00 })
+  @ApiPropertyOptional({ description: 'Updated budget amount', example: 600.0 })
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
@@ -107,7 +104,10 @@ export class BudgetsController {
   }
 
   @ApiOperation({ summary: 'Get budget summary with spending progress for all budgets' })
-  @ApiResponse({ status: 200, description: 'Budget summary with spent vs. limit for each category' })
+  @ApiResponse({
+    status: 200,
+    description: 'Budget summary with spent vs. limit for each category',
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Get('summary')
   getSummary(@CurrentUser('id') userId: string) {
@@ -139,11 +139,7 @@ export class BudgetsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Budget not found' })
   @Patch(':id')
-  update(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-    @Body() dto: UpdateBudgetDto,
-  ) {
+  update(@CurrentUser('id') userId: string, @Param('id') id: string, @Body() dto: UpdateBudgetDto) {
     return this.budgetsService.update(userId, id, dto);
   }
 

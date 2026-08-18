@@ -21,11 +21,7 @@ const FREQUENCY_ANNUAL_MULTIPLIER: Record<string, number> = {
 export class CancellationService {
   constructor(@Inject(DATABASE_TOKEN) private db: DrizzleDB) {}
 
-  async requestCancellation(
-    userId: string,
-    subscriptionId: string,
-    reason?: string,
-  ) {
+  async requestCancellation(userId: string, subscriptionId: string, reason?: string) {
     // Verify subscription belongs to user
     const [subscription] = await this.db
       .select()
@@ -43,8 +39,7 @@ export class CancellationService {
     }
 
     // Generate cancellation instructions
-    const merchantName =
-      subscription.merchantName || subscription.name;
+    const merchantName = subscription.merchantName || subscription.name;
     const instructions = this.getCancellationInstructions(merchantName);
 
     const [request] = await this.db
@@ -99,10 +94,7 @@ export class CancellationService {
       .from(cancellationRequests)
       .leftJoin(
         schema.recurringTransactions,
-        eq(
-          cancellationRequests.subscriptionId,
-          schema.recurringTransactions.id,
-        ),
+        eq(cancellationRequests.subscriptionId, schema.recurringTransactions.id),
       )
       .where(eq(cancellationRequests.userId, userId))
       .orderBy(desc(cancellationRequests.createdAt));
@@ -112,9 +104,7 @@ export class CancellationService {
       cancellationInstructions: r.cancellationInstructions
         ? JSON.parse(r.cancellationInstructions)
         : [],
-      providerContactInfo: r.providerContactInfo
-        ? JSON.parse(r.providerContactInfo)
-        : null,
+      providerContactInfo: r.providerContactInfo ? JSON.parse(r.providerContactInfo) : null,
     }));
   }
 
@@ -142,17 +132,9 @@ export class CancellationService {
       .from(cancellationRequests)
       .leftJoin(
         schema.recurringTransactions,
-        eq(
-          cancellationRequests.subscriptionId,
-          schema.recurringTransactions.id,
-        ),
+        eq(cancellationRequests.subscriptionId, schema.recurringTransactions.id),
       )
-      .where(
-        and(
-          eq(cancellationRequests.id, id),
-          eq(cancellationRequests.userId, userId),
-        ),
-      )
+      .where(and(eq(cancellationRequests.id, id), eq(cancellationRequests.userId, userId)))
       .limit(1);
 
     if (!request) {
@@ -170,12 +152,7 @@ export class CancellationService {
     };
   }
 
-  async updateStatus(
-    userId: string,
-    id: string,
-    status: string,
-    notes?: string,
-  ) {
+  async updateStatus(userId: string, id: string, status: string, notes?: string) {
     await this.getCancellationRequest(userId, id);
 
     const updateData: Record<string, unknown> = {
@@ -190,12 +167,7 @@ export class CancellationService {
     const [updated] = await this.db
       .update(cancellationRequests)
       .set(updateData)
-      .where(
-        and(
-          eq(cancellationRequests.id, id),
-          eq(cancellationRequests.userId, userId),
-        ),
-      )
+      .where(and(eq(cancellationRequests.id, id), eq(cancellationRequests.userId, userId)))
       .returning();
 
     return updated;
@@ -212,12 +184,7 @@ export class CancellationService {
         cancellationConfirmedAt: new Date().toISOString(),
         updatedAt: new Date(),
       })
-      .where(
-        and(
-          eq(cancellationRequests.id, id),
-          eq(cancellationRequests.userId, userId),
-        ),
-      )
+      .where(and(eq(cancellationRequests.id, id), eq(cancellationRequests.userId, userId)))
       .returning();
 
     // Deactivate the subscription
@@ -245,10 +212,7 @@ export class CancellationService {
     return getGenericCancellationInfo(merchantName);
   }
 
-  async getCancellationInstructionsForSubscription(
-    userId: string,
-    subscriptionId: string,
-  ) {
+  async getCancellationInstructionsForSubscription(userId: string, subscriptionId: string) {
     const [subscription] = await this.db
       .select({
         name: schema.recurringTransactions.name,
@@ -267,8 +231,7 @@ export class CancellationService {
       throw new NotFoundException('Subscription not found');
     }
 
-    const merchantName =
-      subscription.merchantName || subscription.name;
+    const merchantName = subscription.merchantName || subscription.name;
     return this.getCancellationInstructions(merchantName);
   }
 
@@ -282,10 +245,7 @@ export class CancellationService {
       .from(cancellationRequests)
       .leftJoin(
         schema.recurringTransactions,
-        eq(
-          cancellationRequests.subscriptionId,
-          schema.recurringTransactions.id,
-        ),
+        eq(cancellationRequests.subscriptionId, schema.recurringTransactions.id),
       )
       .where(eq(cancellationRequests.userId, userId));
 
@@ -299,8 +259,7 @@ export class CancellationService {
 
       if (req.status === 'completed' && req.estimatedAmount && req.frequency) {
         totalCompleted++;
-        const annualMultiplier =
-          FREQUENCY_ANNUAL_MULTIPLIER[req.frequency] ?? 12;
+        const annualMultiplier = FREQUENCY_ANNUAL_MULTIPLIER[req.frequency] ?? 12;
         const annualAmount = req.estimatedAmount * annualMultiplier;
         estimatedAnnualSavings += annualAmount;
         estimatedMonthlySavings += annualAmount / 12;
@@ -311,10 +270,8 @@ export class CancellationService {
       totalRequested,
       totalCompleted,
       totalPending: totalRequested - totalCompleted,
-      estimatedMonthlySavings:
-        Math.round(estimatedMonthlySavings * 100) / 100,
-      estimatedAnnualSavings:
-        Math.round(estimatedAnnualSavings * 100) / 100,
+      estimatedMonthlySavings: Math.round(estimatedMonthlySavings * 100) / 100,
+      estimatedAnnualSavings: Math.round(estimatedAnnualSavings * 100) / 100,
     };
   }
 }

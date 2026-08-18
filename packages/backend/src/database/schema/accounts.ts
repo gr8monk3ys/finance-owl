@@ -37,7 +37,9 @@ export const accounts = pgTable('accounts', {
   subtype: text('subtype'),
   institutionName: text('institution_name'),
   mask: text('mask'), // last 4 digits
-  currentBalance: numeric('current_balance', { precision: 19, scale: 4 }).$type<number>().default(0),
+  currentBalance: numeric('current_balance', { precision: 19, scale: 4 })
+    .$type<number>()
+    .default(0),
   availableBalance: numeric('available_balance', { precision: 19, scale: 4 }).$type<number>(),
   creditLimit: numeric('credit_limit', { precision: 19, scale: 4 }).$type<number>(),
   currency: text('currency').notNull().default('USD'),

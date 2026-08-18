@@ -59,10 +59,7 @@ export class BankSyncController {
   @ApiResponse({ status: 201, description: 'Link token created' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Post('link-token')
-  async createLinkToken(
-    @CurrentUser('id') userId: string,
-    @Query('provider') provider?: string,
-  ) {
+  async createLinkToken(@CurrentUser('id') userId: string, @Query('provider') provider?: string) {
     return this.bankSyncService.createLinkToken(userId, provider);
   }
 
@@ -86,15 +83,8 @@ export class BankSyncController {
   @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Post('exchange')
   @HttpCode(HttpStatus.OK)
-  async exchangeToken(
-    @CurrentUser('id') userId: string,
-    @Body() dto: ExchangeTokenDto,
-  ) {
-    return this.bankSyncService.exchangeAndStore(
-      userId,
-      dto.publicToken,
-      dto.provider,
-    );
+  async exchangeToken(@CurrentUser('id') userId: string, @Body() dto: ExchangeTokenDto) {
+    return this.bankSyncService.exchangeAndStore(userId, dto.publicToken, dto.provider);
   }
 
   @ApiOperation({ summary: 'Refresh account balances for a Plaid item' })
@@ -107,10 +97,7 @@ export class BankSyncController {
     @CurrentUser('id') userId: string,
     @Param('plaidItemId') plaidItemId: string,
   ) {
-    const count = await this.bankSyncService.refreshBalances(
-      userId,
-      plaidItemId,
-    );
+    const count = await this.bankSyncService.refreshBalances(userId, plaidItemId);
     return { refreshed: count };
   }
 
@@ -128,10 +115,7 @@ export class BankSyncController {
     @CurrentUser('id') userId: string,
     @Param('plaidItemId') plaidItemId: string,
   ) {
-    const stats = await this.plaidSyncService.syncTransactionsForItem(
-      plaidItemId,
-      userId,
-    );
+    const stats = await this.plaidSyncService.syncTransactionsForItem(plaidItemId, userId);
     return {
       synced: true,
       added: stats.added,
@@ -146,15 +130,8 @@ export class BankSyncController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Post('sync/:plaidItemId/queue')
   @HttpCode(HttpStatus.ACCEPTED)
-  async queueSync(
-    @CurrentUser('id') userId: string,
-    @Param('plaidItemId') plaidItemId: string,
-  ) {
-    await this.transactionSyncScheduler.queueSyncForItem(
-      plaidItemId,
-      userId,
-      'manual',
-    );
+  async queueSync(@CurrentUser('id') userId: string, @Param('plaidItemId') plaidItemId: string) {
+    await this.transactionSyncScheduler.queueSyncForItem(plaidItemId, userId, 'manual');
     return { queued: true };
   }
 
@@ -184,10 +161,7 @@ export class BankSyncController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Item not found' })
   @Delete('items/:plaidItemId')
-  async unlinkItem(
-    @CurrentUser('id') userId: string,
-    @Param('plaidItemId') plaidItemId: string,
-  ) {
+  async unlinkItem(@CurrentUser('id') userId: string, @Param('plaidItemId') plaidItemId: string) {
     await this.bankSyncService.unlinkItem(userId, plaidItemId);
     return { message: 'Item unlinked' };
   }
@@ -212,13 +186,8 @@ export class BankSyncController {
     @CurrentUser('id') userId: string,
     @Param('plaidItemId') plaidItemId: string,
   ) {
-    const item = await this.bankSyncService.getPlaidItemRaw(
-      userId,
-      plaidItemId,
-    );
-    const accessToken = this.bankSyncService.getDecryptedAccessToken(
-      item.accessToken,
-    );
+    const item = await this.bankSyncService.getPlaidItemRaw(userId, plaidItemId);
+    const accessToken = this.bankSyncService.getDecryptedAccessToken(item.accessToken);
     return this.plaidSandboxService.fireSandboxWebhook(accessToken);
   }
 
@@ -231,13 +200,8 @@ export class BankSyncController {
     @CurrentUser('id') userId: string,
     @Param('plaidItemId') plaidItemId: string,
   ) {
-    const item = await this.bankSyncService.getPlaidItemRaw(
-      userId,
-      plaidItemId,
-    );
-    const accessToken = this.bankSyncService.getDecryptedAccessToken(
-      item.accessToken,
-    );
+    const item = await this.bankSyncService.getPlaidItemRaw(userId, plaidItemId);
+    const accessToken = this.bankSyncService.getDecryptedAccessToken(item.accessToken);
     return this.plaidSandboxService.resetSandboxLogin(accessToken);
   }
 }

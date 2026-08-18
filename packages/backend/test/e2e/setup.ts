@@ -89,8 +89,7 @@ export function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -306,20 +305,14 @@ export function generateAccessToken(
   jwtService: JwtService,
   user: { id: string; email: string } = TEST_USER,
 ): string {
-  return jwtService.sign(
-    { sub: user.id, email: user.email },
-    { expiresIn: '15m' },
-  );
+  return jwtService.sign({ sub: user.id, email: user.email }, { expiresIn: '15m' });
 }
 
 /**
  * Generate an expired JWT token for testing 401 scenarios.
  */
 export function generateExpiredToken(jwtService: JwtService): string {
-  return jwtService.sign(
-    { sub: TEST_USER.id, email: TEST_USER.email },
-    { expiresIn: '0s' },
-  );
+  return jwtService.sign({ sub: TEST_USER.id, email: TEST_USER.email }, { expiresIn: '0s' });
 }
 
 /**

@@ -30,8 +30,17 @@ import {
   notifications,
   netWorthHistory,
 } from '../../database/schema/audit';
-import { billingCustomers, userSubscriptions, invoices, usageTracking } from '../billing/billing.schema';
-import { categories, categorizationRules, categorizationCorrections } from '../../database/schema/categories';
+import {
+  billingCustomers,
+  userSubscriptions,
+  invoices,
+  usageTracking,
+} from '../billing/billing.schema';
+import {
+  categories,
+  categorizationRules,
+  categorizationCorrections,
+} from '../../database/schema/categories';
 
 /** Grace period before actual deletion: 14 days. */
 const GRACE_PERIOD_MS = 14 * 24 * 60 * 60 * 1000;
@@ -58,34 +67,22 @@ export class AccountDeletionService {
   /**
    * Request account deletion. Starts a 14-day grace period.
    */
-  async requestDeletion(
-    userId: string,
-    reason?: string,
-  ): Promise<DeletionStatus> {
+  async requestDeletion(userId: string, reason?: string): Promise<DeletionStatus> {
     // Check for existing pending deletion
     const [existing] = await this.db
       .select()
       .from(dataDeletionRequests)
       .where(
-        and(
-          eq(dataDeletionRequests.userId, userId),
-          eq(dataDeletionRequests.status, 'pending'),
-        ),
+        and(eq(dataDeletionRequests.userId, userId), eq(dataDeletionRequests.status, 'pending')),
       )
       .limit(1);
 
     if (existing) {
-      throw new ConflictException(
-        'A deletion request is already pending for this account',
-      );
+      throw new ConflictException('A deletion request is already pending for this account');
     }
 
     // Verify user exists
-    const [user] = await this.db
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
+    const [user] = await this.db.select().from(users).where(eq(users.id, userId)).limit(1);
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -124,9 +121,7 @@ export class AccountDeletionService {
       `Account Deletion Requested\n\nYour FinanceOwl account will be permanently deleted on ${new Date(scheduledAt).toLocaleDateString()}.\n\nYou can cancel this request within 14 days from Settings > Data.`,
     );
 
-    this.logger.log(
-      `Account deletion requested for user ${userId}, scheduled for ${scheduledAt}`,
-    );
+    this.logger.log(`Account deletion requested for user ${userId}, scheduled for ${scheduledAt}`);
 
     const daysRemaining = Math.ceil(
       (new Date(scheduledAt).getTime() - Date.now()) / (24 * 60 * 60 * 1000),
@@ -148,10 +143,7 @@ export class AccountDeletionService {
       .select()
       .from(dataDeletionRequests)
       .where(
-        and(
-          eq(dataDeletionRequests.userId, userId),
-          eq(dataDeletionRequests.status, 'pending'),
-        ),
+        and(eq(dataDeletionRequests.userId, userId), eq(dataDeletionRequests.status, 'pending')),
       )
       .orderBy(desc(dataDeletionRequests.createdAt))
       .limit(1);
@@ -162,9 +154,7 @@ export class AccountDeletionService {
 
     // Verify still within grace period
     if (pending.scheduledAt && new Date(pending.scheduledAt).getTime() < Date.now()) {
-      throw new BadRequestException(
-        'The grace period has expired and deletion is being processed',
-      );
+      throw new BadRequestException('The grace period has expired and deletion is being processed');
     }
 
     await this.db
@@ -176,11 +166,7 @@ export class AccountDeletionService {
       .where(eq(dataDeletionRequests.id, pending.id));
 
     // Send confirmation email
-    const [user] = await this.db
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
+    const [user] = await this.db.select().from(users).where(eq(users.id, userId)).limit(1);
 
     if (user) {
       await this.emailService.sendEmail(
@@ -207,10 +193,7 @@ export class AccountDeletionService {
       .select()
       .from(dataDeletionRequests)
       .where(
-        and(
-          eq(dataDeletionRequests.userId, userId),
-          eq(dataDeletionRequests.status, 'pending'),
-        ),
+        and(eq(dataDeletionRequests.userId, userId), eq(dataDeletionRequests.status, 'pending')),
       )
       .orderBy(desc(dataDeletionRequests.createdAt))
       .limit(1);
@@ -230,11 +213,7 @@ export class AccountDeletionService {
       .set({ status: 'processing' })
       .where(eq(dataDeletionRequests.id, pending.id));
 
-    const [user] = await this.db
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
+    const [user] = await this.db.select().from(users).where(eq(users.id, userId)).limit(1);
 
     const userEmail = user?.email;
 
@@ -249,13 +228,9 @@ export class AccountDeletionService {
 
       for (const item of plaidItemsToRevoke) {
         try {
-          this.logger.log(
-            `Revoking Plaid access token for item ${item.plaidItemId}`,
-          );
+          this.logger.log(`Revoking Plaid access token for item ${item.plaidItemId}`);
           await this.bankSyncService.unlinkItem(userId, item.id);
-          this.logger.log(
-            `Successfully revoked Plaid item ${item.plaidItemId}`,
-          );
+          this.logger.log(`Successfully revoked Plaid item ${item.plaidItemId}`);
         } catch (error) {
           this.logger.warn(
             `Failed to revoke Plaid item ${item.plaidItemId}: ${error instanceof Error ? error.message : String(error)}`,
@@ -272,9 +247,7 @@ export class AccountDeletionService {
 
       if (subscription?.stripeSubscriptionId) {
         try {
-          this.logger.log(
-            `Cancelling Stripe subscription ${subscription.stripeSubscriptionId}`,
-          );
+          this.logger.log(`Cancelling Stripe subscription ${subscription.stripeSubscriptionId}`);
           await this.billingService.cancelSubscription(userId, false);
           this.logger.log(
             `Successfully cancelled Stripe subscription ${subscription.stripeSubscriptionId}`,
@@ -295,9 +268,7 @@ export class AccountDeletionService {
           .where(eq(transactions.userId, userId));
 
         for (const t of userTxns) {
-          await tx
-            .delete(transactionSplits)
-            .where(eq(transactionSplits.transactionId, t.id));
+          await tx.delete(transactionSplits).where(eq(transactionSplits.transactionId, t.id));
         }
 
         // Savings contributions (depend on savings goals)
@@ -307,9 +278,7 @@ export class AccountDeletionService {
           .where(eq(savingsGoals.userId, userId));
 
         for (const goal of userGoals) {
-          await tx
-            .delete(savingsContributions)
-            .where(eq(savingsContributions.goalId, goal.id));
+          await tx.delete(savingsContributions).where(eq(savingsContributions.goalId, goal.id));
         }
 
         // Budget alerts and periods (depend on budgets)
@@ -319,12 +288,8 @@ export class AccountDeletionService {
           .where(eq(budgets.userId, userId));
 
         for (const budget of userBudgets) {
-          await tx
-            .delete(budgetAlerts)
-            .where(eq(budgetAlerts.budgetId, budget.id));
-          await tx
-            .delete(budgetPeriods)
-            .where(eq(budgetPeriods.budgetId, budget.id));
+          await tx.delete(budgetAlerts).where(eq(budgetAlerts.budgetId, budget.id));
+          await tx.delete(budgetPeriods).where(eq(budgetPeriods.budgetId, budget.id));
         }
 
         // Now delete the main tables
@@ -343,7 +308,9 @@ export class AccountDeletionService {
         await tx.delete(invoices).where(eq(invoices.userId, userId));
         await tx.delete(usageTracking).where(eq(usageTracking.userId, userId));
         await tx.delete(categorizationRules).where(eq(categorizationRules.userId, userId));
-        await tx.delete(categorizationCorrections).where(eq(categorizationCorrections.userId, userId));
+        await tx
+          .delete(categorizationCorrections)
+          .where(eq(categorizationCorrections.userId, userId));
         await tx.delete(budgetAlerts).where(eq(budgetAlerts.userId, userId));
 
         // 4. Anonymize audit logs (keep for compliance but remove PII)
@@ -361,9 +328,7 @@ export class AccountDeletionService {
         await tx.delete(webauthnCredentials).where(eq(webauthnCredentials.userId, userId));
 
         // 6. Delete the deletion request itself
-        await tx
-          .delete(dataDeletionRequests)
-          .where(eq(dataDeletionRequests.userId, userId));
+        await tx.delete(dataDeletionRequests).where(eq(dataDeletionRequests.userId, userId));
 
         // 7. Delete user record (last, since other tables reference it)
         await tx.delete(users).where(eq(users.id, userId));
@@ -384,9 +349,7 @@ export class AccountDeletionService {
 
       this.logger.log(`Account deletion completed for user ${userId}`);
     } catch (error) {
-      this.logger.error(
-        `Failed to execute deletion for user ${userId}: ${error}`,
-      );
+      this.logger.error(`Failed to execute deletion for user ${userId}: ${error}`);
 
       // Revert status to pending so it can be retried
       await this.db
@@ -418,8 +381,7 @@ export class AccountDeletionService {
         ? Math.max(
             0,
             Math.ceil(
-              (new Date(latest.scheduledAt).getTime() - Date.now()) /
-                (24 * 60 * 60 * 1000),
+              (new Date(latest.scheduledAt).getTime() - Date.now()) / (24 * 60 * 60 * 1000),
             ),
           )
         : 0;

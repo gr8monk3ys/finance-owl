@@ -15,9 +15,7 @@ test.describe('Transactions — Page load', () => {
   });
 
   test('should display the search bar', async ({ authenticatedPage: page }) => {
-    await expect(
-      page.getByPlaceholder(/search by name, merchant, or amount/i),
-    ).toBeVisible();
+    await expect(page.getByPlaceholder(/search by name, merchant, or amount/i)).toBeVisible();
   });
 
   test('should show the transaction list or empty state', async ({ authenticatedPage: page }) => {
@@ -58,7 +56,10 @@ test.describe('Transactions — Add manual transaction', () => {
     // Date defaults to today, so we leave it as-is
 
     // Submit the form
-    await page.locator('form[action="?/create"]').getByRole('button', { name: /add transaction/i }).click();
+    await page
+      .locator('form[action="?/create"]')
+      .getByRole('button', { name: /add transaction/i })
+      .click();
 
     // After a successful create the modal closes and the page reloads.
     // We should either see the new transaction in the list or no error is shown.
@@ -66,7 +67,9 @@ test.describe('Transactions — Add manual transaction', () => {
     await page.waitForTimeout(2_000);
 
     // The modal should have closed (no more "Cancel" button in the modal)
-    const modalCancelButton = page.locator('form[action="?/create"]').getByRole('button', { name: /cancel/i });
+    const modalCancelButton = page
+      .locator('form[action="?/create"]')
+      .getByRole('button', { name: /cancel/i });
     await expect(modalCancelButton).not.toBeVisible({ timeout: 5_000 });
   });
 });
@@ -87,7 +90,9 @@ test.describe('Transactions — Search and filter', () => {
 
   test('should toggle the filter panel', async ({ authenticatedPage: page }) => {
     // Click the filter button (has a funnel icon)
-    const filterButtons = page.locator('button').filter({ has: page.locator('svg path[d*="M3 4a1"]') });
+    const filterButtons = page
+      .locator('button')
+      .filter({ has: page.locator('svg path[d*="M3 4a1"]') });
     await filterButtons.first().click();
 
     // The filter panel should show with account, category, date fields
@@ -100,7 +105,9 @@ test.describe('Transactions — Search and filter', () => {
 
   test('should apply date filters', async ({ authenticatedPage: page }) => {
     // Open filter panel
-    const filterButtons = page.locator('button').filter({ has: page.locator('svg path[d*="M3 4a1"]') });
+    const filterButtons = page
+      .locator('button')
+      .filter({ has: page.locator('svg path[d*="M3 4a1"]') });
     await filterButtons.first().click();
 
     await page.locator('#filterStartDate').fill('2025-01-01');
@@ -116,7 +123,9 @@ test.describe('Transactions — Search and filter', () => {
     await page.goto('/transactions?search=test&startDate=2025-01-01');
 
     // Open filter panel
-    const filterButtons = page.locator('button').filter({ has: page.locator('svg path[d*="M3 4a1"]') });
+    const filterButtons = page
+      .locator('button')
+      .filter({ has: page.locator('svg path[d*="M3 4a1"]') });
     await filterButtons.first().click();
 
     // Look for the Clear All button

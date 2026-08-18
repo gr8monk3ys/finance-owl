@@ -60,8 +60,7 @@ export class PlaidController {
 
   @ApiOperation({
     summary: 'Exchange a Plaid public token for a persistent access token',
-    description:
-      'Stores the encrypted access token, creates the Plaid item, and links accounts.',
+    description: 'Stores the encrypted access token, creates the Plaid item, and links accounts.',
   })
   @ApiResponse({ status: 200, description: 'Token exchanged, accounts linked' })
   @ApiResponse({ status: 400, description: 'Invalid public token' })
@@ -69,15 +68,8 @@ export class PlaidController {
   @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Post('exchange-token')
   @HttpCode(HttpStatus.OK)
-  async exchangeToken(
-    @CurrentUser('id') userId: string,
-    @Body() dto: ExchangeTokenDto,
-  ) {
-    return this.plaidService.exchangePublicToken(
-      userId,
-      dto.publicToken,
-      dto.metadata,
-    );
+  async exchangeToken(@CurrentUser('id') userId: string, @Body() dto: ExchangeTokenDto) {
+    return this.plaidService.exchangePublicToken(userId, dto.publicToken, dto.metadata);
   }
 
   @ApiExcludeEndpoint()
@@ -103,10 +95,7 @@ export class PlaidController {
   @Throttle({ default: { ttl: 60000, limit: 10 } })
   @Post('sync/:itemId')
   @HttpCode(HttpStatus.OK)
-  async syncTransactions(
-    @CurrentUser('id') userId: string,
-    @Param('itemId') itemId: string,
-  ) {
+  async syncTransactions(@CurrentUser('id') userId: string, @Param('itemId') itemId: string) {
     const stats = await this.plaidService.syncTransactions(itemId, userId);
     return {
       synced: true,
@@ -121,10 +110,7 @@ export class PlaidController {
   @ApiResponse({ status: 404, description: 'Plaid item not found' })
   @Delete('items/:itemId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async removeItem(
-    @CurrentUser('id') userId: string,
-    @Param('itemId') itemId: string,
-  ) {
+  async removeItem(@CurrentUser('id') userId: string, @Param('itemId') itemId: string) {
     await this.plaidService.removeItem(userId, itemId);
   }
 

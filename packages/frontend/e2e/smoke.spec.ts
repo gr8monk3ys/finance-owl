@@ -38,9 +38,7 @@ test.describe('Web Smoke', () => {
     await page.getByRole('link', { name: 'Transactions', exact: true }).click();
     await expect(page).toHaveURL(/\/transactions/);
     await expect(page.getByRole('heading', { level: 2, name: 'Transactions' })).toBeVisible();
-    await expect(
-      page.getByPlaceholder('Search by name, merchant, or amount…'),
-    ).toBeVisible();
+    await expect(page.getByPlaceholder('Search by name, merchant, or amount…')).toBeVisible();
   });
 
   test('transactions search updates as you type and can be cleared', async ({

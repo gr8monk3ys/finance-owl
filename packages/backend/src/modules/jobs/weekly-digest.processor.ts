@@ -36,21 +36,14 @@ export class WeeklyDigestProcessor extends WorkerHost {
         const sent = await this.processUserDigest(user.id, user.email);
         if (sent) sentCount++;
       } catch (error) {
-        this.logger.error(
-          `Weekly digest failed for user ${user.id}: ${error}`,
-        );
+        this.logger.error(`Weekly digest failed for user ${user.id}: ${error}`);
       }
     }
 
-    this.logger.log(
-      `Weekly digest complete: ${sentCount} emails sent for ${users.length} users`,
-    );
+    this.logger.log(`Weekly digest complete: ${sentCount} emails sent for ${users.length} users`);
   }
 
-  private async processUserDigest(
-    userId: string,
-    userEmail: string,
-  ): Promise<boolean> {
+  private async processUserDigest(userId: string, userEmail: string): Promise<boolean> {
     // Check if user has weekly digest enabled
     const [prefs] = await this.db
       .select()
@@ -73,11 +66,7 @@ export class WeeklyDigestProcessor extends WorkerHost {
     const endStr = endDate.toISOString().split('T')[0];
 
     // Aggregate weekly spending
-    const digestData = await this.aggregateWeeklyData(
-      userId,
-      startStr,
-      endStr,
-    );
+    const digestData = await this.aggregateWeeklyData(userId, startStr, endStr);
 
     // Only send if there is data to report
     if (
@@ -104,10 +93,7 @@ export class WeeklyDigestProcessor extends WorkerHost {
         categoryName: schema.categories.name,
       })
       .from(schema.transactions)
-      .leftJoin(
-        schema.categories,
-        eq(schema.transactions.categoryId, schema.categories.id),
-      )
+      .leftJoin(schema.categories, eq(schema.transactions.categoryId, schema.categories.id))
       .where(
         and(
           eq(schema.transactions.userId, userId),
@@ -119,10 +105,7 @@ export class WeeklyDigestProcessor extends WorkerHost {
     // Calculate income (negative amounts) and expenses (positive amounts)
     let totalIncome = 0;
     let totalExpenses = 0;
-    const categoryTotals = new Map<
-      string,
-      { name: string; amount: number }
-    >();
+    const categoryTotals = new Map<string, { name: string; amount: number }>();
 
     for (const tx of transactions) {
       if (tx.amount > 0) {

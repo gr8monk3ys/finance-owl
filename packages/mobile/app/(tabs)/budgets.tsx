@@ -12,30 +12,15 @@ import {
   Platform,
   TextInput,
 } from 'react-native';
-import {
-  listBudgets,
-  getBudgetSummary,
-  createBudget,
-} from '../../src/api/budgets';
+import { listBudgets, getBudgetSummary, createBudget } from '../../src/api/budgets';
 import { listCategories } from '../../src/api/categories';
 import { getApiErrorMessage } from '../../src/api/client';
 import BudgetCard from '../../src/components/BudgetCard';
 import { hapticFeedback } from '../../src/native';
 import { useAuthStore } from '../../src/stores/auth';
-import type {
-  Budget,
-  BudgetSummary,
-  BudgetPeriod,
-  Category,
-} from '../../src/types';
+import type { Budget, BudgetSummary, BudgetPeriod, Category } from '../../src/types';
 import { formatCurrencyCompact } from '../../src/utils/format';
-import {
-  colors,
-  fontSize,
-  fontWeight,
-  borderRadius,
-  spacing,
-} from '../../src/utils/theme';
+import { colors, fontSize, fontWeight, borderRadius, spacing } from '../../src/utils/theme';
 
 const CREATE_PERIOD_OPTIONS: Array<{
   value: BudgetPeriod;
@@ -74,18 +59,13 @@ function normalizeAmountInput(value: string): string {
   return `${whole || '0'}.${fractionParts.join('').slice(0, 2)}`;
 }
 
-function getCategorySubtitle(
-  category: Category,
-  categories: Category[],
-): string {
+function getCategorySubtitle(category: Category, categories: Category[]): string {
   if (category.parentId) {
     const parent = categories.find((item) => item.id === category.parentId);
     return parent ? `Part of ${parent.name}` : 'Selected subcategory';
   }
 
-  const childCount = categories.filter(
-    (item) => item.parentId === category.id,
-  ).length;
+  const childCount = categories.filter((item) => item.parentId === category.id).length;
 
   if (childCount === 0) {
     return 'Track this category total';
@@ -111,15 +91,10 @@ export default function BudgetsScreen() {
   const [createError, setCreateError] = useState('');
 
   const sortedCategories = sortCategories(categories);
-  const selectedCategory =
-    sortedCategories.find((category) => category.id === categoryId) ?? null;
-  const topLevelCategories = sortedCategories.filter(
-    (category) => !category.parentId,
-  );
+  const selectedCategory = sortedCategories.find((category) => category.id === categoryId) ?? null;
+  const topLevelCategories = sortedCategories.filter((category) => !category.parentId);
   const existingBudget =
-    budgets.find(
-      (budget) => budget.categoryId === categoryId && budget.period === period,
-    ) ?? null;
+    budgets.find((budget) => budget.categoryId === categoryId && budget.period === period) ?? null;
 
   const fetchBudgets = useCallback(async () => {
     if (!isAuthenticated) {
@@ -167,9 +142,7 @@ export default function BudgetsScreen() {
       return;
     }
 
-    Promise.all([fetchBudgets(), fetchCategories()]).finally(() =>
-      setLoading(false),
-    );
+    Promise.all([fetchBudgets(), fetchCategories()]).finally(() => setLoading(false));
   }, [fetchBudgets, fetchCategories, isAuthenticated]);
 
   const onRefresh = useCallback(async () => {
@@ -323,9 +296,7 @@ export default function BudgetsScreen() {
             </View>
             <View style={styles.summaryCard}>
               <Text style={styles.summaryLabel}>Total Spent</Text>
-              <Text style={styles.summaryValue}>
-                {formatCurrencyCompact(summary.totalSpent)}
-              </Text>
+              <Text style={styles.summaryValue}>{formatCurrencyCompact(summary.totalSpent)}</Text>
             </View>
           </View>
         )}
@@ -334,12 +305,7 @@ export default function BudgetsScreen() {
           <View style={styles.overallCard}>
             <View style={styles.overallHeader}>
               <Text style={styles.overallLabel}>Overall Progress</Text>
-              <Text
-                style={[
-                  styles.overallPercent,
-                  { color: getOverallProgressColor() },
-                ]}
-              >
+              <Text style={[styles.overallPercent, { color: getOverallProgressColor() }]}>
                 {summary.percentUsed.toFixed(0)}% used
               </Text>
             </View>
@@ -355,28 +321,19 @@ export default function BudgetsScreen() {
               />
             </View>
             <View style={styles.overallStats}>
-              {onTrackCount > 0 && (
-                <Text style={styles.statOnTrack}>{onTrackCount} on track</Text>
-              )}
+              {onTrackCount > 0 && <Text style={styles.statOnTrack}>{onTrackCount} on track</Text>}
               {nearLimitCount > 0 && (
-                <Text style={styles.statNearLimit}>
-                  {nearLimitCount} near limit
-                </Text>
+                <Text style={styles.statNearLimit}>{nearLimitCount} near limit</Text>
               )}
               {overBudgetCount > 0 && (
-                <Text style={styles.statOverBudget}>
-                  {overBudgetCount} over budget
-                </Text>
+                <Text style={styles.statOverBudget}>{overBudgetCount} over budget</Text>
               )}
             </View>
           </View>
         )}
 
         <Pressable
-          style={({ pressed }) => [
-            styles.createButton,
-            pressed && styles.createButtonPressed,
-          ]}
+          style={({ pressed }) => [styles.createButton, pressed && styles.createButtonPressed]}
           onPress={() => setShowCreateModal(true)}
         >
           <Text style={styles.createButtonText}>Create Budget</Text>
@@ -387,8 +344,8 @@ export default function BudgetsScreen() {
             <Text style={styles.emptyEyebrow}>Start with one focused category</Text>
             <Text style={styles.emptyTitle}>No budgets yet</Text>
             <Text style={styles.emptySubtitle}>
-              Create your first budget by picking a category and setting a limit.
-              Parent categories cover all subcategories automatically.
+              Create your first budget by picking a category and setting a limit. Parent categories
+              cover all subcategories automatically.
             </Text>
             <Pressable
               style={({ pressed }) => [
@@ -397,9 +354,7 @@ export default function BudgetsScreen() {
               ]}
               onPress={() => setShowCreateModal(true)}
             >
-              <Text style={styles.emptyActionButtonText}>
-                Create Your First Budget
-              </Text>
+              <Text style={styles.emptyActionButtonText}>Create Your First Budget</Text>
             </Pressable>
           </View>
         ) : (
@@ -458,15 +413,12 @@ export default function BudgetsScreen() {
                           style={[
                             styles.categorySwatch,
                             {
-                              backgroundColor:
-                                selectedCategory.color ?? colors.surface[500],
+                              backgroundColor: selectedCategory.color ?? colors.surface[500],
                             },
                           ]}
                         />
                         <View style={styles.categoryTriggerCopy}>
-                          <Text style={styles.categoryTriggerLabel}>
-                            {selectedCategory.name}
-                          </Text>
+                          <Text style={styles.categoryTriggerLabel}>{selectedCategory.name}</Text>
                           <Text style={styles.categoryTriggerHint}>
                             {getCategorySubtitle(selectedCategory, sortedCategories)}
                           </Text>
@@ -475,9 +427,7 @@ export default function BudgetsScreen() {
                     ) : (
                       <View style={styles.categoryTriggerCopy}>
                         <Text style={styles.categoryTriggerPlaceholder}>
-                          {categoriesLoading
-                            ? 'Loading categories...'
-                            : 'Choose a category'}
+                          {categoriesLoading ? 'Loading categories...' : 'Choose a category'}
                         </Text>
                         <Text style={styles.categoryTriggerHint}>
                           Pick a broad category or a subcategory.
@@ -553,8 +503,8 @@ export default function BudgetsScreen() {
                 <View style={styles.noticeBox}>
                   <Text style={styles.noticeText}>
                     You already have a {period} budget for{' '}
-                    {selectedCategory?.name ?? 'this category'}. Update the
-                    existing budget instead of creating a duplicate.
+                    {selectedCategory?.name ?? 'this category'}. Update the existing budget instead
+                    of creating a duplicate.
                   </Text>
                 </View>
               ) : null}
@@ -600,18 +550,14 @@ export default function BudgetsScreen() {
         onRequestClose={() => setShowCategoryPicker(false)}
       >
         <View style={styles.modalOverlay}>
-          <Pressable
-            style={styles.modalBackdrop}
-            onPress={() => setShowCategoryPicker(false)}
-          />
+          <Pressable style={styles.modalBackdrop} onPress={() => setShowCategoryPicker(false)} />
           <View style={styles.pickerContent}>
             <View style={styles.modalHandle} />
             <View style={styles.pickerHeader}>
               <View style={styles.pickerHeaderCopy}>
                 <Text style={styles.modalTitle}>Choose Category</Text>
                 <Text style={styles.modalSubtitle}>
-                  Pick a parent category for broad coverage or a subcategory for
-                  tighter control.
+                  Pick a parent category for broad coverage or a subcategory for tighter control.
                 </Text>
               </View>
               <Pressable

@@ -81,9 +81,7 @@ describe('Auth Integration', () => {
     let refreshToken: string;
 
     it('should check first-run returns true when no users', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/auth/first-run')
-        .expect(200);
+      const res = await request(app.getHttpServer()).get('/auth/first-run').expect(200);
 
       expect(res.body.isFirstRun).toBe(true);
     });
@@ -102,18 +100,13 @@ describe('Auth Integration', () => {
     });
 
     it('should check first-run returns false after registration', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/auth/first-run')
-        .expect(200);
+      const res = await request(app.getHttpServer()).get('/auth/first-run').expect(200);
 
       expect(res.body.isFirstRun).toBe(false);
     });
 
     it('should reject duplicate registration', async () => {
-      await request(app.getHttpServer())
-        .post('/auth/register')
-        .send(testUser)
-        .expect(409);
+      await request(app.getHttpServer()).post('/auth/register').send(testUser).expect(409);
     });
 
     it('should login with valid credentials', async () => {
@@ -152,9 +145,7 @@ describe('Auth Integration', () => {
     });
 
     it('should reject protected route without token', async () => {
-      await request(app.getHttpServer())
-        .get('/auth/me')
-        .expect(401);
+      await request(app.getHttpServer()).get('/auth/me').expect(401);
     });
 
     it('should refresh tokens', async () => {

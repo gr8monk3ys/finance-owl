@@ -116,10 +116,7 @@ export function weeklyDigestHtml(data: WeeklyDigestData): string {
   if (upcomingBills.length > 0) {
     const rows = upcomingBills
       .map((bill) =>
-        statsRow(
-          `${bill.name} (${formatDate(bill.dueDate)})`,
-          formatCurrency(bill.amount),
-        ),
+        statsRow(`${bill.name} (${formatDate(bill.dueDate)})`, formatCurrency(bill.amount)),
       )
       .join('');
 

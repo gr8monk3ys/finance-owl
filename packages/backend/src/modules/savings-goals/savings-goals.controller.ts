@@ -33,10 +33,7 @@ export class SavingsGoalsController {
   }
 
   @Post()
-  create(
-    @CurrentUser('id') userId: string,
-    @Body() dto: CreateSavingsGoalDto,
-  ) {
+  create(@CurrentUser('id') userId: string, @Body() dto: CreateSavingsGoalDto) {
     return this.savingsGoalsService.create(userId, dto);
   }
 
@@ -51,10 +48,7 @@ export class SavingsGoalsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  async remove(@CurrentUser('id') userId: string, @Param('id') id: string) {
     await this.savingsGoalsService.remove(userId, id);
   }
 
@@ -64,13 +58,7 @@ export class SavingsGoalsController {
     @Param('id') id: string,
     @Body() dto: AddContributionDto,
   ) {
-    return this.savingsGoalsService.addContribution(
-      userId,
-      id,
-      dto.amount,
-      dto.note,
-      dto.date,
-    );
+    return this.savingsGoalsService.addContribution(userId, id, dto.amount, dto.note, dto.date);
   }
 
   @Delete(':id/contributions/:contributionId')
@@ -80,10 +68,6 @@ export class SavingsGoalsController {
     @Param('id') id: string,
     @Param('contributionId') contributionId: string,
   ) {
-    await this.savingsGoalsService.removeContribution(
-      userId,
-      id,
-      contributionId,
-    );
+    await this.savingsGoalsService.removeContribution(userId, id, contributionId);
   }
 }

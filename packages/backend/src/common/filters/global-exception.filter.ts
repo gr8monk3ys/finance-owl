@@ -112,10 +112,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
-      } else if (
-        typeof exceptionResponse === 'object' &&
-        exceptionResponse !== null
-      ) {
+      } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
         const resp = exceptionResponse as Record<string, unknown>;
 
         // Handle class-validator validation errors (arrays of messages)
@@ -156,10 +153,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     // Fallback: completely unknown exception
     return {
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      message:
-        exception instanceof Error
-          ? exception.message
-          : 'Internal server error',
+      message: exception instanceof Error ? exception.message : 'Internal server error',
       error: 'InternalServerError',
     };
   }
@@ -181,12 +175,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     if (statusCode >= 500) {
       // Log full stack trace for server errors
-      const err =
-        exception instanceof Error ? exception : new Error(String(exception));
-      this.logger.error(
-        `[${statusCode}] ${logContext} -- ${formattedMessage}`,
-        err.stack,
-      );
+      const err = exception instanceof Error ? exception : new Error(String(exception));
+      this.logger.error(`[${statusCode}] ${logContext} -- ${formattedMessage}`, err.stack);
     } else if (statusCode >= 400) {
       this.logger.warn(`[${statusCode}] ${logContext} -- ${formattedMessage}`);
     }
@@ -196,11 +186,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   // Sentry reporting
   // ---------------------------------------------------------------------------
 
-  private reportToSentry(
-    exception: unknown,
-    request: Request,
-    statusCode: number,
-  ): void {
+  private reportToSentry(exception: unknown, request: Request, statusCode: number): void {
     // Only report if Sentry is initialized
     const client = Sentry.getClient();
     if (!client) return;
@@ -236,9 +222,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       if (exception instanceof Error) {
         Sentry.captureException(exception);
       } else {
-        Sentry.captureException(
-          new Error(`Non-Error exception: ${String(exception)}`),
-        );
+        Sentry.captureException(new Error(`Non-Error exception: ${String(exception)}`));
       }
     });
   }
@@ -251,10 +235,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
    * In production, 500-level errors are sanitized to avoid leaking
    * internal implementation details (stack traces, DB errors, etc.).
    */
-  private sanitizeMessage(
-    statusCode: number,
-    message: string | string[],
-  ): string | string[] {
+  private sanitizeMessage(statusCode: number, message: string | string[]): string | string[] {
     if (statusCode >= 500 && this.isProduction) {
       return 'An unexpected error occurred';
     }

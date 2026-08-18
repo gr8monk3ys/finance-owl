@@ -23,7 +23,10 @@ import { categories } from '../src/database/schema/categories';
 import { transactions } from '../src/database/schema/transactions';
 import { budgets, recurringTransactions } from '../src/database/schema/budgets';
 import { userPreferences } from '../src/database/schema/audit';
-import { savingsGoals, savingsContributions } from '../src/modules/savings-goals/savings-goals.schema';
+import {
+  savingsGoals,
+  savingsContributions,
+} from '../src/modules/savings-goals/savings-goals.schema';
 import { notificationPreferences } from '../src/modules/notifications/notification-preferences.schema';
 
 // ---------------------------------------------------------------------------
@@ -121,12 +124,48 @@ interface MonthlyBill {
 }
 
 const MONTHLY_BILLS: MonthlyBill[] = [
-  { name: 'Rent Payment', merchant: 'Oakwood Apartments', amount: 1800, category: 'Housing', dayOfMonth: 1 },
-  { name: 'Auto Loan Payment', merchant: 'Capital One Auto', amount: 380, category: 'Transportation', dayOfMonth: 15 },
-  { name: 'Internet Service', merchant: 'Xfinity', amount: 79.99, category: 'Utilities', dayOfMonth: 8 },
-  { name: 'Netflix', merchant: 'Netflix', amount: 15.49, category: 'Subscriptions', dayOfMonth: 12 },
-  { name: 'Spotify Premium', merchant: 'Spotify', amount: 9.99, category: 'Subscriptions', dayOfMonth: 18 },
-  { name: 'Gym Membership', merchant: 'LA Fitness', amount: 49.99, category: 'Health & Fitness', dayOfMonth: 5 },
+  {
+    name: 'Rent Payment',
+    merchant: 'Oakwood Apartments',
+    amount: 1800,
+    category: 'Housing',
+    dayOfMonth: 1,
+  },
+  {
+    name: 'Auto Loan Payment',
+    merchant: 'Capital One Auto',
+    amount: 380,
+    category: 'Transportation',
+    dayOfMonth: 15,
+  },
+  {
+    name: 'Internet Service',
+    merchant: 'Xfinity',
+    amount: 79.99,
+    category: 'Utilities',
+    dayOfMonth: 8,
+  },
+  {
+    name: 'Netflix',
+    merchant: 'Netflix',
+    amount: 15.49,
+    category: 'Subscriptions',
+    dayOfMonth: 12,
+  },
+  {
+    name: 'Spotify Premium',
+    merchant: 'Spotify',
+    amount: 9.99,
+    category: 'Subscriptions',
+    dayOfMonth: 18,
+  },
+  {
+    name: 'Gym Membership',
+    merchant: 'LA Fitness',
+    amount: 49.99,
+    category: 'Health & Fitness',
+    dayOfMonth: 5,
+  },
 ];
 
 interface RandomTransaction {
@@ -140,7 +179,18 @@ interface RandomTransaction {
 
 const RANDOM_TRANSACTIONS: RandomTransaction[] = [
   {
-    merchants: ['Olive Garden', 'Chipotle', 'Panera Bread', 'Thai Orchid', 'Burger King', 'Panda Express', 'Chili\'s', 'Subway', 'Five Guys', 'Sushi Palace'],
+    merchants: [
+      'Olive Garden',
+      'Chipotle',
+      'Panera Bread',
+      'Thai Orchid',
+      'Burger King',
+      'Panda Express',
+      "Chili's",
+      'Subway',
+      'Five Guys',
+      'Sushi Palace',
+    ],
     category: 'Dining',
     minAmount: 15,
     maxAmount: 80,
@@ -148,7 +198,7 @@ const RANDOM_TRANSACTIONS: RandomTransaction[] = [
     namePrefix: 'Restaurant',
   },
   {
-    merchants: ['Starbucks', 'Dunkin\'', 'Peet\'s Coffee', 'Blue Bottle Coffee', 'Local Cafe'],
+    merchants: ['Starbucks', "Dunkin'", "Peet's Coffee", 'Blue Bottle Coffee', 'Local Cafe'],
     category: 'Dining',
     minAmount: 4,
     maxAmount: 7,
@@ -156,7 +206,17 @@ const RANDOM_TRANSACTIONS: RandomTransaction[] = [
     namePrefix: 'Coffee',
   },
   {
-    merchants: ['Amazon', 'Target', 'Walmart', 'Best Buy', 'Nordstrom', 'Macy\'s', 'TJ Maxx', 'Home Depot', 'IKEA'],
+    merchants: [
+      'Amazon',
+      'Target',
+      'Walmart',
+      'Best Buy',
+      'Nordstrom',
+      "Macy's",
+      'TJ Maxx',
+      'Home Depot',
+      'IKEA',
+    ],
     category: 'Shopping',
     minAmount: 20,
     maxAmount: 200,
@@ -173,7 +233,16 @@ const RANDOM_TRANSACTIONS: RandomTransaction[] = [
   },
 ];
 
-const GROCERY_STORES = ['Whole Foods', 'Trader Joe\'s', 'Kroger', 'Safeway', 'Costco', 'Aldi', 'Publix', 'Sprouts'];
+const GROCERY_STORES = [
+  'Whole Foods',
+  "Trader Joe's",
+  'Kroger',
+  'Safeway',
+  'Costco',
+  'Aldi',
+  'Publix',
+  'Sprouts',
+];
 const GAS_STATIONS = ['Shell', 'Chevron', 'BP', 'ExxonMobil', 'Costco Gas', 'Arco'];
 
 // ---------------------------------------------------------------------------
@@ -186,8 +255,7 @@ async function seed(): Promise<void> {
   console.log('==========================================\n');
 
   const databaseUrl =
-    process.env.DATABASE_URL ||
-    'postgresql://postgres:postgres@localhost:5432/finance_owl';
+    process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/finance_owl';
 
   const pool = new Pool({ connectionString: databaseUrl });
   const db = drizzle(pool);
@@ -304,7 +372,11 @@ async function seed(): Promise<void> {
 
     // Iterate over each month in the 6-month window
     for (let monthOffset = 0; monthOffset < 6; monthOffset++) {
-      const monthDate = new Date(sixMonthsAgo.getFullYear(), sixMonthsAgo.getMonth() + monthOffset, 1);
+      const monthDate = new Date(
+        sixMonthsAgo.getFullYear(),
+        sixMonthsAgo.getMonth() + monthOffset,
+        1,
+      );
       const year = monthDate.getFullYear();
       const month = monthDate.getMonth();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -335,9 +407,10 @@ async function seed(): Promise<void> {
         const billDate = new Date(year, month, billDay);
         if (billDate <= now) {
           // Rent and auto loan come from checking, others from credit card
-          const acctId = (bill.name === 'Rent Payment' || bill.name === 'Auto Loan Payment')
-            ? checkingId
-            : creditCardId;
+          const acctId =
+            bill.name === 'Rent Payment' || bill.name === 'Auto Loan Payment'
+              ? checkingId
+              : creditCardId;
 
           transactionValues.push({
             id: uuid(),
@@ -357,7 +430,7 @@ async function seed(): Promise<void> {
 
       // --- Weekly groceries ---
       for (let week = 0; week < 4; week++) {
-        const groceryDay = 3 + (week * 7) + Math.floor(Math.random() * 3); // Wed-Fri each week
+        const groceryDay = 3 + week * 7 + Math.floor(Math.random() * 3); // Wed-Fri each week
         if (groceryDay <= daysInMonth) {
           const groceryDate = new Date(year, month, groceryDay);
           if (groceryDate <= now) {
@@ -380,7 +453,7 @@ async function seed(): Promise<void> {
 
       // --- Weekly gas ---
       for (let week = 0; week < 4; week++) {
-        const gasDay = 6 + (week * 7) + Math.floor(Math.random() * 2); // Sat-Sun each week
+        const gasDay = 6 + week * 7 + Math.floor(Math.random() * 2); // Sat-Sun each week
         if (gasDay <= daysInMonth) {
           const gasDate = new Date(year, month, gasDay);
           if (gasDate <= now) {
@@ -445,7 +518,12 @@ async function seed(): Promise<void> {
       { name: 'Groceries', categoryName: 'Groceries', amount: 600, period: 'monthly' as const },
       { name: 'Dining Out', categoryName: 'Dining', amount: 300, period: 'monthly' as const },
       { name: 'Shopping', categoryName: 'Shopping', amount: 200, period: 'monthly' as const },
-      { name: 'Transportation', categoryName: 'Transportation', amount: 250, period: 'monthly' as const },
+      {
+        name: 'Transportation',
+        categoryName: 'Transportation',
+        amount: 250,
+        period: 'monthly' as const,
+      },
     ];
 
     for (const def of budgetDefs) {
@@ -558,9 +636,10 @@ async function seed(): Promise<void> {
     const recurringDefs = MONTHLY_BILLS.map((bill) => ({
       id: uuid(),
       userId,
-      accountId: (bill.name === 'Rent Payment' || bill.name === 'Auto Loan Payment')
-        ? checkingId
-        : creditCardId,
+      accountId:
+        bill.name === 'Rent Payment' || bill.name === 'Auto Loan Payment'
+          ? checkingId
+          : creditCardId,
       categoryId: categoryMap.get(bill.category) || null,
       name: bill.name,
       merchantName: bill.merchant,

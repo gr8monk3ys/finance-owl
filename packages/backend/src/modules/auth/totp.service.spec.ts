@@ -4,7 +4,11 @@ import { TotpService } from './totp.service';
 
 // Mock otplib
 const mockGenerateSecret = vi.fn().mockReturnValue('MOCK_SECRET_BASE32');
-const mockGenerateURI = vi.fn().mockReturnValue('otpauth://totp/FinanceOwl:test@example.com?secret=MOCK_SECRET_BASE32&issuer=FinanceOwl');
+const mockGenerateURI = vi
+  .fn()
+  .mockReturnValue(
+    'otpauth://totp/FinanceOwl:test@example.com?secret=MOCK_SECRET_BASE32&issuer=FinanceOwl',
+  );
 const mockVerifySync = vi.fn();
 
 vi.mock('otplib', () => ({
@@ -49,11 +53,7 @@ describe('TotpService', () => {
     };
 
     // Construct directly to avoid NestJS DI issues in unit tests
-    service = new (TotpService as any)(
-      mockUsersService,
-      mockCryptoService,
-      mockCacheService,
-    );
+    service = new (TotpService as any)(mockUsersService, mockCryptoService, mockCacheService);
   });
 
   describe('generateSecret', () => {
@@ -79,7 +79,8 @@ describe('TotpService', () => {
       );
       expect(result).toEqual({
         secret: 'MOCK_SECRET_BASE32',
-        otpauth: 'otpauth://totp/FinanceOwl:test@example.com?secret=MOCK_SECRET_BASE32&issuer=FinanceOwl',
+        otpauth:
+          'otpauth://totp/FinanceOwl:test@example.com?secret=MOCK_SECRET_BASE32&issuer=FinanceOwl',
       });
     });
 
@@ -88,12 +89,8 @@ describe('TotpService', () => {
       mockUsersService.findById.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(service.generateSecret('non-existent')).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.generateSecret('non-existent')).rejects.toThrow(
-        'User not found',
-      );
+      await expect(service.generateSecret('non-existent')).rejects.toThrow(BadRequestException);
+      await expect(service.generateSecret('non-existent')).rejects.toThrow('User not found');
     });
   });
 
@@ -113,10 +110,7 @@ describe('TotpService', () => {
         secret: 'MOCK_SECRET_BASE32',
       });
       expect(mockCryptoService.encrypt).toHaveBeenCalledWith('MOCK_SECRET_BASE32');
-      expect(mockUsersService.setTotpSecret).toHaveBeenCalledWith(
-        'user-123',
-        'encrypted-secret',
-      );
+      expect(mockUsersService.setTotpSecret).toHaveBeenCalledWith('user-123', 'encrypted-secret');
       expect(mockCacheService.del).toHaveBeenCalledWith('totp_setup:user-123');
       expect(result).toEqual({ enabled: true });
     });
@@ -127,12 +121,8 @@ describe('TotpService', () => {
       mockVerifySync.mockReturnValue({ valid: false });
 
       // Act & Assert
-      await expect(service.enableTotp('user-123', '000000')).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.enableTotp('user-123', '000000')).rejects.toThrow(
-        'Invalid TOTP code',
-      );
+      await expect(service.enableTotp('user-123', '000000')).rejects.toThrow(BadRequestException);
+      await expect(service.enableTotp('user-123', '000000')).rejects.toThrow('Invalid TOTP code');
 
       // Should not encrypt or store anything
       expect(mockCryptoService.encrypt).not.toHaveBeenCalled();
@@ -144,9 +134,7 @@ describe('TotpService', () => {
       mockCacheService.get.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(service.enableTotp('user-123', '123456')).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.enableTotp('user-123', '123456')).rejects.toThrow(BadRequestException);
       await expect(service.enableTotp('user-123', '123456')).rejects.toThrow(
         'TOTP setup expired, please restart setup',
       );
@@ -250,12 +238,8 @@ describe('TotpService', () => {
       mockVerifySync.mockReturnValue({ valid: false });
 
       // Act & Assert
-      await expect(service.disableTotp('user-123', '000000')).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.disableTotp('user-123', '000000')).rejects.toThrow(
-        'Invalid TOTP code',
-      );
+      await expect(service.disableTotp('user-123', '000000')).rejects.toThrow(BadRequestException);
+      await expect(service.disableTotp('user-123', '000000')).rejects.toThrow('Invalid TOTP code');
       expect(mockUsersService.setTotpSecret).not.toHaveBeenCalled();
     });
 
@@ -266,9 +250,7 @@ describe('TotpService', () => {
       mockUsersService.findByEmail.mockResolvedValue(userWithoutTotp);
 
       // Act & Assert
-      await expect(service.disableTotp('user-123', '123456')).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.disableTotp('user-123', '123456')).rejects.toThrow(BadRequestException);
       await expect(service.disableTotp('user-123', '123456')).rejects.toThrow(
         'TOTP is not enabled',
       );

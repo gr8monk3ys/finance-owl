@@ -23,8 +23,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -106,7 +105,7 @@ describe('calculateStateTax', () => {
     });
 
     it('should handle small amounts', () => {
-      expect(calculateStateTax(1_000, 'PA')).toBe(30.70);
+      expect(calculateStateTax(1_000, 'PA')).toBe(30.7);
     });
   });
 
@@ -218,7 +217,7 @@ describe('calculateStateTax', () => {
       const tax = calculateStateTax(100_000, 'VA');
       // 3,000*0.02 + 2,000*0.03 + 12,000*0.05 + 83,000*0.0575
       // = 60 + 60 + 600 + 4,772.50 = 5,492.50
-      expect(tax).toBe(5_492.50);
+      expect(tax).toBe(5_492.5);
     });
   });
 
@@ -270,9 +269,7 @@ describe('TaxService', () => {
   describe('generateSummary', () => {
     it('should use state parameter for state tax calculation', async () => {
       // Mock getDocuments – returns a W-2 for $100,000
-      const docQuery = mockQuery([
-        { type: 'w2', amount: 100_000, isDeductible: false },
-      ]);
+      const docQuery = mockQuery([{ type: 'w2', amount: 100_000, isDeductible: false }]);
       mockDb.select.mockReturnValueOnce(docQuery); // getDocuments
 
       // Mock existing summary lookup – none exists
@@ -299,9 +296,7 @@ describe('TaxService', () => {
     });
 
     it('should use California brackets when state is CA', async () => {
-      const docQuery = mockQuery([
-        { type: 'w2', amount: 200_000, isDeductible: false },
-      ]);
+      const docQuery = mockQuery([{ type: 'w2', amount: 200_000, isDeductible: false }]);
       mockDb.select.mockReturnValueOnce(docQuery);
 
       const summaryQuery = mockQuery([]);

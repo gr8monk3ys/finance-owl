@@ -30,10 +30,7 @@ export interface BankAggregatorProvider {
   ): Promise<AggregatorTransaction[]>;
 
   /** Sync transactions incrementally using a cursor (preferred for ongoing sync). */
-  syncTransactions(
-    accessToken: string,
-    cursor?: string | null,
-  ): Promise<TransactionSyncResult>;
+  syncTransactions(accessToken: string, cursor?: string | null): Promise<TransactionSyncResult>;
 
   /** Retrieve investment holdings for a connected item. */
   getInvestmentHoldings(accessToken: string): Promise<AggregatorHolding[]>;

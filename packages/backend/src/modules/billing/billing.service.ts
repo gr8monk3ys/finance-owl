@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  Inject,
-  Logger,
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Inject, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq, and } from 'drizzle-orm';
 import Stripe from 'stripe';
@@ -59,9 +53,7 @@ export class BillingService {
   ) {
     const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
     if (!secretKey) {
-      this.logger.warn(
-        'STRIPE_SECRET_KEY is not configured. Billing features will not work.',
-      );
+      this.logger.warn('STRIPE_SECRET_KEY is not configured. Billing features will not work.');
     }
     this.stripe = new Stripe(secretKey || 'sk_not_configured');
   }
@@ -94,11 +86,7 @@ export class BillingService {
    * Create a Stripe customer for a user and persist the mapping.
    * If a customer already exists, returns the existing Stripe customer ID.
    */
-  async createCustomer(
-    userId: string,
-    email: string,
-    name?: string,
-  ): Promise<string> {
+  async createCustomer(userId: string, email: string, name?: string): Promise<string> {
     const [existing] = await this.db
       .select()
       .from(billingCustomers)
@@ -120,9 +108,7 @@ export class BillingService {
       stripeCustomerId: customer.id,
     });
 
-    this.logger.log(
-      `Created Stripe customer ${customer.id} for user ${userId}`,
-    );
+    this.logger.log(`Created Stripe customer ${customer.id} for user ${userId}`);
 
     return customer.id;
   }
@@ -175,10 +161,7 @@ export class BillingService {
     if (update.name) stripeUpdate.name = update.name;
 
     if (Object.keys(stripeUpdate).length > 0) {
-      await this.stripe.customers.update(
-        customer.stripeCustomerId,
-        stripeUpdate,
-      );
+      await this.stripe.customers.update(customer.stripeCustomerId, stripeUpdate);
       await this.db
         .update(billingCustomers)
         .set({ updatedAt: new Date() })
@@ -259,15 +242,10 @@ export class BillingService {
 
     const priceId = this.getStripePriceId(plan.name, interval);
     if (!priceId) {
-      throw new BadRequestException(
-        'Stripe price not configured for this plan and interval',
-      );
+      throw new BadRequestException('Stripe price not configured for this plan and interval');
     }
 
-    const frontendUrl = this.configService.get<string>(
-      'FRONTEND_URL',
-      'http://localhost:3000',
-    );
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
 
     return this.createCheckoutSession(
       userId,
@@ -284,22 +262,14 @@ export class BillingService {
   /**
    * Create a Stripe Customer Portal session for self-serve subscription management.
    */
-  async createPortalSession(
-    userId: string,
-    returnUrl?: string,
-  ): Promise<{ url: string }> {
+  async createPortalSession(userId: string, returnUrl?: string): Promise<{ url: string }> {
     const stripeCustomerId = await this.resolveStripeCustomerId(userId);
 
     if (!stripeCustomerId) {
-      throw new BadRequestException(
-        'No billing account found. Please subscribe first.',
-      );
+      throw new BadRequestException('No billing account found. Please subscribe first.');
     }
 
-    const frontendUrl = this.configService.get<string>(
-      'FRONTEND_URL',
-      'http://localhost:3000',
-    );
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
 
     const session = await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
@@ -317,21 +287,12 @@ export class BillingService {
    * Process an incoming Stripe webhook event.
    * Verifies the signature, then dispatches to the appropriate handler.
    */
-  async handleWebhook(
-    body: Buffer,
-    signature: string,
-  ): Promise<{ received: true }> {
-    const webhookSecret = this.configService.getOrThrow<string>(
-      'STRIPE_WEBHOOK_SECRET',
-    );
+  async handleWebhook(body: Buffer, signature: string): Promise<{ received: true }> {
+    const webhookSecret = this.configService.getOrThrow<string>('STRIPE_WEBHOOK_SECRET');
 
     let event: Stripe.Event;
     try {
-      event = this.stripe.webhooks.constructEvent(
-        body,
-        signature,
-        webhookSecret,
-      );
+      event = this.stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
       this.logger.error('Webhook signature verification failed', err);
       throw new BadRequestException('Invalid webhook signature');
@@ -341,34 +302,22 @@ export class BillingService {
 
     switch (event.type) {
       case 'checkout.session.completed':
-        await this.handleCheckoutCompleted(
-          event.data.object as Stripe.Checkout.Session,
-        );
+        await this.handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
         break;
       case 'customer.subscription.updated':
-        await this.handleSubscriptionUpdated(
-          event.data.object as Stripe.Subscription,
-        );
+        await this.handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
         break;
       case 'customer.subscription.deleted':
-        await this.handleSubscriptionDeleted(
-          event.data.object as Stripe.Subscription,
-        );
+        await this.handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
         break;
       case 'invoice.payment_succeeded':
-        await this.handlePaymentSucceeded(
-          event.data.object as Stripe.Invoice,
-        );
+        await this.handlePaymentSucceeded(event.data.object as Stripe.Invoice);
         break;
       case 'invoice.payment_failed':
-        await this.handlePaymentFailed(
-          event.data.object as Stripe.Invoice,
-        );
+        await this.handlePaymentFailed(event.data.object as Stripe.Invoice);
         break;
       case 'customer.subscription.trial_will_end':
-        await this.handleTrialWillEnd(
-          event.data.object as Stripe.Subscription,
-        );
+        await this.handleTrialWillEnd(event.data.object as Stripe.Subscription);
         break;
       default:
         this.logger.log(`Unhandled event type: ${event.type}`);
@@ -400,9 +349,7 @@ export class BillingService {
 
     // If not active/trialing, treat as free for feature gating
     const effectivePlan =
-      subscription.status === 'active' || subscription.status === 'trialing'
-        ? planName
-        : 'free';
+      subscription.status === 'active' || subscription.status === 'trialing' ? planName : 'free';
 
     return this.buildSubscriptionInfo(
       effectivePlan,
@@ -469,9 +416,7 @@ export class BillingService {
       .limit(1);
 
     if (!subscription || !subscription.stripeSubscriptionId) {
-      throw new BadRequestException(
-        'No active subscription found to cancel.',
-      );
+      throw new BadRequestException('No active subscription found to cancel.');
     }
 
     if (subscription.status === 'canceled') {
@@ -482,10 +427,9 @@ export class BillingService {
 
     if (atPeriodEnd) {
       // Cancel at period end: subscription stays active until renewal date
-      const updated = await this.stripe.subscriptions.update(
-        subscription.stripeSubscriptionId,
-        { cancel_at_period_end: true },
-      );
+      const updated = await this.stripe.subscriptions.update(subscription.stripeSubscriptionId, {
+        cancel_at_period_end: true,
+      });
 
       await this.db
         .update(userSubscriptions)
@@ -499,14 +443,10 @@ export class BillingService {
         ? new Date(updated.cancel_at * 1000).toISOString()
         : subscription.currentPeriodEnd;
 
-      this.logger.log(
-        `Subscription for user ${userId} scheduled for cancellation at period end`,
-      );
+      this.logger.log(`Subscription for user ${userId} scheduled for cancellation at period end`);
     } else {
       // Cancel immediately
-      await this.stripe.subscriptions.cancel(
-        subscription.stripeSubscriptionId,
-      );
+      await this.stripe.subscriptions.cancel(subscription.stripeSubscriptionId);
 
       const plans = await this.getPlans();
       const freePlan = plans.find((p: { name: string }) => p.name === 'free');
@@ -526,9 +466,7 @@ export class BillingService {
 
       effectiveDate = new Date().toISOString();
 
-      this.logger.log(
-        `Subscription for user ${userId} canceled immediately`,
-      );
+      this.logger.log(`Subscription for user ${userId} canceled immediately`);
     }
 
     return { canceled: true, effectiveDate };
@@ -538,9 +476,7 @@ export class BillingService {
    * Resume a subscription that was marked for cancellation at period end.
    * Only works if the subscription is still active (cancel_at_period_end = true).
    */
-  async resumeSubscription(
-    userId: string,
-  ): Promise<{ resumed: true }> {
+  async resumeSubscription(userId: string): Promise<{ resumed: true }> {
     const [subscription] = await this.db
       .select()
       .from(userSubscriptions)
@@ -552,9 +488,7 @@ export class BillingService {
     }
 
     if (subscription.cancelAtPeriodEnd !== 1) {
-      throw new BadRequestException(
-        'Subscription is not scheduled for cancellation.',
-      );
+      throw new BadRequestException('Subscription is not scheduled for cancellation.');
     }
 
     if (subscription.status === 'canceled') {
@@ -563,10 +497,9 @@ export class BillingService {
       );
     }
 
-    await this.stripe.subscriptions.update(
-      subscription.stripeSubscriptionId,
-      { cancel_at_period_end: false },
-    );
+    await this.stripe.subscriptions.update(subscription.stripeSubscriptionId, {
+      cancel_at_period_end: false,
+    });
 
     await this.db
       .update(userSubscriptions)
@@ -598,20 +531,14 @@ export class BillingService {
     return canAccessFeature(subscription.planName, feature);
   }
 
-  async getFeatureAccess(
-    userId: string,
-    feature: string,
-  ): Promise<boolean> {
+  async getFeatureAccess(userId: string, feature: string): Promise<boolean> {
     return this.canAccess(userId, feature);
   }
 
   /**
    * Check if a user has at least the given plan tier.
    */
-  async hasMinimumPlan(
-    userId: string,
-    requiredPlan: PlanTier,
-  ): Promise<boolean> {
+  async hasMinimumPlan(userId: string, requiredPlan: PlanTier): Promise<boolean> {
     const subscription = await this.getSubscription(userId);
     return isAtLeastPlan(subscription.planName, requiredPlan);
   }
@@ -628,13 +555,9 @@ export class BillingService {
 
     const limits: Record<string, number | string> = {
       ai_chat_daily:
-        planLimits.aiChatMessagesPerDay === -1
-          ? 'unlimited'
-          : planLimits.aiChatMessagesPerDay,
+        planLimits.aiChatMessagesPerDay === -1 ? 'unlimited' : planLimits.aiChatMessagesPerDay,
       linked_accounts:
-        planLimits.maxLinkedAccounts === -1
-          ? 'unlimited'
-          : planLimits.maxLinkedAccounts,
+        planLimits.maxLinkedAccounts === -1 ? 'unlimited' : planLimits.maxLinkedAccounts,
       api_requests_per_minute: planLimits.apiRequestsPerMinute,
       transaction_history_months:
         planLimits.transactionHistoryMonths === -1
@@ -671,22 +594,10 @@ export class BillingService {
     };
   }
 
-  async trackUsage(
-    userId: string,
-    feature: string,
-    increment: number = 1,
-  ): Promise<void> {
+  async trackUsage(userId: string, feature: string, increment: number = 1): Promise<void> {
     const now = new Date();
-    const periodStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      1,
-    ).toISOString();
-    const periodEnd = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0,
-    ).toISOString();
+    const periodStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
 
     const [existing] = await this.db
       .select()
@@ -767,17 +678,14 @@ export class BillingService {
       },
       {
         name: 'pro',
-        stripePriceId:
-          this.configService.get<string>('STRIPE_PRICE_PRO_MONTHLY') || null,
+        stripePriceId: this.configService.get<string>('STRIPE_PRICE_PRO_MONTHLY') || null,
         monthlyPrice: PLANS.pro.monthlyPrice,
         yearlyPrice: PLANS.pro.yearlyPrice,
         features: JSON.stringify(PLAN_FEATURES.pro),
       },
       {
         name: 'premium',
-        stripePriceId:
-          this.configService.get<string>('STRIPE_PRICE_PREMIUM_MONTHLY') ||
-          null,
+        stripePriceId: this.configService.get<string>('STRIPE_PRICE_PREMIUM_MONTHLY') || null,
         monthlyPrice: PLANS.premium.monthlyPrice,
         yearlyPrice: PLANS.premium.yearlyPrice,
         features: JSON.stringify(PLAN_FEATURES.premium),
@@ -795,10 +703,7 @@ export class BillingService {
     }));
   }
 
-  private getStripePriceId(
-    planName: string,
-    interval: 'month' | 'year',
-  ): string | undefined {
+  private getStripePriceId(planName: string, interval: 'month' | 'year'): string | undefined {
     const envMap: Record<string, string> = {
       pro_month: 'STRIPE_PRICE_PRO_MONTHLY',
       pro_year: 'STRIPE_PRICE_PRO_YEARLY',
@@ -841,9 +746,7 @@ export class BillingService {
     return this.createCustomerForUser(userId);
   }
 
-  private async resolveStripeCustomerId(
-    userId: string,
-  ): Promise<string | null> {
+  private async resolveStripeCustomerId(userId: string): Promise<string | null> {
     const [billingCustomer] = await this.db
       .select()
       .from(billingCustomers)
@@ -871,9 +774,7 @@ export class BillingService {
     periodEnd: string | null;
   } {
     const periodStart = new Date(sub.start_date * 1000).toISOString();
-    const periodEnd = sub.cancel_at
-      ? new Date(sub.cancel_at * 1000).toISOString()
-      : null;
+    const periodEnd = sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null;
 
     return { periodStart, periodEnd };
   }
@@ -882,18 +783,10 @@ export class BillingService {
    * Resolve plan name from a Stripe subscription's price ID.
    */
   private resolvePlanNameFromPrice(priceId: string): PlanTier {
-    const proMonthly = this.configService.get<string>(
-      'STRIPE_PRICE_PRO_MONTHLY',
-    );
-    const proYearly = this.configService.get<string>(
-      'STRIPE_PRICE_PRO_YEARLY',
-    );
-    const premiumMonthly = this.configService.get<string>(
-      'STRIPE_PRICE_PREMIUM_MONTHLY',
-    );
-    const premiumYearly = this.configService.get<string>(
-      'STRIPE_PRICE_PREMIUM_YEARLY',
-    );
+    const proMonthly = this.configService.get<string>('STRIPE_PRICE_PRO_MONTHLY');
+    const proYearly = this.configService.get<string>('STRIPE_PRICE_PRO_YEARLY');
+    const premiumMonthly = this.configService.get<string>('STRIPE_PRICE_PREMIUM_MONTHLY');
+    const premiumYearly = this.configService.get<string>('STRIPE_PRICE_PREMIUM_YEARLY');
 
     if (priceId === proMonthly || priceId === proYearly) {
       return 'pro';
@@ -919,18 +812,13 @@ export class BillingService {
     const stripeSubscriptionId = session.subscription as string;
     const stripeCustomerId = session.customer as string;
 
-    const stripeSubscription =
-      await this.stripe.subscriptions.retrieve(stripeSubscriptionId);
+    const stripeSubscription = await this.stripe.subscriptions.retrieve(stripeSubscriptionId);
 
-    const { periodStart, periodEnd } =
-      this.getSubscriptionPeriodDates(stripeSubscription);
+    const { periodStart, periodEnd } = this.getSubscriptionPeriodDates(stripeSubscription);
 
-    const stripePriceId =
-      stripeSubscription.items?.data?.[0]?.price?.id ?? null;
+    const stripePriceId = stripeSubscription.items?.data?.[0]?.price?.id ?? null;
 
-    const planName = stripePriceId
-      ? this.resolvePlanNameFromPrice(stripePriceId)
-      : 'pro';
+    const planName = stripePriceId ? this.resolvePlanNameFromPrice(stripePriceId) : 'pro';
 
     // Resolve plan ID from database
     const plans = await this.getPlans();
@@ -964,8 +852,7 @@ export class BillingService {
       stripeCustomerId,
       stripeSubscriptionId,
       stripePriceId,
-      status:
-        stripeSubscription.status === 'active' ? 'active' : 'trialing',
+      status: stripeSubscription.status === 'active' ? 'active' : 'trialing',
       currentPeriodStart: periodStart,
       currentPeriodEnd: periodEnd,
       cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end ? 1 : 0,
@@ -977,14 +864,10 @@ export class BillingService {
         .set({ ...subscriptionData, updatedAt: new Date() })
         .where(eq(userSubscriptions.userId, userId));
     } else {
-      await this.db
-        .insert(userSubscriptions)
-        .values({ userId, ...subscriptionData });
+      await this.db.insert(userSubscriptions).values({ userId, ...subscriptionData });
     }
 
-    this.logger.log(
-      `Subscription activated for user ${userId}, plan ${planName}`,
-    );
+    this.logger.log(`Subscription activated for user ${userId}, plan ${planName}`);
   }
 
   private async handleSubscriptionUpdated(subscription: Stripe.Subscription) {
@@ -995,9 +878,7 @@ export class BillingService {
       .limit(1);
 
     if (!existing) {
-      this.logger.warn(
-        `No local subscription found for Stripe subscription ${subscription.id}`,
-      );
+      this.logger.warn(`No local subscription found for Stripe subscription ${subscription.id}`);
       return;
     }
 
@@ -1012,11 +893,9 @@ export class BillingService {
       paused: 'canceled',
     };
 
-    const { periodStart, periodEnd } =
-      this.getSubscriptionPeriodDates(subscription);
+    const { periodStart, periodEnd } = this.getSubscriptionPeriodDates(subscription);
 
-    const currentPriceId =
-      subscription.items?.data?.[0]?.price?.id ?? null;
+    const currentPriceId = subscription.items?.data?.[0]?.price?.id ?? null;
     let planUpdate: PlanTier | undefined;
     if (currentPriceId) {
       planUpdate = this.resolvePlanNameFromPrice(currentPriceId);
@@ -1055,9 +934,7 @@ export class BillingService {
       .limit(1);
 
     if (!existing) {
-      this.logger.warn(
-        `No local subscription found for Stripe subscription ${subscription.id}`,
-      );
+      this.logger.warn(`No local subscription found for Stripe subscription ${subscription.id}`);
       return;
     }
 
@@ -1084,17 +961,13 @@ export class BillingService {
 
   private async handlePaymentSucceeded(invoice: Stripe.Invoice) {
     const customerId =
-      typeof invoice.customer === 'string'
-        ? invoice.customer
-        : invoice.customer?.id;
+      typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
 
     if (!customerId) return;
 
     const userId = await this.resolveUserIdFromCustomer(customerId);
     if (!userId) {
-      this.logger.warn(
-        `No user found for Stripe customer ${customerId} on payment success`,
-      );
+      this.logger.warn(`No user found for Stripe customer ${customerId} on payment success`);
       return;
     }
 
@@ -1114,8 +987,7 @@ export class BillingService {
         amount: amountPaid,
         currency: invoice.currency ?? 'usd',
         status: 'paid',
-        description:
-          invoice.lines?.data?.[0]?.description ?? 'Subscription payment',
+        description: invoice.lines?.data?.[0]?.description ?? 'Subscription payment',
         invoiceUrl: invoice.hosted_invoice_url ?? null,
         paidAt: new Date(),
       });
@@ -1126,9 +998,7 @@ export class BillingService {
 
   private async handlePaymentFailed(invoice: Stripe.Invoice) {
     const customerId =
-      typeof invoice.customer === 'string'
-        ? invoice.customer
-        : invoice.customer?.id;
+      typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
 
     if (!customerId) return;
 
@@ -1139,9 +1009,7 @@ export class BillingService {
       .limit(1);
 
     if (!existing) {
-      this.logger.warn(
-        `No local subscription found for Stripe customer ${customerId}`,
-      );
+      this.logger.warn(`No local subscription found for Stripe customer ${customerId}`);
       return;
     }
 
@@ -1195,9 +1063,7 @@ export class BillingService {
     );
   }
 
-  private async resolveUserIdFromCustomer(
-    stripeCustomerId: string,
-  ): Promise<string | null> {
+  private async resolveUserIdFromCustomer(stripeCustomerId: string): Promise<string | null> {
     const [billingCustomer] = await this.db
       .select()
       .from(billingCustomers)

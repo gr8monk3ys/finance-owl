@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  Inject,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { eq, and, gte, lte, like, desc, sql, count, isNull, or } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
@@ -46,9 +41,7 @@ export class TransactionsService {
     const offset = (page - 1) * limit;
 
     // Build conditions
-    const conditions: ReturnType<typeof eq>[] = [
-      eq(schema.transactions.userId, userId),
-    ];
+    const conditions: ReturnType<typeof eq>[] = [eq(schema.transactions.userId, userId)];
 
     if (filters.accountId) {
       conditions.push(eq(schema.transactions.accountId, filters.accountId));
@@ -205,40 +198,33 @@ export class TransactionsService {
       .from(schema.transactions)
       .leftJoin(schema.accounts, eq(schema.transactions.accountId, schema.accounts.id))
       .leftJoin(schema.categories, eq(schema.transactions.categoryId, schema.categories.id))
-      .where(
-        and(
-          eq(schema.transactions.id, id),
-          eq(schema.transactions.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.transactions.id, id), eq(schema.transactions.userId, userId)))
       .limit(1);
 
     if (!transaction) throw new NotFoundException('Transaction not found');
     return transaction;
   }
 
-  async createManual(userId: string, data: {
-    accountId: string;
-    amount: number;
-    name: string;
-    merchantName?: string;
-    description?: string;
-    categoryId?: string;
-    date: string;
-    pending?: boolean;
-    notes?: string;
-  }) {
+  async createManual(
+    userId: string,
+    data: {
+      accountId: string;
+      amount: number;
+      name: string;
+      merchantName?: string;
+      description?: string;
+      categoryId?: string;
+      date: string;
+      pending?: boolean;
+      notes?: string;
+    },
+  ) {
     // The account and category ids come from the client — verify they are
     // actually usable by this user before persisting the row.
     const [account] = await this.db
       .select({ id: schema.accounts.id })
       .from(schema.accounts)
-      .where(
-        and(
-          eq(schema.accounts.id, data.accountId),
-          eq(schema.accounts.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.accounts.id, data.accountId), eq(schema.accounts.userId, userId)))
       .limit(1);
     if (!account) {
       throw new BadRequestException('Account not found');
@@ -251,10 +237,7 @@ export class TransactionsService {
         .where(
           and(
             eq(schema.categories.id, data.categoryId),
-            or(
-              eq(schema.categories.userId, userId),
-              isNull(schema.categories.userId),
-            ),
+            or(eq(schema.categories.userId, userId), isNull(schema.categories.userId)),
           ),
         )
         .limit(1);
@@ -287,11 +270,15 @@ export class TransactionsService {
     return transaction;
   }
 
-  async update(userId: string, id: string, data: {
-    categoryId?: string;
-    notes?: string;
-    name?: string;
-  }) {
+  async update(
+    userId: string,
+    id: string,
+    data: {
+      categoryId?: string;
+      notes?: string;
+      name?: string;
+    },
+  ) {
     // Get existing transaction for correction tracking
     const existing = await this.findById(userId, id);
 
@@ -325,12 +312,7 @@ export class TransactionsService {
     const [updated] = await this.db
       .update(schema.transactions)
       .set(updateData)
-      .where(
-        and(
-          eq(schema.transactions.id, id),
-          eq(schema.transactions.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.transactions.id, id), eq(schema.transactions.userId, userId)))
       .returning();
 
     if (!updated) throw new NotFoundException('Transaction not found');
@@ -347,12 +329,7 @@ export class TransactionsService {
 
     await this.db
       .delete(schema.transactions)
-      .where(
-        and(
-          eq(schema.transactions.id, id),
-          eq(schema.transactions.userId, userId),
-        ),
-      );
+      .where(and(eq(schema.transactions.id, id), eq(schema.transactions.userId, userId)));
 
     await this.invalidateUserCaches(userId);
   }

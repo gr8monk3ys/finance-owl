@@ -51,8 +51,8 @@ export function anomalyAlertHtml(data: AnomalyAlertData): string {
 
     ${statsTable(
       statsRow('Merchant', escapeHtml(merchantName)) +
-      statsRow('Amount', formattedAmount, '#f87171') +
-      statsRow('Date', formattedDate)
+        statsRow('Amount', formattedAmount, '#f87171') +
+        statsRow('Date', formattedDate),
     )}
 
     ${divider()}

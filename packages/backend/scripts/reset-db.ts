@@ -62,8 +62,7 @@ async function reset(): Promise<void> {
   checkEnvironment();
 
   const databaseUrl =
-    process.env.DATABASE_URL ||
-    'postgresql://postgres:postgres@localhost:5432/finance_owl';
+    process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/finance_owl';
 
   // Step 1: Drop all tables
   console.log('[1/3] Dropping all tables...');

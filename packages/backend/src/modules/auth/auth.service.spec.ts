@@ -1,9 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  ConflictException,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
+import { ConflictException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import * as argon2 from 'argon2';
 
@@ -151,12 +147,12 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValue(mockUser);
 
       // Act & Assert
-      await expect(
-        service.register('New User', 'test@example.com', 'password'),
-      ).rejects.toThrow(ConflictException);
-      await expect(
-        service.register('New User', 'test@example.com', 'password'),
-      ).rejects.toThrow('Email already registered');
+      await expect(service.register('New User', 'test@example.com', 'password')).rejects.toThrow(
+        ConflictException,
+      );
+      await expect(service.register('New User', 'test@example.com', 'password')).rejects.toThrow(
+        'Email already registered',
+      );
 
       expect(argon2.hash).not.toHaveBeenCalled();
       expect(mockUsersService.create).not.toHaveBeenCalled();
@@ -191,12 +187,12 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        service.login('nonexistent@example.com', 'password'),
-      ).rejects.toThrow(UnauthorizedException);
-      await expect(
-        service.login('nonexistent@example.com', 'password'),
-      ).rejects.toThrow('Invalid credentials');
+      await expect(service.login('nonexistent@example.com', 'password')).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.login('nonexistent@example.com', 'password')).rejects.toThrow(
+        'Invalid credentials',
+      );
 
       expect(argon2.verify).not.toHaveBeenCalled();
     });
@@ -207,12 +203,12 @@ describe('AuthService', () => {
       vi.mocked(argon2.verify).mockResolvedValue(false);
 
       // Act & Assert
-      await expect(
-        service.login('test@example.com', 'wrong-password'),
-      ).rejects.toThrow(UnauthorizedException);
-      await expect(
-        service.login('test@example.com', 'wrong-password'),
-      ).rejects.toThrow('Invalid credentials');
+      await expect(service.login('test@example.com', 'wrong-password')).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.login('test@example.com', 'wrong-password')).rejects.toThrow(
+        'Invalid credentials',
+      );
 
       expect(mockDb.insert).not.toHaveBeenCalled();
     });
@@ -224,13 +220,11 @@ describe('AuthService', () => {
       vi.mocked(argon2.verify).mockResolvedValue(true);
 
       // Act & Assert
-      await expect(
-        service.login('test@example.com', 'correct-password'),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.login('test@example.com', 'correct-password')).rejects.toThrow(
+        BadRequestException,
+      );
 
-      const error = await service
-        .login('test@example.com', 'correct-password')
-        .catch((e) => e);
+      const error = await service.login('test@example.com', 'correct-password').catch((e) => e);
       expect(error.response).toEqual({
         message: 'TOTP code required',
         code: 'TOTP_REQUIRED',
@@ -246,11 +240,7 @@ describe('AuthService', () => {
       vi.mocked(argon2.verify).mockResolvedValue(true);
 
       // Act
-      const result = await service.login(
-        'test@example.com',
-        'correct-password',
-        '123456',
-      );
+      const result = await service.login('test@example.com', 'correct-password', '123456');
 
       // Assert
       expect(result).toEqual({
@@ -291,12 +281,12 @@ describe('AuthService', () => {
       mockDb.limit.mockResolvedValue([]);
 
       // Act & Assert
-      await expect(
-        service.refreshTokens('invalid-refresh-token'),
-      ).rejects.toThrow(UnauthorizedException);
-      await expect(
-        service.refreshTokens('invalid-refresh-token'),
-      ).rejects.toThrow('Invalid refresh token');
+      await expect(service.refreshTokens('invalid-refresh-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.refreshTokens('invalid-refresh-token')).rejects.toThrow(
+        'Invalid refresh token',
+      );
 
       expect(mockUsersService.findById).not.toHaveBeenCalled();
       expect(mockDb.insert).not.toHaveBeenCalled();
@@ -311,12 +301,12 @@ describe('AuthService', () => {
       mockDb.limit.mockResolvedValue([expiredSession]);
 
       // Act & Assert
-      await expect(
-        service.refreshTokens('expired-refresh-token'),
-      ).rejects.toThrow(UnauthorizedException);
-      await expect(
-        service.refreshTokens('expired-refresh-token'),
-      ).rejects.toThrow('Refresh token expired');
+      await expect(service.refreshTokens('expired-refresh-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.refreshTokens('expired-refresh-token')).rejects.toThrow(
+        'Refresh token expired',
+      );
 
       // Should delete the expired session
       expect(mockDb.delete).toHaveBeenCalled();
@@ -330,12 +320,10 @@ describe('AuthService', () => {
       mockUsersService.findById.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        service.refreshTokens('valid-refresh-token'),
-      ).rejects.toThrow(UnauthorizedException);
-      await expect(
-        service.refreshTokens('valid-refresh-token'),
-      ).rejects.toThrow('User not found');
+      await expect(service.refreshTokens('valid-refresh-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.refreshTokens('valid-refresh-token')).rejects.toThrow('User not found');
 
       expect(mockDb.delete).toHaveBeenCalled(); // Old session should be deleted
       expect(mockDb.insert).not.toHaveBeenCalled();
@@ -356,29 +344,19 @@ describe('AuthService', () => {
       vi.mocked(argon2.hash).mockResolvedValue(newPasswordHash);
 
       // Act
-      const result = await service.changePassword(
-        userId,
-        currentPassword,
-        newPassword,
-      );
+      const result = await service.changePassword(userId, currentPassword, newPassword);
 
       // Assert
       expect(mockUsersService.findById).toHaveBeenCalledWith(userId);
       expect(mockUsersService.findByEmail).toHaveBeenCalledWith(mockUser.email);
-      expect(argon2.verify).toHaveBeenCalledWith(
-        mockUser.passwordHash,
-        currentPassword,
-      );
+      expect(argon2.verify).toHaveBeenCalledWith(mockUser.passwordHash, currentPassword);
       expect(argon2.hash).toHaveBeenCalledWith(newPassword, {
         type: argon2.argon2id,
         memoryCost: 65536,
         timeCost: 3,
         parallelism: 4,
       });
-      expect(mockUsersService.updatePassword).toHaveBeenCalledWith(
-        userId,
-        newPasswordHash,
-      );
+      expect(mockUsersService.updatePassword).toHaveBeenCalledWith(userId, newPasswordHash);
       expect(mockDb.delete).toHaveBeenCalled(); // All sessions invalidated
       expect(result).toEqual({
         accessToken: 'mock-access-token',
@@ -398,12 +376,12 @@ describe('AuthService', () => {
       vi.mocked(argon2.verify).mockResolvedValue(false);
 
       // Act & Assert
-      await expect(
-        service.changePassword(userId, currentPassword, newPassword),
-      ).rejects.toThrow(UnauthorizedException);
-      await expect(
-        service.changePassword(userId, currentPassword, newPassword),
-      ).rejects.toThrow('Current password is incorrect');
+      await expect(service.changePassword(userId, currentPassword, newPassword)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.changePassword(userId, currentPassword, newPassword)).rejects.toThrow(
+        'Current password is incorrect',
+      );
 
       expect(argon2.hash).not.toHaveBeenCalled();
       expect(mockUsersService.updatePassword).not.toHaveBeenCalled();
@@ -416,12 +394,12 @@ describe('AuthService', () => {
       mockUsersService.findById.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        service.changePassword(userId, 'old-password', 'new-password'),
-      ).rejects.toThrow(UnauthorizedException);
-      await expect(
-        service.changePassword(userId, 'old-password', 'new-password'),
-      ).rejects.toThrow('User not found');
+      await expect(service.changePassword(userId, 'old-password', 'new-password')).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.changePassword(userId, 'old-password', 'new-password')).rejects.toThrow(
+        'User not found',
+      );
 
       expect(argon2.verify).not.toHaveBeenCalled();
       expect(mockUsersService.updatePassword).not.toHaveBeenCalled();
@@ -517,12 +495,8 @@ describe('AuthService', () => {
       mockUsersService.findById.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(service.createTokensForUser(userId)).rejects.toThrow(
-        UnauthorizedException,
-      );
-      await expect(service.createTokensForUser(userId)).rejects.toThrow(
-        'User not found',
-      );
+      await expect(service.createTokensForUser(userId)).rejects.toThrow(UnauthorizedException);
+      await expect(service.createTokensForUser(userId)).rejects.toThrow('User not found');
 
       expect(mockDb.insert).not.toHaveBeenCalled();
     });
@@ -568,14 +542,8 @@ describe('AuthService', () => {
         { sub: userId, email: mockUser.email },
         { expiresIn: '15m' },
       );
-      expect(mockConfigService.get).toHaveBeenCalledWith(
-        'JWT_ACCESS_EXPIRY',
-        '15m',
-      );
-      expect(mockConfigService.get).toHaveBeenCalledWith(
-        'JWT_REFRESH_EXPIRY',
-        '7d',
-      );
+      expect(mockConfigService.get).toHaveBeenCalledWith('JWT_ACCESS_EXPIRY', '15m');
+      expect(mockConfigService.get).toHaveBeenCalledWith('JWT_REFRESH_EXPIRY', '7d');
     });
 
     it('should insert session with correct expiry date', async () => {

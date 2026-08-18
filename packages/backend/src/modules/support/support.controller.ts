@@ -1,17 +1,5 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { Controller, Post, Get, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { IsString, MinLength, MaxLength, IsEmail } from 'class-validator';
 import { CurrentUser } from '../../common/decorators';
 import { SupportService } from './support.service';
@@ -48,10 +36,7 @@ export class SupportController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Post('tickets')
   @HttpCode(HttpStatus.CREATED)
-  async createTicket(
-    @CurrentUser('id') userId: string,
-    @Body() body: CreateTicketBody,
-  ) {
+  async createTicket(@CurrentUser('id') userId: string, @Body() body: CreateTicketBody) {
     const ticket = await this.supportService.createTicket({
       userId,
       email: body.email,
@@ -62,8 +47,7 @@ export class SupportController {
 
     return {
       id: ticket.id,
-      message:
-        "Your request has been submitted. We'll respond via email.",
+      message: "Your request has been submitted. We'll respond via email.",
     };
   }
 

@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useDeferredValue,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useDeferredValue, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -33,9 +27,7 @@ import { getDateGroupLabel } from '../../src/utils/format';
 import { useAppStore } from '../../src/stores/app';
 import { colors, fontSize, fontWeight, borderRadius, spacing } from '../../src/utils/theme';
 
-type GroupedItem =
-  | { type: 'header'; label: string }
-  | { type: 'transaction'; data: Transaction };
+type GroupedItem = { type: 'header'; label: string } | { type: 'transaction'; data: Transaction };
 
 export default function TransactionsScreen() {
   const { isAuthenticated } = useAuthStore();
@@ -82,10 +74,7 @@ export default function TransactionsScreen() {
 
   function handleOpenAccounts() {
     if (!webUrl) {
-      Alert.alert(
-        'Link Accounts',
-        'Set EXPO_PUBLIC_WEB_URL to open account linking from mobile.',
-      );
+      Alert.alert('Link Accounts', 'Set EXPO_PUBLIC_WEB_URL to open account linking from mobile.');
       return;
     }
 
@@ -326,10 +315,7 @@ export default function TransactionsScreen() {
           </View>
         ) : searchQuery || localSearch ? (
           <Pressable
-            style={({ pressed }) => [
-              styles.clearButton,
-              pressed && styles.clearButtonPressed,
-            ]}
+            style={({ pressed }) => [styles.clearButton, pressed && styles.clearButtonPressed]}
             onPress={clearSearch}
           >
             <Text style={styles.clearButtonText}>Clear</Text>
@@ -344,10 +330,10 @@ export default function TransactionsScreen() {
             {searching
               ? 'Updating results...'
               : total > 0
-              ? `${total.toLocaleString()} transaction${total !== 1 ? 's' : ''}${
-                  searchQuery ? ` for "${searchQuery}"` : ''
-                }`
-              : `No matches for "${searchQuery}"`}
+                ? `${total.toLocaleString()} transaction${total !== 1 ? 's' : ''}${
+                    searchQuery ? ` for "${searchQuery}"` : ''
+                  }`
+                : `No matches for "${searchQuery}"`}
           </Text>
         </View>
       )}
@@ -380,9 +366,7 @@ export default function TransactionsScreen() {
                 ]}
                 onPress={handleOpenAccounts}
               >
-                <Text style={styles.emptyPrimaryButtonText}>
-                  Link Accounts on Web
-                </Text>
+                <Text style={styles.emptyPrimaryButtonText}>Link Accounts on Web</Text>
               </Pressable>
               <Text style={styles.emptyFootnote}>
                 Account linking is handled in the web app for now.
@@ -410,10 +394,7 @@ export default function TransactionsScreen() {
           ListFooterComponent={
             loadingMore ? (
               <View style={styles.loadingMore}>
-                <ActivityIndicator
-                  size="small"
-                  color={colors.primary[500]}
-                />
+                <ActivityIndicator size="small" color={colors.primary[500]} />
               </View>
             ) : null
           }
@@ -421,14 +402,26 @@ export default function TransactionsScreen() {
       )}
 
       {/* Floating Action Button */}
-      <TouchableOpacity
-        style={styles.fab}
-        activeOpacity={0.8}
-        onPress={openAddModal}
-      >
+      <TouchableOpacity style={styles.fab} activeOpacity={0.8} onPress={openAddModal}>
         <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-          <Line x1={12} y1={5} x2={12} y2={19} stroke={colors.white} strokeWidth={2} strokeLinecap="round" />
-          <Line x1={5} y1={12} x2={19} y2={12} stroke={colors.white} strokeWidth={2} strokeLinecap="round" />
+          <Line
+            x1={12}
+            y1={5}
+            x2={12}
+            y2={19}
+            stroke={colors.white}
+            strokeWidth={2}
+            strokeLinecap="round"
+          />
+          <Line
+            x1={5}
+            y1={12}
+            x2={19}
+            y2={12}
+            stroke={colors.white}
+            strokeWidth={2}
+            strokeLinecap="round"
+          />
         </Svg>
       </TouchableOpacity>
 
@@ -513,7 +506,13 @@ export default function TransactionsScreen() {
                   {selectedAccount?.name ?? 'Select an account'}
                 </Text>
                 <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-                  <Path d="M6 9l6 6 6-6" stroke={colors.surface[400]} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                  <Path
+                    d="M6 9l6 6 6-6"
+                    stroke={colors.surface[400]}
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </Svg>
               </Pressable>
               {showAccountPicker && (
@@ -560,16 +559,19 @@ export default function TransactionsScreen() {
                   {selectedCategory?.name ?? 'Select a category'}
                 </Text>
                 <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-                  <Path d="M6 9l6 6 6-6" stroke={colors.surface[400]} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                  <Path
+                    d="M6 9l6 6 6-6"
+                    stroke={colors.surface[400]}
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </Svg>
               </Pressable>
               {showCategoryPicker && (
                 <View style={styles.pickerDropdown}>
                   <Pressable
-                    style={[
-                      styles.pickerOption,
-                      !addCategoryId && styles.pickerOptionSelected,
-                    ]}
+                    style={[styles.pickerOption, !addCategoryId && styles.pickerOptionSelected]}
                     onPress={() => {
                       setAddCategoryId('');
                       setShowCategoryPicker(false);
@@ -598,12 +600,7 @@ export default function TransactionsScreen() {
                     >
                       <View style={styles.pickerOptionRow}>
                         {cat.color && (
-                          <View
-                            style={[
-                              styles.pickerOptionDot,
-                              { backgroundColor: cat.color },
-                            ]}
-                          />
+                          <View style={[styles.pickerOptionDot, { backgroundColor: cat.color }]} />
                         )}
                         <Text
                           style={[

@@ -1,11 +1,6 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  createCipheriv,
-  createDecipheriv,
-  randomBytes,
-  pbkdf2,
-} from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes, pbkdf2 } from 'crypto';
 import { promisify } from 'util';
 
 const pbkdf2Async = promisify(pbkdf2);
@@ -64,9 +59,7 @@ export class EncryptionService implements OnModuleInit {
       );
     }
     this.masterSecret = Buffer.from(secret, 'utf8');
-    this.logger.log(
-      'Encryption master secret loaded (AES-256-GCM + PBKDF2-SHA512)',
-    );
+    this.logger.log('Encryption master secret loaded (AES-256-GCM + PBKDF2-SHA512)');
   }
 
   /**
@@ -84,20 +77,11 @@ export class EncryptionService implements OnModuleInit {
     const derivedKey = await this.deriveKey(salt, version);
 
     const cipher = createCipheriv('aes-256-gcm', derivedKey, iv);
-    const encrypted = Buffer.concat([
-      cipher.update(plaintext, 'utf8'),
-      cipher.final(),
-    ]);
+    const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
     const authTag = cipher.getAuthTag();
 
     // Wire format: version(1) + salt(16) + iv(12) + authTag(16) + ciphertext
-    const combined = Buffer.concat([
-      Buffer.from([version]),
-      salt,
-      iv,
-      authTag,
-      encrypted,
-    ]);
+    const combined = Buffer.concat([Buffer.from([version]), salt, iv, authTag, encrypted]);
 
     return combined.toString('base64');
   }
@@ -115,9 +99,7 @@ export class EncryptionService implements OnModuleInit {
     const combined = Buffer.from(ciphertext, 'base64');
 
     if (combined.length < EncryptionService.MIN_BUFFER_LENGTH) {
-      throw new Error(
-        'Invalid ciphertext: buffer too short (possibly corrupted or tampered data)',
-      );
+      throw new Error('Invalid ciphertext: buffer too short (possibly corrupted or tampered data)');
     }
 
     let offset = 0;
@@ -143,10 +125,7 @@ export class EncryptionService implements OnModuleInit {
     offset += EncryptionService.IV_LENGTH;
 
     // 4. Auth tag
-    const authTag = combined.subarray(
-      offset,
-      offset + EncryptionService.AUTH_TAG_LENGTH,
-    );
+    const authTag = combined.subarray(offset, offset + EncryptionService.AUTH_TAG_LENGTH);
     offset += EncryptionService.AUTH_TAG_LENGTH;
 
     // 5. Encrypted payload
@@ -157,10 +136,7 @@ export class EncryptionService implements OnModuleInit {
     decipher.setAuthTag(authTag);
 
     try {
-      const decrypted = Buffer.concat([
-        decipher.update(encrypted),
-        decipher.final(),
-      ]);
+      const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
       return decrypted.toString('utf8');
     } catch {
       throw new Error(

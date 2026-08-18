@@ -20,7 +20,7 @@ describe('Transactions E2E - /transactions', () => {
     accountId: 'acct-001',
     categoryId: 'cat-001',
     plaidTransactionId: null,
-    amount: 42.50,
+    amount: 42.5,
     name: 'Coffee Shop',
     merchantName: 'Starbucks',
     description: 'Morning coffee',
@@ -184,9 +184,7 @@ describe('Transactions E2E - /transactions', () => {
     });
 
     it('should return 401 without authentication', async () => {
-      await request(server)
-        .get('/transactions')
-        .expect(401);
+      await request(server).get('/transactions').expect(401);
     });
   });
 
@@ -242,7 +240,7 @@ describe('Transactions E2E - /transactions', () => {
   describe('POST /transactions', () => {
     const validTransaction = {
       accountId: 'acct-001',
-      amount: 25.00,
+      amount: 25.0,
       name: 'Grocery Store',
       date: '2026-02-15',
     };
@@ -322,10 +320,7 @@ describe('Transactions E2E - /transactions', () => {
     });
 
     it('should return 401 without authentication', async () => {
-      await request(server)
-        .post('/transactions')
-        .send(validTransaction)
-        .expect(401);
+      await request(server).post('/transactions').send(validTransaction).expect(401);
     });
   });
 
@@ -393,10 +388,7 @@ describe('Transactions E2E - /transactions', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
 
-      expect(ctx.mockTransactionsService.remove).toHaveBeenCalledWith(
-        TEST_USER.id,
-        'txn-001',
-      );
+      expect(ctx.mockTransactionsService.remove).toHaveBeenCalledWith(TEST_USER.id, 'txn-001');
     });
 
     it('should return 404 when deleting non-existent transaction', async () => {
@@ -472,10 +464,7 @@ describe('Transactions E2E - /transactions', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
 
-      expect(ctx.mockTransactionsService.remove).toHaveBeenCalledWith(
-        TEST_USER.id,
-        'txn-other',
-      );
+      expect(ctx.mockTransactionsService.remove).toHaveBeenCalledWith(TEST_USER.id, 'txn-other');
     });
 
     it('should scope updates to the authenticated user', async () => {

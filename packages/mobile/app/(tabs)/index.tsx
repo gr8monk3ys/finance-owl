@@ -29,10 +29,7 @@ import AccountCard from '../../src/components/AccountCard';
 import TransactionItem from '../../src/components/TransactionItem';
 import HealthScoreCircle from '../../src/components/HealthScoreCircle';
 import SpendingChart from '../../src/components/SpendingChart';
-import {
-  formatCurrency,
-  formatCurrencyCompact,
-} from '../../src/utils/format';
+import { formatCurrency, formatCurrencyCompact } from '../../src/utils/format';
 import { colors, fontSize, fontWeight, borderRadius, spacing } from '../../src/utils/theme';
 
 export default function DashboardScreen() {
@@ -68,10 +65,7 @@ export default function DashboardScreen() {
 
   function handleOpenAccounts() {
     if (!webUrl) {
-      Alert.alert(
-        'Link Accounts',
-        'Set EXPO_PUBLIC_WEB_URL to open account linking from mobile.',
-      );
+      Alert.alert('Link Accounts', 'Set EXPO_PUBLIC_WEB_URL to open account linking from mobile.');
       return;
     }
 
@@ -95,7 +89,10 @@ export default function DashboardScreen() {
       const [nw, accts, txResult, budgetList, summary] = await Promise.all([
         getNetWorth().catch(() => null),
         listAccounts().catch(() => []),
-        listTransactions({ limit: 5 }).catch(() => ({ data: [], meta: { page: 1, limit: 5, total: 0, totalPages: 0 } })),
+        listTransactions({ limit: 5 }).catch(() => ({
+          data: [],
+          meta: { page: 1, limit: 5, total: 0, totalPages: 0 },
+        })),
         listBudgets().catch(() => []),
         getBudgetSummary().catch(() => null),
       ]);
@@ -168,9 +165,7 @@ export default function DashboardScreen() {
   }
 
   const hasData =
-    (netWorth?.accountCount ?? 0) > 0 ||
-    recentTransactions.length > 0 ||
-    budgets.length > 0;
+    (netWorth?.accountCount ?? 0) > 0 || recentTransactions.length > 0 || budgets.length > 0;
 
   return (
     <ScrollView
@@ -194,10 +189,7 @@ export default function DashboardScreen() {
         </View>
         <Text style={styles.netWorthLabel}>Net Worth</Text>
         <Text
-          style={[
-            styles.netWorthValue,
-            (netWorth?.netWorth ?? 0) < 0 && styles.netWorthNegative,
-          ]}
+          style={[styles.netWorthValue, (netWorth?.netWorth ?? 0) < 0 && styles.netWorthNegative]}
         >
           {formatCurrency(netWorth?.netWorth ?? 0)}
         </Text>
@@ -218,9 +210,7 @@ export default function DashboardScreen() {
       <View style={styles.summaryRow}>
         <View style={styles.summaryCardBlue}>
           <Text style={styles.summaryLabel}>Monthly Spending</Text>
-          <Text style={styles.summaryValue}>
-            {formatCurrencyCompact(monthlySpending)}
-          </Text>
+          <Text style={styles.summaryValue}>{formatCurrencyCompact(monthlySpending)}</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={styles.summaryLabel}>Budget Remaining</Text>
@@ -231,9 +221,7 @@ export default function DashboardScreen() {
                   styles.summaryValue,
                   {
                     color:
-                      budgetSummary.totalRemaining >= 0
-                        ? colors.primary[400]
-                        : colors.danger[400],
+                      budgetSummary.totalRemaining >= 0 ? colors.primary[400] : colors.danger[400],
                   },
                 ]}
               >
@@ -249,8 +237,8 @@ export default function DashboardScreen() {
                         budgetSummary.percentUsed >= 100
                           ? colors.danger[500]
                           : budgetSummary.percentUsed >= 80
-                          ? colors.accent[500]
-                          : colors.primary[500],
+                            ? colors.accent[500]
+                            : colors.primary[500],
                     },
                   ]}
                 />
@@ -302,8 +290,8 @@ export default function DashboardScreen() {
                 budget.percentUsed >= 100
                   ? colors.danger[500]
                   : budget.percentUsed >= 80
-                  ? colors.accent[500]
-                  : colors.primary[500];
+                    ? colors.accent[500]
+                    : colors.primary[500];
               return (
                 <View key={budget.id} style={styles.budgetProgressItem}>
                   <View style={styles.budgetProgressHeader}>
@@ -311,8 +299,7 @@ export default function DashboardScreen() {
                       {budget.categoryName ?? 'Unknown'}
                     </Text>
                     <Text style={styles.budgetProgressAmount}>
-                      {formatCurrencyCompact(budget.spent)} /{' '}
-                      {formatCurrencyCompact(budget.amount)}
+                      {formatCurrencyCompact(budget.spent)} / {formatCurrencyCompact(budget.amount)}
                     </Text>
                   </View>
                   <View style={styles.progressTrack}>
@@ -374,8 +361,8 @@ export default function DashboardScreen() {
           <Text style={styles.emptyEyebrow}>Set up your money view</Text>
           <Text style={styles.emptyTitle}>Welcome to Finance Owl</Text>
           <Text style={styles.emptySubtitle}>
-            Get started by linking your bank accounts. We will automatically
-            track your spending, net worth, and budget progress.
+            Get started by linking your bank accounts. We will automatically track your spending,
+            net worth, and budget progress.
           </Text>
           <View style={styles.emptyActionRow}>
             <Pressable
@@ -385,9 +372,7 @@ export default function DashboardScreen() {
               ]}
               onPress={handleOpenAccounts}
             >
-              <Text style={styles.emptyPrimaryButtonText}>
-                Link Accounts on Web
-              </Text>
+              <Text style={styles.emptyPrimaryButtonText}>Link Accounts on Web</Text>
             </Pressable>
             <Pressable
               style={({ pressed }) => [
@@ -396,9 +381,7 @@ export default function DashboardScreen() {
               ]}
               onPress={() => router.push('/(tabs)/budgets')}
             >
-              <Text style={styles.emptySecondaryButtonText}>
-                Create a Budget
-              </Text>
+              <Text style={styles.emptySecondaryButtonText}>Create a Budget</Text>
             </Pressable>
           </View>
           <Text style={styles.emptyFootnote}>

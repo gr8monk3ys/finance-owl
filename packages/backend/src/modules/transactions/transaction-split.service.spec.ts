@@ -25,8 +25,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -123,11 +122,7 @@ describe('TransactionSplitService', () => {
       // 4. getSplitsWithCategories
       mockDb.select.mockReturnValueOnce(mockQuery(mockSplitsWithCategories));
 
-      const result = await service.splitTransaction(
-        mockUserId,
-        mockTransactionId,
-        mockSplitInputs,
-      );
+      const result = await service.splitTransaction(mockUserId, mockTransactionId, mockSplitInputs);
 
       expect(result).toEqual(mockSplitsWithCategories);
       expect(result).toHaveLength(2);
@@ -221,11 +216,7 @@ describe('TransactionSplitService', () => {
       // 4. getSplitsWithCategories
       mockDb.select.mockReturnValueOnce(mockQuery(mockSplitsWithCategories));
 
-      const result = await service.splitTransaction(
-        mockUserId,
-        mockTransactionId,
-        negativeSplits,
-      );
+      const result = await service.splitTransaction(mockUserId, mockTransactionId, negativeSplits);
 
       expect(result).toHaveLength(2);
     });
@@ -270,10 +261,7 @@ describe('TransactionSplitService', () => {
     });
 
     it('should handle splits without optional fields', async () => {
-      const minimalSplits = [
-        { amount: 60 },
-        { amount: 40 },
-      ];
+      const minimalSplits = [{ amount: 60 }, { amount: 40 }];
 
       // 1. getTransaction
       mockDb.select.mockReturnValueOnce(mockQuery([mockTransaction]));
@@ -284,11 +272,7 @@ describe('TransactionSplitService', () => {
       // 4. getSplitsWithCategories
       mockDb.select.mockReturnValueOnce(mockQuery(mockSplitsWithCategories));
 
-      const result = await service.splitTransaction(
-        mockUserId,
-        mockTransactionId,
-        minimalSplits,
-      );
+      const result = await service.splitTransaction(mockUserId, mockTransactionId, minimalSplits);
 
       expect(result).toBeDefined();
     });
@@ -312,11 +296,7 @@ describe('TransactionSplitService', () => {
 
       mockDb.select.mockReturnValueOnce(mockQuery(mockSplitsWithCategories));
 
-      await service.splitTransaction(
-        mockUserId,
-        mockTransactionId,
-        mockSplitInputs,
-      );
+      await service.splitTransaction(mockUserId, mockTransactionId, mockSplitInputs);
 
       expect(callOrder).toEqual(['delete', 'insert']);
     });
@@ -347,17 +327,17 @@ describe('TransactionSplitService', () => {
       // Another user tries to access - DB returns empty because userId filter doesn't match
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.getSplits(mockOtherUserId, mockTransactionId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getSplits(mockOtherUserId, mockTransactionId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException for non-existent transaction', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.getSplits(mockUserId, 'non-existent-txn'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getSplits(mockUserId, 'non-existent-txn')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should return empty array when transaction has no splits', async () => {
@@ -418,11 +398,7 @@ describe('TransactionSplitService', () => {
       // 4. getSplitsWithCategories
       mockDb.select.mockReturnValueOnce(mockQuery(updatedSplitsWithCategories));
 
-      const result = await service.updateSplits(
-        mockUserId,
-        mockTransactionId,
-        newSplits,
-      );
+      const result = await service.updateSplits(mockUserId, mockTransactionId, newSplits);
 
       expect(result).toEqual(updatedSplitsWithCategories);
       expect(result).toHaveLength(2);
@@ -477,17 +453,17 @@ describe('TransactionSplitService', () => {
     it('should throw NotFoundException when transaction does not exist', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.removeSplits(mockUserId, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.removeSplits(mockUserId, 'non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException when another user tries to remove splits', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.removeSplits(mockOtherUserId, mockTransactionId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.removeSplits(mockOtherUserId, mockTransactionId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should succeed even when there are no existing splits to remove', async () => {
@@ -496,9 +472,7 @@ describe('TransactionSplitService', () => {
       // delete succeeds (no rows affected is fine)
       mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
 
-      await expect(
-        service.removeSplits(mockUserId, mockTransactionId),
-      ).resolves.toBeUndefined();
+      await expect(service.removeSplits(mockUserId, mockTransactionId)).resolves.toBeUndefined();
     });
   });
 
@@ -509,9 +483,9 @@ describe('TransactionSplitService', () => {
     it('should reject an empty splits array', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([mockTransaction]));
 
-      await expect(
-        service.splitTransaction(mockUserId, mockTransactionId, []),
-      ).rejects.toThrow('At least 2 splits are required');
+      await expect(service.splitTransaction(mockUserId, mockTransactionId, [])).rejects.toThrow(
+        'At least 2 splits are required',
+      );
     });
 
     it('should reject a single split even if amount matches', async () => {

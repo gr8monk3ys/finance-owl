@@ -30,8 +30,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -258,10 +257,7 @@ describe('PlaidService', () => {
       const accountChain = mockQuery([{ id: 'acct-1', name: 'Premium Checking' }]);
       mockDb.insert.mockReturnValueOnce(accountChain);
 
-      const result = await service.exchangePublicToken(
-        MOCK_USER_ID,
-        'public-sandbox-token',
-      );
+      const result = await service.exchangePublicToken(MOCK_USER_ID, 'public-sandbox-token');
 
       expect(result.plaidItem).toEqual(mockPlaidItem);
       expect(result.accounts).toHaveLength(1);
@@ -304,19 +300,14 @@ describe('PlaidService', () => {
           item: { institution_id: 'ins_fail' },
         },
       });
-      mockClient.institutionsGetById.mockRejectedValue(
-        new Error('Institution not found'),
-      );
+      mockClient.institutionsGetById.mockRejectedValue(new Error('Institution not found'));
 
       mockDb.insert
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(mockQuery([{ id: 'acct-1' }]));
 
       // Should not throw despite institution lookup failure
-      const result = await service.exchangePublicToken(
-        MOCK_USER_ID,
-        'public-token',
-      );
+      const result = await service.exchangePublicToken(MOCK_USER_ID, 'public-token');
 
       expect(result.plaidItem).toBeDefined();
     });
@@ -336,9 +327,9 @@ describe('PlaidService', () => {
       });
       mockClient.itemPublicTokenExchange.mockRejectedValue(axiosError);
 
-      await expect(
-        service.exchangePublicToken(MOCK_USER_ID, 'bad-token'),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.exchangePublicToken(MOCK_USER_ID, 'bad-token')).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -350,16 +341,9 @@ describe('PlaidService', () => {
       // Get item
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem])) // getItemById
-        .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
-        ) // account map
+        .mockReturnValueOnce(mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }])) // account map
         .mockReturnValueOnce(mockQuery([])) // upsert check for added (not existing)
-        .mockReturnValueOnce(
-          mockQuery([{ id: 'existing-tx', categorizationSource: 'plaid' }]),
-        ) // upsert check for modified (existing)
-        ;
+        .mockReturnValueOnce(mockQuery([{ id: 'existing-tx', categorizationSource: 'plaid' }])); // upsert check for modified (existing)
 
       mockClient.transactionsSync.mockResolvedValue({
         data: {
@@ -390,11 +374,7 @@ describe('PlaidService', () => {
     it('should paginate through all sync results when has_more is true', async () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
-        .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
-        )
+        .mockReturnValueOnce(mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]))
         .mockReturnValueOnce(mockQuery([])) // first tx upsert check
         .mockReturnValueOnce(mockQuery([])); // second tx upsert check
 
@@ -482,16 +462,8 @@ describe('PlaidService', () => {
     it('should preserve user categorization when updating transactions', async () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
-        .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
-        )
-        .mockReturnValueOnce(
-          mockQuery([
-            { id: 'existing-tx', categorizationSource: 'user' },
-          ]),
-        );
+        .mockReturnValueOnce(mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]))
+        .mockReturnValueOnce(mockQuery([{ id: 'existing-tx', categorizationSource: 'user' }]));
 
       mockClient.transactionsSync.mockResolvedValue({
         data: {
@@ -518,9 +490,7 @@ describe('PlaidService', () => {
     it('should throw NotFoundException for non-existent item', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(service.syncTransactions('non-existent')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.syncTransactions('non-existent')).rejects.toThrow(NotFoundException);
     });
 
     it('should update item status to login_required on ITEM_LOGIN_REQUIRED error', async () => {
@@ -544,9 +514,7 @@ describe('PlaidService', () => {
       const updateChain = mockQuery(undefined);
       mockDb.update.mockReturnValueOnce(updateChain);
 
-      await expect(service.syncTransactions(MOCK_ITEM_ID)).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.syncTransactions(MOCK_ITEM_ID)).rejects.toThrow(BadRequestException);
 
       expect(updateChain.set).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -608,9 +576,7 @@ describe('PlaidService', () => {
       });
 
       // findItemByPlaidItemId
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: MOCK_ITEM_ID, userId: MOCK_USER_ID }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: MOCK_ITEM_ID, userId: MOCK_USER_ID }]));
 
       // syncTransactions internally needs:
       // getItemById
@@ -756,9 +722,9 @@ describe('PlaidService', () => {
     it('should throw NotFoundException for non-existent item', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.removeItem(MOCK_USER_ID, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.removeItem(MOCK_USER_ID, 'non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should still delete local records if Plaid API removal fails', async () => {
@@ -777,9 +743,9 @@ describe('PlaidService', () => {
     it('should not return item belonging to another user', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([])); // WHERE userId + id yields nothing
 
-      await expect(
-        service.removeItem('other-user', MOCK_ITEM_ID),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.removeItem('other-user', MOCK_ITEM_ID)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -816,9 +782,7 @@ describe('PlaidService', () => {
     it('should throw NotFoundException for non-existent item', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(service.refreshBalances('non-existent')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.refreshBalances('non-existent')).rejects.toThrow(NotFoundException);
     });
 
     it('should map rate limit errors to BadRequestException', async () => {
@@ -840,9 +804,7 @@ describe('PlaidService', () => {
 
       mockDb.update.mockReturnValueOnce(mockQuery(undefined)); // updateItemStatusOnError
 
-      await expect(service.refreshBalances(MOCK_ITEM_ID)).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.refreshBalances(MOCK_ITEM_ID)).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -921,9 +883,7 @@ describe('PlaidService', () => {
         }),
       );
 
-      await expect(service.createLinkToken(MOCK_USER_ID)).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.createLinkToken(MOCK_USER_ID)).rejects.toThrow(BadRequestException);
     });
   });
 });

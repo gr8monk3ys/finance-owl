@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  loginSchema,
-  registerSchema,
-  changePasswordSchema,
-} from './auth';
+import { loginSchema, registerSchema, changePasswordSchema } from './auth';
 import { createAccountSchema, updateAccountSchema, accountTypeEnum } from './accounts';
 import { createTransactionSchema, transactionFilterSchema } from './transactions';
 import { createCategorySchema } from './categories';
@@ -58,28 +54,20 @@ describe('registerSchema', () => {
   });
 
   it('requires at least one lowercase letter', () => {
-    expect(
-      registerSchema.safeParse({ ...valid, password: 'PASSWORD1' }).success,
-    ).toBe(false);
+    expect(registerSchema.safeParse({ ...valid, password: 'PASSWORD1' }).success).toBe(false);
   });
 
   it('requires at least one uppercase letter', () => {
-    expect(
-      registerSchema.safeParse({ ...valid, password: 'password1' }).success,
-    ).toBe(false);
+    expect(registerSchema.safeParse({ ...valid, password: 'password1' }).success).toBe(false);
   });
 
   it('requires at least one digit', () => {
-    expect(
-      registerSchema.safeParse({ ...valid, password: 'Passwordd' }).success,
-    ).toBe(false);
+    expect(registerSchema.safeParse({ ...valid, password: 'Passwordd' }).success).toBe(false);
   });
 
   it('rejects a password longer than 128 characters', () => {
     const longPassword = 'A1' + 'a'.repeat(130);
-    expect(
-      registerSchema.safeParse({ ...valid, password: longPassword }).success,
-    ).toBe(false);
+    expect(registerSchema.safeParse({ ...valid, password: longPassword }).success).toBe(false);
   });
 });
 
@@ -186,30 +174,20 @@ describe('createTransactionSchema', () => {
   });
 
   it('allows negative and positive amounts', () => {
-    expect(createTransactionSchema.safeParse({ ...valid, amount: 100 }).success).toBe(
-      true,
-    );
-    expect(createTransactionSchema.safeParse({ ...valid, amount: -100 }).success).toBe(
-      true,
-    );
+    expect(createTransactionSchema.safeParse({ ...valid, amount: 100 }).success).toBe(true);
+    expect(createTransactionSchema.safeParse({ ...valid, amount: -100 }).success).toBe(true);
   });
 
   it('rejects an invalid accountId', () => {
-    expect(
-      createTransactionSchema.safeParse({ ...valid, accountId: 'nope' }).success,
-    ).toBe(false);
+    expect(createTransactionSchema.safeParse({ ...valid, accountId: 'nope' }).success).toBe(false);
   });
 
   it('rejects a malformed date', () => {
-    expect(
-      createTransactionSchema.safeParse({ ...valid, date: '06/24/2026' }).success,
-    ).toBe(false);
+    expect(createTransactionSchema.safeParse({ ...valid, date: '06/24/2026' }).success).toBe(false);
   });
 
   it('rejects an empty name', () => {
-    expect(createTransactionSchema.safeParse({ ...valid, name: '' }).success).toBe(
-      false,
-    );
+    expect(createTransactionSchema.safeParse({ ...valid, name: '' }).success).toBe(false);
   });
 });
 
@@ -237,27 +215,21 @@ describe('transactionFilterSchema', () => {
 
 describe('createCategorySchema', () => {
   it('accepts a valid hex color', () => {
-    expect(
-      createCategorySchema.safeParse({ name: 'Food', color: '#1a2B3c' }).success,
-    ).toBe(true);
+    expect(createCategorySchema.safeParse({ name: 'Food', color: '#1a2B3c' }).success).toBe(true);
   });
 
   it('rejects a non-hex color', () => {
-    expect(
-      createCategorySchema.safeParse({ name: 'Food', color: 'red' }).success,
-    ).toBe(false);
+    expect(createCategorySchema.safeParse({ name: 'Food', color: 'red' }).success).toBe(false);
   });
 
   it('rejects a 3-digit shorthand hex color', () => {
-    expect(
-      createCategorySchema.safeParse({ name: 'Food', color: '#abc' }).success,
-    ).toBe(false);
+    expect(createCategorySchema.safeParse({ name: 'Food', color: '#abc' }).success).toBe(false);
   });
 
   it('rejects a non-uuid parentId', () => {
-    expect(
-      createCategorySchema.safeParse({ name: 'Food', parentId: 'parent' }).success,
-    ).toBe(false);
+    expect(createCategorySchema.safeParse({ name: 'Food', parentId: 'parent' }).success).toBe(
+      false,
+    );
   });
 });
 
@@ -283,9 +255,7 @@ describe('createBudgetSchema', () => {
   });
 
   it('rejects an unknown period', () => {
-    expect(
-      createBudgetSchema.safeParse({ ...valid, period: 'weekly' }).success,
-    ).toBe(false);
+    expect(createBudgetSchema.safeParse({ ...valid, period: 'weekly' }).success).toBe(false);
   });
 });
 

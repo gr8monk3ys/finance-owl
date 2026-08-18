@@ -24,8 +24,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -71,11 +70,7 @@ describe('AdaptiveBudgetService', () => {
       expect(result).toHaveLength(3);
       // Sorted descending by averageSpending: Entertainment (110) first,
       // then Rent and Misc tie at 100 (stable sort keeps original order).
-      expect(result.map((r) => r.categoryName)).toEqual([
-        'Entertainment',
-        'Rent',
-        'Misc',
-      ]);
+      expect(result.map((r) => r.categoryName)).toEqual(['Entertainment', 'Rent', 'Misc']);
 
       const rent = result.find((r) => r.categoryName === 'Rent')!;
       expect(rent.confidence).toBe('high');
@@ -283,9 +278,7 @@ describe('AdaptiveBudgetService', () => {
 
   describe('predictNextMonth', () => {
     it('skips categories with fewer than 2 months of history', async () => {
-      const rows = [
-        { categoryId: 'cat-1', categoryName: 'Rent', month: '2026-01', total: 100 },
-      ];
+      const rows = [{ categoryId: 'cat-1', categoryName: 'Rent', month: '2026-01', total: 100 }];
       mockDb.select.mockReturnValueOnce(mockQuery(rows));
 
       const result = await service.predictNextMonth(mockUserId);

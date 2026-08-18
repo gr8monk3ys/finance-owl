@@ -85,14 +85,10 @@ export class PlaidService {
     const env = this.configService.get<string>('PLAID_ENV', 'sandbox');
     const configuration = new Configuration({
       basePath:
-        PlaidEnvironments[env as keyof typeof PlaidEnvironments] ||
-        PlaidEnvironments.sandbox,
+        PlaidEnvironments[env as keyof typeof PlaidEnvironments] || PlaidEnvironments.sandbox,
       baseOptions: {
         headers: {
-          'PLAID-CLIENT-ID': this.configService.get<string>(
-            'PLAID_CLIENT_ID',
-            '',
-          ),
+          'PLAID-CLIENT-ID': this.configService.get<string>('PLAID_CLIENT_ID', ''),
           'PLAID-SECRET': this.configService.get<string>('PLAID_SECRET', ''),
         },
       },
@@ -149,11 +145,7 @@ export class PlaidService {
    *   5. Upsert linked accounts
    *   6. Return created records
    */
-  async exchangePublicToken(
-    userId: string,
-    publicToken: string,
-    metadata?: PlaidLinkMetadata,
-  ) {
+  async exchangePublicToken(userId: string, publicToken: string, metadata?: PlaidLinkMetadata) {
     try {
       // Step 1: Exchange for access token
       const exchangeResponse = await this.client.itemPublicTokenExchange({
@@ -181,9 +173,7 @@ export class PlaidService {
           });
           institutionName = instResponse.data.institution.name;
         } catch {
-          this.logger.warn(
-            `Failed to fetch institution name for ${institutionId}`,
-          );
+          this.logger.warn(`Failed to fetch institution name for ${institutionId}`);
         }
       }
 
@@ -294,9 +284,7 @@ export class PlaidService {
         for (const tx of data.added) {
           const accountId = accountMap.get(tx.account_id);
           if (!accountId) {
-            this.logger.warn(
-              `No local account for Plaid account ${tx.account_id}, skipping`,
-            );
+            this.logger.warn(`No local account for Plaid account ${tx.account_id}, skipping`);
             continue;
           }
           await this.upsertTransaction(item.userId, accountId, tx);
@@ -345,9 +333,7 @@ export class PlaidService {
     } catch (error) {
       // If the cursor is corrupted or Plaid asks for a reset, clear cursor and retry
       if (this.isPlaidError(error, 'TRANSACTIONS_SYNC_MUTATION_DURING_PAGINATION')) {
-        this.logger.warn(
-          `Cursor invalidated for item ${itemId}, resetting cursor and retrying`,
-        );
+        this.logger.warn(`Cursor invalidated for item ${itemId}, resetting cursor and retrying`);
         await this.db
           .update(schema.plaidItems)
           .set({ cursor: null, updatedAt: new Date() })
@@ -371,10 +357,7 @@ export class PlaidService {
    * Updates balances, names, and metadata. Does not remove accounts that
    * Plaid no longer returns (they may be temporarily unavailable).
    */
-  async syncAccounts(
-    itemId: string,
-    userId?: string,
-  ): Promise<{ synced: number }> {
+  async syncAccounts(itemId: string, userId?: string): Promise<{ synced: number }> {
     const item = await this.getItemById(itemId, userId);
     const accessToken = this.cryptoService.decrypt(item.accessToken);
 
@@ -496,9 +479,7 @@ export class PlaidService {
         break;
 
       default:
-        this.logger.log(
-          `Unhandled webhook type: ${payload.webhook_type}/${payload.webhook_code}`,
-        );
+        this.logger.log(`Unhandled webhook type: ${payload.webhook_type}/${payload.webhook_code}`);
         action = 'unhandled';
     }
 
@@ -518,12 +499,7 @@ export class PlaidService {
     const [item] = await this.db
       .select()
       .from(schema.plaidItems)
-      .where(
-        and(
-          eq(schema.plaidItems.id, itemId),
-          eq(schema.plaidItems.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.plaidItems.id, itemId), eq(schema.plaidItems.userId, userId)))
       .limit(1);
 
     if (!item) {
@@ -543,18 +519,12 @@ export class PlaidService {
     }
 
     // Delete linked accounts (cascade will handle transactions via FK)
-    await this.db
-      .delete(schema.accounts)
-      .where(eq(schema.accounts.plaidItemId, itemId));
+    await this.db.delete(schema.accounts).where(eq(schema.accounts.plaidItemId, itemId));
 
     // Delete the Plaid item row
-    await this.db
-      .delete(schema.plaidItems)
-      .where(eq(schema.plaidItems.id, itemId));
+    await this.db.delete(schema.plaidItems).where(eq(schema.plaidItems.id, itemId));
 
-    this.logger.log(
-      `Removed Plaid item ${itemId} for user ${userId}`,
-    );
+    this.logger.log(`Removed Plaid item ${itemId} for user ${userId}`);
   }
 
   // ---------------------------------------------------------------------------
@@ -565,10 +535,7 @@ export class PlaidService {
    * On-demand balance refresh. Fetches latest balances from Plaid
    * and updates the local accounts table.
    */
-  async refreshBalances(
-    itemId: string,
-    userId?: string,
-  ): Promise<{ refreshed: number }> {
+  async refreshBalances(itemId: string, userId?: string): Promise<{ refreshed: number }> {
     const item = await this.getItemById(itemId, userId);
     const accessToken = this.cryptoService.decrypt(item.accessToken);
 
@@ -628,14 +595,10 @@ export class PlaidService {
   // Private: Webhook Processing
   // ---------------------------------------------------------------------------
 
-  private async handleTransactionWebhook(
-    payload: PlaidWebhookBody,
-  ): Promise<string> {
+  private async handleTransactionWebhook(payload: PlaidWebhookBody): Promise<string> {
     const internalItem = await this.findItemByPlaidItemId(payload.item_id);
     if (!internalItem) {
-      this.logger.warn(
-        `Webhook for unknown Plaid item_id: ${payload.item_id}`,
-      );
+      this.logger.warn(`Webhook for unknown Plaid item_id: ${payload.item_id}`);
       return 'item_not_found';
     }
 
@@ -643,9 +606,7 @@ export class PlaidService {
       case 'SYNC_UPDATES_AVAILABLE':
       case 'INITIAL_UPDATE':
       case 'HISTORICAL_UPDATE':
-        this.logger.log(
-          `Triggering sync for item ${internalItem.id} (${payload.webhook_code})`,
-        );
+        this.logger.log(`Triggering sync for item ${internalItem.id} (${payload.webhook_code})`);
         // Sync inline; in production you would typically queue this via BullMQ
         await this.syncTransactions(internalItem.id);
         return `synced_${payload.webhook_code.toLowerCase()}`;
@@ -665,21 +626,16 @@ export class PlaidService {
         return 'transactions_removed';
 
       default:
-        this.logger.log(
-          `Unhandled transaction webhook code: ${payload.webhook_code}`,
-        );
+        this.logger.log(`Unhandled transaction webhook code: ${payload.webhook_code}`);
         return 'unhandled_transaction';
     }
   }
 
-  private async handleItemWebhook(
-    payload: PlaidWebhookBody,
-  ): Promise<string> {
+  private async handleItemWebhook(payload: PlaidWebhookBody): Promise<string> {
     switch (payload.webhook_code) {
       case 'ERROR': {
         const errorCode = payload.error?.error_code;
-        const status =
-          errorCode === 'ITEM_LOGIN_REQUIRED' ? 'login_required' : 'error';
+        const status = errorCode === 'ITEM_LOGIN_REQUIRED' ? 'login_required' : 'error';
 
         this.logger.warn(
           `Item error for ${payload.item_id}: ${errorCode} - ${payload.error?.error_message}`,
@@ -724,9 +680,7 @@ export class PlaidService {
         return 'pending_expiration';
 
       case 'USER_PERMISSION_REVOKED':
-        this.logger.warn(
-          `User revoked permission for item ${payload.item_id}`,
-        );
+        this.logger.warn(`User revoked permission for item ${payload.item_id}`);
         await this.db
           .update(schema.plaidItems)
           .set({
@@ -740,9 +694,7 @@ export class PlaidService {
         return 'webhook_update_acknowledged';
 
       default:
-        this.logger.log(
-          `Unhandled item webhook code: ${payload.webhook_code}`,
-        );
+        this.logger.log(`Unhandled item webhook code: ${payload.webhook_code}`);
         return 'unhandled_item';
     }
   }
@@ -848,8 +800,7 @@ export class PlaidService {
     if (existing) {
       // Preserve user/rule categorization
       const preserveCategory =
-        existing.categorizationSource === 'user' ||
-        existing.categorizationSource === 'rule';
+        existing.categorizationSource === 'user' || existing.categorizationSource === 'rule';
 
       const updateData: Record<string, unknown> = {
         amount: tx.amount,
@@ -882,9 +833,7 @@ export class PlaidService {
         date: tx.date,
         authorizedDate: tx.authorized_date ?? null,
         pending: tx.pending,
-        categorizationSource: tx.personal_finance_category?.primary
-          ? 'plaid'
-          : null,
+        categorizationSource: tx.personal_finance_category?.primary ? 'plaid' : null,
         isManual: false,
       });
     }
@@ -925,10 +874,7 @@ export class PlaidService {
     return item ?? null;
   }
 
-  private async updateItemStatusOnError(
-    itemId: string,
-    error: unknown,
-  ): Promise<void> {
+  private async updateItemStatusOnError(itemId: string, error: unknown): Promise<void> {
     if (this.isPlaidError(error, 'ITEM_LOGIN_REQUIRED')) {
       await this.db
         .update(schema.plaidItems)
@@ -965,12 +911,9 @@ export class PlaidService {
     if (error instanceof AxiosError && error.response?.data) {
       const data = error.response.data as PlaidErrorData;
       const code = data.error_code ?? 'UNKNOWN';
-      const message =
-        data.display_message || data.error_message || 'Unknown Plaid error';
+      const message = data.display_message || data.error_message || 'Unknown Plaid error';
 
-      this.logger.error(
-        `Plaid API error in ${context}: [${data.error_type}/${code}] ${message}`,
-      );
+      this.logger.error(`Plaid API error in ${context}: [${data.error_type}/${code}] ${message}`);
 
       // Map specific Plaid errors to appropriate HTTP exceptions
       switch (code) {
@@ -983,18 +926,14 @@ export class PlaidService {
         case 'INVALID_RESULT':
           return new BadRequestException(message);
         case 'RATE_LIMIT_EXCEEDED':
-          return new BadRequestException(
-            'Too many requests. Please try again in a few minutes.',
-          );
+          return new BadRequestException('Too many requests. Please try again in a few minutes.');
         case 'INSTITUTION_NOT_RESPONDING':
         case 'INSTITUTION_DOWN':
           return new BadRequestException(
             'Your bank is temporarily unavailable. Please try again later.',
           );
         default:
-          return new InternalServerErrorException(
-            `Bank connection error: ${message}`,
-          );
+          return new InternalServerErrorException(`Bank connection error: ${message}`);
       }
     }
 

@@ -43,15 +43,7 @@ class CreateManualAccountDto {
     example: 'checking',
   })
   @IsString()
-  @IsIn([
-    'checking',
-    'savings',
-    'credit_card',
-    'investment',
-    'loan',
-    'mortgage',
-    'other',
-  ])
+  @IsIn(['checking', 'savings', 'credit_card', 'investment', 'loan', 'mortgage', 'other'])
   type!: string;
 
   @ApiPropertyOptional({ description: 'Financial institution name', example: 'Chase' })
@@ -60,7 +52,7 @@ class CreateManualAccountDto {
   @MaxLength(255)
   institutionName?: string;
 
-  @ApiPropertyOptional({ description: 'Initial account balance', example: 5000.00 })
+  @ApiPropertyOptional({ description: 'Initial account balance', example: 5000.0 })
   @IsNumber()
   @IsOptional()
   balance?: number;
@@ -89,7 +81,7 @@ class UpdateAccountDto {
   @IsOptional()
   institutionName?: string;
 
-  @ApiPropertyOptional({ description: 'Updated current balance', example: 4250.00 })
+  @ApiPropertyOptional({ description: 'Updated current balance', example: 4250.0 })
   @IsNumber()
   @IsOptional()
   currentBalance?: number;
@@ -128,10 +120,7 @@ export class AccountsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Account not found' })
   @Get(':id')
-  async findOne(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  async findOne(@CurrentUser('id') userId: string, @Param('id') id: string) {
     return this.accountsService.findById(userId, id);
   }
 
@@ -140,10 +129,7 @@ export class AccountsController {
   @ApiResponse({ status: 400, description: 'Validation error' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Post('manual')
-  async createManual(
-    @CurrentUser('id') userId: string,
-    @Body() dto: CreateManualAccountDto,
-  ) {
+  async createManual(@CurrentUser('id') userId: string, @Body() dto: CreateManualAccountDto) {
     return this.accountsService.createManual(userId, dto);
   }
 
@@ -168,10 +154,7 @@ export class AccountsController {
   @ApiResponse({ status: 404, description: 'Account not found' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  async remove(@CurrentUser('id') userId: string, @Param('id') id: string) {
     await this.accountsService.remove(userId, id);
   }
 }

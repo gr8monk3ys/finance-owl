@@ -43,10 +43,7 @@ export class SecurityHeadersMiddleware implements NestMiddleware {
 
     // -- HTTP Strict Transport Security --
     // max-age = 2 years (63072000 s), include subdomains, preload-ready
-    res.setHeader(
-      'Strict-Transport-Security',
-      'max-age=63072000; includeSubDomains; preload',
-    );
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
 
     // -- Click-jacking protection --
     res.setHeader('X-Frame-Options', 'DENY');
@@ -82,10 +79,7 @@ export class SecurityHeadersMiddleware implements NestMiddleware {
     res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
 
     // -- Prevent caching of sensitive API responses --
-    res.setHeader(
-      'Cache-Control',
-      'no-store, no-cache, must-revalidate, proxy-revalidate',
-    );
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
 

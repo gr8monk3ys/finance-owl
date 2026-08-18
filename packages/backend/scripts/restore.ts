@@ -144,8 +144,7 @@ async function restore(): Promise<void> {
   const isGzipped = ext === '.sql.gz';
 
   const databaseUrl =
-    process.env.DATABASE_URL ||
-    'postgresql://postgres:postgres@localhost:5432/finance_owl';
+    process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/finance_owl';
 
   const dbConfig = parseDatabaseUrl(databaseUrl);
 
@@ -195,15 +194,19 @@ async function restore(): Promise<void> {
   // Step 1: Drop and recreate public schema
   console.log('  [1/3] Dropping and recreating schema...');
   try {
-    execFileSync('psql', [
-      ...psqlBaseArgs,
-      '--command',
-      'DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO public;',
-    ], {
-      env,
-      stdio: ['pipe', 'pipe', 'pipe'],
-      timeout: 30000,
-    });
+    execFileSync(
+      'psql',
+      [
+        ...psqlBaseArgs,
+        '--command',
+        'DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO public;',
+      ],
+      {
+        env,
+        stdio: ['pipe', 'pipe', 'pipe'],
+        timeout: 30000,
+      },
+    );
     console.log('        Schema recreated.');
   } catch (err: any) {
     console.error('ERROR: Failed to drop/recreate schema.');
@@ -224,10 +227,7 @@ async function restore(): Promise<void> {
       sqlData = fs.readFileSync(backupFile);
     }
 
-    execFileSync('psql', [
-      ...psqlBaseArgs,
-      '--set', 'ON_ERROR_STOP=off',
-    ], {
+    execFileSync('psql', [...psqlBaseArgs, '--set', 'ON_ERROR_STOP=off'], {
       env,
       input: sqlData,
       stdio: ['pipe', 'pipe', 'pipe'],

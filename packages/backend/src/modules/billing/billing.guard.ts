@@ -34,10 +34,7 @@ export const REQUIRED_FEATURE_KEY = 'billing:requiredFeature';
  * Can be applied at the class or method level.
  */
 export function RequirePlan(plan: PlanTier) {
-  return applyDecorators(
-    SetMetadata(REQUIRED_PLAN_KEY, plan),
-    UseGuards(BillingPlanGuard),
-  );
+  return applyDecorators(SetMetadata(REQUIRED_PLAN_KEY, plan), UseGuards(BillingPlanGuard));
 }
 
 /**
@@ -67,10 +64,10 @@ export class BillingPlanGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredPlan = this.reflector.getAllAndOverride<PlanTier>(
-      REQUIRED_PLAN_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const requiredPlan = this.reflector.getAllAndOverride<PlanTier>(REQUIRED_PLAN_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     if (!requiredPlan) {
       return true;
@@ -122,10 +119,10 @@ export class BillingFeatureGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredFeature = this.reflector.getAllAndOverride<string>(
-      REQUIRED_FEATURE_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const requiredFeature = this.reflector.getAllAndOverride<string>(REQUIRED_FEATURE_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     if (!requiredFeature) {
       return true;

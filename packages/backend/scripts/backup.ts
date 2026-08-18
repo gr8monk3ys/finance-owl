@@ -205,8 +205,7 @@ async function backup(): Promise<void> {
 
   const { outputDir } = parseArgs();
   const databaseUrl =
-    process.env.DATABASE_URL ||
-    'postgresql://postgres:postgres@localhost:5432/finance_owl';
+    process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/finance_owl';
 
   // Ensure output directory exists
   if (!fs.existsSync(outputDir)) {

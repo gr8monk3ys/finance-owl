@@ -82,10 +82,10 @@ export class RateLimitGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const opts = this.reflector.getAllAndOverride<RateLimitOptions | undefined>(
-      RATE_LIMIT_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const opts = this.reflector.getAllAndOverride<RateLimitOptions | undefined>(RATE_LIMIT_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     // No @RateLimit decorator -> allow
     if (!opts) {
@@ -113,16 +113,8 @@ export class RateLimitGuard implements CanActivate {
 
       // Expose remaining tokens in response headers (non-standard but useful)
       response.setHeader('X-RateLimit-Limit', String(opts.maxRequests));
-      response.setHeader(
-        'X-RateLimit-Remaining',
-        String(Math.floor(bucket.tokens)),
-      );
-      response.setHeader(
-        'X-RateLimit-Reset',
-        String(
-          Math.ceil(now / 1000) + opts.windowSeconds,
-        ),
-      );
+      response.setHeader('X-RateLimit-Remaining', String(Math.floor(bucket.tokens)));
+      response.setHeader('X-RateLimit-Reset', String(Math.ceil(now / 1000) + opts.windowSeconds));
       return true;
     }
 
@@ -137,10 +129,7 @@ export class RateLimitGuard implements CanActivate {
     response.setHeader('Retry-After', String(retryAfter));
     response.setHeader('X-RateLimit-Limit', String(opts.maxRequests));
     response.setHeader('X-RateLimit-Remaining', '0');
-    response.setHeader(
-      'X-RateLimit-Reset',
-      String(Math.ceil(now / 1000) + retryAfter),
-    );
+    response.setHeader('X-RateLimit-Reset', String(Math.ceil(now / 1000) + retryAfter));
 
     this.logger.warn(
       `Rate limit exceeded: ip=${ip} handler=${handlerId} limit=${opts.maxRequests}/${opts.windowSeconds}s`,

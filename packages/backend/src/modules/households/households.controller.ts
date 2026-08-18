@@ -63,10 +63,7 @@ export class HouseholdsController {
   }
 
   @Post(':id/invite-code')
-  generateInviteCode(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  generateInviteCode(@CurrentUser('id') userId: string, @Param('id') id: string) {
     return this.householdsService.generateInviteCode(userId, id);
   }
 
@@ -82,12 +79,7 @@ export class HouseholdsController {
     @Param('memberId') memberId: string,
     @Body() dto: UpdateMemberRoleDto,
   ) {
-    return this.householdsService.updateMemberRole(
-      userId,
-      id,
-      memberId,
-      dto.role,
-    );
+    return this.householdsService.updateMemberRole(userId, id, memberId, dto.role);
   }
 
   @Delete(':id/members/:memberId')
@@ -120,19 +112,13 @@ export class HouseholdsController {
   }
 
   @Get(':id/accounts')
-  getSharedAccounts(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  getSharedAccounts(@CurrentUser('id') userId: string, @Param('id') id: string) {
     return this.householdsService.getSharedAccounts(userId, id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteHousehold(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  async deleteHousehold(@CurrentUser('id') userId: string, @Param('id') id: string) {
     await this.householdsService.delete(userId, id);
   }
 

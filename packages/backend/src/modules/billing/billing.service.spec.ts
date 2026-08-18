@@ -1,8 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { BillingService } from './billing.service';
 import {
   PLAN_FEATURES,
@@ -60,8 +57,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -284,9 +280,7 @@ describe('BillingService', () => {
   // ---------------------------------------------------------------------------
   describe('getPlans', () => {
     it('should return existing plans with parsed features', async () => {
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([freePlan, proPlan]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([freePlan, proPlan]));
 
       const result = await service.getPlans();
 
@@ -301,9 +295,7 @@ describe('BillingService', () => {
         .mockReturnValueOnce(mockQuery(undefined))
         .mockReturnValueOnce(mockQuery(undefined))
         .mockReturnValueOnce(mockQuery(undefined));
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([freePlan, proPlan, premiumPlan]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([freePlan, proPlan, premiumPlan]));
 
       const result = await service.getPlans();
 
@@ -399,11 +391,7 @@ describe('BillingService', () => {
         mockQuery([{ userId: mockUserId, stripeCustomerId: 'cus_existing' }]),
       );
 
-      const result = await service.createCustomer(
-        mockUserId,
-        'test@example.com',
-        'Test User',
-      );
+      const result = await service.createCustomer(mockUserId, 'test@example.com', 'Test User');
 
       expect(result).toBe('cus_existing');
     });
@@ -415,11 +403,7 @@ describe('BillingService', () => {
       stripe.customers.create.mockResolvedValue({ id: 'cus_new_123' });
       mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
 
-      const result = await service.createCustomer(
-        mockUserId,
-        'test@example.com',
-        'Test User',
-      );
+      const result = await service.createCustomer(mockUserId, 'test@example.com', 'Test User');
 
       expect(result).toBe('cus_new_123');
       expect(stripe.customers.create).toHaveBeenCalledWith({
@@ -459,9 +443,7 @@ describe('BillingService', () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.createPortalSession(mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.createPortalSession(mockUserId)).rejects.toThrow(BadRequestException);
     });
 
     it('should create portal session for existing customer', async () => {
@@ -487,9 +469,7 @@ describe('BillingService', () => {
     it('should throw when no subscription exists', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.cancelSubscription(mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.cancelSubscription(mockUserId)).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when subscription is already canceled', async () => {
@@ -501,9 +481,7 @@ describe('BillingService', () => {
       };
       mockDb.select.mockReturnValueOnce(mockQuery([subscription]));
 
-      await expect(
-        service.cancelSubscription(mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.cancelSubscription(mockUserId)).rejects.toThrow(BadRequestException);
     });
 
     it('should cancel at period end by default', async () => {
@@ -567,9 +545,7 @@ describe('BillingService', () => {
     it('should throw when no subscription exists', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.resumeSubscription(mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.resumeSubscription(mockUserId)).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when subscription is not scheduled for cancellation', async () => {
@@ -582,9 +558,7 @@ describe('BillingService', () => {
       };
       mockDb.select.mockReturnValueOnce(mockQuery([subscription]));
 
-      await expect(
-        service.resumeSubscription(mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.resumeSubscription(mockUserId)).rejects.toThrow(BadRequestException);
     });
 
     it('should throw when subscription is fully canceled', async () => {
@@ -597,9 +571,7 @@ describe('BillingService', () => {
       };
       mockDb.select.mockReturnValueOnce(mockQuery([subscription]));
 
-      await expect(
-        service.resumeSubscription(mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.resumeSubscription(mockUserId)).rejects.toThrow(BadRequestException);
     });
 
     it('should resume a subscription scheduled for cancellation', async () => {
@@ -811,9 +783,9 @@ describe('BillingService', () => {
         throw new Error('Invalid signature');
       });
 
-      await expect(
-        service.handleWebhook(Buffer.from('{}'), 'bad-sig'),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.handleWebhook(Buffer.from('{}'), 'bad-sig')).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should handle checkout.session.completed event', async () => {
@@ -838,9 +810,7 @@ describe('BillingService', () => {
       });
 
       // getPlans
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([freePlan, proPlan, premiumPlan]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([freePlan, proPlan, premiumPlan]));
       // Check existing billing customer
       mockDb.select.mockReturnValueOnce(mockQuery([]));
       // Insert billing customer
@@ -850,10 +820,7 @@ describe('BillingService', () => {
       // Insert new subscription
       mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
 
-      const result = await service.handleWebhook(
-        Buffer.from('{}'),
-        'valid-sig',
-      );
+      const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
     });
@@ -883,10 +850,7 @@ describe('BillingService', () => {
       mockDb.select.mockReturnValueOnce(mockQuery([existingSub]));
       mockDb.update.mockReturnValueOnce(mockQuery(undefined));
 
-      const result = await service.handleWebhook(
-        Buffer.from('{}'),
-        'valid-sig',
-      );
+      const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
     });
@@ -910,15 +874,10 @@ describe('BillingService', () => {
       };
 
       mockDb.select.mockReturnValueOnce(mockQuery([existingSub]));
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([freePlan, proPlan]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([freePlan, proPlan]));
       mockDb.update.mockReturnValueOnce(mockQuery(undefined));
 
-      const result = await service.handleWebhook(
-        Buffer.from('{}'),
-        'valid-sig',
-      );
+      const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
     });
@@ -945,10 +904,7 @@ describe('BillingService', () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
       mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
 
-      const result = await service.handleWebhook(
-        Buffer.from('{}'),
-        'valid-sig',
-      );
+      const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
     });
@@ -979,10 +935,7 @@ describe('BillingService', () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
       mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
 
-      const result = await service.handleWebhook(
-        Buffer.from('{}'),
-        'valid-sig',
-      );
+      const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
     });
@@ -994,10 +947,7 @@ describe('BillingService', () => {
         data: { object: {} },
       });
 
-      const result = await service.handleWebhook(
-        Buffer.from('{}'),
-        'valid-sig',
-      );
+      const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
     });

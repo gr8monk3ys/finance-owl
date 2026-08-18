@@ -7,11 +7,7 @@ import { NotificationSchedulerService } from './notification-scheduler.service';
 
 @Module({
   imports: [EmailModule],
-  providers: [
-    NotificationsService,
-    NotificationTriggerService,
-    NotificationSchedulerService,
-  ],
+  providers: [NotificationsService, NotificationTriggerService, NotificationSchedulerService],
   controllers: [NotificationsController],
   exports: [NotificationsService, NotificationTriggerService],
 })

@@ -17,10 +17,7 @@ describe('DetectionService', () => {
   });
 
   // ─── Helper to set up mock DB chains ────────────────────────────────
-  function setupDetectMocks(
-    transactions: any[],
-    existingRecords: any[] = [],
-  ) {
+  function setupDetectMocks(transactions: any[], existingRecords: any[] = []) {
     const selectChain = {
       select: vi.fn().mockReturnThis(),
       from: vi.fn().mockReturnThis(),
@@ -342,9 +339,12 @@ describe('DetectionService', () => {
     it('should handle transactions with null merchantName', async () => {
       const today = new Date();
       const fmt = (d: Date) => d.toISOString().split('T')[0];
-      const d1 = new Date(today); d1.setDate(d1.getDate() - 5);
-      const d2 = new Date(today); d2.setDate(d2.getDate() - 35);
-      const d3 = new Date(today); d3.setDate(d3.getDate() - 65);
+      const d1 = new Date(today);
+      d1.setDate(d1.getDate() - 5);
+      const d2 = new Date(today);
+      d2.setDate(d2.getDate() - 35);
+      const d3 = new Date(today);
+      d3.setDate(d3.getDate() - 65);
       const transactions = [
         {
           name: 'Recurring Service',
@@ -561,14 +561,7 @@ describe('DetectionService', () => {
         amount: 9.99,
       }));
       const intervals = Array(6).fill(30);
-      const result = service.calculateConfidence(
-        sorted,
-        intervals,
-        'monthly',
-        9.99,
-        0,
-        'Spotify',
-      );
+      const result = service.calculateConfidence(sorted, intervals, 'monthly', 9.99, 0, 'Spotify');
       // 35 (exact amount) + 35 (exact interval) + 17 (7 txns, 6+ bracket) + 10 (known merchant) = 97
       expect(result.score).toBe(97);
       expect(result.confidence).toBe('high');
@@ -581,14 +574,7 @@ describe('DetectionService', () => {
         { date: '2026-01-15', amount: 9.99 },
       ];
       const intervals = [30, 31];
-      const result = service.calculateConfidence(
-        sorted,
-        intervals,
-        'monthly',
-        9.99,
-        0,
-        'Spotify',
-      );
+      const result = service.calculateConfidence(sorted, intervals, 'monthly', 9.99, 0, 'Spotify');
       // 35 + some interval score + 9 + 10
       expect(result.score).toBeGreaterThanOrEqual(50);
     });
@@ -657,9 +643,7 @@ describe('DetectionService', () => {
       const recentDate = new Date(now);
       recentDate.setDate(recentDate.getDate() - 10);
 
-      const sorted = [
-        { date: recentDate.toISOString().split('T')[0], amount: 9.99 },
-      ];
+      const sorted = [{ date: recentDate.toISOString().split('T')[0], amount: 9.99 }];
 
       expect(service.detectTrial(sorted)).toBe(true);
     });
@@ -694,9 +678,7 @@ describe('DetectionService', () => {
       const oldDate = new Date(now);
       oldDate.setDate(oldDate.getDate() - 60);
 
-      const sorted = [
-        { date: oldDate.toISOString().split('T')[0], amount: 9.99 },
-      ];
+      const sorted = [{ date: oldDate.toISOString().split('T')[0], amount: 9.99 }];
 
       expect(service.detectTrial(sorted)).toBe(false);
     });

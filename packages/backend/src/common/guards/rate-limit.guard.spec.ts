@@ -30,11 +30,7 @@ function createMockCacheService() {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function createMockContext(overrides?: {
-  ip?: string;
-  className?: string;
-  handlerName?: string;
-}): {
+function createMockContext(overrides?: { ip?: string; className?: string; handlerName?: string }): {
   context: ExecutionContext;
   responseHeaders: Record<string, string>;
 } {
@@ -124,9 +120,7 @@ describe('RateLimitGuard', () => {
       expect.unreachable('should have thrown');
     } catch (err) {
       expect(err).toBeInstanceOf(HttpException);
-      expect((err as HttpException).getStatus()).toBe(
-        HttpStatus.TOO_MANY_REQUESTS,
-      );
+      expect((err as HttpException).getStatus()).toBe(HttpStatus.TOO_MANY_REQUESTS);
     }
   });
 
@@ -212,9 +206,7 @@ describe('RateLimitGuard', () => {
   // ---------- presets ----------
 
   it('AUTH preset should allow 5 requests and block the 6th', async () => {
-    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(
-      RateLimitPresets.AUTH,
-    );
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(RateLimitPresets.AUTH);
 
     const { context } = createMockContext();
 
@@ -225,9 +217,7 @@ describe('RateLimitGuard', () => {
   });
 
   it('SENSITIVE preset should allow 3 requests and block the 4th', async () => {
-    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(
-      RateLimitPresets.SENSITIVE,
-    );
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(RateLimitPresets.SENSITIVE);
 
     const { context } = createMockContext();
 
@@ -238,9 +228,7 @@ describe('RateLimitGuard', () => {
   });
 
   it('API preset should allow 100 requests', async () => {
-    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(
-      RateLimitPresets.API,
-    );
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(RateLimitPresets.API);
 
     const { context } = createMockContext();
 

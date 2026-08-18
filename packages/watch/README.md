@@ -142,19 +142,23 @@ Watch App                          iPhone App
 The app provides four complication styles for watch faces:
 
 ### Circular Complication
+
 - **Shows:** Safe-to-spend amount with a progress ring
 - **Best for:** Infograph, Modular Compact
 - **Color coding:** Green (healthy), Orange (warning), Red (critical)
 
 ### Rectangular Complication
+
 - **Shows:** Mini spending bar chart for the last 7 days with safe-to-spend amount
 - **Best for:** Infograph Modular (large), Modular (large)
 
 ### Inline Complication
+
 - **Shows:** Text reading "Safe: $X" with a dollar sign icon
 - **Best for:** Utility, Simple, Modular (small)
 
 ### Corner Complication (Gauge)
+
 - **Shows:** Budget usage as a circular gauge
 - **Best for:** Infograph corners
 
@@ -179,33 +183,37 @@ The app provides four complication styles for watch faces:
 
 When the iPhone is not reachable, the watch can call these endpoints directly:
 
-| Endpoint | Description |
-|---|---|
-| `GET /v1/analytics/safe-to-spend` | Current safe-to-spend amount |
-| `GET /v1/accounts` | All linked account balances |
-| `GET /v1/budgets` | Budget statuses and limits |
-| `GET /v1/bills/upcoming` | Bills due in the next 7 days |
-| `GET /v1/analytics/net-worth` | Net worth summary |
-| `GET /v1/analytics/spending-history?days=7` | Daily spending for chart |
+| Endpoint                                    | Description                  |
+| ------------------------------------------- | ---------------------------- |
+| `GET /v1/analytics/safe-to-spend`           | Current safe-to-spend amount |
+| `GET /v1/accounts`                          | All linked account balances  |
+| `GET /v1/budgets`                           | Budget statuses and limits   |
+| `GET /v1/bills/upcoming`                    | Bills due in the next 7 days |
+| `GET /v1/analytics/net-worth`               | Net worth summary            |
+| `GET /v1/analytics/spending-history?days=7` | Daily spending for chart     |
 
 ## Troubleshooting
 
 ### Watch app shows "Loading..."
+
 - Ensure the iPhone app is installed and running
 - Check that both devices are paired and nearby
 - Try opening the iPhone app to trigger a data sync
 
 ### "Please sign in on your iPhone"
+
 - The auth token has not been synced or has expired
 - Open the Finance Owl app on your iPhone and sign in
 - The token will automatically sync to the watch
 
 ### Complications not updating
+
 - Check that background app refresh is enabled on the watch
 - Go to **Settings > General > Background App Refresh** on the watch
 - Ensure Finance Owl is listed and enabled
 
 ### Build errors
+
 - Ensure you are targeting watchOS 10.0+
 - Clean the build folder: **Product > Clean Build Folder** (Cmd + Shift + K)
 - Delete derived data if issues persist

@@ -59,10 +59,7 @@ function RootLayout() {
   // - The device supports biometrics and user has enrolled
   const inAuthGroup = segments[0] === '(auth)';
   const showBiometricLock =
-    isAuthenticated &&
-    !inAuthGroup &&
-    isBiometricAvailable &&
-    (isLocked || requiresAuth);
+    isAuthenticated && !inAuthGroup && isBiometricAvailable && (isLocked || requiresAuth);
 
   if (isLoading) {
     return (
@@ -86,11 +83,7 @@ function RootLayout() {
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
       </Stack>
-      {showBiometricLock && (
-        <BiometricLockScreen
-          onAuthenticate={handleBiometricAuth}
-        />
-      )}
+      {showBiometricLock && <BiometricLockScreen onAuthenticate={handleBiometricAuth} />}
     </>
   );
 }

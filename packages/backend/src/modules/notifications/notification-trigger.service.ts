@@ -1,9 +1,6 @@
 import { Injectable, Inject, Logger, Optional } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import {
-  DATABASE_TOKEN,
-  type DrizzleDB,
-} from '../../database/database.module';
+import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 import {
   NotificationsService,
@@ -45,9 +42,7 @@ export class NotificationTriggerService {
     const prefs = await this.getPreferences(userId);
 
     if (prefs && !prefs.emailBillReminders) {
-      this.logger.debug(
-        `Bill reminder suppressed for user=${userId} (preference off)`,
-      );
+      this.logger.debug(`Bill reminder suppressed for user=${userId} (preference off)`);
       return null;
     }
 
@@ -106,9 +101,7 @@ export class NotificationTriggerService {
     const prefs = await this.getPreferences(userId);
 
     if (prefs && !prefs.emailBudgetAlerts) {
-      this.logger.debug(
-        `Budget alert suppressed for user=${userId} (preference off)`,
-      );
+      this.logger.debug(`Budget alert suppressed for user=${userId} (preference off)`);
       return null;
     }
 
@@ -173,9 +166,7 @@ export class NotificationTriggerService {
     const prefs = await this.getPreferences(userId);
 
     if (prefs && !prefs.emailAnomalies) {
-      this.logger.debug(
-        `Anomaly alert suppressed for user=${userId} (preference off)`,
-      );
+      this.logger.debug(`Anomaly alert suppressed for user=${userId} (preference off)`);
       return null;
     }
 
@@ -201,9 +192,7 @@ export class NotificationTriggerService {
       message += ` Transaction: ${transaction.name} for ${formattedAmount}.`;
     }
 
-    const actionUrl = transaction
-      ? `/transactions/${transaction.id}`
-      : '/anomalies';
+    const actionUrl = transaction ? `/transactions/${transaction.id}` : '/anomalies';
 
     const notification = await this.notificationsService.createNotification(
       userId,
@@ -339,9 +328,7 @@ export class NotificationTriggerService {
 
       await sender(userEmail);
     } catch (error) {
-      this.logger.error(
-        `Failed to send email for user=${userId}: ${error}`,
-      );
+      this.logger.error(`Failed to send email for user=${userId}: ${error}`);
     }
   }
 

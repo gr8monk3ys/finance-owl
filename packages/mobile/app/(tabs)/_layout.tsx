@@ -65,77 +65,69 @@ function MoreIcon({ color, size }: TabIconProps) {
 export default function TabsLayout() {
   return (
     <View style={{ flex: 1 }}>
-    <OfflineBanner />
-    <Tabs
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.surface[800],
-          borderBottomWidth: 1,
-          borderBottomColor: colors.surface[700] + '80',
-          elevation: 0,
-          shadowOpacity: 0,
-        },
-        headerTitleStyle: {
-          fontSize: fontSize.lg,
-          fontWeight: fontWeight.semibold,
-          color: colors.white,
-        },
-        headerTintColor: colors.white,
-        tabBarStyle: {
-          backgroundColor: colors.surface[800],
-          borderTopWidth: 1,
-          borderTopColor: colors.surface[700] + '80',
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-          paddingTop: 8,
-          elevation: 0,
-        },
-        tabBarActiveTintColor: colors.primary[400],
-        tabBarInactiveTintColor: colors.surface[500],
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: fontWeight.medium,
-          marginTop: 2,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Dashboard',
-          tabBarIcon: ({ color, size }) => (
-            <DashboardIcon color={color} size={size} />
-          ),
+      <OfflineBanner />
+      <Tabs
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: colors.surface[800],
+            borderBottomWidth: 1,
+            borderBottomColor: colors.surface[700] + '80',
+            elevation: 0,
+            shadowOpacity: 0,
+          },
+          headerTitleStyle: {
+            fontSize: fontSize.lg,
+            fontWeight: fontWeight.semibold,
+            color: colors.white,
+          },
+          headerTintColor: colors.white,
+          tabBarStyle: {
+            backgroundColor: colors.surface[800],
+            borderTopWidth: 1,
+            borderTopColor: colors.surface[700] + '80',
+            height: Platform.OS === 'ios' ? 88 : 64,
+            paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+            paddingTop: 8,
+            elevation: 0,
+          },
+          tabBarActiveTintColor: colors.primary[400],
+          tabBarInactiveTintColor: colors.surface[500],
+          tabBarLabelStyle: {
+            fontSize: 11,
+            fontWeight: fontWeight.medium,
+            marginTop: 2,
+          },
         }}
-      />
-      <Tabs.Screen
-        name="transactions"
-        options={{
-          title: 'Transactions',
-          tabBarIcon: ({ color, size }) => (
-            <TransactionsIcon color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="budgets"
-        options={{
-          title: 'Budgets',
-          tabBarIcon: ({ color, size }) => (
-            <BudgetsIcon color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="more"
-        options={{
-          title: 'More',
-          tabBarIcon: ({ color, size }) => (
-            <MoreIcon color={color} size={size} />
-          ),
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Dashboard',
+            tabBarIcon: ({ color, size }) => <DashboardIcon color={color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
+          name="transactions"
+          options={{
+            title: 'Transactions',
+            tabBarIcon: ({ color, size }) => <TransactionsIcon color={color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
+          name="budgets"
+          options={{
+            title: 'Budgets',
+            tabBarIcon: ({ color, size }) => <BudgetsIcon color={color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
+          name="more"
+          options={{
+            title: 'More',
+            tabBarIcon: ({ color, size }) => <MoreIcon color={color} size={size} />,
+          }}
+        />
+      </Tabs>
     </View>
   );
 }

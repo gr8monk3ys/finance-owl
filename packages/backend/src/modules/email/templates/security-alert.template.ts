@@ -30,16 +30,7 @@ export interface SecurityAlertData {
 }
 
 export function securityAlertHtml(data: SecurityAlertData): string {
-  const {
-    eventTitle,
-    details,
-    device,
-    ipAddress,
-    location,
-    timestamp,
-    appUrl,
-    settingsUrl,
-  } = data;
+  const { eventTitle, details, device, ipAddress, location, timestamp, appUrl, settingsUrl } = data;
 
   const formattedTime = formatTimestamp(timestamp);
 
@@ -104,16 +95,7 @@ export function securityAlertHtml(data: SecurityAlertData): string {
 }
 
 export function securityAlertText(data: SecurityAlertData): string {
-  const {
-    eventTitle,
-    details,
-    device,
-    ipAddress,
-    location,
-    timestamp,
-    appUrl,
-    settingsUrl,
-  } = data;
+  const { eventTitle, details, device, ipAddress, location, timestamp, appUrl, settingsUrl } = data;
 
   const formattedTime = formatTimestamp(timestamp);
   const lines: string[] = [

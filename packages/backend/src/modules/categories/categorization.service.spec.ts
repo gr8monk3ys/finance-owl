@@ -1,8 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  CategorizationEngineService,
-  type CategoryResult,
-} from './categorization.service';
+import { CategorizationEngineService, type CategoryResult } from './categorization.service';
 
 describe('CategorizationEngineService', () => {
   let service: CategorizationEngineService;
@@ -82,9 +79,7 @@ describe('CategorizationEngineService', () => {
     });
 
     it('should match "STARBUCKS STORE 12345 SEATTLE WA"', () => {
-      const result = service.categorizeTransaction(
-        'STARBUCKS STORE 12345 SEATTLE WA',
-      );
+      const result = service.categorizeTransaction('STARBUCKS STORE 12345 SEATTLE WA');
       expect(result.category).toBe('Food & Drink');
       expect(result.subcategory).toBe('Coffee Shops');
     });
@@ -126,54 +121,42 @@ describe('CategorizationEngineService', () => {
 
   describe('keyword fallback', () => {
     it('should categorize a gas station via keyword', () => {
-      const result = service.categorizeTransaction(
-        'UNKNOWN GAS STATION 456',
-      );
+      const result = service.categorizeTransaction('UNKNOWN GAS STATION 456');
       expect(result.category).toBe('Transportation');
       expect(result.subcategory).toBe('Gas & Fuel');
       expect(result.source).toBe('keyword');
     });
 
     it('should categorize a restaurant via keyword', () => {
-      const result = service.categorizeTransaction(
-        'JOES BISTRO AND GRILL',
-      );
+      const result = service.categorizeTransaction('JOES BISTRO AND GRILL');
       expect(result.category).toBe('Food & Drink');
       expect(result.subcategory).toBe('Restaurants');
       expect(result.source).toBe('keyword');
     });
 
     it('should categorize a gym via keyword', () => {
-      const result = service.categorizeTransaction(
-        'DOWNTOWN FITNESS CENTER',
-      );
+      const result = service.categorizeTransaction('DOWNTOWN FITNESS CENTER');
       expect(result.category).toBe('Health & Medical');
       expect(result.subcategory).toBe('Gym & Fitness');
       expect(result.source).toBe('keyword');
     });
 
     it('should categorize a pharmacy via keyword', () => {
-      const result = service.categorizeTransaction(
-        'NEIGHBORHOOD PHARMACY RX',
-      );
+      const result = service.categorizeTransaction('NEIGHBORHOOD PHARMACY RX');
       expect(result.category).toBe('Health & Medical');
       expect(result.subcategory).toBe('Pharmacy');
       expect(result.source).toBe('keyword');
     });
 
     it('should categorize an airline via keyword', () => {
-      const result = service.categorizeTransaction(
-        'RANDOM AIRWAYS TICKET',
-      );
+      const result = service.categorizeTransaction('RANDOM AIRWAYS TICKET');
       expect(result.category).toBe('Travel');
       expect(result.subcategory).toBe('Flights');
       expect(result.source).toBe('keyword');
     });
 
     it('should categorize a hotel via keyword', () => {
-      const result = service.categorizeTransaction(
-        'BEACH RESORT AND SPA',
-      );
+      const result = service.categorizeTransaction('BEACH RESORT AND SPA');
       expect(result.category).toBe('Travel');
       expect(result.subcategory).toBe('Hotels');
       expect(result.source).toBe('keyword');
@@ -184,11 +167,7 @@ describe('CategorizationEngineService', () => {
 
   describe('MCC code matching', () => {
     it('should categorize via MCC 5812 (restaurants)', () => {
-      const result = service.categorizeTransaction(
-        'RANDOM MERCHANT XYZ123',
-        null,
-        '5812',
-      );
+      const result = service.categorizeTransaction('RANDOM MERCHANT XYZ123', null, '5812');
       expect(result.category).toBe('Food & Drink');
       expect(result.subcategory).toBe('Restaurants');
       expect(result.source).toBe('mcc');
@@ -196,33 +175,21 @@ describe('CategorizationEngineService', () => {
     });
 
     it('should categorize via MCC 5541 (gas stations)', () => {
-      const result = service.categorizeTransaction(
-        'UNKNOWN PLACE 99',
-        null,
-        '5541',
-      );
+      const result = service.categorizeTransaction('UNKNOWN PLACE 99', null, '5541');
       expect(result.category).toBe('Transportation');
       expect(result.subcategory).toBe('Gas & Fuel');
       expect(result.source).toBe('mcc');
     });
 
     it('should categorize via MCC 5411 (grocery stores)', () => {
-      const result = service.categorizeTransaction(
-        'SOME PLACE 77',
-        null,
-        '5411',
-      );
+      const result = service.categorizeTransaction('SOME PLACE 77', null, '5411');
       expect(result.category).toBe('Food & Drink');
       expect(result.subcategory).toBe('Groceries');
       expect(result.source).toBe('mcc');
     });
 
     it('should categorize via MCC 4511 (airlines)', () => {
-      const result = service.categorizeTransaction(
-        'TICKET PURCHASE ZZZ',
-        null,
-        '4511',
-      );
+      const result = service.categorizeTransaction('TICKET PURCHASE ZZZ', null, '4511');
       expect(result.category).toBe('Travel');
       expect(result.subcategory).toBe('Flights');
       expect(result.source).toBe('mcc');
@@ -243,19 +210,9 @@ describe('CategorizationEngineService', () => {
     const userId = 'user-123';
 
     it('should apply user override over merchant database match', () => {
-      service.setUserCategoryOverride(
-        userId,
-        'costco',
-        'Shopping',
-        'Home Goods',
-      );
+      service.setUserCategoryOverride(userId, 'costco', 'Shopping', 'Home Goods');
 
-      const result = service.categorizeTransaction(
-        'COSTCO WHOLESALE',
-        'Costco',
-        null,
-        userId,
-      );
+      const result = service.categorizeTransaction('COSTCO WHOLESALE', 'Costco', null, userId);
 
       expect(result.category).toBe('Shopping');
       expect(result.subcategory).toBe('Home Goods');
@@ -264,12 +221,7 @@ describe('CategorizationEngineService', () => {
     });
 
     it('should return overrides for a user', () => {
-      service.setUserCategoryOverride(
-        userId,
-        'starbucks',
-        'Food & Drink',
-        'Fast Food',
-      );
+      service.setUserCategoryOverride(userId, 'starbucks', 'Food & Drink', 'Fast Food');
 
       const overrides = service.getUserOverrides(userId);
       expect(overrides).toHaveLength(1);
@@ -333,9 +285,7 @@ describe('CategorizationEngineService', () => {
       service.recordCorrection(userId, 'Target', 'Food & Drink', 'Groceries');
 
       const corrections = service.getLearnedCorrections(userId);
-      const targetCorrection = corrections.find(
-        (c) => c.normalizedMerchant === 'target',
-      );
+      const targetCorrection = corrections.find((c) => c.normalizedMerchant === 'target');
 
       expect(targetCorrection).toBeDefined();
       expect(targetCorrection!.count).toBe(3);
@@ -345,12 +295,7 @@ describe('CategorizationEngineService', () => {
       service.recordCorrection(userId, 'Starbucks', 'Food & Drink', 'Coffee Shops');
       service.recordCorrection(userId, 'Starbucks', 'Food & Drink', 'Restaurants');
 
-      const result = service.categorizeTransaction(
-        'Starbucks',
-        'Starbucks',
-        null,
-        userId,
-      );
+      const result = service.categorizeTransaction('Starbucks', 'Starbucks', null, userId);
 
       expect(result.subcategory).toBe('Restaurants');
       expect(result.source).toBe('learned');
@@ -402,11 +347,7 @@ describe('CategorizationEngineService', () => {
 
   describe('unknown merchants', () => {
     it('should return Uncategorized for unknown merchant with no matching keywords or MCC', () => {
-      const result = service.categorizeTransaction(
-        'XYZZY CORP 12345',
-        'XYZZY CORP',
-        null,
-      );
+      const result = service.categorizeTransaction('XYZZY CORP 12345', 'XYZZY CORP', null);
       expect(result.category).toBe('Uncategorized');
       expect(result.subcategory).toBe('Uncategorized');
       expect(result.confidence).toBe(0);
@@ -419,11 +360,7 @@ describe('CategorizationEngineService', () => {
     });
 
     it('should still try MCC for unknown merchant', () => {
-      const result = service.categorizeTransaction(
-        'XYZZY TOTALLY UNKNOWN',
-        null,
-        '5812',
-      );
+      const result = service.categorizeTransaction('XYZZY TOTALLY UNKNOWN', null, '5812');
       expect(result.category).toBe('Food & Drink');
       expect(result.subcategory).toBe('Restaurants');
       expect(result.source).toBe('mcc');
@@ -456,9 +393,7 @@ describe('CategorizationEngineService', () => {
     });
 
     it('should strip store number with STORE prefix', () => {
-      expect(service.normalizeMerchant('WALMART STORE #2345')).toBe(
-        'walmart',
-      );
+      expect(service.normalizeMerchant('WALMART STORE #2345')).toBe('walmart');
     });
 
     it('should strip trailing multi-digit number', () => {
@@ -489,12 +424,7 @@ describe('CategorizationEngineService', () => {
       const userId = 'user-priority';
       service.setUserCategoryOverride(userId, 'shell', 'Food & Drink', 'Groceries');
 
-      const result = service.categorizeTransaction(
-        'SHELL OIL',
-        'Shell',
-        '5541',
-        userId,
-      );
+      const result = service.categorizeTransaction('SHELL OIL', 'Shell', '5541', userId);
 
       expect(result.source).toBe('user_override');
       expect(result.category).toBe('Food & Drink');
@@ -504,12 +434,7 @@ describe('CategorizationEngineService', () => {
       const userId = 'user-learned-priority';
       service.recordCorrection(userId, 'Shell', 'Education', 'Tuition');
 
-      const result = service.categorizeTransaction(
-        'SHELL OIL',
-        'Shell',
-        '5541',
-        userId,
-      );
+      const result = service.categorizeTransaction('SHELL OIL', 'Shell', '5541', userId);
 
       expect(result.source).toBe('learned');
       expect(result.category).toBe('Education');
@@ -522,11 +447,7 @@ describe('CategorizationEngineService', () => {
     });
 
     it('should prefer keyword match over MCC when both are available', () => {
-      const result = service.categorizeTransaction(
-        'JOE\'S RESTAURANT AND BAR',
-        null,
-        '9999',
-      );
+      const result = service.categorizeTransaction("JOE'S RESTAURANT AND BAR", null, '9999');
 
       // Should match keyword "restaurant" rather than fall to MCC
       expect(result.source).toBe('keyword');

@@ -27,8 +27,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -89,12 +88,7 @@ describe('NotificationsService', () => {
       const insertChain = mockQuery([baseNotification]);
       mockDb.insert.mockReturnValueOnce(insertChain);
 
-      await service.createNotification(
-        userId,
-        NotificationType.SYSTEM,
-        'Test',
-        'Body',
-      );
+      await service.createNotification(userId, NotificationType.SYSTEM, 'Test', 'Body');
 
       expect(insertChain.values).toHaveBeenCalledWith(
         expect.objectContaining({ severity: 'info' }),
@@ -148,12 +142,7 @@ describe('NotificationsService', () => {
       const events: any[] = [];
       const sub = service.notificationStream$.subscribe((e) => events.push(e));
 
-      await service.createNotification(
-        userId,
-        NotificationType.SYSTEM,
-        'Test',
-        'Body',
-      );
+      await service.createNotification(userId, NotificationType.SYSTEM, 'Test', 'Body');
 
       expect(events).toHaveLength(1);
       expect(events[0].userId).toBe(userId);
@@ -253,9 +242,7 @@ describe('NotificationsService', () => {
     it('should throw NotFoundException for non-existent notification', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.markAsRead(userId, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.markAsRead(userId, 'non-existent')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -305,17 +292,17 @@ describe('NotificationsService', () => {
     it('should throw NotFoundException for non-existent notification', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.deleteNotification(userId, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.deleteNotification(userId, 'non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should not allow deleting another user notification', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.deleteNotification('other-user', notifId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.deleteNotification('other-user', notifId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 

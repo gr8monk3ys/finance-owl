@@ -1,11 +1,4 @@
-import {
-  pgTable,
-  text,
-  numeric,
-  integer,
-  boolean,
-  timestamp,
-} from 'drizzle-orm/pg-core';
+import { pgTable, text, numeric, integer, boolean, timestamp } from 'drizzle-orm/pg-core';
 import { users } from './users';
 
 export const auditLog = pgTable('audit_log', {

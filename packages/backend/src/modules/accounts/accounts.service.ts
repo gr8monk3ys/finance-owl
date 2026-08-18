@@ -34,12 +34,7 @@ export class AccountsService {
     const [account] = await this.db
       .select()
       .from(schema.accounts)
-      .where(
-        and(
-          eq(schema.accounts.id, accountId),
-          eq(schema.accounts.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.accounts.id, accountId), eq(schema.accounts.userId, userId)))
       .limit(1);
 
     if (!account) throw new NotFoundException('Account not found');
@@ -93,12 +88,7 @@ export class AccountsService {
         ...data,
         updatedAt: new Date(),
       })
-      .where(
-        and(
-          eq(schema.accounts.id, accountId),
-          eq(schema.accounts.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.accounts.id, accountId), eq(schema.accounts.userId, userId)))
       .returning();
 
     await this.invalidateAccountCaches(userId);
@@ -109,28 +99,19 @@ export class AccountsService {
     const account = await this.findById(userId, accountId);
 
     if (!account.isManual) {
-      throw new Error(
-        'Cannot delete a linked account. Unlink the institution instead.',
-      );
+      throw new Error('Cannot delete a linked account. Unlink the institution instead.');
     }
 
     await this.db
       .delete(schema.accounts)
-      .where(
-        and(
-          eq(schema.accounts.id, accountId),
-          eq(schema.accounts.userId, userId),
-        ),
-      );
+      .where(and(eq(schema.accounts.id, accountId), eq(schema.accounts.userId, userId)));
 
     await this.invalidateAccountCaches(userId);
   }
 
   async getNetWorth(userId: string) {
     const cacheKey = `accounts:${userId}:net-worth`;
-    return this.cacheService.wrap(cacheKey, 300, () =>
-      this._getNetWorth(userId),
-    );
+    return this.cacheService.wrap(cacheKey, 300, () => this._getNetWorth(userId));
   }
 
   private async _getNetWorth(userId: string) {

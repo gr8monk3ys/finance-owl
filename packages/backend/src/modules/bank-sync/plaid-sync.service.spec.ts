@@ -24,8 +24,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -169,9 +168,7 @@ describe('PlaidSyncService', () => {
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         // Get accounts for mapping
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -189,10 +186,7 @@ describe('PlaidSyncService', () => {
       // Update cursor
       mockDbTx.update.mockReturnValueOnce(mockQuery(undefined));
 
-      const stats = await service.syncTransactionsForItem(
-        MOCK_ITEM_ID,
-        MOCK_USER_ID,
-      );
+      const stats = await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
       expect(stats.added).toBe(1);
       expect(stats.modified).toBe(0);
@@ -204,9 +198,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -226,10 +218,7 @@ describe('PlaidSyncService', () => {
         .mockReturnValueOnce(mockQuery(undefined)) // update tx
         .mockReturnValueOnce(mockQuery(undefined)); // update cursor
 
-      const stats = await service.syncTransactionsForItem(
-        MOCK_ITEM_ID,
-        MOCK_USER_ID,
-      );
+      const stats = await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
       expect(stats.added).toBe(0);
       expect(stats.modified).toBe(1);
@@ -239,9 +228,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -258,10 +245,7 @@ describe('PlaidSyncService', () => {
         .mockReturnValueOnce(mockQuery(undefined));
       mockDbTx.update.mockReturnValueOnce(mockQuery(undefined));
 
-      const stats = await service.syncTransactionsForItem(
-        MOCK_ITEM_ID,
-        MOCK_USER_ID,
-      );
+      const stats = await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
       expect(stats.removed).toBe(2);
       expect(mockDbTx.delete).toHaveBeenCalledTimes(2);
@@ -271,9 +255,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -300,10 +282,7 @@ describe('PlaidSyncService', () => {
       // update cursor
       mockDbTx.update.mockReturnValueOnce(mockQuery(undefined));
 
-      const stats = await service.syncTransactionsForItem(
-        MOCK_ITEM_ID,
-        MOCK_USER_ID,
-      );
+      const stats = await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
       expect(stats.added).toBe(1);
       expect(stats.modified).toBe(1);
@@ -317,9 +296,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       // Page 1
@@ -350,10 +327,7 @@ describe('PlaidSyncService', () => {
       // update cursor
       mockDbTx.update.mockReturnValueOnce(mockQuery(undefined));
 
-      const stats = await service.syncTransactionsForItem(
-        MOCK_ITEM_ID,
-        MOCK_USER_ID,
-      );
+      const stats = await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
       expect(stats.added).toBe(2);
       expect(mockPlaidProvider.syncTransactions).toHaveBeenCalledTimes(2);
@@ -403,10 +377,7 @@ describe('PlaidSyncService', () => {
 
       await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
-      expect(mockPlaidProvider.syncTransactions).toHaveBeenCalledWith(
-        MOCK_ACCESS_TOKEN,
-        null,
-      );
+      expect(mockPlaidProvider.syncTransactions).toHaveBeenCalledWith(MOCK_ACCESS_TOKEN, null);
     });
 
     // -----------------------------------------------------------------------
@@ -428,10 +399,7 @@ describe('PlaidSyncService', () => {
       // update cursor inside transaction
       mockDbTx.update.mockReturnValueOnce(mockQuery(undefined));
 
-      const stats = await service.syncTransactionsForItem(
-        MOCK_ITEM_ID,
-        MOCK_USER_ID,
-      );
+      const stats = await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
       expect(stats.added).toBe(0); // skipped
       expect(mockDbTx.insert).not.toHaveBeenCalled();
@@ -441,9 +409,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -456,10 +422,7 @@ describe('PlaidSyncService', () => {
 
       mockDbTx.update.mockReturnValueOnce(mockQuery(undefined));
 
-      const stats = await service.syncTransactionsForItem(
-        MOCK_ITEM_ID,
-        MOCK_USER_ID,
-      );
+      const stats = await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
       expect(stats.added).toBe(0);
       expect(stats.modified).toBe(0);
@@ -472,9 +435,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -494,10 +455,7 @@ describe('PlaidSyncService', () => {
         .mockReturnValueOnce(mockQuery(undefined)) // update tx
         .mockReturnValueOnce(mockQuery(undefined)); // update cursor
 
-      const stats = await service.syncTransactionsForItem(
-        MOCK_ITEM_ID,
-        MOCK_USER_ID,
-      );
+      const stats = await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
       // Still counts as "added" by the sync result
       expect(stats.added).toBe(1);
@@ -512,9 +470,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -545,9 +501,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -562,9 +516,7 @@ describe('PlaidSyncService', () => {
         mockQuery([{ id: 'existing-tx', categorizationSource: 'rule' }]),
       );
       const updateTxChain = mockQuery(undefined);
-      mockDbTx.update
-        .mockReturnValueOnce(updateTxChain)
-        .mockReturnValueOnce(mockQuery(undefined));
+      mockDbTx.update.mockReturnValueOnce(updateTxChain).mockReturnValueOnce(mockQuery(undefined));
 
       await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
@@ -576,9 +528,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -593,9 +543,7 @@ describe('PlaidSyncService', () => {
         mockQuery([{ id: 'existing-tx', categorizationSource: 'plaid' }]),
       );
       const updateTxChain = mockQuery(undefined);
-      mockDbTx.update
-        .mockReturnValueOnce(updateTxChain)
-        .mockReturnValueOnce(mockQuery(undefined));
+      mockDbTx.update.mockReturnValueOnce(updateTxChain).mockReturnValueOnce(mockQuery(undefined));
 
       await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
@@ -607,9 +555,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       const txWithoutCategory = {
@@ -629,9 +575,7 @@ describe('PlaidSyncService', () => {
         mockQuery([{ id: 'existing-tx', categorizationSource: 'plaid' }]),
       );
       const updateTxChain = mockQuery(undefined);
-      mockDbTx.update
-        .mockReturnValueOnce(updateTxChain)
-        .mockReturnValueOnce(mockQuery(undefined));
+      mockDbTx.update.mockReturnValueOnce(updateTxChain).mockReturnValueOnce(mockQuery(undefined));
 
       await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
@@ -646,9 +590,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -686,9 +628,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -717,9 +657,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       const txWithoutCategory = {
@@ -755,17 +693,17 @@ describe('PlaidSyncService', () => {
     it('should throw NotFoundException when plaid item does not exist', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.syncTransactionsForItem('non-existent', MOCK_USER_ID),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.syncTransactionsForItem('non-existent', MOCK_USER_ID)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException when item belongs to another user', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.syncTransactionsForItem(MOCK_ITEM_ID, 'other-user'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.syncTransactionsForItem(MOCK_ITEM_ID, 'other-user')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should propagate Plaid API errors', async () => {
@@ -773,22 +711,18 @@ describe('PlaidSyncService', () => {
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(mockQuery([]));
 
-      mockPlaidProvider.syncTransactions.mockRejectedValue(
-        new Error('Plaid API rate limit'),
-      );
+      mockPlaidProvider.syncTransactions.mockRejectedValue(new Error('Plaid API rate limit'));
 
-      await expect(
-        service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID),
-      ).rejects.toThrow('Plaid API rate limit');
+      await expect(service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID)).rejects.toThrow(
+        'Plaid API rate limit',
+      );
     });
 
     it('should propagate database transaction errors', async () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       mockPlaidProvider.syncTransactions.mockResolvedValue({
@@ -800,13 +734,11 @@ describe('PlaidSyncService', () => {
       });
 
       // Make the transaction callback throw
-      mockDb.transaction.mockRejectedValue(
-        new Error('Database write conflict'),
-      );
+      mockDb.transaction.mockRejectedValue(new Error('Database write conflict'));
 
-      await expect(
-        service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID),
-      ).rejects.toThrow('Database write conflict');
+      await expect(service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID)).rejects.toThrow(
+        'Database write conflict',
+      );
     });
 
     // -----------------------------------------------------------------------
@@ -816,9 +748,7 @@ describe('PlaidSyncService', () => {
       mockDb.select
         .mockReturnValueOnce(mockQuery([mockPlaidItem]))
         .mockReturnValueOnce(
-          mockQuery([
-            { id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' },
-          ]),
+          mockQuery([{ id: 'acct-internal-1', plaidAccountId: 'plaid-acct-1' }]),
         );
 
       // Page 1
@@ -862,10 +792,7 @@ describe('PlaidSyncService', () => {
       // cursor update
       mockDbTx.update.mockReturnValueOnce(mockQuery(undefined));
 
-      const stats = await service.syncTransactionsForItem(
-        MOCK_ITEM_ID,
-        MOCK_USER_ID,
-      );
+      const stats = await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
       expect(stats.added).toBe(1);
       expect(stats.modified).toBe(1);
@@ -905,10 +832,7 @@ describe('PlaidSyncService', () => {
 
       mockDbTx.update.mockReturnValueOnce(mockQuery(undefined)); // cursor
 
-      const stats = await service.syncTransactionsForItem(
-        MOCK_ITEM_ID,
-        MOCK_USER_ID,
-      );
+      const stats = await service.syncTransactionsForItem(MOCK_ITEM_ID, MOCK_USER_ID);
 
       expect(stats.modified).toBe(0);
       expect(mockDbTx.select).not.toHaveBeenCalled(); // no upsert check

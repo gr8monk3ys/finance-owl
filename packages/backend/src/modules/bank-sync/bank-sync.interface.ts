@@ -51,10 +51,7 @@ export interface BankSyncProvider {
   createUpdateLinkToken(accessToken: string): Promise<LinkTokenResult>;
   exchangePublicToken(publicToken: string): Promise<ExchangeResult>;
   getAccounts(accessToken: string): Promise<BankAccount[]>;
-  syncTransactions(
-    accessToken: string,
-    cursor: string | null,
-  ): Promise<SyncResult>;
+  syncTransactions(accessToken: string, cursor: string | null): Promise<SyncResult>;
   removeItem(accessToken: string): Promise<void>;
 }
 

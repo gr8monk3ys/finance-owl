@@ -29,9 +29,7 @@ export async function getTransaction(id: string): Promise<Transaction> {
 /**
  * Create a new manual transaction.
  */
-export async function createTransaction(
-  req: CreateTransactionRequest,
-): Promise<Transaction> {
+export async function createTransaction(req: CreateTransactionRequest): Promise<Transaction> {
   const { data } = await client.post<Transaction>('/transactions', req);
   return data;
 }

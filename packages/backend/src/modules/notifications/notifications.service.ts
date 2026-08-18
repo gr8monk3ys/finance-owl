@@ -1,15 +1,7 @@
-import {
-  Injectable,
-  Inject,
-  NotFoundException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, Logger } from '@nestjs/common';
 import { eq, and, desc, count, sql } from 'drizzle-orm';
 import { Subject } from 'rxjs';
-import {
-  DATABASE_TOKEN,
-  type DrizzleDB,
-} from '../../database/database.module';
+import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 
 // ── Notification Types ──────────────────────────────────────────────
@@ -77,9 +69,7 @@ export class NotificationsService {
       })
       .returning();
 
-    this.logger.debug(
-      `Notification created: type=${type} user=${userId} id=${notification.id}`,
-    );
+    this.logger.debug(`Notification created: type=${type} user=${userId} id=${notification.id}`);
 
     // Push to the real-time stream
     this.notificationStream$.next({ userId, notification });
@@ -88,10 +78,7 @@ export class NotificationsService {
   }
 
   // ── List (paginated, filterable) ────────────────────────────────
-  async getUserNotifications(
-    userId: string,
-    options: ListNotificationsOptions = {},
-  ) {
+  async getUserNotifications(userId: string, options: ListNotificationsOptions = {}) {
     const { limit = 20, offset = 0, unreadOnly = false } = options;
 
     const conditions = [
@@ -136,10 +123,7 @@ export class NotificationsService {
       .update(schema.notifications)
       .set({ read: true, readAt: new Date() })
       .where(
-        and(
-          eq(schema.notifications.id, notificationId),
-          eq(schema.notifications.userId, userId),
-        ),
+        and(eq(schema.notifications.id, notificationId), eq(schema.notifications.userId, userId)),
       )
       .returning();
 
@@ -171,10 +155,7 @@ export class NotificationsService {
       .update(schema.notifications)
       .set({ deleted: true, deletedAt: new Date() })
       .where(
-        and(
-          eq(schema.notifications.id, notificationId),
-          eq(schema.notifications.userId, userId),
-        ),
+        and(eq(schema.notifications.id, notificationId), eq(schema.notifications.userId, userId)),
       );
   }
 

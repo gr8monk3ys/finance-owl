@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
 import { Observable, tap } from 'rxjs';
 import type { Request, Response } from 'express';
 
@@ -24,10 +18,7 @@ export class PerformanceInterceptor implements NestInterceptor {
   private readonly slowThresholdMs: number;
 
   constructor() {
-    const configuredThreshold = parseInt(
-      process.env.SLOW_REQUEST_THRESHOLD_MS || '1000',
-      10,
-    );
+    const configuredThreshold = parseInt(process.env.SLOW_REQUEST_THRESHOLD_MS || '1000', 10);
     this.slowThresholdMs = isNaN(configuredThreshold) ? 1000 : configuredThreshold;
   }
 
@@ -50,11 +41,7 @@ export class PerformanceInterceptor implements NestInterceptor {
     );
   }
 
-  private recordMetrics(
-    request: Request,
-    response: Response,
-    startTime: number,
-  ): void {
+  private recordMetrics(request: Request, response: Response, startTime: number): void {
     const duration = Date.now() - startTime;
     const { method, originalUrl } = request;
     const user = request.user as { id?: string } | undefined;

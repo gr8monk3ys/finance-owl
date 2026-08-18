@@ -11,9 +11,7 @@ export const platform = Platform.OS;
 /**
  * Trigger haptic feedback on supported devices.
  */
-export async function hapticFeedback(
-  style: 'light' | 'medium' | 'heavy' = 'light',
-): Promise<void> {
+export async function hapticFeedback(style: 'light' | 'medium' | 'heavy' = 'light'): Promise<void> {
   if (!isNative) return;
 
   const impactStyle = {

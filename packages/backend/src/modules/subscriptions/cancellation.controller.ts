@@ -1,17 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Body,
-  Param,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
 import { CurrentUser } from '../../common/decorators';
 import { CancellationService } from './cancellation.service';
-import {
-  RequestCancellationDto,
-  UpdateCancellationStatusDto,
-} from './dto/cancellation.dto';
+import { RequestCancellationDto, UpdateCancellationStatusDto } from './dto/cancellation.dto';
 
 @Controller('subscriptions')
 export class CancellationController {
@@ -23,11 +13,7 @@ export class CancellationController {
     @Param('id') id: string,
     @Body() dto: RequestCancellationDto,
   ) {
-    return this.cancellationService.requestCancellation(
-      userId,
-      id,
-      dto.reason,
-    );
+    return this.cancellationService.requestCancellation(userId, id, dto.reason);
   }
 
   @Get('cancellations')
@@ -41,10 +27,7 @@ export class CancellationController {
   }
 
   @Get('cancellations/:id')
-  getCancellationRequest(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  getCancellationRequest(@CurrentUser('id') userId: string, @Param('id') id: string) {
     return this.cancellationService.getCancellationRequest(userId, id);
   }
 
@@ -54,30 +37,16 @@ export class CancellationController {
     @Param('id') id: string,
     @Body() dto: UpdateCancellationStatusDto,
   ) {
-    return this.cancellationService.updateStatus(
-      userId,
-      id,
-      dto.status,
-      dto.notes,
-    );
+    return this.cancellationService.updateStatus(userId, id, dto.status, dto.notes);
   }
 
   @Post('cancellations/:id/confirm')
-  confirmCancellation(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  confirmCancellation(@CurrentUser('id') userId: string, @Param('id') id: string) {
     return this.cancellationService.confirmCancellation(userId, id);
   }
 
   @Get(':id/cancel-instructions')
-  getCancellationInstructions(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
-    return this.cancellationService.getCancellationInstructionsForSubscription(
-      userId,
-      id,
-    );
+  getCancellationInstructions(@CurrentUser('id') userId: string, @Param('id') id: string) {
+    return this.cancellationService.getCancellationInstructionsForSubscription(userId, id);
   }
 }

@@ -380,9 +380,7 @@ async function setup(): Promise<void> {
       console.log(`  ${envVar.key}: [auto-generated]`);
     } else if (envVar.required) {
       // Prompt for required variables
-      const defaultDisplay = envVar.defaultValue
-        ? ` [${envVar.defaultValue}]`
-        : '';
+      const defaultDisplay = envVar.defaultValue ? ` [${envVar.defaultValue}]` : '';
       const answer = await prompt(rl, `  ${envVar.key}${defaultDisplay}: `);
       value = answer || envVar.defaultValue;
     } else {

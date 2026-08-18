@@ -54,10 +54,7 @@ export default function RegisterScreen() {
       style={styles.flex}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         {/* Logo area */}
         <View style={styles.logoContainer}>
           <Image
@@ -66,9 +63,7 @@ export default function RegisterScreen() {
             accessibilityIgnoresInvertColors
           />
           <Text style={styles.logoTitle}>Create Account</Text>
-          <Text style={styles.logoSubtitle}>
-            Get started with Finance Owl
-          </Text>
+          <Text style={styles.logoSubtitle}>Get started with Finance Owl</Text>
         </View>
 
         {/* Error message */}
