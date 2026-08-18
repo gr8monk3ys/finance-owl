@@ -293,8 +293,8 @@ importers:
         specifier: ~7.0.5
         version: 7.0.5(expo@52.0.49(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@expo/metro-runtime@4.0.1(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1)))(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1))(react@18.3.1)
       expo-local-authentication:
-        specifier: ^15.0.2
-        version: 15.0.2(expo@52.0.49(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@expo/metro-runtime@4.0.1(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1)))(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1))(react@18.3.1))
+        specifier: ^57.0.2
+        version: 57.0.2(expo@52.0.49(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@expo/metro-runtime@4.0.1(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1)))(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1))(react@18.3.1))
       expo-router:
         specifier: ~4.0.22
         version: 4.0.22(lxlfgj2bdrcpup4hjwzy73jnqi)
@@ -1701,7 +1701,7 @@ packages:
 
   '@expo/bunyan@4.0.1':
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {'0': node >=0.10.0}
+    engines: {node: '>=0.10.0'}
 
   '@expo/cli@0.22.28':
     resolution: {integrity: sha512-lvt72KNitGuixYD2l3SZmRKVu2G4zJpmg5V7WfUBNpmUU5oODBw/6qmiJ6kSLAlfDozscUk+BBGknBBzxUrwrA==}
@@ -5016,8 +5016,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  expo-local-authentication@15.0.2:
-    resolution: {integrity: sha512-v7TOfovuivGWffA8B0FudEas+njMKTrjhaPpJYLASiTLTP3zUYqtumNgZ9pkaDB6Cagq0+DeNH39AI8tdEBUkQ==}
+  expo-local-authentication@57.0.2:
+    resolution: {integrity: sha512-8K4zcrQ5wZkRS1rwEWY8qHbeGVMNh35e9D1VTVKlMHz1O47itW+pW6iBVuqwGFLozN4fRBeEDQH8hu9Gt58YuQ==}
     peerDependencies:
       expo: '*'
 
@@ -13385,7 +13385,7 @@ snapshots:
       - expo
       - supports-color
 
-  expo-local-authentication@15.0.2(expo@52.0.49(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@expo/metro-runtime@4.0.1(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1)))(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1))(react@18.3.1)):
+  expo-local-authentication@57.0.2(expo@52.0.49(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@expo/metro-runtime@4.0.1(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1)))(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1))(react@18.3.1)):
     dependencies:
       expo: 52.0.49(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@expo/metro-runtime@4.0.1(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1)))(react-native@0.76.9(@babel/core@8.0.1)(@babel/preset-env@7.29.0(@babel/core@8.0.1))(@types/react@18.3.28)(react@18.3.1))(react@18.3.1)
       invariant: 2.2.4
