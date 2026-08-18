@@ -43,3 +43,6 @@ test-results/
 
 # TypeScript incremental build state
 *.tsbuildinfo
+
+# Local Redis snapshots
+dump.rdb
