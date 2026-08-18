@@ -323,6 +323,7 @@ jobs:
       ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       NODE_ENV: test
       API_URL: http://localhost:4000
+      DISABLE_RATE_LIMITING: "1"
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5

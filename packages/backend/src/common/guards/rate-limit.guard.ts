@@ -82,6 +82,11 @@ export class RateLimitGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Same escape hatch as the global ThrottlerModule (e2e suites only)
+    if (process.env.DISABLE_RATE_LIMITING === '1') {
+      return true;
+    }
+
     const opts = this.reflector.getAllAndOverride<RateLimitOptions | undefined>(RATE_LIMIT_KEY, [
       context.getHandler(),
       context.getClass(),
