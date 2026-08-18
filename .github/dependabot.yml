@@ -154,6 +154,18 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # These are pinned to the installed Expo SDK (see `expo` in
+      # packages/mobile/package.json). Bumping them independently breaks
+      # `expo-doctor` and the React Native runtime; they are upgraded
+      # together via `npx expo install --fix` during SDK upgrades.
+      - dependency-name: "expo"
+      - dependency-name: "expo-*"
+      - dependency-name: "react"
+      - dependency-name: "@types/react"
+      - dependency-name: "react-native"
+      - dependency-name: "react-native-*"
+      - dependency-name: "@react-navigation/*"
 
   # ──────────────────────────────────────────────
   # GitHub Actions
@@ -179,15 +191,15 @@ updates:
         update-types:
           - minor
           - patch
-
-  # ──────────────────────────────────────────────
-  # Docker base images
-  # ──────────────────────────────────────────────
     ignore:
       # Same-owner reusable workflows live in the PRIVATE gr8monk3ys/github
       # repo; Dependabot cannot reach it (git_dependencies_not_reachable)
       # and fails every weekly run. They are pinned manually, not versioned.
       - dependency-name: "gr8monk3ys/*"
+
+  # ──────────────────────────────────────────────
+  # Docker base images
+  # ──────────────────────────────────────────────
   - package-ecosystem: docker
     directory: /docker
     schedule:

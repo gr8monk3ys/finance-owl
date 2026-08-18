@@ -104,10 +104,10 @@ export class PlaidController {
   @Post('sync/:itemId')
   @HttpCode(HttpStatus.OK)
   async syncTransactions(
-    @CurrentUser('id') _userId: string,
+    @CurrentUser('id') userId: string,
     @Param('itemId') itemId: string,
   ) {
-    const stats = await this.plaidService.syncTransactions(itemId);
+    const stats = await this.plaidService.syncTransactions(itemId, userId);
     return {
       synced: true,
       ...stats,

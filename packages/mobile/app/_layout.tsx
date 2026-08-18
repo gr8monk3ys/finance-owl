@@ -6,6 +6,9 @@ import { useRouter, useSegments } from 'expo-router';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { colors } from '../src/utils/theme';
 import ErrorBoundary from '../src/components/ErrorBoundary';
+import BiometricLockScreen from '../src/components/BiometricLockScreen';
+import { useBiometricAuth } from '../src/hooks/useBiometricAuth';
+import { useAppStateTimeout } from '../src/hooks/useAppStateTimeout';
 import { configureSentry, Sentry } from '../src/lib/sentry';
 
 // Initialize Sentry as early as possible

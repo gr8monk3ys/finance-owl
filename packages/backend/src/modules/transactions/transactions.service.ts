@@ -1,5 +1,10 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { eq, and, gte, lte, like, desc, sql, count } from 'drizzle-orm';
+import {
+  Injectable,
+  Inject,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import { eq, and, gte, lte, like, desc, sql, count, isNull, or } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
 import * as schema from '../../database/schema';
@@ -223,6 +228,41 @@ export class TransactionsService {
     pending?: boolean;
     notes?: string;
   }) {
+    // The account and category ids come from the client — verify they are
+    // actually usable by this user before persisting the row.
+    const [account] = await this.db
+      .select({ id: schema.accounts.id })
+      .from(schema.accounts)
+      .where(
+        and(
+          eq(schema.accounts.id, data.accountId),
+          eq(schema.accounts.userId, userId),
+        ),
+      )
+      .limit(1);
+    if (!account) {
+      throw new BadRequestException('Account not found');
+    }
+
+    if (data.categoryId) {
+      const [category] = await this.db
+        .select({ id: schema.categories.id })
+        .from(schema.categories)
+        .where(
+          and(
+            eq(schema.categories.id, data.categoryId),
+            or(
+              eq(schema.categories.userId, userId),
+              isNull(schema.categories.userId),
+            ),
+          ),
+        )
+        .limit(1);
+      if (!category) {
+        throw new BadRequestException('Category not found');
+      }
+    }
+
     const [transaction] = await this.db
       .insert(schema.transactions)
       .values({

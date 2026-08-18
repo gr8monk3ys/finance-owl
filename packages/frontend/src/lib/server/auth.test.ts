@@ -2,15 +2,18 @@ import { describe, expect, it, vi } from 'vitest';
 import { buildForwardedClientHeaders, setAuthCookies } from './auth';
 
 describe('server auth helpers', () => {
-	it('prefers forwarded headers when they already exist', () => {
+	it('appends the trusted address after any inbound forwarded chain', () => {
 		const headers = new Headers({
 			'x-forwarded-for': '198.51.100.24',
 			'x-real-ip': '198.51.100.24'
 		});
 
+		// The inbound header is attacker-controlled: it may be kept as
+		// history, but the trusted address must be the right-most hop and
+		// x-real-ip must never echo the spoofable inbound value.
 		expect(buildForwardedClientHeaders(headers, '127.0.0.1')).toEqual({
-			'x-forwarded-for': '198.51.100.24',
-			'x-real-ip': '198.51.100.24'
+			'x-forwarded-for': '198.51.100.24, 127.0.0.1',
+			'x-real-ip': '127.0.0.1'
 		});
 	});
 

@@ -166,6 +166,23 @@ export class BudgetsService {
       }
     }
 
+    // A budget may only be attached to a household the caller belongs to
+    if (data.householdId) {
+      const [membership] = await this.db
+        .select({ id: schema.householdMembers.id })
+        .from(schema.householdMembers)
+        .where(
+          and(
+            eq(schema.householdMembers.householdId, data.householdId),
+            eq(schema.householdMembers.userId, userId),
+          ),
+        )
+        .limit(1);
+      if (!membership) {
+        throw new BadRequestException('Household not found');
+      }
+    }
+
     const thresholds = data.alertThresholds ?? DEFAULT_ALERT_THRESHOLDS;
 
     const [budget] = await this.db

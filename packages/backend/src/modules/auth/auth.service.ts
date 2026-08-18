@@ -9,7 +9,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
-import { randomBytes } from 'crypto';
+import { randomBytes, createHash } from 'crypto';
 import { eq } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
@@ -80,7 +80,7 @@ export class AuthService {
     const [session] = await this.db
       .select()
       .from(schema.sessions)
-      .where(eq(schema.sessions.refreshToken, refreshToken))
+      .where(eq(schema.sessions.refreshToken, this.hashRefreshToken(refreshToken)))
       .limit(1);
 
     if (!session) {
@@ -146,7 +146,7 @@ export class AuthService {
   async logout(refreshToken: string) {
     await this.db
       .delete(schema.sessions)
-      .where(eq(schema.sessions.refreshToken, refreshToken));
+      .where(eq(schema.sessions.refreshToken, this.hashRefreshToken(refreshToken)));
   }
 
   async logoutAll(userId: string) {
@@ -193,9 +193,11 @@ export class AuthService {
       Date.now() + this.parseDuration(refreshExpiry),
     ).toISOString();
 
+    // Only a SHA-256 digest of the refresh token is persisted, so a leaked
+    // database dump cannot be replayed against /auth/refresh.
     await this.db.insert(schema.sessions).values({
       userId,
-      refreshToken,
+      refreshToken: this.hashRefreshToken(refreshToken),
       expiresAt,
     });
 
@@ -206,6 +208,10 @@ export class AuthService {
         this.configService.get('JWT_ACCESS_EXPIRY', '15m'),
       ) / 1000,
     };
+  }
+
+  private hashRefreshToken(token: string): string {
+    return createHash('sha256').update(token).digest('hex');
   }
 
   private parseDuration(duration: string): number {

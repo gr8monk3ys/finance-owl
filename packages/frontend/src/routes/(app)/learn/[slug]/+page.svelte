@@ -39,7 +39,14 @@
 
 	// Simple markdown rendering
 	function renderMarkdown(md: string): string {
-		let html = md;
+		// Escape any raw HTML in the source first — the rendered result is
+		// injected with {@html}, so unescaped article content would be a
+		// stored-XSS vector if the content store were ever compromised.
+		let html = md
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;');
 
 		// Headers
 		html = html.replace(/^### (.+)$/gm, '<h3 class="mt-6 mb-2 text-lg font-semibold text-white">$1</h3>');

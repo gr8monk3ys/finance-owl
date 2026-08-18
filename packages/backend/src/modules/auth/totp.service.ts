@@ -82,7 +82,9 @@ export class TotpService {
     const user = await this.usersService.findByEmail(
       (await this.usersService.findById(userId))!.email,
     );
-    if (!user?.totpSecret) return true; // TOTP not enabled, pass through
+    // Fail closed: verifyCode is only called when TOTP is required, so a
+    // missing secret means an inconsistent state, never a free pass.
+    if (!user?.totpSecret) return false;
 
     // Decrypt the stored secret for verification
     const decryptedSecret = this.cryptoService.decrypt(user.totpSecret);

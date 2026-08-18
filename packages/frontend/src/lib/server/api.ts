@@ -18,6 +18,13 @@ export async function api(
 ) {
 	const { method = 'GET', body, accessToken, rawText = false } = options;
 
+	// Callers interpolate user-supplied ids into paths. Reject anything that
+	// could traverse to a different backend endpoint after URL normalization
+	// (`..` segments, encoded traversal, CR/LF header-splitting attempts).
+	if (/(^|\/)\.\.(\/|$)|%2e%2e|%2f|%5c|[\r\n]|\\/i.test(path)) {
+		throw new Error('Invalid API path');
+	}
+
 	const headers: Record<string, string> = {
 		'Content-Type': 'application/json'
 	};

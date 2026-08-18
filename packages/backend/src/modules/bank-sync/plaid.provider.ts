@@ -405,9 +405,13 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
         return false;
       }
 
-      // In sandbox mode, skip verification (Plaid sandbox does not always send valid JWTs)
+      // In sandbox mode, skip verification (Plaid sandbox does not always
+      // send valid JWTs). Only skip when PLAID_ENV is EXPLICITLY sandbox
+      // outside production — an unset PLAID_ENV must fail closed.
+      const plaidEnv = this.configService.get<string>('PLAID_ENV');
       if (
-        this.configService.get<string>('PLAID_ENV', 'sandbox') === 'sandbox'
+        this.configService.get<string>('NODE_ENV') !== 'production' &&
+        (plaidEnv === undefined || plaidEnv === 'sandbox')
       ) {
         return true;
       }

@@ -38,6 +38,7 @@ export default tseslint.config(
     ignores: [
       '**/dist/**',
       '**/build/**',
+      '**/.vercel/**',
       '**/.svelte-kit/**',
       '**/node_modules/**',
       '**/drizzle/**',

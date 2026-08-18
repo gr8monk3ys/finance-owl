@@ -10,14 +10,20 @@ const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 7;
 
 export function buildForwardedClientHeaders(
 	requestHeaders: Headers,
-	fallbackIp: string
+	clientIp: string
 ): Record<string, string> {
-	const forwardedFor = requestHeaders.get('x-forwarded-for') || fallbackIp;
-	const realIp = requestHeaders.get('x-real-ip') || forwardedFor;
+	// clientIp comes from SvelteKit's getClientAddress(), which is derived
+	// from the platform's own trusted proxy handling. The inbound
+	// x-forwarded-for header is attacker-controlled, so it is only kept as
+	// leading history — the trusted address is always appended as the
+	// right-most hop, which is the entry the backend (trust proxy = 1)
+	// uses for rate limiting. Never let a spoofed header replace it.
+	const inboundChain = requestHeaders.get('x-forwarded-for');
+	const forwardedFor = inboundChain ? `${inboundChain}, ${clientIp}` : clientIp;
 
 	return {
 		'x-forwarded-for': forwardedFor,
-		'x-real-ip': realIp
+		'x-real-ip': clientIp
 	};
 }
 

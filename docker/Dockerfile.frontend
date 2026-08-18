@@ -1,5 +1,5 @@
-FROM node:20-slim AS base
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+FROM node:26-slim AS base
+RUN npm install -g pnpm@9.15.0
 WORKDIR /app
 
 # Install dependencies
@@ -22,7 +22,7 @@ ENV ADAPTER=node
 RUN pnpm --filter @finance-owl/frontend build
 
 # Production
-FROM node:20-slim AS production
+FROM node:26-slim AS production
 RUN addgroup --system app && adduser --system --ingroup app app
 WORKDIR /app
 

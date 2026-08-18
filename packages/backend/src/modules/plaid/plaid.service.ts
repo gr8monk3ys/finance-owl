@@ -256,8 +256,8 @@ export class PlaidService {
    *   - Cursor persistence between syncs
    *   - Initial historical sync (first call with no cursor fetches up to 2 years)
    */
-  async syncTransactions(itemId: string): Promise<SyncStats> {
-    const item = await this.getItemById(itemId);
+  async syncTransactions(itemId: string, userId?: string): Promise<SyncStats> {
+    const item = await this.getItemById(itemId, userId);
     const accessToken = this.cryptoService.decrypt(item.accessToken);
 
     // Build plaidAccountId -> internal accountId map
@@ -354,7 +354,7 @@ export class PlaidService {
           .where(eq(schema.plaidItems.id, itemId));
 
         // Recurse once with a fresh cursor
-        return this.syncTransactions(itemId);
+        return this.syncTransactions(itemId, userId);
       }
 
       await this.updateItemStatusOnError(itemId, error);
@@ -373,8 +373,9 @@ export class PlaidService {
    */
   async syncAccounts(
     itemId: string,
+    userId?: string,
   ): Promise<{ synced: number }> {
-    const item = await this.getItemById(itemId);
+    const item = await this.getItemById(itemId, userId);
     const accessToken = this.cryptoService.decrypt(item.accessToken);
 
     try {
@@ -461,11 +462,16 @@ export class PlaidService {
     body: string,
     headers: Record<string, string>,
   ): Promise<{ received: true; action: string }> {
-    // Verify signature (skip in sandbox)
-    const isSandbox =
-      this.configService.get<string>('PLAID_ENV', 'sandbox') === 'sandbox';
+    // Verify signature. Verification is only skipped when PLAID_ENV is
+    // EXPLICITLY set to sandbox outside production — an unset PLAID_ENV
+    // must fail closed, otherwise a production deploy that forgot the env
+    // var would accept forged webhooks.
+    const plaidEnv = this.configService.get<string>('PLAID_ENV');
+    const skipVerification =
+      this.configService.get<string>('NODE_ENV') !== 'production' &&
+      (plaidEnv === undefined || plaidEnv === 'sandbox');
 
-    if (!isSandbox) {
+    if (!skipVerification) {
       const isValid = await this.verifyWebhookSignature(body, headers);
       if (!isValid) {
         throw new ForbiddenException('Invalid webhook signature');
@@ -561,8 +567,9 @@ export class PlaidService {
    */
   async refreshBalances(
     itemId: string,
+    userId?: string,
   ): Promise<{ refreshed: number }> {
-    const item = await this.getItemById(itemId);
+    const item = await this.getItemById(itemId, userId);
     const accessToken = this.cryptoService.decrypt(item.accessToken);
 
     try {
@@ -887,11 +894,18 @@ export class PlaidService {
   // Private: Helpers
   // ---------------------------------------------------------------------------
 
-  private async getItemById(itemId: string) {
+  private async getItemById(itemId: string, userId?: string) {
+    // When a userId is provided (user-initiated requests), scope the lookup
+    // to that user so one user can never operate on another user's item.
+    // Internal callers (webhook handlers) resolve items without user context.
     const [item] = await this.db
       .select()
       .from(schema.plaidItems)
-      .where(eq(schema.plaidItems.id, itemId))
+      .where(
+        userId
+          ? and(eq(schema.plaidItems.id, itemId), eq(schema.plaidItems.userId, userId))
+          : eq(schema.plaidItems.id, itemId),
+      )
       .limit(1);
 
     if (!item) {

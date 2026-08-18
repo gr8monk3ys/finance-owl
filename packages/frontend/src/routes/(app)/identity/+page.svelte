@@ -25,6 +25,22 @@
 		}
 	});
 
+	// Breach descriptions come from an external feed as HTML; render them as
+	// plain text (tags stripped, entities decoded by the parser) instead of
+	// {@html} so a tampered feed can never inject script into the session.
+	function stripHtml(html: string): string {
+		const text = html.replace(/<[^>]*>/g, ' ');
+		return text
+			.replace(/&nbsp;/g, ' ')
+			.replace(/&quot;/g, '"')
+			.replace(/&#39;|&apos;/g, "'")
+			.replace(/&lt;/g, '<')
+			.replace(/&gt;/g, '>')
+			.replace(/&amp;/g, '&')
+			.replace(/\s+/g, ' ')
+			.trim();
+	}
+
 	function fmtDate(date: string | null): string {
 		if (!date) return '--';
 		return new Date(date).toLocaleDateString('en-US', {
@@ -318,7 +334,7 @@
 
 										{#if breach.breachDescription}
 											<p class="mt-2 text-sm leading-relaxed text-surface-300">
-												{@html breach.breachDescription}
+												{stripHtml(breach.breachDescription)}
 											</p>
 										{/if}
 

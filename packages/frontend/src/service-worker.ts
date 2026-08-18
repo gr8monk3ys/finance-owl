@@ -52,25 +52,23 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 		return;
 	}
 
-	// __data.json responses contain authenticated financial data and should not be
-	// cached by the service worker.  Let these requests go straight to the network.
-	// (Previously used stale-while-revalidate, which risked leaking data post-logout.)
-	// if (url.pathname.endsWith('/__data.json')) { ... }
-
-	// Navigation requests (HTML pages): network-first
-	if (request.mode === 'navigate') {
-		event.respondWith(networkFirst(request));
+	// __data.json responses contain authenticated financial data and must never
+	// be cached by the service worker. Let these requests go straight to the
+	// network (no respondWith -> browser default handling, nothing stored).
+	if (url.pathname.endsWith('/__data.json')) {
 		return;
 	}
 
-	// Everything else: network-first
+	// Everything else (rendered pages included) may contain authenticated
+	// data, so it is cached in the wipeable data cache — never in the
+	// build-asset cache — and cleared on logout.
 	event.respondWith(networkFirst(request));
 });
 
-// Clear cached API data when the user logs out to prevent data leakage
+// Clear cached pages/data when the user logs out to prevent data leakage
 self.addEventListener('message', (event) => {
 	if (event.data?.type === 'LOGOUT') {
-		caches.delete(API_CACHE_NAME);
+		event.waitUntil?.(caches.delete(API_CACHE_NAME));
 	}
 });
 
@@ -90,7 +88,7 @@ async function networkFirst(request: Request): Promise<Response> {
 	try {
 		const response = await fetch(request);
 		if (response.ok) {
-			const cache = await caches.open(CACHE_NAME);
+			const cache = await caches.open(API_CACHE_NAME);
 			cache.put(request, response.clone());
 		}
 		return response;
@@ -106,23 +104,4 @@ async function networkFirst(request: Request): Promise<Response> {
 
 		return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
 	}
-}
-
-async function staleWhileRevalidate(
-	request: Request,
-	cacheName: string
-): Promise<Response> {
-	const cache = await caches.open(cacheName);
-	const cached = await cache.match(request);
-
-	const fetchPromise = fetch(request)
-		.then((response) => {
-			if (response.ok) {
-				cache.put(request, response.clone());
-			}
-			return response;
-		})
-		.catch(() => cached ?? new Response('Offline', { status: 503 }));
-
-	return cached ?? fetchPromise;
 }
