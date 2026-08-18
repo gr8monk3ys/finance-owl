@@ -147,8 +147,8 @@ importers:
         specifier: ^8.20.0
         version: 8.20.0
       plaid:
-        specifier: ^41.4.0
-        version: 41.4.0
+        specifier: ^45.0.0
+        version: 45.0.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -5332,10 +5332,6 @@ packages:
     resolution: {integrity: sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==}
     engines: {node: '>= 0.4'}
 
-  hasown@2.0.2:
-    resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
-    engines: {node: '>= 0.4'}
-
   hasown@2.0.4:
     resolution: {integrity: sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==}
     engines: {node: '>= 0.4'}
@@ -6642,8 +6638,8 @@ packages:
     resolution: {integrity: sha512-nDywThFk1i4BQK4twPQ6TA4RT8bDY96yeuCVBWL3ePARCiEKDRSrNGbFIgUJpLp+XeIR65v8ra7WuJOFUBtkMA==}
     engines: {node: '>=8'}
 
-  plaid@41.4.0:
-    resolution: {integrity: sha512-Ku5W9Ufsa2+TS0/kY8jS6RFPtBUbTq1xNyod89qQt/Jy2L9q9CYAnNL0WlUGa+Y5HEGP990BxCUUS2lGMRxY3g==}
+  plaid@45.0.0:
+    resolution: {integrity: sha512-JuK7VKPEdH4muxic35ZyzjFA3Xc+DURkIE/O5A1QQGZfBzOgsQgYBovgGzd/+Z5Jl5dBTV43S9HQX3GSorymUw==}
     engines: {node: '>=10.0.0'}
 
   playwright-core@1.58.2:
@@ -13638,10 +13634,6 @@ snapshots:
     dependencies:
       has-symbols: 1.1.0
 
-  hasown@2.0.2:
-    dependencies:
-      function-bind: 1.1.2
-
   hasown@2.0.4:
     dependencies:
       function-bind: 1.1.2
@@ -13788,7 +13780,7 @@ snapshots:
 
   is-core-module@2.16.1:
     dependencies:
-      hasown: 2.0.2
+      hasown: 2.0.4
 
   is-directory@0.3.1: {}
 
@@ -14957,7 +14949,7 @@ snapshots:
     dependencies:
       find-up: 3.0.0
 
-  plaid@41.4.0:
+  plaid@45.0.0:
     dependencies:
       axios: 1.19.0
     transitivePeerDependencies:

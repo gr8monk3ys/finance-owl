@@ -180,6 +180,7 @@ updates:
       - dependency-name: "react-native-*"
       - dependency-name: "@react-navigation/*"
       - dependency-name: "@sentry/react-native"
+      - dependency-name: "typescript"
 
   # ──────────────────────────────────────────────
   # GitHub Actions
