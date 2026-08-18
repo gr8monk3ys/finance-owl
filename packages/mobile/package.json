@@ -24,7 +24,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-navigation/bottom-tabs": "^7.15.5",
+    "@react-navigation/bottom-tabs": "^7.18.16",
     "@sentry/react-native": "^6.22.0",
     "expo": "~52.0.49",
     "expo-constants": "~17.0.8",
