@@ -26,43 +26,43 @@ Adapters: `@sveltejs/adapter-node` for self-hosted Docker deployments, `@sveltej
 
 All authenticated routes live under `src/routes/(app)/`:
 
-| Route | Description |
-|-------|-------------|
-| `dashboard/` | Overview with account balances, recent transactions, budget status |
-| `accounts/` | Financial accounts list and detail views |
-| `transactions/` | Transaction list, search, and categorization |
-| `budgets/` | Budget management and spending progress |
-| `bills/` | Bill tracking and upcoming due dates |
-| `subscriptions/` | Recurring subscription management |
-| `investments/` | Investment portfolio and performance |
-| `crypto/` | Cryptocurrency holdings |
-| `real-estate/` | Property tracking |
-| `credit/` | Credit score and monitoring |
-| `debt-payoff/` | Debt payoff planner |
-| `savings/` | Savings goals and smart savings |
-| `retirement/` | Retirement planning |
-| `tax/` | Tax preparation and categorization |
-| `forecast/` | Income/expense forecasting |
-| `calculators/` | Financial calculators |
-| `reports/` | Financial reports |
-| `import/` | Transaction import (CSV/OFX) |
-| `banking/` | Bank connection management (Plaid) |
-| `settings/` | User preferences and security settings |
-| `household/` | Household member management |
-| `ask/` | AI assistant (natural language queries) |
-| `learn/` | Financial education content |
-| `pricing/` | Subscription plans |
-| `admin/` | Admin panel |
+| Route            | Description                                                        |
+| ---------------- | ------------------------------------------------------------------ |
+| `dashboard/`     | Overview with account balances, recent transactions, budget status |
+| `accounts/`      | Financial accounts list and detail views                           |
+| `transactions/`  | Transaction list, search, and categorization                       |
+| `budgets/`       | Budget management and spending progress                            |
+| `bills/`         | Bill tracking and upcoming due dates                               |
+| `subscriptions/` | Recurring subscription management                                  |
+| `investments/`   | Investment portfolio and performance                               |
+| `crypto/`        | Cryptocurrency holdings                                            |
+| `real-estate/`   | Property tracking                                                  |
+| `credit/`        | Credit score and monitoring                                        |
+| `debt-payoff/`   | Debt payoff planner                                                |
+| `savings/`       | Savings goals and smart savings                                    |
+| `retirement/`    | Retirement planning                                                |
+| `tax/`           | Tax preparation and categorization                                 |
+| `forecast/`      | Income/expense forecasting                                         |
+| `calculators/`   | Financial calculators                                              |
+| `reports/`       | Financial reports                                                  |
+| `import/`        | Transaction import (CSV/OFX)                                       |
+| `banking/`       | Bank connection management (Plaid)                                 |
+| `settings/`      | User preferences and security settings                             |
+| `household/`     | Household member management                                        |
+| `ask/`           | AI assistant (natural language queries)                            |
+| `learn/`         | Financial education content                                        |
+| `pricing/`       | Subscription plans                                                 |
+| `admin/`         | Admin panel                                                        |
 
 Public routes:
 
-| Route | Description |
-|-------|-------------|
-| `auth/` | Login, registration, password reset |
-| `onboarding/` | New user setup |
-| `privacy/` | Privacy policy |
-| `terms/` | Terms of service |
-| `security/` | Security information |
+| Route         | Description                         |
+| ------------- | ----------------------------------- |
+| `auth/`       | Login, registration, password reset |
+| `onboarding/` | New user setup                      |
+| `privacy/`    | Privacy policy                      |
+| `terms/`      | Terms of service                    |
+| `security/`   | Security information                |
 
 ## Shared Schemas
 
@@ -78,7 +78,7 @@ pnpm --filter @finance-owl/frontend test:e2e:ui  # E2E tests with Playwright UI
 
 ## Environment Variables
 
-| Variable | Description |
-|----------|-------------|
+| Variable  | Description                                                |
+| --------- | ---------------------------------------------------------- |
 | `API_URL` | Backend API URL (default: `http://backend:4000` in Docker) |
-| `PORT` | Server port (default: 3000) |
+| `PORT`    | Server port (default: 3000)                                |

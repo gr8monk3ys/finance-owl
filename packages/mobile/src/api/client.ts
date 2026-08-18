@@ -6,9 +6,7 @@ const REFRESH_KEY = 'fo_refresh_token';
 const REQUEST_TIMEOUT_MS = 15_000;
 
 const DEFAULT_API_URL =
-  Platform.OS === 'android'
-    ? 'http://10.0.2.2:4000/api'
-    : 'http://localhost:4000/api';
+  Platform.OS === 'android' ? 'http://10.0.2.2:4000/api' : 'http://localhost:4000/api';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? DEFAULT_API_URL;
 
@@ -53,21 +51,19 @@ export class ApiError<T = ErrorResponseBody> extends Error {
 function appendQueryParams(url: URL, params?: object): void {
   if (!params) return;
 
-  Object.entries(params as Record<string, QueryValue>).forEach(
-    ([key, rawValue]) => {
-      if (rawValue === null || rawValue === undefined) return;
+  Object.entries(params as Record<string, QueryValue>).forEach(([key, rawValue]) => {
+    if (rawValue === null || rawValue === undefined) return;
 
-      if (Array.isArray(rawValue)) {
-        rawValue.forEach((value) => {
-          if (value === null || value === undefined) return;
-          url.searchParams.append(key, String(value));
-        });
-        return;
-      }
+    if (Array.isArray(rawValue)) {
+      rawValue.forEach((value) => {
+        if (value === null || value === undefined) return;
+        url.searchParams.append(key, String(value));
+      });
+      return;
+    }
 
-      url.searchParams.append(key, String(rawValue));
-    },
-  );
+    url.searchParams.append(key, String(rawValue));
+  });
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -126,10 +122,7 @@ async function performFetch<T, TBody = unknown>(
 
   try {
     const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
-    const url = new URL(
-      normalizedPath,
-      API_URL.endsWith('/') ? API_URL : `${API_URL}/`,
-    );
+    const url = new URL(normalizedPath, API_URL.endsWith('/') ? API_URL : `${API_URL}/`);
     appendQueryParams(url, options.params);
 
     const headers: Record<string, string> = {
@@ -151,8 +144,7 @@ async function performFetch<T, TBody = unknown>(
     const response = await fetch(url.toString(), {
       method,
       headers,
-      body:
-        options.data === undefined ? undefined : JSON.stringify(options.data),
+      body: options.data === undefined ? undefined : JSON.stringify(options.data),
       signal: controller.signal,
     });
 
@@ -173,18 +165,10 @@ async function performFetch<T, TBody = unknown>(
     }
 
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new ApiError(
-        'Request timed out. Check your connection and try again.',
-        408,
-        {},
-      );
+      throw new ApiError('Request timed out. Check your connection and try again.', 408, {});
     }
 
-    throw new ApiError(
-      error instanceof Error ? error.message : 'Network request failed',
-      0,
-      {},
-    );
+    throw new ApiError(error instanceof Error ? error.message : 'Network request failed', 0, {});
   } finally {
     clearTimeout(timeout);
   }
@@ -212,10 +196,13 @@ async function refreshAccessToken(): Promise<string> {
       throw new ApiError('No refresh token available', 401, {});
     }
 
-    const { data } = await performFetch<{
-      accessToken: string;
-      refreshToken: string;
-    }, { refreshToken: string }>('POST', '/auth/refresh', {
+    const { data } = await performFetch<
+      {
+        accessToken: string;
+        refreshToken: string;
+      },
+      { refreshToken: string }
+    >('POST', '/auth/refresh', {
       data: { refreshToken },
       includeAuth: false,
       retryOnUnauthorized: false,
@@ -316,10 +303,7 @@ export function setUnauthorizedHandler(handler: UnauthorizedHandler): void {
   unauthorizedHandler = handler;
 }
 
-export function getApiErrorMessage(
-  error: unknown,
-  fallback = 'Something went wrong',
-): string {
+export function getApiErrorMessage(error: unknown, fallback = 'Something went wrong'): string {
   if (error instanceof ApiError) {
     return extractMessage(error.response.data, error.message || fallback);
   }

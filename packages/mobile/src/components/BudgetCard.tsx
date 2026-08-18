@@ -16,12 +16,9 @@ function getProgressColor(percentUsed: number): string {
 }
 
 function getStatusLabel(percentUsed: number): { label: string; color: string } {
-  if (percentUsed >= 100)
-    return { label: 'Over Budget', color: colors.danger[400] };
-  if (percentUsed >= 80)
-    return { label: 'Near Limit', color: colors.accent[400] };
-  if (percentUsed >= 50)
-    return { label: 'On Track', color: colors.primary[400] };
+  if (percentUsed >= 100) return { label: 'Over Budget', color: colors.danger[400] };
+  if (percentUsed >= 80) return { label: 'Near Limit', color: colors.accent[400] };
+  if (percentUsed >= 50) return { label: 'On Track', color: colors.primary[400] };
   return { label: 'Under Budget', color: colors.primary[400] };
 }
 
@@ -51,29 +48,20 @@ export default function BudgetCard({ budget, onPress }: BudgetCardProps) {
               },
             ]}
           >
-            <Text
-              style={[
-                styles.iconText,
-                { color: budget.categoryColor ?? '#64748b' },
-              ]}
-            >
+            <Text style={[styles.iconText, { color: budget.categoryColor ?? '#64748b' }]}>
               {getCategoryInitial(budget.categoryName)}
             </Text>
           </View>
           <View>
             <View style={styles.nameRow}>
-              <Text style={styles.name}>
-                {budget.categoryName ?? 'Unknown Category'}
-              </Text>
+              <Text style={styles.name}>{budget.categoryName ?? 'Unknown Category'}</Text>
               <View
                 style={[
                   styles.statusBadge,
                   { backgroundColor: status.color + '18', borderColor: status.color + '30' },
                 ]}
               >
-                <Text style={[styles.statusText, { color: status.color }]}>
-                  {status.label}
-                </Text>
+                <Text style={[styles.statusText, { color: status.color }]}>{status.label}</Text>
               </View>
             </View>
             <Text style={styles.period}>{budget.period}</Text>

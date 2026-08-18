@@ -7,9 +7,7 @@ import { QUEUES } from './jobs.module';
 export class WeeklyDigestScheduler implements OnModuleInit {
   private readonly logger = new Logger(WeeklyDigestScheduler.name);
 
-  constructor(
-    @InjectQueue(QUEUES.ALERTS) private alertsQueue: Queue,
-  ) {}
+  constructor(@InjectQueue(QUEUES.ALERTS) private alertsQueue: Queue) {}
 
   async onModuleInit() {
     // Weekly digest every Monday at 8:00 AM
@@ -22,8 +20,6 @@ export class WeeklyDigestScheduler implements OnModuleInit {
       },
     );
 
-    this.logger.log(
-      'Weekly digest scheduler initialized (Mondays at 8:00 AM)',
-    );
+    this.logger.log('Weekly digest scheduler initialized (Mondays at 8:00 AM)');
   }
 }

@@ -20,8 +20,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -61,9 +60,9 @@ describe('AccountsService', () => {
       set: vi.fn().mockResolvedValue(undefined),
       del: vi.fn().mockResolvedValue(undefined),
       delPattern: vi.fn().mockResolvedValue(0),
-      wrap: vi.fn().mockImplementation(
-        (_key: string, _ttl: number, factory: () => Promise<any>) => factory(),
-      ),
+      wrap: vi
+        .fn()
+        .mockImplementation((_key: string, _ttl: number, factory: () => Promise<any>) => factory()),
     };
 
     service = new AccountsService(mockDb, mockCacheService as any);
@@ -106,17 +105,15 @@ describe('AccountsService', () => {
     it('should throw NotFoundException when account not found', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.findById(mockUserId, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findById(mockUserId, 'non-existent')).rejects.toThrow(NotFoundException);
     });
 
     it('should not return accounts belonging to another user', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.findById('other-user', mockAccountId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findById('other-user', mockAccountId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -185,9 +182,7 @@ describe('AccountsService', () => {
       const result = await service.createManual(mockUserId, createData);
 
       expect(result.currentBalance).toBe(0);
-      expect(chain.values).toHaveBeenCalledWith(
-        expect.objectContaining({ currentBalance: 0 }),
-      );
+      expect(chain.values).toHaveBeenCalledWith(expect.objectContaining({ currentBalance: 0 }));
     });
 
     it('should default currency to USD when not provided', async () => {
@@ -201,9 +196,7 @@ describe('AccountsService', () => {
 
       await service.createManual(mockUserId, createData);
 
-      expect(chain.values).toHaveBeenCalledWith(
-        expect.objectContaining({ currency: 'USD' }),
-      );
+      expect(chain.values).toHaveBeenCalledWith(expect.objectContaining({ currency: 'USD' }));
     });
 
     it('should set institutionName to null when not provided', async () => {
@@ -217,9 +210,7 @@ describe('AccountsService', () => {
 
       await service.createManual(mockUserId, createData);
 
-      expect(chain.values).toHaveBeenCalledWith(
-        expect.objectContaining({ institutionName: null }),
-      );
+      expect(chain.values).toHaveBeenCalledWith(expect.objectContaining({ institutionName: null }));
     });
   });
 
@@ -258,9 +249,9 @@ describe('AccountsService', () => {
     it('should throw NotFoundException when updating non-existent account', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.update(mockUserId, 'non-existent', { name: 'Updated' }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.update(mockUserId, 'non-existent', { name: 'Updated' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -281,9 +272,7 @@ describe('AccountsService', () => {
       const linkedAccount = { ...mockAccount, isManual: false };
       mockDb.select.mockReturnValueOnce(mockQuery([linkedAccount]));
 
-      await expect(
-        service.remove(mockUserId, mockAccountId),
-      ).rejects.toThrow(
+      await expect(service.remove(mockUserId, mockAccountId)).rejects.toThrow(
         'Cannot delete a linked account. Unlink the institution instead.',
       );
     });
@@ -291,9 +280,7 @@ describe('AccountsService', () => {
     it('should throw NotFoundException when account does not exist', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.remove(mockUserId, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.remove(mockUserId, 'non-existent')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -305,7 +292,13 @@ describe('AccountsService', () => {
       const accounts = [
         { ...mockAccount, type: 'checking', currentBalance: 5000, isHidden: false },
         { ...mockAccount, id: 'acct-2', type: 'savings', currentBalance: 10000, isHidden: false },
-        { ...mockAccount, id: 'acct-3', type: 'credit_card', currentBalance: -2000, isHidden: false },
+        {
+          ...mockAccount,
+          id: 'acct-3',
+          type: 'credit_card',
+          currentBalance: -2000,
+          isHidden: false,
+        },
         { ...mockAccount, id: 'acct-4', type: 'loan', currentBalance: -15000, isHidden: false },
       ];
 
@@ -334,9 +327,7 @@ describe('AccountsService', () => {
     });
 
     it('should handle zero balance accounts', async () => {
-      const accounts = [
-        { ...mockAccount, type: 'checking', currentBalance: 0, isHidden: false },
-      ];
+      const accounts = [{ ...mockAccount, type: 'checking', currentBalance: 0, isHidden: false }];
 
       mockDb.select.mockReturnValueOnce(mockQuery(accounts));
 

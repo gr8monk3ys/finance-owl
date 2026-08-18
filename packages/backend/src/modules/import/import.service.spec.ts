@@ -25,8 +25,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -73,20 +72,17 @@ describe('ImportService', () => {
       expect(result.transactions[0]).toMatchObject({
         date: '2026-01-15',
         name: 'Coffee Shop',
-        amount: 4.50,
+        amount: 4.5,
       });
       expect(result.transactions[1]).toMatchObject({
         date: '2026-01-16',
         name: 'Grocery Store',
-        amount: 52.30,
+        amount: 52.3,
       });
     });
 
     it('should detect the generic format', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026-01-15,Coffee Shop,4.50',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,Coffee Shop,4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -112,9 +108,9 @@ describe('ImportService', () => {
       expect(result.detectedFormat).toBe('mint');
       expect(result.transactions).toHaveLength(2);
       // Mint debit = positive (expense)
-      expect(result.transactions[0].amount).toBe(4.50);
+      expect(result.transactions[0].amount).toBe(4.5);
       // Mint credit = negative (income)
-      expect(result.transactions[1].amount).toBe(-2500.00);
+      expect(result.transactions[1].amount).toBe(-2500.0);
     });
 
     it('should detect YNAB CSV format', () => {
@@ -131,8 +127,8 @@ describe('ImportService', () => {
       // YNAB mapping picks Memo (index 4) as description since Math.max(payee=2, memo=4) = 4
       expect(result.transactions[0].name).toBe('Morning latte');
       // YNAB: outflow - inflow
-      expect(result.transactions[0].amount).toBe(4.50);
-      expect(result.transactions[1].amount).toBe(-3000.00);
+      expect(result.transactions[0].amount).toBe(4.5);
+      expect(result.transactions[1].amount).toBe(-3000.0);
     });
 
     it('should detect bank debit/credit format', () => {
@@ -147,16 +143,13 @@ describe('ImportService', () => {
       expect(result.detectedFormat).toBe('bank_debit_credit');
       expect(result.transactions).toHaveLength(2);
       // Debit is positive
-      expect(result.transactions[0].amount).toBe(200.00);
+      expect(result.transactions[0].amount).toBe(200.0);
       // Credit is negative
-      expect(result.transactions[1].amount).toBe(-3500.00);
+      expect(result.transactions[1].amount).toBe(-3500.0);
     });
 
     it('should use a custom column mapping when provided', () => {
-      const csv = [
-        'When,What,How Much',
-        '2026-03-01,Rent Payment,1200.00',
-      ].join('\n');
+      const csv = ['When,What,How Much', '2026-03-01,Rent Payment,1200.00'].join('\n');
 
       const mapping = { date: 0, description: 1, amount: 2 };
       const result = service.parseCSV(Buffer.from(csv), mapping);
@@ -166,15 +159,14 @@ describe('ImportService', () => {
       expect(result.transactions[0]).toMatchObject({
         date: '2026-03-01',
         name: 'Rent Payment',
-        amount: 1200.00,
+        amount: 1200.0,
       });
     });
 
     it('should handle quoted fields containing commas', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026-01-15,"Smith, John - Payment",150.00',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,"Smith, John - Payment",150.00'].join(
+        '\n',
+      );
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -183,10 +175,7 @@ describe('ImportService', () => {
     });
 
     it('should handle escaped double quotes in CSV fields', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026-01-15,"Payment ""Ref #42""",75.00',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,"Payment ""Ref #42""",75.00'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -241,11 +230,9 @@ describe('ImportService', () => {
     });
 
     it('should skip rows with missing or invalid date', () => {
-      const csv = [
-        'Date,Description,Amount',
-        ',Coffee Shop,4.50',
-        '2026-01-16,Lunch,12.00',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', ',Coffee Shop,4.50', '2026-01-16,Lunch,12.00'].join(
+        '\n',
+      );
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -287,31 +274,21 @@ describe('ImportService', () => {
     it('should throw BadRequestException for a file with only a header row', () => {
       const csv = 'Date,Description,Amount';
 
-      expect(() => service.parseCSV(Buffer.from(csv))).toThrow(
-        BadRequestException,
-      );
+      expect(() => service.parseCSV(Buffer.from(csv))).toThrow(BadRequestException);
     });
 
     it('should throw BadRequestException for an empty file', () => {
-      expect(() => service.parseCSV(Buffer.from(''))).toThrow(
-        BadRequestException,
-      );
+      expect(() => service.parseCSV(Buffer.from(''))).toThrow(BadRequestException);
     });
 
     it('should throw BadRequestException for a single-line file', () => {
       const csv = 'just-one-line';
 
-      expect(() => service.parseCSV(Buffer.from(csv))).toThrow(
-        BadRequestException,
-      );
+      expect(() => service.parseCSV(Buffer.from(csv))).toThrow(BadRequestException);
     });
 
     it('should return zero transactions if all data rows are invalid', () => {
-      const csv = [
-        'Date,Description,Amount',
-        ',,,',
-        ',,,',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', ',,,', ',,,'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -324,10 +301,7 @@ describe('ImportService', () => {
   // ===========================================================================
   describe('parseCSV - date normalization', () => {
     it('should parse MM/DD/YYYY dates', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '01/15/2026,Coffee,4.50',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '01/15/2026,Coffee,4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -335,10 +309,7 @@ describe('ImportService', () => {
     });
 
     it('should parse MM-DD-YYYY dates', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '01-15-2026,Coffee,4.50',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '01-15-2026,Coffee,4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -346,10 +317,7 @@ describe('ImportService', () => {
     });
 
     it('should parse YYYY/MM/DD dates', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026/01/15,Coffee,4.50',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026/01/15,Coffee,4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -357,10 +325,7 @@ describe('ImportService', () => {
     });
 
     it('should preserve YYYY-MM-DD dates', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026-01-15,Coffee,4.50',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,Coffee,4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -368,10 +333,7 @@ describe('ImportService', () => {
     });
 
     it('should pad single-digit month and day in MM/DD/YYYY', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '1/5/2026,Coffee,4.50',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '1/5/2026,Coffee,4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -384,58 +346,43 @@ describe('ImportService', () => {
   // ===========================================================================
   describe('parseCSV - number parsing', () => {
     it('should strip dollar sign from amounts', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026-01-15,Coffee,$4.50',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,Coffee,$4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(4.50);
+      expect(result.transactions[0].amount).toBe(4.5);
     });
 
     it('should strip commas from amounts', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026-01-15,Rent,"1,200.00"',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,Rent,"1,200.00"'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(1200.00);
+      expect(result.transactions[0].amount).toBe(1200.0);
     });
 
     it('should handle parenthetical negative notation', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026-01-15,Refund,(50.00)',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,Refund,(50.00)'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(-50.00);
+      expect(result.transactions[0].amount).toBe(-50.0);
     });
 
     it('should handle euro symbol in amounts', () => {
-      const csv = [
-        'Date,Description,Amount',
-        "2026-01-15,Coffee,\u20AC4.50",
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,Coffee,\u20AC4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(4.50);
+      expect(result.transactions[0].amount).toBe(4.5);
     });
 
     it('should handle pound symbol in amounts', () => {
-      const csv = [
-        'Date,Description,Amount',
-        "2026-01-15,Coffee,\u00A34.50",
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,Coffee,\u00A34.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(4.50);
+      expect(result.transactions[0].amount).toBe(4.5);
     });
   });
 
@@ -480,7 +427,7 @@ DATA:OFXSGML
       expect(result[0]).toMatchObject({
         date: '2026-01-15',
         name: 'STARBUCKS COFFEE',
-        amount: 42.50,
+        amount: 42.5,
         fitId: 'TXN001',
         memo: 'Purchase at store #123',
       });
@@ -488,7 +435,7 @@ DATA:OFXSGML
       expect(result[1]).toMatchObject({
         date: '2026-01-16',
         name: 'EMPLOYER PAYROLL',
-        amount: -2500.00,
+        amount: -2500.0,
         fitId: 'TXN002',
       });
     });
@@ -667,10 +614,7 @@ DATA:OFXSGML
   // ===========================================================================
   describe('field mapping', () => {
     it('should map non-standard column names with auto-detection', () => {
-      const csv = [
-        'Transaction Date,Payee,Total Amount',
-        '2026-01-15,Coffee Shop,4.50',
-      ].join('\n');
+      const csv = ['Transaction Date,Payee,Total Amount', '2026-01-15,Coffee Shop,4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -678,7 +622,7 @@ DATA:OFXSGML
       expect(result.transactions[0]).toMatchObject({
         date: '2026-01-15',
         name: 'Coffee Shop',
-        amount: 4.50,
+        amount: 4.5,
       });
     });
 
@@ -707,15 +651,12 @@ DATA:OFXSGML
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(100.00); // debit
-      expect(result.transactions[1].amount).toBe(-50.00); // credit
+      expect(result.transactions[0].amount).toBe(100.0); // debit
+      expect(result.transactions[1].amount).toBe(-50.0); // credit
     });
 
     it('should use column index 0 for date when no date header found', () => {
-      const csv = [
-        'Col A,Col B,Amount',
-        '2026-01-15,Something,50.00',
-      ].join('\n');
+      const csv = ['Col A,Col B,Amount', '2026-01-15,Something,50.00'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -729,22 +670,16 @@ DATA:OFXSGML
   // ===========================================================================
   describe('previewImport', () => {
     it('should flag duplicates based on date/amount/name', async () => {
-      const existingTxs = [
-        { date: '2026-01-15', amount: 4.50, name: 'Coffee Shop' },
-      ];
+      const existingTxs = [{ date: '2026-01-15', amount: 4.5, name: 'Coffee Shop' }];
 
       mockDb.select.mockReturnValueOnce(mockQuery(existingTxs));
 
       const parsed = [
-        { date: '2026-01-15', name: 'Coffee Shop', amount: 4.50 },
-        { date: '2026-01-16', name: 'Lunch', amount: 12.00 },
+        { date: '2026-01-15', name: 'Coffee Shop', amount: 4.5 },
+        { date: '2026-01-16', name: 'Lunch', amount: 12.0 },
       ];
 
-      const result = await service.previewImport(
-        mockUserId,
-        parsed,
-        mockAccountId,
-      );
+      const result = await service.previewImport(mockUserId, parsed, mockAccountId);
 
       expect(result).toHaveLength(2);
       expect(result[0].isDuplicate).toBe(true);
@@ -754,41 +689,25 @@ DATA:OFXSGML
     });
 
     it('should use case-insensitive comparison for duplicate detection', async () => {
-      const existingTxs = [
-        { date: '2026-01-15', amount: 4.50, name: 'COFFEE SHOP' },
-      ];
+      const existingTxs = [{ date: '2026-01-15', amount: 4.5, name: 'COFFEE SHOP' }];
 
       mockDb.select.mockReturnValueOnce(mockQuery(existingTxs));
 
-      const parsed = [
-        { date: '2026-01-15', name: 'coffee shop', amount: 4.50 },
-      ];
+      const parsed = [{ date: '2026-01-15', name: 'coffee shop', amount: 4.5 }];
 
-      const result = await service.previewImport(
-        mockUserId,
-        parsed,
-        mockAccountId,
-      );
+      const result = await service.previewImport(mockUserId, parsed, mockAccountId);
 
       expect(result[0].isDuplicate).toBe(true);
     });
 
     it('should not flag transactions with different amounts as duplicates', async () => {
-      const existingTxs = [
-        { date: '2026-01-15', amount: 4.50, name: 'Coffee Shop' },
-      ];
+      const existingTxs = [{ date: '2026-01-15', amount: 4.5, name: 'Coffee Shop' }];
 
       mockDb.select.mockReturnValueOnce(mockQuery(existingTxs));
 
-      const parsed = [
-        { date: '2026-01-15', name: 'Coffee Shop', amount: 5.00 },
-      ];
+      const parsed = [{ date: '2026-01-15', name: 'Coffee Shop', amount: 5.0 }];
 
-      const result = await service.previewImport(
-        mockUserId,
-        parsed,
-        mockAccountId,
-      );
+      const result = await service.previewImport(mockUserId, parsed, mockAccountId);
 
       expect(result[0].isDuplicate).toBe(false);
       expect(result[0].selected).toBe(true);
@@ -803,11 +722,7 @@ DATA:OFXSGML
         { date: '2026-01-17', name: 'C', amount: 3 },
       ];
 
-      const result = await service.previewImport(
-        mockUserId,
-        parsed,
-        mockAccountId,
-      );
+      const result = await service.previewImport(mockUserId, parsed, mockAccountId);
 
       expect(result[0].rowIndex).toBe(0);
       expect(result[1].rowIndex).toBe(1);
@@ -817,15 +732,9 @@ DATA:OFXSGML
     it('should handle preview with no existing transactions', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      const parsed = [
-        { date: '2026-01-15', name: 'Coffee', amount: 4.50 },
-      ];
+      const parsed = [{ date: '2026-01-15', name: 'Coffee', amount: 4.5 }];
 
-      const result = await service.previewImport(
-        mockUserId,
-        parsed,
-        mockAccountId,
-      );
+      const result = await service.previewImport(mockUserId, parsed, mockAccountId);
 
       expect(result[0].isDuplicate).toBe(false);
       expect(result[0].selected).toBe(true);
@@ -840,9 +749,7 @@ DATA:OFXSGML
 
     it('should import transactions and return counts', async () => {
       // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
 
       // Existing transactions query (empty - no duplicates)
       mockDb.select.mockReturnValueOnce(mockQuery([]));
@@ -850,9 +757,7 @@ DATA:OFXSGML
       // Insert two transactions
       const insertChain1 = mockQuery([{ id: 'txn-1' }]);
       const insertChain2 = mockQuery([{ id: 'txn-2' }]);
-      mockDb.insert
-        .mockReturnValueOnce(insertChain1)
-        .mockReturnValueOnce(insertChain2);
+      mockDb.insert.mockReturnValueOnce(insertChain1).mockReturnValueOnce(insertChain2);
 
       // Categorization returns null for both
       mockCategorizationService.categorize.mockResolvedValue({
@@ -865,8 +770,8 @@ DATA:OFXSGML
       mockDb.insert.mockReturnValueOnce(historyChain);
 
       const transactions = [
-        { date: '2026-01-15', name: 'Coffee', amount: 4.50 },
-        { date: '2026-01-16', name: 'Lunch', amount: 12.00 },
+        { date: '2026-01-15', name: 'Coffee', amount: 4.5 },
+        { date: '2026-01-16', name: 'Lunch', amount: 12.0 },
       ];
 
       const result = await service.executeImport(
@@ -888,13 +793,11 @@ DATA:OFXSGML
 
     it('should skip duplicates when skipDuplicates is true', async () => {
       // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
 
       // Existing transactions
       mockDb.select.mockReturnValueOnce(
-        mockQuery([{ date: '2026-01-15', amount: 4.50, name: 'Coffee' }]),
+        mockQuery([{ date: '2026-01-15', amount: 4.5, name: 'Coffee' }]),
       );
 
       // Insert for the non-duplicate transaction
@@ -910,8 +813,8 @@ DATA:OFXSGML
       mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
 
       const transactions = [
-        { date: '2026-01-15', name: 'Coffee', amount: 4.50 }, // duplicate
-        { date: '2026-01-16', name: 'Lunch', amount: 12.00 }, // new
+        { date: '2026-01-15', name: 'Coffee', amount: 4.5 }, // duplicate
+        { date: '2026-01-16', name: 'Lunch', amount: 12.0 }, // new
       ];
 
       const result = await service.executeImport(
@@ -930,13 +833,11 @@ DATA:OFXSGML
 
     it('should import duplicates when skipDuplicates is false', async () => {
       // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
 
       // Existing transactions
       mockDb.select.mockReturnValueOnce(
-        mockQuery([{ date: '2026-01-15', amount: 4.50, name: 'Coffee' }]),
+        mockQuery([{ date: '2026-01-15', amount: 4.5, name: 'Coffee' }]),
       );
 
       // Insert for both transactions (even the duplicate)
@@ -953,8 +854,8 @@ DATA:OFXSGML
       mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
 
       const transactions = [
-        { date: '2026-01-15', name: 'Coffee', amount: 4.50 },
-        { date: '2026-01-16', name: 'Lunch', amount: 12.00 },
+        { date: '2026-01-15', name: 'Coffee', amount: 4.5 },
+        { date: '2026-01-16', name: 'Lunch', amount: 12.0 },
       ];
 
       const result = await service.executeImport(
@@ -987,12 +888,9 @@ DATA:OFXSGML
       ).rejects.toThrow(BadRequestException);
     });
 
-
     it('should continue import when auto-categorization fails', async () => {
       // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
 
       // No existing transactions
       mockDb.select.mockReturnValueOnce(mockQuery([]));
@@ -1001,16 +899,12 @@ DATA:OFXSGML
       mockDb.insert.mockReturnValueOnce(mockQuery([{ id: 'txn-1' }]));
 
       // Categorization throws error
-      mockCategorizationService.categorize.mockRejectedValue(
-        new Error('AI service unavailable'),
-      );
+      mockCategorizationService.categorize.mockRejectedValue(new Error('AI service unavailable'));
 
       // Import history
       mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
 
-      const transactions = [
-        { date: '2026-01-15', name: 'Coffee', amount: 4.50 },
-      ];
+      const transactions = [{ date: '2026-01-15', name: 'Coffee', amount: 4.5 }];
 
       const result = await service.executeImport(
         mockUserId,
@@ -1027,9 +921,7 @@ DATA:OFXSGML
 
     it('should set fitId in notes when provided', async () => {
       // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
 
       // No existing transactions
       mockDb.select.mockReturnValueOnce(mockQuery([]));
@@ -1050,7 +942,7 @@ DATA:OFXSGML
         {
           date: '2026-01-15',
           name: 'Coffee',
-          amount: 4.50,
+          amount: 4.5,
           fitId: 'OFX123',
         },
       ];
@@ -1073,9 +965,7 @@ DATA:OFXSGML
 
     it('should record import history after import', async () => {
       // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
 
       // No existing transactions
       mockDb.select.mockReturnValueOnce(mockQuery([]));
@@ -1092,9 +982,7 @@ DATA:OFXSGML
       const historyChain = mockQuery(undefined);
       mockDb.insert.mockReturnValueOnce(historyChain);
 
-      const transactions = [
-        { date: '2026-01-15', name: 'Coffee', amount: 4.50 },
-      ];
+      const transactions = [{ date: '2026-01-15', name: 'Coffee', amount: 4.5 }];
 
       await service.executeImport(
         mockUserId,
@@ -1119,9 +1007,7 @@ DATA:OFXSGML
 
     it('should prevent within-batch duplicates by updating existingSet', async () => {
       // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
 
       // No existing transactions in DB
       mockDb.select.mockReturnValueOnce(mockQuery([]));
@@ -1139,8 +1025,8 @@ DATA:OFXSGML
 
       // Two identical transactions in the same batch
       const transactions = [
-        { date: '2026-01-15', name: 'Coffee', amount: 4.50 },
-        { date: '2026-01-15', name: 'Coffee', amount: 4.50 },
+        { date: '2026-01-15', name: 'Coffee', amount: 4.5 },
+        { date: '2026-01-15', name: 'Coffee', amount: 4.5 },
       ];
 
       const result = await service.executeImport(
@@ -1159,9 +1045,7 @@ DATA:OFXSGML
 
     it('should handle empty transaction array', async () => {
       // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
 
       // No existing transactions
       mockDb.select.mockReturnValueOnce(mockQuery([]));
@@ -1188,9 +1072,7 @@ DATA:OFXSGML
 
     it('should skip and count a transaction when insert fails', async () => {
       // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
 
       // No existing transactions
       mockDb.select.mockReturnValueOnce(mockQuery([]));
@@ -1198,8 +1080,18 @@ DATA:OFXSGML
       // First insert fails
       const failChain: any = {};
       const methods = [
-        'select', 'from', 'where', 'leftJoin', 'innerJoin', 'orderBy',
-        'limit', 'offset', 'set', 'values', 'returning', 'groupBy',
+        'select',
+        'from',
+        'where',
+        'leftJoin',
+        'innerJoin',
+        'orderBy',
+        'limit',
+        'offset',
+        'set',
+        'values',
+        'returning',
+        'groupBy',
       ];
       for (const m of methods) {
         failChain[m] = vi.fn().mockReturnValue(failChain);
@@ -1223,8 +1115,8 @@ DATA:OFXSGML
       mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
 
       const transactions = [
-        { date: '2026-01-15', name: 'Bad Txn', amount: 1.00 },
-        { date: '2026-01-16', name: 'Good Txn', amount: 2.00 },
+        { date: '2026-01-15', name: 'Bad Txn', amount: 1.0 },
+        { date: '2026-01-16', name: 'Good Txn', amount: 2.0 },
       ];
 
       const result = await service.executeImport(
@@ -1242,9 +1134,7 @@ DATA:OFXSGML
 
     it('should store columnMapping as JSON string in import history', async () => {
       // Account lookup
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([{ id: mockAccountId, userId: mockUserId }]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
 
       // No existing transactions
       mockDb.select.mockReturnValueOnce(mockQuery([]));
@@ -1358,10 +1248,7 @@ DATA:OFXSGML
     });
 
     it('should handle CSV with extra trailing commas', () => {
-      const csv = [
-        'Date,Description,Amount,',
-        '2026-01-15,Coffee,4.50,',
-      ].join('\n');
+      const csv = ['Date,Description,Amount,', '2026-01-15,Coffee,4.50,'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -1369,10 +1256,7 @@ DATA:OFXSGML
     });
 
     it('should handle zero-amount transactions in CSV', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026-01-15,Balance Inquiry,0',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,Balance Inquiry,0'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -1381,14 +1265,11 @@ DATA:OFXSGML
     });
 
     it('should handle negative amounts in generic CSV', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026-01-15,Refund,-25.50',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,Refund,-25.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(-25.50);
+      expect(result.transactions[0].amount).toBe(-25.5);
     });
 
     it('should handle OFX with very short date (less than 8 chars) and skip', () => {
@@ -1410,10 +1291,7 @@ DATA:OFXSGML
     });
 
     it('should trim whitespace from descriptions', () => {
-      const csv = [
-        'Date,Description,Amount',
-        '2026-01-15,  Coffee Shop  ,4.50',
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,  Coffee Shop  ,4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv));
 
@@ -1421,10 +1299,7 @@ DATA:OFXSGML
     });
 
     it('should handle UTF-8 encoded file content', () => {
-      const csv = [
-        'Date,Description,Amount',
-        "2026-01-15,Caf\u00E9 au Lait,4.50",
-      ].join('\n');
+      const csv = ['Date,Description,Amount', '2026-01-15,Caf\u00E9 au Lait,4.50'].join('\n');
 
       const result = service.parseCSV(Buffer.from(csv, 'utf-8'));
 

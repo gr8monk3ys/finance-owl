@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  Delete,
-  HttpCode,
-  HttpStatus,
-  Req,
-} from '@nestjs/common';
+import { Controller, Post, Get, Body, Delete, HttpCode, HttpStatus, Req } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
@@ -76,15 +67,8 @@ export class AuthController {
   @Throttle({ default: { ttl: 60000, limit: 3 } })
   @Post('change-password')
   @HttpCode(HttpStatus.OK)
-  async changePassword(
-    @CurrentUser('id') userId: string,
-    @Body() dto: ChangePasswordDto,
-  ) {
-    return this.authService.changePassword(
-      userId,
-      dto.currentPassword,
-      dto.newPassword,
-    );
+  async changePassword(@CurrentUser('id') userId: string, @Body() dto: ChangePasswordDto) {
+    return this.authService.changePassword(userId, dto.currentPassword, dto.newPassword);
   }
 
   @ApiOperation({ summary: 'Logout and invalidate a refresh token' })

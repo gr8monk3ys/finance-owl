@@ -45,10 +45,7 @@ export class MxProvider implements BankAggregatorProvider, OnModuleInit {
 
     // MX offers sandbox (int-api) and production (api) environments
     const env = this.configService.get<string>('MX_ENV', 'sandbox');
-    this.baseUrl =
-      env === 'production'
-        ? 'https://api.mx.com'
-        : 'https://int-api.mx.com';
+    this.baseUrl = env === 'production' ? 'https://api.mx.com' : 'https://int-api.mx.com';
   }
 
   onModuleInit() {
@@ -67,10 +64,7 @@ export class MxProvider implements BankAggregatorProvider, OnModuleInit {
   // BankAggregatorProvider implementation
   // ---------------------------------------------------------------------------
 
-  async createLinkToken(
-    userId: string,
-    options?: LinkTokenOptions,
-  ): Promise<LinkTokenResult> {
+  async createLinkToken(userId: string, options?: LinkTokenOptions): Promise<LinkTokenResult> {
     this.ensureAvailable();
 
     const body = {
@@ -107,9 +101,7 @@ export class MxProvider implements BankAggregatorProvider, OnModuleInit {
       member: { guid: string; institution_code: string; name: string };
     }>('GET', `/users/${parsed.userGuid}/members/${parsed.memberGuid}`);
 
-    const accounts = await this.getAccounts(
-      `${parsed.userGuid}:${parsed.memberGuid}`,
-    );
+    const accounts = await this.getAccounts(`${parsed.userGuid}:${parsed.memberGuid}`);
 
     return {
       accessToken: `${parsed.userGuid}:${parsed.memberGuid}`,
@@ -226,11 +218,7 @@ export class MxProvider implements BankAggregatorProvider, OnModuleInit {
     const fromDate = cursor ?? this.daysAgo(30);
     const toDate = new Date().toISOString().slice(0, 10);
 
-    const transactions = await this.getTransactions(
-      accessToken,
-      fromDate,
-      toDate,
-    );
+    const transactions = await this.getTransactions(accessToken, fromDate, toDate);
 
     return {
       added: transactions,
@@ -241,9 +229,7 @@ export class MxProvider implements BankAggregatorProvider, OnModuleInit {
     };
   }
 
-  async getInvestmentHoldings(
-    accessToken: string,
-  ): Promise<AggregatorHolding[]> {
+  async getInvestmentHoldings(accessToken: string): Promise<AggregatorHolding[]> {
     this.ensureAvailable();
 
     const { userGuid, memberGuid } = this.parseAccessToken(accessToken);
@@ -349,15 +335,9 @@ export class MxProvider implements BankAggregatorProvider, OnModuleInit {
   // Internal HTTP helpers
   // ---------------------------------------------------------------------------
 
-  private async request<T>(
-    method: string,
-    path: string,
-    body?: unknown,
-  ): Promise<T> {
+  private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
     const url = `${this.baseUrl}${path}`;
-    const credentials = Buffer.from(
-      `${this.clientId}:${this.apiKey}`,
-    ).toString('base64');
+    const credentials = Buffer.from(`${this.clientId}:${this.apiKey}`).toString('base64');
 
     const headers: Record<string, string> = {
       Accept: 'application/vnd.mx.api.v1+json',
@@ -373,9 +353,7 @@ export class MxProvider implements BankAggregatorProvider, OnModuleInit {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `MX API error ${response.status}: ${errorText}`,
-      );
+      throw new Error(`MX API error ${response.status}: ${errorText}`);
     }
 
     if (response.status === 204) return {} as T;

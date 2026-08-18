@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Inject,
-  Logger,
-  ServiceUnavailableException,
-} from '@nestjs/common';
+import { Controller, Get, Inject, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { SkipThrottle } from '@nestjs/throttler';
@@ -114,10 +108,7 @@ export class HealthController {
   @Public()
   @Get('detailed')
   async detailed(): Promise<DetailedHealthResponse> {
-    const [dbStatus, redisStatus] = await Promise.all([
-      this.checkDatabase(),
-      this.checkRedis(),
-    ]);
+    const [dbStatus, redisStatus] = await Promise.all([this.checkDatabase(), this.checkRedis()]);
 
     const memoryUsage = process.memoryUsage();
     const toMb = (bytes: number) => (bytes / 1024 / 1024).toFixed(2);

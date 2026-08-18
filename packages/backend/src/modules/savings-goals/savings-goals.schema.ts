@@ -10,7 +10,10 @@ export const savingsGoals = pgTable('savings_goals', {
     .references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   targetAmount: numeric('target_amount', { precision: 19, scale: 4 }).$type<number>().notNull(),
-  currentAmount: numeric('current_amount', { precision: 19, scale: 4 }).$type<number>().notNull().default(0),
+  currentAmount: numeric('current_amount', { precision: 19, scale: 4 })
+    .$type<number>()
+    .notNull()
+    .default(0),
   deadline: text('deadline'),
   icon: text('icon'),
   color: text('color'),

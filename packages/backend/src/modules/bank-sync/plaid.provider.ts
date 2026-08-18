@@ -1,12 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  Configuration,
-  PlaidApi,
-  PlaidEnvironments,
-  Products,
-  CountryCode,
-} from 'plaid';
+import { Configuration, PlaidApi, PlaidEnvironments, Products, CountryCode } from 'plaid';
 import * as jose from 'jose';
 import { createHash } from 'crypto';
 import type {
@@ -43,14 +37,10 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
     const env = this.configService.get<string>('PLAID_ENV', 'sandbox');
     const configuration = new Configuration({
       basePath:
-        PlaidEnvironments[env as keyof typeof PlaidEnvironments] ||
-        PlaidEnvironments.sandbox,
+        PlaidEnvironments[env as keyof typeof PlaidEnvironments] || PlaidEnvironments.sandbox,
       baseOptions: {
         headers: {
-          'PLAID-CLIENT-ID': this.configService.get<string>(
-            'PLAID_CLIENT_ID',
-            '',
-          ),
+          'PLAID-CLIENT-ID': this.configService.get<string>('PLAID_CLIENT_ID', ''),
           'PLAID-SECRET': this.configService.get<string>('PLAID_SECRET', ''),
         },
       },
@@ -63,16 +53,9 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
   // BankAggregatorProvider implementation
   // ---------------------------------------------------------------------------
 
-  async createLinkToken(
-    userId: string,
-    options?: LinkTokenOptions,
-  ): Promise<LinkTokenResult> {
-    const products = (options?.products ?? ['transactions']).map(
-      (p) => p as Products,
-    );
-    const countryCodes = (options?.countryCodes ?? ['US']).map(
-      (c) => c as CountryCode,
-    );
+  async createLinkToken(userId: string, options?: LinkTokenOptions): Promise<LinkTokenResult> {
+    const products = (options?.products ?? ['transactions']).map((p) => p as Products);
+    const countryCodes = (options?.countryCodes ?? ['US']).map((c) => c as CountryCode);
 
     const response = await this._client.linkTokenCreate({
       user: { client_user_id: userId },
@@ -122,20 +105,18 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
       }
     }
 
-    const accounts: AggregatorAccount[] = accountsResponse.data.accounts.map(
-      (acct) => ({
-        externalId: acct.account_id,
-        name: acct.name,
-        officialName: acct.official_name ?? null,
-        type: this.mapAccountType(acct.type),
-        subtype: acct.subtype ?? null,
-        mask: acct.mask ?? null,
-        currentBalance: acct.balances.current ?? null,
-        availableBalance: acct.balances.available ?? null,
-        creditLimit: acct.balances.limit ?? null,
-        currency: acct.balances.iso_currency_code ?? 'USD',
-      }),
-    );
+    const accounts: AggregatorAccount[] = accountsResponse.data.accounts.map((acct) => ({
+      externalId: acct.account_id,
+      name: acct.name,
+      officialName: acct.official_name ?? null,
+      type: this.mapAccountType(acct.type),
+      subtype: acct.subtype ?? null,
+      mask: acct.mask ?? null,
+      currentBalance: acct.balances.current ?? null,
+      availableBalance: acct.balances.available ?? null,
+      creditLimit: acct.balances.limit ?? null,
+      currency: acct.balances.iso_currency_code ?? 'USD',
+    }));
 
     return {
       accessToken,
@@ -198,8 +179,7 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
           authorizedDate: tx.authorized_date ?? null,
           pending: tx.pending,
           category: tx.category?.join(', ') ?? null,
-          personalFinanceCategory:
-            tx.personal_finance_category?.primary ?? null,
+          personalFinanceCategory: tx.personal_finance_category?.primary ?? null,
         });
       }
 
@@ -232,8 +212,7 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
         authorizedDate: tx.authorized_date ?? null,
         pending: tx.pending,
         category: tx.category?.join(', ') ?? null,
-        personalFinanceCategory:
-          tx.personal_finance_category?.primary ?? null,
+        personalFinanceCategory: tx.personal_finance_category?.primary ?? null,
       })),
       modified: data.modified.map((tx) => ({
         externalId: tx.transaction_id,
@@ -246,8 +225,7 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
         authorizedDate: tx.authorized_date ?? null,
         pending: tx.pending,
         category: tx.category?.join(', ') ?? null,
-        personalFinanceCategory:
-          tx.personal_finance_category?.primary ?? null,
+        personalFinanceCategory: tx.personal_finance_category?.primary ?? null,
       })),
       removed: data.removed.map((r) => r.transaction_id!).filter(Boolean),
       cursor: data.next_cursor,
@@ -255,16 +233,12 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
     };
   }
 
-  async getInvestmentHoldings(
-    accessToken: string,
-  ): Promise<AggregatorHolding[]> {
+  async getInvestmentHoldings(accessToken: string): Promise<AggregatorHolding[]> {
     const response = await this._client.investmentsHoldingsGet({
       access_token: accessToken,
     });
 
-    const securities = new Map(
-      response.data.securities.map((s) => [s.security_id, s]),
-    );
+    const securities = new Map(response.data.securities.map((s) => [s.security_id, s]));
 
     return response.data.holdings.map((h) => {
       const security = securities.get(h.security_id);
@@ -312,15 +286,11 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
 
       const item = response.data.item;
       const error = response.data.status?.transactions?.last_failed_update;
-      const lastSuccess =
-        response.data.status?.transactions?.last_successful_update ?? null;
+      const lastSuccess = response.data.status?.transactions?.last_successful_update ?? null;
 
       if (item.error) {
         return {
-          status:
-            item.error.error_code === 'ITEM_LOGIN_REQUIRED'
-              ? 'login_required'
-              : 'error',
+          status: item.error.error_code === 'ITEM_LOGIN_REQUIRED' ? 'login_required' : 'error',
           lastSuccessfulSync: lastSuccess,
           errorCode: item.error.error_code ?? null,
           errorMessage: item.error.error_message ?? null,
@@ -394,10 +364,7 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
    * 5. Confirm the token is not older than 5 minutes (iat claim).
    * 6. Verify that the request body SHA-256 hash matches the `request_body_sha256` claim.
    */
-  async verifyWebhook(
-    body: string,
-    headers: Record<string, string>,
-  ): Promise<boolean> {
+  async verifyWebhook(body: string, headers: Record<string, string>): Promise<boolean> {
     try {
       const token = headers['plaid-verification'] || '';
       if (!token) {
@@ -405,9 +372,13 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
         return false;
       }
 
-      // In sandbox mode, skip verification (Plaid sandbox does not always send valid JWTs)
+      // In sandbox mode, skip verification (Plaid sandbox does not always
+      // send valid JWTs). Only skip when PLAID_ENV is EXPLICITLY sandbox
+      // outside production — an unset PLAID_ENV must fail closed.
+      const plaidEnv = this.configService.get<string>('PLAID_ENV');
       if (
-        this.configService.get<string>('PLAID_ENV', 'sandbox') === 'sandbox'
+        this.configService.get<string>('NODE_ENV') !== 'production' &&
+        (plaidEnv === undefined || plaidEnv === 'sandbox')
       ) {
         return true;
       }
@@ -464,9 +435,7 @@ export class PlaidProvider implements BankAggregatorProvider, BankSyncProvider {
 
       const actualHash = createHash('sha256').update(body).digest('hex');
       if (actualHash !== expectedHash) {
-        this.logger.warn(
-          'Plaid webhook body hash mismatch: JWT claims a different body hash',
-        );
+        this.logger.warn('Plaid webhook body hash mismatch: JWT claims a different body hash');
         return false;
       }
 

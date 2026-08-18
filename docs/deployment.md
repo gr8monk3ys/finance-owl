@@ -152,13 +152,13 @@ The `packages/frontend/vercel.json` handles build configuration:
 
 If Vercel does not pick up the config automatically, set these manually in the Vercel dashboard:
 
-| Setting          | Value                                                                          |
-|------------------|--------------------------------------------------------------------------------|
-| Framework        | SvelteKit                                                                      |
-| Root Directory   | `packages/frontend`                                                            |
+| Setting          | Value                                                                                              |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| Framework        | SvelteKit                                                                                          |
+| Root Directory   | `packages/frontend`                                                                                |
 | Build Command    | `cd ../.. && pnpm --filter @finance-owl/shared build && pnpm --filter @finance-owl/frontend build` |
-| Install Command  | `cd ../.. && pnpm install --frozen-lockfile`                                   |
-| Output Directory | `.svelte-kit/output`                                                           |
+| Install Command  | `cd ../.. && pnpm install --frozen-lockfile`                                                       |
+| Output Directory | `.svelte-kit/output`                                                                               |
 
 ### Step 3: Configure Environment Variables
 
@@ -205,6 +205,7 @@ The backend reads CORS origins from environment variables:
 2. `FRONTEND_URL` (single origin fallback)
 
 Set in Railway:
+
 ```bash
 CORS_ORIGIN=https://yourapp.com
 # or for multiple origins:
@@ -234,24 +235,24 @@ The repository includes GitHub Actions workflows for automated deployment:
 
 ### Required GitHub Secrets
 
-| Secret               | Description                                | Where to find                    |
-|----------------------|--------------------------------------------|----------------------------------|
-| `RAILWAY_TOKEN`      | Railway API token for CLI deployments      | Railway dashboard > Account > Tokens |
-| `VERCEL_TOKEN`       | Vercel API token                           | Vercel dashboard > Settings > Tokens |
-| `VERCEL_ORG_ID`      | Vercel organization/team ID               | `.vercel/project.json` after `vercel link` |
-| `VERCEL_PROJECT_ID`  | Vercel project ID                         | `.vercel/project.json` after `vercel link` |
-| `DATABASE_URL`       | Production PostgreSQL connection string    | Railway dashboard > PostgreSQL > Variables |
-| `BACKEND_URL`        | Production backend URL (for smoke tests)  | Your Railway custom domain       |
-| `FRONTEND_URL`       | Production frontend URL (for smoke tests) | Your Vercel custom domain        |
+| Secret              | Description                               | Where to find                              |
+| ------------------- | ----------------------------------------- | ------------------------------------------ |
+| `RAILWAY_TOKEN`     | Railway API token for CLI deployments     | Railway dashboard > Account > Tokens       |
+| `VERCEL_TOKEN`      | Vercel API token                          | Vercel dashboard > Settings > Tokens       |
+| `VERCEL_ORG_ID`     | Vercel organization/team ID               | `.vercel/project.json` after `vercel link` |
+| `VERCEL_PROJECT_ID` | Vercel project ID                         | `.vercel/project.json` after `vercel link` |
+| `DATABASE_URL`      | Production PostgreSQL connection string   | Railway dashboard > PostgreSQL > Variables |
+| `BACKEND_URL`       | Production backend URL (for smoke tests)  | Your Railway custom domain                 |
+| `FRONTEND_URL`      | Production frontend URL (for smoke tests) | Your Vercel custom domain                  |
 
 ### Workflows
 
-| Workflow                  | Trigger           | What it does                                    |
-|---------------------------|-------------------|-------------------------------------------------|
-| `ci.yml`                  | Push / PR         | Lint, typecheck, test                           |
-| `deploy-preview.yml`      | Pull request      | Deploy frontend preview to Vercel               |
-| `deploy-production.yml`   | Push to `main`    | Build images, run migrations, deploy to Railway + Vercel |
-| `security.yml`            | Scheduled / PR    | Security audits                                 |
+| Workflow                | Trigger        | What it does                                             |
+| ----------------------- | -------------- | -------------------------------------------------------- |
+| `ci.yml`                | Push / PR      | Lint, typecheck, test                                    |
+| `deploy-preview.yml`    | Pull request   | Deploy frontend preview to Vercel                        |
+| `deploy-production.yml` | Push to `main` | Build images, run migrations, deploy to Railway + Vercel |
+| `security.yml`          | Scheduled / PR | Security audits                                          |
 
 ### Alternative: Railway GitHub Integration
 
@@ -279,37 +280,37 @@ Use `https://yourapp.com/support` as the public support URL for store listings a
 
 ### Railway (Backend) Variables
 
-| Variable                    | Required | Auto-provided | Notes                           |
-|-----------------------------|----------|---------------|---------------------------------|
-| `DATABASE_URL`              | Yes      | Yes (plugin)  | PostgreSQL connection string    |
-| `REDIS_URL`                 | Yes      | Yes (plugin)  | Redis connection string         |
-| `PORT`                      | Yes      | Yes (Railway)  | Do not override                 |
-| `NODE_ENV`                  | Yes      | No            | Set to `production`             |
-| `JWT_SECRET`                | Yes      | No            | `openssl rand -base64 48`       |
-| `JWT_REFRESH_SECRET`        | Yes      | No            | `openssl rand -base64 48`       |
-| `ENCRYPTION_KEY`            | Yes      | No            | `openssl rand -hex 32`          |
-| `FRONTEND_URL`              | Yes      | No            | Your Vercel domain              |
-| `CORS_ORIGIN`               | Yes      | No            | Your Vercel domain              |
-| `PLAID_CLIENT_ID`           | If using | No            | From Plaid dashboard            |
-| `PLAID_SECRET`              | If using | No            | From Plaid dashboard            |
-| `PLAID_ENV`                 | If using | No            | `production` or `sandbox`       |
-| `STRIPE_SECRET_KEY`         | If using | No            | From Stripe dashboard           |
-| `STRIPE_WEBHOOK_SECRET`     | If using | No            | From Stripe dashboard           |
-| `SENTRY_DSN`                | Optional | No            | From Sentry project settings    |
-| `LOG_LEVEL`                 | Optional | No            | `warn` recommended for prod     |
+| Variable                | Required | Auto-provided | Notes                        |
+| ----------------------- | -------- | ------------- | ---------------------------- |
+| `DATABASE_URL`          | Yes      | Yes (plugin)  | PostgreSQL connection string |
+| `REDIS_URL`             | Yes      | Yes (plugin)  | Redis connection string      |
+| `PORT`                  | Yes      | Yes (Railway) | Do not override              |
+| `NODE_ENV`              | Yes      | No            | Set to `production`          |
+| `JWT_SECRET`            | Yes      | No            | `openssl rand -base64 48`    |
+| `JWT_REFRESH_SECRET`    | Yes      | No            | `openssl rand -base64 48`    |
+| `ENCRYPTION_KEY`        | Yes      | No            | `openssl rand -hex 32`       |
+| `FRONTEND_URL`          | Yes      | No            | Your Vercel domain           |
+| `CORS_ORIGIN`           | Yes      | No            | Your Vercel domain           |
+| `PLAID_CLIENT_ID`       | If using | No            | From Plaid dashboard         |
+| `PLAID_SECRET`          | If using | No            | From Plaid dashboard         |
+| `PLAID_ENV`             | If using | No            | `production` or `sandbox`    |
+| `STRIPE_SECRET_KEY`     | If using | No            | From Stripe dashboard        |
+| `STRIPE_WEBHOOK_SECRET` | If using | No            | From Stripe dashboard        |
+| `SENTRY_DSN`            | Optional | No            | From Sentry project settings |
+| `LOG_LEVEL`             | Optional | No            | `warn` recommended for prod  |
 
 ### Vercel (Frontend) Variables
 
-| Variable                    | Required | Notes                              |
-|-----------------------------|----------|------------------------------------|
-| `API_URL`                   | Yes      | Railway backend URL                |
-| `PUBLIC_SITE_URL`           | Yes      | Public web origin for support/legal pages |
-| `PUBLIC_SUPPORT_EMAIL`      | Yes      | Public support inbox               |
-| `PUBLIC_PRIVACY_EMAIL`      | Yes      | Public privacy inbox               |
-| `PUBLIC_LEGAL_EMAIL`        | Yes      | Public legal inbox                 |
-| `PUBLIC_SECURITY_EMAIL`     | Yes      | Public security inbox              |
-| `PUBLIC_SENTRY_DSN`         | Optional | Sentry DSN for frontend            |
-| `SENTRY_AUTH_TOKEN`         | Optional | For source map uploads             |
+| Variable                | Required | Notes                                     |
+| ----------------------- | -------- | ----------------------------------------- |
+| `API_URL`               | Yes      | Railway backend URL                       |
+| `PUBLIC_SITE_URL`       | Yes      | Public web origin for support/legal pages |
+| `PUBLIC_SUPPORT_EMAIL`  | Yes      | Public support inbox                      |
+| `PUBLIC_PRIVACY_EMAIL`  | Yes      | Public privacy inbox                      |
+| `PUBLIC_LEGAL_EMAIL`    | Yes      | Public legal inbox                        |
+| `PUBLIC_SECURITY_EMAIL` | Yes      | Public security inbox                     |
+| `PUBLIC_SENTRY_DSN`     | Optional | Sentry DSN for frontend                   |
+| `SENTRY_AUTH_TOKEN`     | Optional | For source map uploads                    |
 
 ---
 
@@ -327,6 +328,7 @@ Both backend and frontend support Sentry. Set `SENTRY_DSN` / `PUBLIC_SENTRY_DSN`
 ### Railway Logs
 
 View logs in the Railway dashboard or via CLI:
+
 ```bash
 railway logs --service backend
 ```

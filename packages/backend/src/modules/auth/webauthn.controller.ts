@@ -1,21 +1,9 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Delete,
-  Body,
-  Param,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Post, Get, Delete, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { WebAuthnService } from './webauthn.service';
 import { AuthService } from './auth.service';
 import { CurrentUser, Public } from '../../common/decorators';
-import {
-  WebAuthnRegistrationDto,
-  WebAuthnAuthenticationDto,
-} from './dto/webauthn.dto';
+import { WebAuthnRegistrationDto, WebAuthnAuthenticationDto } from './dto/webauthn.dto';
 
 @Controller('auth/webauthn')
 export class WebAuthnController {
@@ -26,13 +14,8 @@ export class WebAuthnController {
 
   @Throttle({ default: { ttl: 60000, limit: 10 } })
   @Get('register/options')
-  async registrationOptions(
-    @CurrentUser() user: { id: string; email: string },
-  ) {
-    return this.webAuthnService.generateRegistrationOptions(
-      user.id,
-      user.email,
-    );
+  async registrationOptions(@CurrentUser() user: { id: string; email: string }) {
+    return this.webAuthnService.generateRegistrationOptions(user.id, user.email);
   }
 
   @Throttle({ default: { ttl: 60000, limit: 10 } })
@@ -71,10 +54,7 @@ export class WebAuthnController {
 
   @Throttle({ default: { ttl: 60000, limit: 10 } })
   @Delete('credentials/:id')
-  async removeCredential(
-    @CurrentUser('id') userId: string,
-    @Param('id') credentialId: string,
-  ) {
+  async removeCredential(@CurrentUser('id') userId: string, @Param('id') credentialId: string) {
     await this.webAuthnService.removeCredential(userId, credentialId);
     return { message: 'Credential removed' };
   }

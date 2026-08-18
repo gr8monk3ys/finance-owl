@@ -19,9 +19,7 @@ export default function OfflineBanner() {
 
   return (
     <View style={styles.banner}>
-      <Text style={styles.text}>
-        You're offline. Some features may be unavailable.
-      </Text>
+      <Text style={styles.text}>You're offline. Some features may be unavailable.</Text>
     </View>
   );
 }

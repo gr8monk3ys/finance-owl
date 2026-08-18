@@ -39,10 +39,7 @@ export function RequiresPremium(feature?: string) {
  *   @RequiresPlan('premium')   // requires premium only
  */
 export function RequiresPlan(plan: PlanTier) {
-  return applyDecorators(
-    SetMetadata(REQUIRED_PLAN_KEY, plan),
-    UseGuards(PlanGuard),
-  );
+  return applyDecorators(SetMetadata(REQUIRED_PLAN_KEY, plan), UseGuards(PlanGuard));
 }
 
 @Injectable()
@@ -53,10 +50,10 @@ export class PremiumGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const feature = this.reflector.getAllAndOverride<string>(
-      PREMIUM_FEATURE_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const feature = this.reflector.getAllAndOverride<string>(PREMIUM_FEATURE_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     if (!feature) {
       return true;
@@ -92,10 +89,7 @@ export class PremiumGuard implements CanActivate {
       return true;
     }
 
-    const hasAccess = await this.billingService.getFeatureAccess(
-      user.id,
-      feature,
-    );
+    const hasAccess = await this.billingService.getFeatureAccess(user.id, feature);
 
     if (!hasAccess) {
       throw new HttpException(
@@ -120,10 +114,10 @@ export class PlanGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredPlan = this.reflector.getAllAndOverride<string>(
-      REQUIRED_PLAN_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const requiredPlan = this.reflector.getAllAndOverride<string>(REQUIRED_PLAN_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     if (!requiredPlan) {
       return true;
@@ -143,10 +137,7 @@ export class PlanGuard implements CanActivate {
       );
     }
 
-    const hasPlan = await this.billingService.hasMinimumPlan(
-      user.id,
-      requiredPlan as PlanTier,
-    );
+    const hasPlan = await this.billingService.hasMinimumPlan(user.id, requiredPlan as PlanTier);
 
     if (!hasPlan) {
       throw new HttpException(

@@ -1,11 +1,6 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  createCipheriv,
-  createDecipheriv,
-  randomBytes,
-  timingSafeEqual,
-} from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes, timingSafeEqual } from 'crypto';
 
 @Injectable()
 export class CryptoService implements OnModuleInit {
@@ -30,17 +25,13 @@ export class CryptoService implements OnModuleInit {
 
     // Validate the hex string contains only valid hex characters
     if (!/^[0-9a-fA-F]{64}$/.test(keyHex)) {
-      throw new Error(
-        'ENCRYPTION_KEY must be exactly 64 hex characters [0-9a-fA-F].',
-      );
+      throw new Error('ENCRYPTION_KEY must be exactly 64 hex characters [0-9a-fA-F].');
     }
 
     this.key = Buffer.from(keyHex, 'hex');
 
     if (this.key.length !== CryptoService.KEY_LENGTH) {
-      throw new Error(
-        `ENCRYPTION_KEY must decode to exactly ${CryptoService.KEY_LENGTH} bytes.`,
-      );
+      throw new Error(`ENCRYPTION_KEY must decode to exactly ${CryptoService.KEY_LENGTH} bytes.`);
     }
 
     this.logger.log('Encryption key loaded and validated (AES-256-GCM)');
@@ -57,10 +48,7 @@ export class CryptoService implements OnModuleInit {
 
     const iv = randomBytes(CryptoService.IV_LENGTH);
     const cipher = createCipheriv('aes-256-gcm', this.key, iv);
-    const encrypted = Buffer.concat([
-      cipher.update(plaintext, 'utf8'),
-      cipher.final(),
-    ]);
+    const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
     const authTag = cipher.getAuthTag();
 
     // Format: base64(iv + authTag + encrypted)
@@ -79,12 +67,9 @@ export class CryptoService implements OnModuleInit {
 
     const combined = Buffer.from(ciphertext, 'base64');
 
-    const minLength =
-      CryptoService.IV_LENGTH + CryptoService.AUTH_TAG_LENGTH + 1;
+    const minLength = CryptoService.IV_LENGTH + CryptoService.AUTH_TAG_LENGTH + 1;
     if (combined.length < minLength) {
-      throw new Error(
-        'Invalid ciphertext: buffer too short (possibly corrupted or tampered data)',
-      );
+      throw new Error('Invalid ciphertext: buffer too short (possibly corrupted or tampered data)');
     }
 
     const iv = combined.subarray(0, CryptoService.IV_LENGTH);
@@ -92,18 +77,13 @@ export class CryptoService implements OnModuleInit {
       CryptoService.IV_LENGTH,
       CryptoService.IV_LENGTH + CryptoService.AUTH_TAG_LENGTH,
     );
-    const encrypted = combined.subarray(
-      CryptoService.IV_LENGTH + CryptoService.AUTH_TAG_LENGTH,
-    );
+    const encrypted = combined.subarray(CryptoService.IV_LENGTH + CryptoService.AUTH_TAG_LENGTH);
 
     const decipher = createDecipheriv('aes-256-gcm', this.key, iv);
     decipher.setAuthTag(authTag);
 
     try {
-      const decrypted = Buffer.concat([
-        decipher.update(encrypted),
-        decipher.final(),
-      ]);
+      const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
       return decrypted.toString('utf8');
     } catch {
       throw new Error('Decryption failed: data integrity check failed');

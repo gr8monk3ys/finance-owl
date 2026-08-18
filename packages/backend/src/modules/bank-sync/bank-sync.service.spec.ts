@@ -24,8 +24,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -202,9 +201,7 @@ describe('BankSyncService', () => {
 
       expect(result).toEqual(linkTokenResult);
       expect(mockAggregatorFactory.getDefaultProvider).toHaveBeenCalled();
-      expect(mockPlaidProvider.createLinkToken).toHaveBeenCalledWith(
-        MOCK_USER_ID,
-      );
+      expect(mockPlaidProvider.createLinkToken).toHaveBeenCalledWith(MOCK_USER_ID);
     });
 
     it('should create a link token using a specified provider', async () => {
@@ -223,31 +220,23 @@ describe('BankSyncService', () => {
 
       expect(result).toEqual(linkTokenResult);
       expect(mockAggregatorFactory.getProvider).toHaveBeenCalledWith('mx');
-      expect(mockMxProvider.createLinkToken).toHaveBeenCalledWith(
-        MOCK_USER_ID,
-      );
+      expect(mockMxProvider.createLinkToken).toHaveBeenCalledWith(MOCK_USER_ID);
     });
 
     it('should propagate provider errors', async () => {
-      mockPlaidProvider.createLinkToken.mockRejectedValue(
-        new Error('Plaid API failure'),
-      );
+      mockPlaidProvider.createLinkToken.mockRejectedValue(new Error('Plaid API failure'));
 
-      await expect(service.createLinkToken(MOCK_USER_ID)).rejects.toThrow(
-        'Plaid API failure',
-      );
+      await expect(service.createLinkToken(MOCK_USER_ID)).rejects.toThrow('Plaid API failure');
     });
 
     it('should throw when specified provider is not found', async () => {
       mockAggregatorFactory.getProvider.mockImplementation(() => {
-        throw new NotFoundException(
-          'Aggregator "invalid" is not available.',
-        );
+        throw new NotFoundException('Aggregator "invalid" is not available.');
       });
 
-      await expect(
-        service.createLinkToken(MOCK_USER_ID, 'invalid'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.createLinkToken(MOCK_USER_ID, 'invalid')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -262,37 +251,30 @@ describe('BankSyncService', () => {
         expiration: '2026-03-15T12:00:00Z',
       });
 
-      const result = await service.createUpdateLinkToken(
-        MOCK_USER_ID,
-        MOCK_ITEM_ID,
-      );
+      const result = await service.createUpdateLinkToken(MOCK_USER_ID, MOCK_ITEM_ID);
 
       expect(result).toEqual({
         linkToken: 'link-update-token',
         expiration: '2026-03-15T12:00:00Z',
       });
-      expect(mockCryptoService.decrypt).toHaveBeenCalledWith(
-        MOCK_ENCRYPTED_TOKEN,
-      );
-      expect(mockPlaidProvider.createUpdateLinkToken).toHaveBeenCalledWith(
-        MOCK_ACCESS_TOKEN,
-      );
+      expect(mockCryptoService.decrypt).toHaveBeenCalledWith(MOCK_ENCRYPTED_TOKEN);
+      expect(mockPlaidProvider.createUpdateLinkToken).toHaveBeenCalledWith(MOCK_ACCESS_TOKEN);
     });
 
     it('should throw NotFoundException when item does not exist', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.createUpdateLinkToken(MOCK_USER_ID, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.createUpdateLinkToken(MOCK_USER_ID, 'non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException when item belongs to another user', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.createUpdateLinkToken('other-user', MOCK_ITEM_ID),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.createUpdateLinkToken('other-user', MOCK_ITEM_ID)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -315,17 +297,12 @@ describe('BankSyncService', () => {
       const acct2 = { id: 'acct-2', name: 'High Yield Savings' };
       mockDb.insert.mockReturnValueOnce(mockQuery([acct2]));
 
-      const result = await service.exchangeAndStore(
-        MOCK_USER_ID,
-        'public-sandbox-token',
-      );
+      const result = await service.exchangeAndStore(MOCK_USER_ID, 'public-sandbox-token');
 
       expect(result.plaidItem).toEqual(mockPlaidItem);
       expect(result.accounts).toHaveLength(2);
       expect(result.provider).toBe('plaid');
-      expect(mockCryptoService.encrypt).toHaveBeenCalledWith(
-        MOCK_ACCESS_TOKEN,
-      );
+      expect(mockCryptoService.encrypt).toHaveBeenCalledWith(MOCK_ACCESS_TOKEN);
       // 1 for plaid item + 2 for accounts
       expect(mockDb.insert).toHaveBeenCalledTimes(3);
     });
@@ -341,17 +318,11 @@ describe('BankSyncService', () => {
       const plaidItemChain = mockQuery([{ ...mockPlaidItem, id: 'item-new' }]);
       mockDb.insert.mockReturnValueOnce(plaidItemChain);
 
-      const result = await service.exchangeAndStore(
-        MOCK_USER_ID,
-        'public-token',
-        'mx',
-      );
+      const result = await service.exchangeAndStore(MOCK_USER_ID, 'public-token', 'mx');
 
       expect(result.provider).toBe('mx');
       expect(mockAggregatorFactory.getProvider).toHaveBeenCalledWith('mx');
-      expect(mockMxProvider.exchangeToken).toHaveBeenCalledWith(
-        'public-token',
-      );
+      expect(mockMxProvider.exchangeToken).toHaveBeenCalledWith('public-token');
     });
 
     it('should store the encrypted access token, not the raw one', async () => {
@@ -454,10 +425,7 @@ describe('BankSyncService', () => {
       const plaidItemChain = mockQuery([mockPlaidItem]);
       mockDb.insert.mockReturnValueOnce(plaidItemChain);
 
-      const result = await service.exchangeAndStore(
-        MOCK_USER_ID,
-        'public-token',
-      );
+      const result = await service.exchangeAndStore(MOCK_USER_ID, 'public-token');
 
       expect(result.accounts).toHaveLength(0);
       // Only one insert for the plaid item, none for accounts
@@ -465,13 +433,11 @@ describe('BankSyncService', () => {
     });
 
     it('should propagate errors from the exchange step', async () => {
-      mockPlaidProvider.exchangeToken.mockRejectedValue(
-        new Error('Invalid public token'),
-      );
+      mockPlaidProvider.exchangeToken.mockRejectedValue(new Error('Invalid public token'));
 
-      await expect(
-        service.exchangeAndStore(MOCK_USER_ID, 'bad-token'),
-      ).rejects.toThrow('Invalid public token');
+      await expect(service.exchangeAndStore(MOCK_USER_ID, 'bad-token')).rejects.toThrow(
+        'Invalid public token',
+      );
     });
   });
 
@@ -491,25 +457,23 @@ describe('BankSyncService', () => {
 
       expect(count).toBe(2);
       expect(mockDb.update).toHaveBeenCalledTimes(2);
-      expect(mockCryptoService.decrypt).toHaveBeenCalledWith(
-        MOCK_ENCRYPTED_TOKEN,
-      );
+      expect(mockCryptoService.decrypt).toHaveBeenCalledWith(MOCK_ENCRYPTED_TOKEN);
     });
 
     it('should throw NotFoundException when item does not exist', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.refreshBalances(MOCK_USER_ID, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.refreshBalances(MOCK_USER_ID, 'non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException when item belongs to another user', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.refreshBalances('other-user', MOCK_ITEM_ID),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.refreshBalances('other-user', MOCK_ITEM_ID)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should handle zero accounts returned from provider', async () => {
@@ -542,13 +506,11 @@ describe('BankSyncService', () => {
 
     it('should propagate provider errors', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([mockPlaidItem]));
-      mockPlaidProvider.getAccounts.mockRejectedValue(
-        new Error('Plaid API unavailable'),
-      );
+      mockPlaidProvider.getAccounts.mockRejectedValue(new Error('Plaid API unavailable'));
 
-      await expect(
-        service.refreshBalances(MOCK_USER_ID, MOCK_ITEM_ID),
-      ).rejects.toThrow('Plaid API unavailable');
+      await expect(service.refreshBalances(MOCK_USER_ID, MOCK_ITEM_ID)).rejects.toThrow(
+        'Plaid API unavailable',
+      );
     });
   });
 
@@ -565,25 +527,21 @@ describe('BankSyncService', () => {
 
       await service.unlinkItem(MOCK_USER_ID, MOCK_ITEM_ID);
 
-      expect(mockPlaidProvider.removeConnection).toHaveBeenCalledWith(
-        MOCK_ACCESS_TOKEN,
-      );
+      expect(mockPlaidProvider.removeConnection).toHaveBeenCalledWith(MOCK_ACCESS_TOKEN);
       expect(mockDb.delete).toHaveBeenCalledTimes(2);
     });
 
     it('should throw NotFoundException when item does not exist', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.unlinkItem(MOCK_USER_ID, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.unlinkItem(MOCK_USER_ID, 'non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should still delete local records if remote removal fails', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([mockPlaidItem]));
-      mockPlaidProvider.removeConnection.mockRejectedValue(
-        new Error('Provider unreachable'),
-      );
+      mockPlaidProvider.removeConnection.mockRejectedValue(new Error('Provider unreachable'));
       mockDb.delete
         .mockReturnValueOnce(mockQuery(undefined))
         .mockReturnValueOnce(mockQuery(undefined));
@@ -597,9 +555,9 @@ describe('BankSyncService', () => {
     it('should not delete items belonging to another user', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.unlinkItem('other-user', MOCK_ITEM_ID),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.unlinkItem('other-user', MOCK_ITEM_ID)).rejects.toThrow(
+        NotFoundException,
+      );
 
       expect(mockDb.delete).not.toHaveBeenCalled();
     });
@@ -646,11 +604,7 @@ describe('BankSyncService', () => {
       const updateChain = mockQuery(undefined);
       mockDb.update.mockReturnValueOnce(updateChain);
 
-      await service.updateItemStatus(
-        MOCK_PLAID_ITEM_ID,
-        'login_required',
-        'ITEM_LOGIN_REQUIRED',
-      );
+      await service.updateItemStatus(MOCK_PLAID_ITEM_ID, 'login_required', 'ITEM_LOGIN_REQUIRED');
 
       expect(updateChain.set).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -683,9 +637,7 @@ describe('BankSyncService', () => {
       const result = service.getDecryptedAccessToken(MOCK_ENCRYPTED_TOKEN);
 
       expect(result).toBe(MOCK_ACCESS_TOKEN);
-      expect(mockCryptoService.decrypt).toHaveBeenCalledWith(
-        MOCK_ENCRYPTED_TOKEN,
-      );
+      expect(mockCryptoService.decrypt).toHaveBeenCalledWith(MOCK_ENCRYPTED_TOKEN);
     });
   });
 
@@ -705,17 +657,17 @@ describe('BankSyncService', () => {
     it('should throw NotFoundException when item does not exist', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.getPlaidItemRaw(MOCK_USER_ID, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getPlaidItemRaw(MOCK_USER_ID, 'non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException for wrong user', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.getPlaidItemRaw('other-user', MOCK_ITEM_ID),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getPlaidItemRaw('other-user', MOCK_ITEM_ID)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 

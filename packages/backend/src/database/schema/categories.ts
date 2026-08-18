@@ -31,21 +31,18 @@ export const categorizationRules = pgTable('categorization_rules', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
-export const categorizationCorrections = pgTable(
-  'categorization_corrections',
-  {
-    id: text('id')
-      .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
-    userId: text('user_id')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
-    merchantName: text('merchant_name'),
-    description: text('description'),
-    fromCategoryId: text('from_category_id'),
-    toCategoryId: text('to_category_id')
-      .notNull()
-      .references(() => categories.id),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-  },
-);
+export const categorizationCorrections = pgTable('categorization_corrections', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  merchantName: text('merchant_name'),
+  description: text('description'),
+  fromCategoryId: text('from_category_id'),
+  toCategoryId: text('to_category_id')
+    .notNull()
+    .references(() => categories.id),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});

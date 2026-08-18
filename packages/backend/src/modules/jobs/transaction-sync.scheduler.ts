@@ -31,7 +31,11 @@ export class TransactionSyncScheduler implements OnModuleInit {
     this.logger.log('Transaction sync scheduler initialized (every 4 hours)');
   }
 
-  async queueSyncForItem(plaidItemId: string, userId: string, trigger: TransactionSyncJobData['trigger'] = 'manual') {
+  async queueSyncForItem(
+    plaidItemId: string,
+    userId: string,
+    trigger: TransactionSyncJobData['trigger'] = 'manual',
+  ) {
     await this.syncQueue.add(
       `sync-${plaidItemId}`,
       { plaidItemId, userId, trigger },
@@ -45,7 +49,10 @@ export class TransactionSyncScheduler implements OnModuleInit {
     );
   }
 
-  async queueSyncForPlaidItemId(externalPlaidItemId: string, trigger: TransactionSyncJobData['trigger'] = 'webhook') {
+  async queueSyncForPlaidItemId(
+    externalPlaidItemId: string,
+    trigger: TransactionSyncJobData['trigger'] = 'webhook',
+  ) {
     // Look up the internal item by Plaid's item_id
     const [item] = await this.db
       .select({ id: schema.plaidItems.id, userId: schema.plaidItems.userId })

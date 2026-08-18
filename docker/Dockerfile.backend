@@ -1,5 +1,5 @@
-FROM node:20-slim AS base
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+FROM node:26-slim AS base
+RUN npm install -g pnpm@9.15.0
 WORKDIR /app
 
 # Install dependencies
@@ -17,7 +17,7 @@ COPY tsconfig.base.json ./
 RUN pnpm --filter @finance-owl/backend build
 
 # Production
-FROM node:20-slim AS production
+FROM node:26-slim AS production
 RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 RUN addgroup --system app && adduser --system --ingroup app app
 WORKDIR /app

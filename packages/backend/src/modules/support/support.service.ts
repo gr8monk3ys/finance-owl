@@ -1,9 +1,6 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { desc, eq } from 'drizzle-orm';
-import {
-  DATABASE_TOKEN,
-  type DrizzleDB,
-} from '../../database/database.module';
+import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { supportTickets } from './support.schema';
 
 export interface CreateTicketDto {

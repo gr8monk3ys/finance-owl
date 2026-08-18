@@ -20,11 +20,7 @@ import { SubscriptionDetectScheduler } from '../jobs/subscription-detect.schedul
     SubscriptionDetectProcessor,
     SubscriptionDetectScheduler,
   ],
-  controllers: [
-    CancellationController,
-    CancellationEnhancedController,
-    SubscriptionsController,
-  ],
+  controllers: [CancellationController, CancellationEnhancedController, SubscriptionsController],
   exports: [
     SubscriptionsService,
     DetectionService,

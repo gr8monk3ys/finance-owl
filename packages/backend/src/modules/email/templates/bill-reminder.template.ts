@@ -45,8 +45,8 @@ export function billReminderHtml(data: BillReminderData): string {
 
     ${statsTable(
       statsRow('Bill Name', escapeHtml(billName)) +
-      statsRow('Amount', formattedAmount, '#fbbf24') +
-      statsRow('Due Date', formattedDate)
+        statsRow('Amount', formattedAmount, '#fbbf24') +
+        statsRow('Due Date', formattedDate),
     )}
 
     ${divider()}

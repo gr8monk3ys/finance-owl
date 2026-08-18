@@ -47,10 +47,7 @@ export default function LoginScreen() {
       style={styles.flex}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         {/* Logo area */}
         <View style={styles.logoContainer}>
           <Image
@@ -132,9 +129,7 @@ export default function LoginScreen() {
                 pressed && styles.secondaryActionPressed,
               ]}
             >
-              <Text style={styles.secondaryActionText}>
-                Use an authenticator code
-              </Text>
+              <Text style={styles.secondaryActionText}>Use an authenticator code</Text>
             </Pressable>
           )}
 

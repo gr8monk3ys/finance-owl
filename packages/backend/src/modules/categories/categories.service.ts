@@ -27,10 +27,7 @@ export class CategoriesService {
       .where(
         and(
           eq(schema.categories.id, id),
-          or(
-            eq(schema.categories.userId, userId),
-            isNull(schema.categories.userId),
-          ),
+          or(eq(schema.categories.userId, userId), isNull(schema.categories.userId)),
         ),
       )
       .limit(1);
@@ -39,7 +36,10 @@ export class CategoriesService {
     return category;
   }
 
-  async create(userId: string, data: { name: string; parentId?: string; icon?: string; color?: string }) {
+  async create(
+    userId: string,
+    data: { name: string; parentId?: string; icon?: string; color?: string },
+  ) {
     const [category] = await this.db
       .insert(schema.categories)
       .values({
@@ -54,7 +54,11 @@ export class CategoriesService {
     return category;
   }
 
-  async update(userId: string, id: string, data: { name?: string; parentId?: string; icon?: string; color?: string; sortOrder?: number }) {
+  async update(
+    userId: string,
+    id: string,
+    data: { name?: string; parentId?: string; icon?: string; color?: string; sortOrder?: number },
+  ) {
     const category = await this.findById(userId, id);
     if (category.isSystem && !category.userId) {
       // System categories can't be modified, but user can create overrides
@@ -63,12 +67,7 @@ export class CategoriesService {
     const [updated] = await this.db
       .update(schema.categories)
       .set(data)
-      .where(
-        and(
-          eq(schema.categories.id, id),
-          eq(schema.categories.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.categories.id, id), eq(schema.categories.userId, userId)))
       .returning();
 
     if (!updated) throw new NotFoundException('Category not found or is a system category');
@@ -98,7 +97,10 @@ export class CategoriesService {
       .orderBy(schema.categorizationRules.priority);
   }
 
-  async createRule(userId: string, data: { categoryId: string; matchType: string; matchValue: string; priority?: number }) {
+  async createRule(
+    userId: string,
+    data: { categoryId: string; matchType: string; matchValue: string; priority?: number },
+  ) {
     const [rule] = await this.db
       .insert(schema.categorizationRules)
       .values({
@@ -117,10 +119,7 @@ export class CategoriesService {
     return this.db
       .delete(schema.categorizationRules)
       .where(
-        and(
-          eq(schema.categorizationRules.id, id),
-          eq(schema.categorizationRules.userId, userId),
-        ),
+        and(eq(schema.categorizationRules.id, id), eq(schema.categorizationRules.userId, userId)),
       );
   }
 

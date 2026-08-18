@@ -59,9 +59,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
     >
       <View style={styles.row}>
         <View style={[styles.icon, { backgroundColor: accentColor + '20' }]}>
-          <Text style={[styles.iconText, { color: accentColor }]}>
-            {getTypeIcon(account.type)}
-          </Text>
+          <Text style={[styles.iconText, { color: accentColor }]}>{getTypeIcon(account.type)}</Text>
         </View>
         <View style={styles.info}>
           <Text style={styles.name} numberOfLines={1}>
@@ -72,12 +70,7 @@ export default function AccountCard({ account, onPress }: AccountCardProps) {
             {account.institutionName ? ` - ${account.institutionName}` : ''}
           </Text>
         </View>
-        <Text
-          style={[
-            styles.balance,
-            { color: isLiability ? colors.danger[400] : colors.white },
-          ]}
-        >
+        <Text style={[styles.balance, { color: isLiability ? colors.danger[400] : colors.white }]}>
           {formatCurrency(account.currentBalance)}
         </Text>
       </View>

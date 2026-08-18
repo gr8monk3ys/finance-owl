@@ -12,9 +12,7 @@ export const createTransactionSchema = z.object({
   notes: z.string().max(2000).optional(),
 });
 
-export const updateTransactionSchema = createTransactionSchema
-  .partial()
-  .omit({ accountId: true });
+export const updateTransactionSchema = createTransactionSchema.partial().omit({ accountId: true });
 
 export const transactionFilterSchema = z.object({
   accountId: z.string().uuid().optional(),

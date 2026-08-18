@@ -6,7 +6,11 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Pool } from 'pg';
 import * as schema from '../../database/schema';
-import { DATABASE_TOKEN } from '../../database/database.module';
+import {
+  DATABASE_TOKEN,
+  DATABASE_POOL_TOKEN,
+  DatabaseModule,
+} from '../../database/database.module';
 import { AuthModule } from './auth.module';
 import { UsersModule } from '../users/users.module';
 import { CryptoModule } from '../../common/crypto/crypto.module';
@@ -27,6 +31,10 @@ describe('Auth Integration', () => {
     pool = new Pool({ connectionString });
     const db = drizzle(pool, { schema });
 
+    // Start from a clean slate so the suite is re-runnable against a
+    // persistent local database (CI always gets a fresh one).
+    await pool.query('TRUNCATE users CASCADE');
+
     // Run migrations
     const migrationsPath = path.resolve(__dirname, '../../../drizzle');
     await migrate(db, { migrationsFolder: migrationsPath });
@@ -45,11 +53,16 @@ describe('Auth Integration', () => {
             }),
           ],
         }),
+        // DatabaseModule is @Global in the real app; the test must import
+        // it so its DATABASE providers exist and can be overridden below.
+        DatabaseModule,
         AuthModule,
         UsersModule,
         CryptoModule,
       ],
     })
+      .overrideProvider(DATABASE_POOL_TOKEN)
+      .useValue(pool)
       .overrideProvider(DATABASE_TOKEN)
       .useValue(db)
       .compile();
@@ -66,8 +79,10 @@ describe('Auth Integration', () => {
   });
 
   afterAll(async () => {
+    // app.close() ends the pool via DatabaseModule.onModuleDestroy (the
+    // module's pool provider is overridden with this spec's pool), so no
+    // separate pool.end() here — pg throws on a second end().
     await app?.close();
-    await pool?.end();
   });
 
   const testUser = {
@@ -81,9 +96,7 @@ describe('Auth Integration', () => {
     let refreshToken: string;
 
     it('should check first-run returns true when no users', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/auth/first-run')
-        .expect(200);
+      const res = await request(app.getHttpServer()).get('/auth/first-run').expect(200);
 
       expect(res.body.isFirstRun).toBe(true);
     });
@@ -102,18 +115,13 @@ describe('Auth Integration', () => {
     });
 
     it('should check first-run returns false after registration', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/auth/first-run')
-        .expect(200);
+      const res = await request(app.getHttpServer()).get('/auth/first-run').expect(200);
 
       expect(res.body.isFirstRun).toBe(false);
     });
 
     it('should reject duplicate registration', async () => {
-      await request(app.getHttpServer())
-        .post('/auth/register')
-        .send(testUser)
-        .expect(409);
+      await request(app.getHttpServer()).post('/auth/register').send(testUser).expect(409);
     });
 
     it('should login with valid credentials', async () => {
@@ -152,9 +160,7 @@ describe('Auth Integration', () => {
     });
 
     it('should reject protected route without token', async () => {
-      await request(app.getHttpServer())
-        .get('/auth/me')
-        .expect(401);
+      await request(app.getHttpServer()).get('/auth/me').expect(401);
     });
 
     it('should refresh tokens', async () => {
@@ -171,8 +177,9 @@ describe('Auth Integration', () => {
     });
 
     it('should reject used refresh token (rotation)', async () => {
-      // The old refresh token was consumed in the previous test
-      const oldRefreshToken = 'already-consumed-token';
+      // A well-formed (64-char hex) token that no session references —
+      // malformed tokens are rejected earlier with 400 by DTO validation.
+      const oldRefreshToken = 'f'.repeat(64);
       await request(app.getHttpServer())
         .post('/auth/refresh')
         .send({ refreshToken: oldRefreshToken })

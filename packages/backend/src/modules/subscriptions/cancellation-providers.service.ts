@@ -534,7 +534,8 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
     cancellationMethod: 'in_person',
     url: null,
     phoneNumber: null,
-    emailTemplate: 'To Whom It May Concern,\n\nI am writing to request the cancellation of my Planet Fitness membership.\n\nMember Name: [YOUR NAME]\nMember ID: [YOUR MEMBER ID]\nHome Club: [YOUR LOCATION]\n\nPlease process this cancellation effective immediately. I understand my membership will remain active until the end of the current billing period.\n\nPlease send written confirmation of this cancellation to my email address on file.\n\nThank you,\n[YOUR NAME]',
+    emailTemplate:
+      'To Whom It May Concern,\n\nI am writing to request the cancellation of my Planet Fitness membership.\n\nMember Name: [YOUR NAME]\nMember ID: [YOUR MEMBER ID]\nHome Club: [YOUR LOCATION]\n\nPlease process this cancellation effective immediately. I understand my membership will remain active until the end of the current billing period.\n\nPlease send written confirmation of this cancellation to my email address on file.\n\nThank you,\n[YOUR NAME]',
     steps: [
       'Visit your home Planet Fitness location in person',
       'Go to the front desk and request a cancellation form',
@@ -558,7 +559,8 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
     cancellationMethod: 'in_person',
     url: null,
     phoneNumber: null,
-    emailTemplate: 'To Whom It May Concern,\n\nI am writing to request the cancellation of my Anytime Fitness membership.\n\nMember Name: [YOUR NAME]\nMember ID: [YOUR MEMBER ID]\nHome Club: [YOUR LOCATION]\n\nPlease process this cancellation effective immediately and send written confirmation.\n\nThank you,\n[YOUR NAME]',
+    emailTemplate:
+      'To Whom It May Concern,\n\nI am writing to request the cancellation of my Anytime Fitness membership.\n\nMember Name: [YOUR NAME]\nMember ID: [YOUR MEMBER ID]\nHome Club: [YOUR LOCATION]\n\nPlease process this cancellation effective immediately and send written confirmation.\n\nThank you,\n[YOUR NAME]',
     steps: [
       'Review your membership agreement for cancellation terms',
       'Visit your home Anytime Fitness location',
@@ -603,7 +605,8 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
     cancellationMethod: 'in_person',
     url: null,
     phoneNumber: '1-949-255-7200',
-    emailTemplate: 'Operations Manager\nLA Fitness\n[CLUB ADDRESS]\n\nDear Operations Manager,\n\nI am writing to cancel my LA Fitness membership effective immediately.\n\nMember Name: [YOUR NAME]\nMember ID: [YOUR MEMBER ID]\n\nPlease confirm this cancellation in writing.\n\nSincerely,\n[YOUR NAME]',
+    emailTemplate:
+      'Operations Manager\nLA Fitness\n[CLUB ADDRESS]\n\nDear Operations Manager,\n\nI am writing to cancel my LA Fitness membership effective immediately.\n\nMember Name: [YOUR NAME]\nMember ID: [YOUR MEMBER ID]\n\nPlease confirm this cancellation in writing.\n\nSincerely,\n[YOUR NAME]',
     steps: [
       'Visit your home LA Fitness location in person',
       'Request a cancellation form from the front desk',
@@ -861,10 +864,7 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
       'Follow the prompts to confirm',
     ],
     difficulty: 'easy',
-    tips: [
-      'You keep access to the free tier',
-      'Download your designs before downgrading',
-    ],
+    tips: ['You keep access to the free tier', 'Download your designs before downgrading'],
   },
 
   grammarly: {
@@ -942,10 +942,7 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
       'Confirm the cancellation',
     ],
     difficulty: 'easy',
-    tips: [
-      'You revert to the free tier',
-      'Chat history is preserved',
-    ],
+    tips: ['You revert to the free tier', 'Chat history is preserved'],
   },
 
   // --- Gaming ---
@@ -1471,10 +1468,7 @@ export class CancellationProvidersService {
   /**
    * Generate a pre-written cancellation email for a given subscription.
    */
-  generateCancellationEmail(
-    subscriptionName: string,
-    providerEmail: string | null,
-  ): string {
+  generateCancellationEmail(subscriptionName: string, providerEmail: string | null): string {
     // Check if provider has a specific email template
     const provider = this.getProviderInfo(subscriptionName);
     if (provider?.emailTemplate) {
@@ -1515,10 +1509,7 @@ Sincerely,
   /**
    * Generate a phone cancellation script for a given subscription.
    */
-  generateCancellationScript(
-    subscriptionName: string,
-    provider: string,
-  ): string {
+  generateCancellationScript(subscriptionName: string, provider: string): string {
     const providerInfo = this.getProviderInfo(provider);
     const difficulty = providerInfo?.difficulty ?? 'medium';
 
@@ -1601,10 +1592,7 @@ RECORD THESE DETAILS:
       .from(cancellationRequests)
       .leftJoin(
         schema.recurringTransactions,
-        eq(
-          cancellationRequests.subscriptionId,
-          schema.recurringTransactions.id,
-        ),
+        eq(cancellationRequests.subscriptionId, schema.recurringTransactions.id),
       )
       .where(eq(cancellationRequests.userId, userId))
       .orderBy(desc(cancellationRequests.createdAt));
@@ -1637,8 +1625,7 @@ RECORD THESE DETAILS:
       totalCancelled,
       totalPending,
       estimatedMonthlySavings: Math.round(estimatedMonthlySavings * 100) / 100,
-      estimatedAnnualSavings:
-        Math.round(estimatedMonthlySavings * 12 * 100) / 100,
+      estimatedAnnualSavings: Math.round(estimatedMonthlySavings * 12 * 100) / 100,
       cancelledSubscriptions,
     };
   }

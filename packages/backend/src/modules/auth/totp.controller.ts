@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { TotpService } from './totp.service';
 import { CurrentUser } from '../../common/decorators';
@@ -38,19 +32,13 @@ export class TotpController {
 
   @Post('enable')
   @HttpCode(HttpStatus.OK)
-  async enable(
-    @CurrentUser('id') userId: string,
-    @Body() dto: EnableTotpDto,
-  ) {
+  async enable(@CurrentUser('id') userId: string, @Body() dto: EnableTotpDto) {
     return this.totpService.enableTotp(userId, dto.code);
   }
 
   @Post('disable')
   @HttpCode(HttpStatus.OK)
-  async disable(
-    @CurrentUser('id') userId: string,
-    @Body() dto: VerifyTotpDto,
-  ) {
+  async disable(@CurrentUser('id') userId: string, @Body() dto: VerifyTotpDto) {
     return this.totpService.disableTotp(userId, dto.code);
   }
 }

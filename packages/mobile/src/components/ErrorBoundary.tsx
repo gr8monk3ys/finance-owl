@@ -44,8 +44,8 @@ export default class ErrorBoundary extends Component<Props, State> {
           </View>
           <Text style={styles.title}>Something went wrong</Text>
           <Text style={styles.subtitle}>
-            An unexpected error occurred. Please try again. If the problem
-            persists, restart the app.
+            An unexpected error occurred. Please try again. If the problem persists, restart the
+            app.
           </Text>
           {__DEV__ && this.state.error && (
             <View style={styles.debugBox}>
@@ -55,10 +55,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             </View>
           )}
           <Pressable
-            style={({ pressed }) => [
-              styles.retryButton,
-              pressed && styles.retryButtonPressed,
-            ]}
+            style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
             onPress={this.handleReset}
           >
             <Text style={styles.retryButtonText}>Try Again</Text>

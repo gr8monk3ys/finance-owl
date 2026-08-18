@@ -21,10 +21,7 @@ const CHART_COLORS = [
   '#6366f1',
 ];
 
-export default function SpendingChart({
-  data,
-  height = 200,
-}: SpendingChartProps) {
+export default function SpendingChart({ data, height = 200 }: SpendingChartProps) {
   if (!data.length) {
     return (
       <View style={[styles.container, { height }]}>
@@ -38,10 +35,7 @@ export default function SpendingChart({
   const chartHeight = height - 40;
   const maxAmount = Math.max(...data.map((d) => d.amount));
   const barCount = Math.min(data.length, 8);
-  const barWidth = Math.max(
-    (chartWidth - (barCount - 1) * 6) / barCount - 4,
-    12,
-  );
+  const barWidth = Math.max((chartWidth - (barCount - 1) * 6) / barCount - 4, 12);
   const barSpacing = (chartWidth - barCount * barWidth) / (barCount + 1);
 
   return (
@@ -63,8 +57,7 @@ export default function SpendingChart({
 
         {/* Bars */}
         {data.slice(0, barCount).map((item, i) => {
-          const barHeight =
-            maxAmount > 0 ? (item.amount / maxAmount) * (chartHeight - 20) : 0;
+          const barHeight = maxAmount > 0 ? (item.amount / maxAmount) * (chartHeight - 20) : 0;
           const x = barSpacing + i * (barWidth + barSpacing);
           const y = chartHeight - barHeight;
           const barColor = item.categoryColor || CHART_COLORS[i % CHART_COLORS.length];
@@ -105,17 +98,14 @@ export default function SpendingChart({
               style={[
                 styles.legendDot,
                 {
-                  backgroundColor:
-                    item.categoryColor || CHART_COLORS[i % CHART_COLORS.length],
+                  backgroundColor: item.categoryColor || CHART_COLORS[i % CHART_COLORS.length],
                 },
               ]}
             />
             <Text style={styles.legendLabel} numberOfLines={1}>
               {item.categoryName}
             </Text>
-            <Text style={styles.legendValue}>
-              {formatCurrencyCompact(item.amount)}
-            </Text>
+            <Text style={styles.legendValue}>{formatCurrencyCompact(item.amount)}</Text>
           </View>
         ))}
       </View>

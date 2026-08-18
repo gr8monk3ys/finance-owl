@@ -1,10 +1,5 @@
 import client from './client';
-import type {
-  Budget,
-  BudgetSummary,
-  CreateBudgetRequest,
-  UpdateBudgetRequest,
-} from '../types';
+import type { Budget, BudgetSummary, CreateBudgetRequest, UpdateBudgetRequest } from '../types';
 
 /**
  * List all budgets with spending progress for the current period.
@@ -41,10 +36,7 @@ export async function createBudget(req: CreateBudgetRequest): Promise<Budget> {
 /**
  * Update an existing budget.
  */
-export async function updateBudget(
-  id: string,
-  updates: UpdateBudgetRequest,
-): Promise<Budget> {
+export async function updateBudget(id: string, updates: UpdateBudgetRequest): Promise<Budget> {
   const { data } = await client.patch<Budget>(`/budgets/${id}`, updates);
   return data;
 }

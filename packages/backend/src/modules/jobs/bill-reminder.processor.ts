@@ -35,9 +35,7 @@ export class BillReminderProcessor extends WorkerHost {
         const count = await this.processUserBillReminders(user.id, user.email);
         totalReminders += count;
       } catch (error) {
-        this.logger.error(
-          `Bill reminder processing failed for user ${user.id}: ${error}`,
-        );
+        this.logger.error(`Bill reminder processing failed for user ${user.id}: ${error}`);
       }
     }
 
@@ -46,10 +44,7 @@ export class BillReminderProcessor extends WorkerHost {
     );
   }
 
-  private async processUserBillReminders(
-    userId: string,
-    userEmail: string,
-  ): Promise<number> {
+  private async processUserBillReminders(userId: string, userEmail: string): Promise<number> {
     // Get user notification preferences
     const [prefs] = await this.db
       .select()
@@ -97,26 +92,16 @@ export class BillReminderProcessor extends WorkerHost {
       if (dueDate < today || dueDate > cutoffDate) continue;
 
       // Check if we already created a notification for this bill today
-      const existingNotification = await this.findExistingReminder(
-        userId,
-        sub.id,
-        today,
-      );
+      const existingNotification = await this.findExistingReminder(userId, sub.id, today);
 
       if (existingNotification) continue;
 
       // Create in-app notification
       const billName = sub.merchantName || sub.name;
-      const daysUntilDue = Math.ceil(
-        (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-      );
+      const daysUntilDue = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
       const dueLabel =
-        daysUntilDue === 0
-          ? 'today'
-          : daysUntilDue === 1
-            ? 'tomorrow'
-            : `in ${daysUntilDue} days`;
+        daysUntilDue === 0 ? 'today' : daysUntilDue === 1 ? 'tomorrow' : `in ${daysUntilDue} days`;
 
       await this.db.insert(schema.notifications).values({
         userId,

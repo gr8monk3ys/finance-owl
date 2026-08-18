@@ -104,11 +104,11 @@ feat(backend)!: change authentication token format
 
 ## Testing
 
-| Level | Command | Notes |
-|-------|---------|-------|
-| Unit | `pnpm test` | Vitest, runs in all packages |
-| Integration | `pnpm test:integration` | Requires running Postgres and Redis |
-| E2E | `pnpm test:e2e` | Backend: Supertest; Frontend: Playwright |
+| Level       | Command                 | Notes                                    |
+| ----------- | ----------------------- | ---------------------------------------- |
+| Unit        | `pnpm test`             | Vitest, runs in all packages             |
+| Integration | `pnpm test:integration` | Requires running Postgres and Redis      |
+| E2E         | `pnpm test:e2e`         | Backend: Supertest; Frontend: Playwright |
 
 - Write unit tests for business logic and utility functions.
 - Write integration tests for database queries and API endpoints.

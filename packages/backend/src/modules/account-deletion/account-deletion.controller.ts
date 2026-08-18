@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Post, Get, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { CurrentUser } from '../../common/decorators';
 import { AccountDeletionService } from './account-deletion.service';
 import { IsOptional, IsString } from 'class-validator';
@@ -22,10 +15,7 @@ export class AccountDeletionController {
 
   @Post('delete')
   @HttpCode(HttpStatus.OK)
-  requestDeletion(
-    @CurrentUser('id') userId: string,
-    @Body() dto: RequestDeletionDto,
-  ) {
+  requestDeletion(@CurrentUser('id') userId: string, @Body() dto: RequestDeletionDto) {
     return this.accountDeletionService.requestDeletion(userId, dto.reason);
   }
 

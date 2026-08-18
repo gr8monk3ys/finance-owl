@@ -31,14 +31,11 @@ export class RegisterDto {
   })
   @IsEmail()
   @MaxLength(255)
-  @Transform(({ value }) =>
-    typeof value === 'string' ? value.trim().toLowerCase() : value,
-  )
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toLowerCase() : value))
   email!: string;
 
   @ApiProperty({
-    description:
-      'Password (min 8 chars, must include uppercase, lowercase, and a digit)',
+    description: 'Password (min 8 chars, must include uppercase, lowercase, and a digit)',
     minLength: 8,
     maxLength: 128,
     example: 'SecurePass1',
@@ -66,9 +63,7 @@ export class LoginDto {
   })
   @IsEmail()
   @MaxLength(255)
-  @Transform(({ value }) =>
-    typeof value === 'string' ? value.trim().toLowerCase() : value,
-  )
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toLowerCase() : value))
   email!: string;
 
   @ApiProperty({
@@ -121,8 +116,7 @@ export class ChangePasswordDto {
   currentPassword!: string;
 
   @ApiProperty({
-    description:
-      'New password (min 8 chars, must include uppercase, lowercase, and a digit)',
+    description: 'New password (min 8 chars, must include uppercase, lowercase, and a digit)',
     minLength: 8,
     maxLength: 128,
     example: 'NewSecurePass1',

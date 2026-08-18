@@ -19,7 +19,5 @@ export const importHistory = pgTable('import_history', {
   skippedCount: integer('skipped_count').notNull().default(0),
   duplicateCount: integer('duplicate_count').notNull().default(0),
   columnMapping: text('column_mapping'), // JSON string
-  importedAt: text('imported_at')
-    .notNull()
-    .default('now()'),
+  importedAt: text('imported_at').notNull().default('now()'),
 });

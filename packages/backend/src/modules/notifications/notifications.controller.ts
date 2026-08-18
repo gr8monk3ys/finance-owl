@@ -20,11 +20,7 @@ import {
 import { Observable, filter, map } from 'rxjs';
 import { CurrentUser } from '../../common/decorators';
 import { NotificationsService } from './notifications.service';
-import {
-  IsOptional,
-  IsNumberString,
-  IsBooleanString,
-} from 'class-validator';
+import { IsOptional, IsNumberString, IsBooleanString } from 'class-validator';
 
 // -- Query DTO ---------------------------------------------------------------
 class ListNotificationsQuery {
@@ -55,10 +51,7 @@ export class NotificationsController {
   @ApiResponse({ status: 200, description: 'Paginated list of notifications' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Get()
-  findAll(
-    @CurrentUser('id') userId: string,
-    @Query() query: ListNotificationsQuery,
-  ) {
+  findAll(@CurrentUser('id') userId: string, @Query() query: ListNotificationsQuery) {
     return this.notificationsService.getUserNotifications(userId, {
       limit: query.limit ? parseInt(query.limit, 10) : undefined,
       offset: query.offset ? parseInt(query.offset, 10) : undefined,
@@ -80,10 +73,7 @@ export class NotificationsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Notification not found' })
   @Patch(':id/read')
-  markRead(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  markRead(@CurrentUser('id') userId: string, @Param('id') id: string) {
     return this.notificationsService.markAsRead(userId, id);
   }
 
@@ -102,10 +92,7 @@ export class NotificationsController {
   @ApiResponse({ status: 404, description: 'Notification not found' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  async remove(@CurrentUser('id') userId: string, @Param('id') id: string) {
     await this.notificationsService.deleteNotification(userId, id);
   }
 
@@ -118,9 +105,7 @@ export class NotificationsController {
   @ApiResponse({ status: 200, description: 'SSE stream opened' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Sse('stream')
-  stream(
-    @CurrentUser('id') userId: string,
-  ): Observable<MessageEvent> {
+  stream(@CurrentUser('id') userId: string): Observable<MessageEvent> {
     return this.notificationsService.notificationStream$.pipe(
       filter((event) => event.userId === userId),
       map(

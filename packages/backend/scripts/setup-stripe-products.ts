@@ -97,9 +97,7 @@ const PLANS: PlanConfig[] = [
 // Helpers
 // ---------------------------------------------------------------------------
 
-async function findExistingProduct(
-  name: string,
-): Promise<Stripe.Product | null> {
+async function findExistingProduct(name: string): Promise<Stripe.Product | null> {
   const products = await stripe.products.list({ limit: 100, active: true });
   return products.data.find((p) => p.name === name) ?? null;
 }
@@ -115,10 +113,8 @@ async function findExistingPrice(
     active: true,
   });
   return (
-    prices.data.find(
-      (p) =>
-        p.recurring?.interval === interval && p.unit_amount === unitAmount,
-    ) ?? null
+    prices.data.find((p) => p.recurring?.interval === interval && p.unit_amount === unitAmount) ??
+    null
   );
 }
 
@@ -150,11 +146,7 @@ async function main() {
 
     // Create prices
     if (plan.prices.monthly) {
-      let price = await findExistingPrice(
-        product.id,
-        'month',
-        plan.prices.monthly,
-      );
+      let price = await findExistingPrice(product.id, 'month', plan.prices.monthly);
       if (price) {
         console.log(`  Monthly price already exists: ${price.id}`);
       } else {
@@ -172,11 +164,7 @@ async function main() {
     }
 
     if (plan.prices.yearly) {
-      let price = await findExistingPrice(
-        product.id,
-        'year',
-        plan.prices.yearly,
-      );
+      let price = await findExistingPrice(product.id, 'year', plan.prices.yearly);
       if (price) {
         console.log(`  Yearly price already exists: ${price.id}`);
       } else {

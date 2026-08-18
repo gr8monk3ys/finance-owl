@@ -15,7 +15,12 @@ import { RequestLoggerMiddleware } from './common/middleware/request-logger.midd
 const APP_VERSION = process.env.npm_package_version || '0.1.0';
 
 function validateRequiredSecrets(logger: Logger) {
-  const required = ['JWT_SECRET', 'JWT_REFRESH_SECRET', 'ENCRYPTION_KEY', 'ENCRYPTION_MASTER_SECRET'];
+  const required = [
+    'JWT_SECRET',
+    'JWT_REFRESH_SECRET',
+    'ENCRYPTION_KEY',
+    'ENCRYPTION_MASTER_SECRET',
+  ];
   const missing = required.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {
@@ -48,13 +53,9 @@ function initializeSentryEarly(logger: Logger) {
   Sentry.init({
     dsn,
     environment,
-    release:
-      process.env.SENTRY_RELEASE ||
-      `finance-owl-backend@${APP_VERSION}`,
+    release: process.env.SENTRY_RELEASE || `finance-owl-backend@${APP_VERSION}`,
     tracesSampleRate: environment === 'production' ? 0.2 : 1.0,
-    integrations: [
-      Sentry.httpIntegration(),
-    ],
+    integrations: [Sentry.httpIntegration()],
     beforeSend(event) {
       // Remove authorization headers
       if (event.request?.headers) {
@@ -164,12 +165,7 @@ async function bootstrap() {
     origin: corsOrigin,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'X-Requested-With',
-      'Accept',
-    ],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     exposedHeaders: ['Content-Disposition', 'X-Response-Time'],
     maxAge: 3600, // Cache preflight for 1 hour
   });
@@ -182,18 +178,12 @@ async function bootstrap() {
   // SentryExceptionFilter extends BaseExceptionFilter and reports to Sentry
   // GlobalExceptionFilter handles the actual HTTP response formatting
   const httpAdapter = app.getHttpAdapter();
-  app.useGlobalFilters(
-    new SentryExceptionFilter(httpAdapter),
-    new GlobalExceptionFilter(),
-  );
+  app.useGlobalFilters(new SentryExceptionFilter(httpAdapter), new GlobalExceptionFilter());
 
   // Global interceptors
   // Order: Sentry (breadcrumbs/context) -> Performance (timing/headers)
   // Note: LoggingInterceptor is registered via APP_INTERCEPTOR in ObservabilityModule
-  app.useGlobalInterceptors(
-    new SentryInterceptor(),
-    new PerformanceInterceptor(),
-  );
+  app.useGlobalInterceptors(new SentryInterceptor(), new PerformanceInterceptor());
 
   // Global validation pipe with security-focused options
   app.useGlobalPipes(
@@ -285,15 +275,12 @@ async function bootstrap() {
 
   // Handle unhandled rejections (safety net)
   process.on('unhandledRejection', (reason: unknown) => {
-    const message =
-      reason instanceof Error ? reason.message : String(reason);
+    const message = reason instanceof Error ? reason.message : String(reason);
     logger.error(`Unhandled rejection: ${message}`);
 
     const client = Sentry.getClient();
     if (client) {
-      Sentry.captureException(
-        reason instanceof Error ? reason : new Error(String(reason)),
-      );
+      Sentry.captureException(reason instanceof Error ? reason : new Error(String(reason)));
     }
   });
 }

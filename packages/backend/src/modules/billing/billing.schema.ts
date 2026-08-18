@@ -8,8 +8,14 @@ export const subscriptionPlans = pgTable('subscription_plans', {
   name: text('name').notNull(), // 'free', 'premium', 'family'
   stripePriceId: text('stripe_price_id'),
   stripeProductId: text('stripe_product_id'),
-  monthlyPrice: numeric('monthly_price', { precision: 19, scale: 4 }).$type<number>().notNull().default(0),
-  yearlyPrice: numeric('yearly_price', { precision: 19, scale: 4 }).$type<number>().notNull().default(0),
+  monthlyPrice: numeric('monthly_price', { precision: 19, scale: 4 })
+    .$type<number>()
+    .notNull()
+    .default(0),
+  yearlyPrice: numeric('yearly_price', { precision: 19, scale: 4 })
+    .$type<number>()
+    .notNull()
+    .default(0),
   features: text('features').notNull().default('[]'), // JSON array of feature strings
   isActive: integer('is_active').notNull().default(1),
   createdAt: timestamp('created_at').notNull().defaultNow(),

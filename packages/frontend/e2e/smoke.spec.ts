@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { fillAndExpectUrl } from './helpers';
 
 test.describe('Web Smoke', () => {
   test.describe.configure({ mode: 'serial' });
@@ -38,9 +39,7 @@ test.describe('Web Smoke', () => {
     await page.getByRole('link', { name: 'Transactions', exact: true }).click();
     await expect(page).toHaveURL(/\/transactions/);
     await expect(page.getByRole('heading', { level: 2, name: 'Transactions' })).toBeVisible();
-    await expect(
-      page.getByPlaceholder('Search by name, merchant, or amount…'),
-    ).toBeVisible();
+    await expect(page.getByPlaceholder('Search by name, merchant, or amount…')).toBeVisible();
   });
 
   test('transactions search updates as you type and can be cleared', async ({
@@ -49,9 +48,8 @@ test.describe('Web Smoke', () => {
     await page.goto('/transactions');
 
     const search = page.getByPlaceholder('Search by name, merchant, or amount…');
-    await search.fill('Payroll');
-
-    await expect(page).toHaveURL(/\/transactions\?search=Payroll/, { timeout: 10_000 });
+    // Retried fill: a value typed before hydration never reaches the binding.
+    await fillAndExpectUrl(page, search, 'Payroll', /\/transactions\?search=Payroll/);
     await expect(page.getByText('Showing results for “Payroll”')).toBeVisible();
 
     await page.getByRole('button', { name: 'Clear' }).click();

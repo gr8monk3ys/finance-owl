@@ -132,9 +132,7 @@ describe('HealthController', () => {
       const result = await controller.ready();
 
       expect(result.services.redis.status).toBe('unavailable');
-      expect(result.services.redis.message).toBe(
-        'Redis not connected (using in-memory fallback)',
-      );
+      expect(result.services.redis.message).toBe('Redis not connected (using in-memory fallback)');
     });
 
     it('should return redis ok when ping succeeds', async () => {

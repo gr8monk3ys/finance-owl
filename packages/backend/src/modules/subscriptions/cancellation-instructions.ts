@@ -160,7 +160,7 @@ export const CANCELLATION_KNOWLEDGE_BASE: Record<string, CancellationInfo> = {
   'cable/internet': {
     methods: ['phone', 'chat'],
     steps: [
-      'Call your provider\'s cancellation/retention department directly',
+      "Call your provider's cancellation/retention department directly",
       'Have your account number and last bill ready before calling',
       'Be prepared for retention offers - decide in advance if you want to negotiate',
       'Ask for a confirmation number and final bill details',
@@ -175,9 +175,7 @@ export const CANCELLATION_KNOWLEDGE_BASE: Record<string, CancellationInfo> = {
  * Look up cancellation instructions for a merchant name.
  * Performs fuzzy matching against the knowledge base keys.
  */
-export function findCancellationInfo(
-  merchantName: string,
-): CancellationInfo | null {
+export function findCancellationInfo(merchantName: string): CancellationInfo | null {
   const normalized = merchantName.toLowerCase().trim();
 
   // Direct match

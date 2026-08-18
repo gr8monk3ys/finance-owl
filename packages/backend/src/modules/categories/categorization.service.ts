@@ -12,7 +12,14 @@ export interface CategoryResult {
   category: string;
   subcategory: string;
   confidence: number; // 0-1
-  source: 'merchant_exact' | 'merchant_normalized' | 'user_override' | 'keyword' | 'mcc' | 'learned' | 'uncategorized';
+  source:
+    | 'merchant_exact'
+    | 'merchant_normalized'
+    | 'user_override'
+    | 'keyword'
+    | 'mcc'
+    | 'learned'
+    | 'uncategorized';
 }
 
 export interface TransactionInput {
@@ -89,42 +96,26 @@ export class CategorizationEngineService {
     userId?: string | null,
   ): CategoryResult {
     const normalizedDesc = this.normalizeMerchant(description);
-    const normalizedMerchant = merchantName
-      ? this.normalizeMerchant(merchantName)
-      : null;
+    const normalizedMerchant = merchantName ? this.normalizeMerchant(merchantName) : null;
 
     // 1. User overrides (highest priority)
     if (userId) {
-      const overrideResult = this.tryUserOverride(
-        userId,
-        normalizedDesc,
-        normalizedMerchant,
-      );
+      const overrideResult = this.tryUserOverride(userId, normalizedDesc, normalizedMerchant);
       if (overrideResult) return overrideResult;
     }
 
     // 2. Learned corrections from past user behaviour
     if (userId) {
-      const learnedResult = this.tryLearnedCorrection(
-        userId,
-        normalizedDesc,
-        normalizedMerchant,
-      );
+      const learnedResult = this.tryLearnedCorrection(userId, normalizedDesc, normalizedMerchant);
       if (learnedResult) return learnedResult;
     }
 
     // 3. Exact merchant database lookup (merchant name first, then description)
-    const exactResult = this.tryExactMerchantMatch(
-      normalizedMerchant,
-      normalizedDesc,
-    );
+    const exactResult = this.tryExactMerchantMatch(normalizedMerchant, normalizedDesc);
     if (exactResult) return exactResult;
 
     // 4. Normalized / fuzzy merchant lookup
-    const normalizedResult = this.tryNormalizedMerchantMatch(
-      normalizedMerchant,
-      normalizedDesc,
-    );
+    const normalizedResult = this.tryNormalizedMerchantMatch(normalizedMerchant, normalizedDesc);
     if (normalizedResult) return normalizedResult;
 
     // 5. Keyword matching
@@ -148,17 +139,9 @@ export class CategorizationEngineService {
 
   // ── Bulk categorization ──────────────────────────────────────────────
 
-  categorizeBulk(
-    transactions: TransactionInput[],
-    userId?: string | null,
-  ): CategoryResult[] {
+  categorizeBulk(transactions: TransactionInput[], userId?: string | null): CategoryResult[] {
     return transactions.map((tx) =>
-      this.categorizeTransaction(
-        tx.description,
-        tx.merchantName,
-        tx.mcc,
-        userId,
-      ),
+      this.categorizeTransaction(tx.description, tx.merchantName, tx.mcc, userId),
     );
   }
 
@@ -224,9 +207,7 @@ export class CategorizationEngineService {
     const corrections = this.learnedCorrections.get(userId) ?? [];
     const normalizedMerchant = this.normalizeMerchant(merchantNameOrDescription);
 
-    const existing = corrections.find(
-      (c) => c.normalizedMerchant === normalizedMerchant,
-    );
+    const existing = corrections.find((c) => c.normalizedMerchant === normalizedMerchant);
 
     if (existing) {
       existing.category = category;
@@ -294,10 +275,62 @@ export class CategorizationEngineService {
     // Remove city/state trailing info (e.g., "MERCHANT NAME  CITY ST")
     // Only strip when the 2-letter code is a known US state/territory abbreviation
     const stateAbbrs = new Set([
-      'al','ak','az','ar','ca','co','ct','de','fl','ga','hi','id','il','in',
-      'ia','ks','ky','la','me','md','ma','mi','mn','ms','mo','mt','ne','nv',
-      'nh','nj','nm','ny','nc','nd','oh','ok','or','pa','ri','sc','sd','tn',
-      'tx','ut','vt','va','wa','wv','wi','wy','dc','pr','vi','gu','as','mp',
+      'al',
+      'ak',
+      'az',
+      'ar',
+      'ca',
+      'co',
+      'ct',
+      'de',
+      'fl',
+      'ga',
+      'hi',
+      'id',
+      'il',
+      'in',
+      'ia',
+      'ks',
+      'ky',
+      'la',
+      'me',
+      'md',
+      'ma',
+      'mi',
+      'mn',
+      'ms',
+      'mo',
+      'mt',
+      'ne',
+      'nv',
+      'nh',
+      'nj',
+      'nm',
+      'ny',
+      'nc',
+      'nd',
+      'oh',
+      'ok',
+      'or',
+      'pa',
+      'ri',
+      'sc',
+      'sd',
+      'tn',
+      'tx',
+      'ut',
+      'vt',
+      'va',
+      'wa',
+      'wv',
+      'wi',
+      'wy',
+      'dc',
+      'pr',
+      'vi',
+      'gu',
+      'as',
+      'mp',
     ]);
     name = name.replace(/\s+([a-z]{2,})\s+([a-z]{2})\s*$/g, (match, _city, state) => {
       if (stateAbbrs.has(state)) {
@@ -391,9 +424,7 @@ export class CategorizationEngineService {
     normalizedMerchant: string | null,
     normalizedDesc: string,
   ): CategoryResult | null {
-    const candidates = [normalizedMerchant, normalizedDesc].filter(
-      Boolean,
-    ) as string[];
+    const candidates = [normalizedMerchant, normalizedDesc].filter(Boolean) as string[];
 
     for (const candidate of candidates) {
       // Try progressively shorter prefixes of the candidate

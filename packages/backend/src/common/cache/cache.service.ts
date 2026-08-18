@@ -20,10 +20,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
   private redis: Redis | null = null;
 
   /** Process-local fallback store:  key -> { value, expiresAt } */
-  private readonly memoryStore = new Map<
-    string,
-    { value: string; expiresAt: number | null }
-  >();
+  private readonly memoryStore = new Map<string, { value: string; expiresAt: number | null }>();
 
   /** Interval handle for the in-memory TTL sweeper. */
   private memorySweepInterval: ReturnType<typeof setInterval> | null = null;
@@ -41,9 +38,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     const redisPort = this.config.get<number>('REDIS_PORT');
 
     if (!redisUrl && !redisHost) {
-      this.logger.warn(
-        'No REDIS_URL or REDIS_HOST configured — using in-memory cache fallback',
-      );
+      this.logger.warn('No REDIS_URL or REDIS_HOST configured — using in-memory cache fallback');
       this.enableFallback();
       return;
     }
@@ -170,13 +165,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
       let cursor = '0';
 
       do {
-        const [nextCursor, keys] = await this.redis!.scan(
-          cursor,
-          'MATCH',
-          pattern,
-          'COUNT',
-          100,
-        );
+        const [nextCursor, keys] = await this.redis!.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
         cursor = nextCursor;
         if (keys.length > 0) {
           deleted += await this.redis!.del(...keys);
@@ -185,9 +174,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 
       return deleted;
     } catch (err) {
-      this.logger.error(
-        `Cache delPattern error [${pattern}]: ${(err as Error).message}`,
-      );
+      this.logger.error(`Cache delPattern error [${pattern}]: ${(err as Error).message}`);
       return 0;
     }
   }
@@ -198,11 +185,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
    * If the key exists in cache, return it.  Otherwise call `factory()` to
    * compute the value, cache it with the given TTL, and return it.
    */
-  async wrap<T>(
-    key: string,
-    ttlSeconds: number,
-    factory: () => Promise<T>,
-  ): Promise<T> {
+  async wrap<T>(key: string, ttlSeconds: number, factory: () => Promise<T>): Promise<T> {
     const cached = await this.get<T>(key);
     if (cached !== null) {
       return cached;
@@ -240,10 +223,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 
     // Sweep expired entries every 30 seconds
     if (!this.memorySweepInterval) {
-      this.memorySweepInterval = setInterval(
-        () => this.memorySweep(),
-        30_000,
-      );
+      this.memorySweepInterval = setInterval(() => this.memorySweep(), 30_000);
       // Allow the Node process to exit even if the interval is still active
       if (this.memorySweepInterval.unref) {
         this.memorySweepInterval.unref();
@@ -267,15 +247,8 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private memorySet(
-    key: string,
-    serialized: string,
-    ttlSeconds?: number,
-  ): void {
-    const expiresAt =
-      ttlSeconds && ttlSeconds > 0
-        ? Date.now() + ttlSeconds * 1000
-        : null;
+  private memorySet(key: string, serialized: string, ttlSeconds?: number): void {
+    const expiresAt = ttlSeconds && ttlSeconds > 0 ? Date.now() + ttlSeconds * 1000 : null;
 
     this.memoryStore.set(key, { value: serialized, expiresAt });
   }

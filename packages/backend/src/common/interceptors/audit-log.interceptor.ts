@@ -86,17 +86,8 @@ export class AuditLogInterceptor implements NestInterceptor {
       }),
       catchError((error) => {
         const duration = Date.now() - start;
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        this.writeAuditLog(
-          userId,
-          opts,
-          ip,
-          request,
-          'failure',
-          duration,
-          errorMessage,
-        );
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.writeAuditLog(userId, opts, ip, request, 'failure', duration, errorMessage);
         throw error;
       }),
     );
@@ -126,14 +117,7 @@ export class AuditLogInterceptor implements NestInterceptor {
 
     // Fire-and-forget: audit logging should never block or crash the request.
     this.auditService
-      .log(
-        userId,
-        opts.action,
-        opts.resource,
-        undefined,
-        JSON.stringify(details),
-        ip,
-      )
+      .log(userId, opts.action, opts.resource, undefined, JSON.stringify(details), ip)
       .catch((err) => {
         this.logger.error(
           `Failed to write audit log: action=${opts.action} userId=${userId}`,

@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { CurrentUser } from '../../common/decorators';
 import { AdaptiveBudgetService } from './adaptive-budget.service';
 import { IsString, IsIn } from 'class-validator';
@@ -32,10 +25,7 @@ export class AdaptiveBudgetController {
 
   @Post('auto-adjust')
   @HttpCode(HttpStatus.OK)
-  autoAdjust(
-    @CurrentUser('id') userId: string,
-    @Body() dto: AutoAdjustDto,
-  ) {
+  autoAdjust(@CurrentUser('id') userId: string, @Body() dto: AutoAdjustDto) {
     return this.adaptiveBudgetService.autoAdjustBudgets(userId, dto.sensitivity);
   }
 

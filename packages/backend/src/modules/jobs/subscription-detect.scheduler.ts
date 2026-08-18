@@ -24,9 +24,7 @@ export class SubscriptionDetectScheduler implements OnModuleInit {
       },
     );
 
-    this.logger.log(
-      'Subscription detect scheduler initialized (weekly, Sunday 2 AM)',
-    );
+    this.logger.log('Subscription detect scheduler initialized (weekly, Sunday 2 AM)');
   }
 
   async queueDetectionForUser(userId: string): Promise<void> {

@@ -7,9 +7,7 @@ import { QUEUES } from './jobs.module';
 export class NetWorthSnapshotScheduler implements OnModuleInit {
   private readonly logger = new Logger(NetWorthSnapshotScheduler.name);
 
-  constructor(
-    @InjectQueue(QUEUES.ALERTS) private alertsQueue: Queue,
-  ) {}
+  constructor(@InjectQueue(QUEUES.ALERTS) private alertsQueue: Queue) {}
 
   async onModuleInit() {
     // Daily net worth snapshot at 1 AM

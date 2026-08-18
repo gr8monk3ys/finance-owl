@@ -75,9 +75,7 @@ interface CategoryMonthlyData {
 export class AdaptiveBudgetService {
   private readonly logger = new Logger(AdaptiveBudgetService.name);
 
-  constructor(
-    @Inject(DATABASE_TOKEN) private db: DrizzleDB,
-  ) {}
+  constructor(@Inject(DATABASE_TOKEN) private db: DrizzleDB) {}
 
   // ── Public Methods ─────────────────────────────────────────────────
 
@@ -144,7 +142,6 @@ export class AdaptiveBudgetService {
       });
     }
 
-
     return suggestions.sort((a, b) => b.averageSpending - a.averageSpending);
   }
 
@@ -197,10 +194,7 @@ export class AdaptiveBudgetService {
         pattern: pattern.name,
         affectedMonths,
         averageIncrease: Math.round(avgIncrease),
-        recommendation: pattern.recommendation(
-          cat.categoryName,
-          Math.round(avgIncrease),
-        ),
+        recommendation: pattern.recommendation(cat.categoryName, Math.round(avgIncrease)),
       });
     }
 
@@ -223,10 +217,7 @@ export class AdaptiveBudgetService {
         categoryName: schema.categories.name,
       })
       .from(schema.budgets)
-      .leftJoin(
-        schema.categories,
-        eq(schema.budgets.categoryId, schema.categories.id),
-      )
+      .leftJoin(schema.categories, eq(schema.budgets.categoryId, schema.categories.id))
       .where(eq(schema.budgets.userId, userId));
 
     if (budgets.length === 0) return [];
@@ -234,16 +225,14 @@ export class AdaptiveBudgetService {
     // Multipliers control how aggressively budgets are adjusted
     const multipliers = {
       conservative: { up: 0.05, down: 0.03, buffer: 1.15 },
-      moderate: { up: 0.10, down: 0.07, buffer: 1.10 },
-      aggressive: { up: 0.20, down: 0.15, buffer: 1.05 },
+      moderate: { up: 0.1, down: 0.07, buffer: 1.1 },
+      aggressive: { up: 0.2, down: 0.15, buffer: 1.05 },
     };
     const config = multipliers[sensitivity];
 
     const results: AdjustmentResult[] = [];
     const categoryData = await this.getCategorySpendingHistory(userId, 3);
-    const categoryMap = new Map(
-      categoryData.map((c) => [c.categoryId, c]),
-    );
+    const categoryMap = new Map(categoryData.map((c) => [c.categoryId, c]));
 
     for (const budget of budgets) {
       if (!budget.categoryId) continue;
@@ -288,19 +277,13 @@ export class AdaptiveBudgetService {
       // Only include if there's an actual change
       if (newAmount === budget.amount) continue;
 
-      const changePercent =
-        ((newAmount - budget.amount) / budget.amount) * 100;
+      const changePercent = ((newAmount - budget.amount) / budget.amount) * 100;
 
       // Apply the update
       await this.db
         .update(schema.budgets)
         .set({ amount: newAmount, updatedAt: new Date() })
-        .where(
-          and(
-            eq(schema.budgets.id, budget.id),
-            eq(schema.budgets.userId, userId),
-          ),
-        );
+        .where(and(eq(schema.budgets.id, budget.id), eq(schema.budgets.userId, userId)));
 
       results.push({
         budgetId: budget.id,
@@ -331,23 +314,16 @@ export class AdaptiveBudgetService {
         categoryName: schema.categories.name,
       })
       .from(schema.budgets)
-      .leftJoin(
-        schema.categories,
-        eq(schema.budgets.categoryId, schema.categories.id),
-      )
+      .leftJoin(schema.categories, eq(schema.budgets.categoryId, schema.categories.id))
       .where(eq(schema.budgets.userId, userId));
 
     const categoryData = await this.getCategorySpendingHistory(userId, 3);
-    const categoryMap = new Map(
-      categoryData.map((c) => [c.categoryId, c]),
-    );
+    const categoryMap = new Map(categoryData.map((c) => [c.categoryId, c]));
 
     // Current period spending
     const now = new Date();
     const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
-    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-      .toISOString()
-      .split('T')[0];
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
 
     for (const budget of budgets) {
       if (!budget.categoryId) continue;
@@ -380,10 +356,7 @@ export class AdaptiveBudgetService {
         });
       }
       // Significantly under budget (savings opportunity)
-      else if (
-        percentUsed < expectedPercent * 0.5 &&
-        dayOfMonth > 15
-      ) {
+      else if (percentUsed < expectedPercent * 0.5 && dayOfMonth > 15) {
         const projected = (currentSpent / dayOfMonth) * daysInMonth;
         const savings = budget.amount - projected;
         if (savings > 20) {
@@ -464,9 +437,7 @@ export class AdaptiveBudgetService {
 
     // Sort: warnings first, then info, then success
     const severityOrder = { warning: 0, info: 1, success: 2 };
-    return insights.sort(
-      (a, b) => severityOrder[a.severity] - severityOrder[b.severity],
-    );
+    return insights.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
   }
 
   /**
@@ -506,12 +477,9 @@ export class AdaptiveBudgetService {
       confidence = Math.round(confidence * 100) / 100;
 
       // Month-over-month change
-      const lastMonthTotal =
-        totals.length > 0 ? totals[totals.length - 1] : 0;
+      const lastMonthTotal = totals.length > 0 ? totals[totals.length - 1] : 0;
       const momChange =
-        lastMonthTotal > 0
-          ? ((predicted - lastMonthTotal) / lastMonthTotal) * 100
-          : 0;
+        lastMonthTotal > 0 ? ((predicted - lastMonthTotal) / lastMonthTotal) * 100 : 0;
 
       predictions.push({
         categoryId: cat.categoryId,
@@ -541,18 +509,14 @@ export class AdaptiveBudgetService {
       .select({
         categoryId: schema.transactions.categoryId,
         categoryName: schema.categories.name,
-        month: sql<string>`to_char(${schema.transactions.date}::date, 'YYYY-MM')`.as(
-          'month',
-        ),
-        total: sql<number>`SUM(CASE WHEN ${schema.transactions.amount} > 0 THEN ${schema.transactions.amount} ELSE 0 END)`.as(
-          'total',
-        ),
+        month: sql<string>`to_char(${schema.transactions.date}::date, 'YYYY-MM')`.as('month'),
+        total:
+          sql<number>`SUM(CASE WHEN ${schema.transactions.amount} > 0 THEN ${schema.transactions.amount} ELSE 0 END)`.as(
+            'total',
+          ),
       })
       .from(schema.transactions)
-      .leftJoin(
-        schema.categories,
-        eq(schema.transactions.categoryId, schema.categories.id),
-      )
+      .leftJoin(schema.categories, eq(schema.transactions.categoryId, schema.categories.id))
       .where(
         and(
           eq(schema.transactions.userId, userId),
@@ -610,9 +574,10 @@ export class AdaptiveBudgetService {
 
     const [result] = await this.db
       .select({
-        total: sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.amount} > 0 THEN ${schema.transactions.amount} ELSE 0 END), 0)`.as(
-          'total',
-        ),
+        total:
+          sql<number>`COALESCE(SUM(CASE WHEN ${schema.transactions.amount} > 0 THEN ${schema.transactions.amount} ELSE 0 END), 0)`.as(
+            'total',
+          ),
       })
       .from(schema.transactions)
       .where(
@@ -642,9 +607,7 @@ export class AdaptiveBudgetService {
     if (values.length === 0) return 0;
     const sorted = [...values].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
-    return sorted.length % 2 !== 0
-      ? sorted[mid]
-      : (sorted[mid - 1] + sorted[mid]) / 2;
+    return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
   }
 
   private standardDeviation(values: number[]): number {
@@ -691,9 +654,7 @@ export class AdaptiveBudgetService {
     return intercept + slope * n; // Predict at index n (next month)
   }
 
-  private calculateTrend(
-    values: number[],
-  ): 'increasing' | 'stable' | 'decreasing' {
+  private calculateTrend(values: number[]): 'increasing' | 'stable' | 'decreasing' {
     if (values.length < 2) return 'stable';
 
     // Use linear regression slope

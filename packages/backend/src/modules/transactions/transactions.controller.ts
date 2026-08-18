@@ -71,7 +71,10 @@ class TransactionFilterDto {
   @IsNumber()
   maxAmount?: number;
 
-  @ApiPropertyOptional({ description: 'Full-text search on name/merchant/description', example: 'coffee' })
+  @ApiPropertyOptional({
+    description: 'Full-text search on name/merchant/description',
+    example: 'coffee',
+  })
   @IsOptional()
   @IsString()
   search?: string;
@@ -99,11 +102,17 @@ class TransactionFilterDto {
 }
 
 class CreateTransactionDto {
-  @ApiProperty({ description: 'Account ID to associate the transaction with', example: 'acc_abc123' })
+  @ApiProperty({
+    description: 'Account ID to associate the transaction with',
+    example: 'acc_abc123',
+  })
   @IsString()
   accountId!: string;
 
-  @ApiProperty({ description: 'Transaction amount (positive = income, negative = expense)', example: -42.50 })
+  @ApiProperty({
+    description: 'Transaction amount (positive = income, negative = expense)',
+    example: -42.5,
+  })
   @IsNumber()
   @Type(() => Number)
   amount!: number;
@@ -166,7 +175,7 @@ class SplitItemDto {
   @IsString()
   categoryId?: string;
 
-  @ApiProperty({ description: 'Amount for this split portion', example: 15.00 })
+  @ApiProperty({ description: 'Amount for this split portion', example: 15.0 })
   @IsNumber()
   @Type(() => Number)
   amount!: number;
@@ -203,10 +212,7 @@ export class TransactionsController {
   @ApiResponse({ status: 200, description: 'Paginated list of transactions' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Get()
-  findAll(
-    @CurrentUser('id') userId: string,
-    @Query() filters: TransactionFilterDto,
-  ) {
+  findAll(@CurrentUser('id') userId: string, @Query() filters: TransactionFilterDto) {
     return this.transactionsService.findAll(userId, filters);
   }
 
@@ -225,10 +231,7 @@ export class TransactionsController {
   @ApiResponse({ status: 400, description: 'Validation error' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Post()
-  create(
-    @CurrentUser('id') userId: string,
-    @Body() dto: CreateTransactionDto,
-  ) {
+  create(@CurrentUser('id') userId: string, @Body() dto: CreateTransactionDto) {
     return this.transactionsService.createManual(userId, dto);
   }
 
@@ -301,10 +304,7 @@ export class TransactionsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Delete(':id/split')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async removeSplits(
-    @CurrentUser('id') userId: string,
-    @Param('id') id: string,
-  ) {
+  async removeSplits(@CurrentUser('id') userId: string, @Param('id') id: string) {
     await this.splitService.removeSplits(userId, id);
   }
 }

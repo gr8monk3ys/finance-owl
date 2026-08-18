@@ -36,7 +36,10 @@ function uniqueForwardedIp(seed = 0): string {
   return `10.${octetTwo}.${octetThree}.${octetFour}`;
 }
 
-async function attachForwardedIpHeader(page: Page, ipAddress: string): Promise<() => Promise<void>> {
+async function attachForwardedIpHeader(
+  page: Page,
+  ipAddress: string,
+): Promise<() => Promise<void>> {
   const handler = async (route: Route) => {
     await route.continue({
       headers: {

@@ -48,14 +48,11 @@ export function getProductionConfig(): ProductionConfig {
   const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
   const frontendUrl = process.env.FRONTEND_URL || process.env.CORS_ORIGIN;
   if (!frontendUrl) {
-    throw new Error(
-      'FRONTEND_URL or CORS_ORIGIN is required in production for CORS configuration',
-    );
+    throw new Error('FRONTEND_URL or CORS_ORIGIN is required in production for CORS configuration');
   }
 
   // Railway PostgreSQL URLs use sslmode=require by default
-  const requireSsl = databaseUrl.includes('sslmode=require') ||
-    process.env.DATABASE_SSL === 'true';
+  const requireSsl = databaseUrl.includes('sslmode=require') || process.env.DATABASE_SSL === 'true';
 
   // Railway Redis URLs may use rediss:// (TLS) protocol
   const redisTls = redisUrl.startsWith('rediss://');

@@ -126,12 +126,7 @@ export interface Category {
 
 // ── Budgets ──────────────────────────────────────────────────────────────────
 
-export type BudgetPeriod =
-  | 'weekly'
-  | 'biweekly'
-  | 'monthly'
-  | 'quarterly'
-  | 'annual';
+export type BudgetPeriod = 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'annual';
 
 export interface Budget {
   id: string;

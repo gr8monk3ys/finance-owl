@@ -9,9 +9,12 @@ export interface BudgetCategoryNode extends BudgetCategory {
 }
 
 export function getBudgetProgressGradient(percentUsed: number): string {
-  if (percentUsed >= 100) return 'linear-gradient(90deg, var(--fo-danger-500), var(--fo-danger-400))';
-  if (percentUsed >= 80) return 'linear-gradient(90deg, var(--fo-accent-500), var(--fo-danger-400))';
-  if (percentUsed >= 50) return 'linear-gradient(90deg, var(--fo-primary-500), var(--fo-accent-500))';
+  if (percentUsed >= 100)
+    return 'linear-gradient(90deg, var(--fo-danger-500), var(--fo-danger-400))';
+  if (percentUsed >= 80)
+    return 'linear-gradient(90deg, var(--fo-accent-500), var(--fo-danger-400))';
+  if (percentUsed >= 50)
+    return 'linear-gradient(90deg, var(--fo-primary-500), var(--fo-accent-500))';
   return 'linear-gradient(90deg, var(--fo-primary-600), var(--fo-primary-400))';
 }
 
@@ -53,13 +56,38 @@ export function getBudgetCategoryIcon(categoryName: string | null): string {
   if (!categoryName) return '?';
 
   const name = categoryName.toLowerCase();
-  if (name.includes('food') || name.includes('grocery') || name.includes('groceries') || name.includes('dining') || name.includes('restaurant')) return 'F';
-  if (name.includes('transport') || name.includes('gas') || name.includes('auto') || name.includes('car')) return 'T';
+  if (
+    name.includes('food') ||
+    name.includes('grocery') ||
+    name.includes('groceries') ||
+    name.includes('dining') ||
+    name.includes('restaurant')
+  )
+    return 'F';
+  if (
+    name.includes('transport') ||
+    name.includes('gas') ||
+    name.includes('auto') ||
+    name.includes('car')
+  )
+    return 'T';
   if (name.includes('shop') || name.includes('cloth') || name.includes('retail')) return 'S';
   if (name.includes('entertainment') || name.includes('movie') || name.includes('game')) return 'E';
   if (name.includes('health') || name.includes('medical') || name.includes('doctor')) return 'H';
-  if (name.includes('home') || name.includes('rent') || name.includes('mortgage') || name.includes('housing')) return 'R';
-  if (name.includes('util') || name.includes('electric') || name.includes('water') || name.includes('internet')) return 'U';
+  if (
+    name.includes('home') ||
+    name.includes('rent') ||
+    name.includes('mortgage') ||
+    name.includes('housing')
+  )
+    return 'R';
+  if (
+    name.includes('util') ||
+    name.includes('electric') ||
+    name.includes('water') ||
+    name.includes('internet')
+  )
+    return 'U';
   if (name.includes('travel') || name.includes('hotel') || name.includes('flight')) return 'V';
   if (name.includes('education') || name.includes('school') || name.includes('book')) return 'B';
   if (name.includes('subscription') || name.includes('software')) return 'W';
