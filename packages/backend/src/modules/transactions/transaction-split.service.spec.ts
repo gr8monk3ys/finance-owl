@@ -539,7 +539,9 @@ describe('TransactionSplitService', () => {
       // 1. getTransaction
       mockDb.select.mockReturnValueOnce(mockQuery([mockTransaction]));
       // FK ownership check: categories usable by this user
-      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }, { id: 'cat-2' }, { id: 'cat-3' }, { id: 'cat-4' }]));
+      mockDb.select.mockReturnValueOnce(
+        mockQuery([{ id: 'cat-1' }, { id: 'cat-2' }, { id: 'cat-3' }, { id: 'cat-4' }]),
+      );
       // 2. delete
       mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
       // 3. insert

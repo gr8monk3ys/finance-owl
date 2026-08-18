@@ -14,9 +14,7 @@ vi.mock('argon2', () => ({
 // Mock crypto.randomBytes to return predictable values
 const MOCK_REFRESH_TOKEN_HEX = 'a'.repeat(64); // 32 bytes as hex = 64 chars
 // The service persists only the SHA-256 digest of the refresh token
-const MOCK_REFRESH_TOKEN_HASH = createHash('sha256')
-  .update(MOCK_REFRESH_TOKEN_HEX)
-  .digest('hex');
+const MOCK_REFRESH_TOKEN_HASH = createHash('sha256').update(MOCK_REFRESH_TOKEN_HEX).digest('hex');
 const mockRandomBytes = vi.fn().mockReturnValue(Buffer.from(MOCK_REFRESH_TOKEN_HEX, 'hex'));
 vi.mock('crypto', async (importOriginal) => {
   const actual = await importOriginal<typeof import('crypto')>();

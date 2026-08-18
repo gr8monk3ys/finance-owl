@@ -39,6 +39,8 @@ export default tseslint.config(
       '**/dist/**',
       '**/build/**',
       '**/.vercel/**',
+      '**/playwright-report/**',
+      '**/test-results/**',
       '**/.svelte-kit/**',
       '**/node_modules/**',
       '**/drizzle/**',

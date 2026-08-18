@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { clickAndExpectVisible, fillAndExpectUrl } from './helpers';
 
 test.describe('Transactions — Page load', () => {
   test.beforeEach(async ({ authenticatedPage }) => {
@@ -7,7 +8,8 @@ test.describe('Transactions — Page load', () => {
 
   test('should load the transactions page', async ({ authenticatedPage: page }) => {
     await expect(page).toHaveTitle(/Transactions/);
-    await expect(page.getByRole('heading', { name: 'Transactions' })).toBeVisible();
+    // The top bar renders an h1 with the same name, so target the page heading.
+    await expect(page.getByRole('heading', { level: 2, name: 'Transactions' })).toBeVisible();
   });
 
   test('should display the Add Transaction button', async ({ authenticatedPage: page }) => {
@@ -19,14 +21,12 @@ test.describe('Transactions — Page load', () => {
   });
 
   test('should show the transaction list or empty state', async ({ authenticatedPage: page }) => {
-    // Either we see the "No transactions yet" empty state or actual transaction rows
+    // Either we see the "No transactions yet" empty state or the header shows
+    // the total transaction count above the list.
     const emptyState = page.getByText('No transactions yet');
-    const transactionCount = page.getByText(/transaction/);
+    const transactionCount = page.getByText(/\d[\d,]* transactions?\b/).first();
 
-    const hasEmptyState = await emptyState.isVisible().catch(() => false);
-    const hasTransactions = await transactionCount.isVisible().catch(() => false);
-
-    expect(hasEmptyState || hasTransactions).toBe(true);
+    await expect(emptyState.or(transactionCount).first()).toBeVisible();
   });
 });
 
@@ -35,10 +35,17 @@ test.describe('Transactions — Add manual transaction', () => {
     await authenticatedPage.goto('/transactions');
   });
 
-  test('should open the Add Transaction modal', async ({ authenticatedPage: page }) => {
-    await page.getByRole('button', { name: /add transaction/i }).click();
+  /** Open the Add Transaction modal, retrying until hydration lets the click through. */
+  async function openCreateModal(page: import('@playwright/test').Page) {
+    await clickAndExpectVisible(
+      page.getByRole('button', { name: /add transaction/i }).first(),
+      page.getByRole('heading', { name: 'Add Transaction' }),
+    );
+  }
 
-    await expect(page.getByText('Add Transaction', { exact: false })).toBeVisible();
+  test('should open the Add Transaction modal', async ({ authenticatedPage: page }) => {
+    await openCreateModal(page);
+
     // Verify modal form fields
     await expect(page.locator('#txAccount')).toBeVisible();
     await expect(page.locator('#txAmount')).toBeVisible();
@@ -47,7 +54,7 @@ test.describe('Transactions — Add manual transaction', () => {
   });
 
   test('should fill out and submit a new transaction', async ({ authenticatedPage: page }) => {
-    await page.getByRole('button', { name: /add transaction/i }).click();
+    await openCreateModal(page);
 
     // Fill in the transaction form
     await page.locator('#txAmount').fill('42.50');
@@ -62,15 +69,9 @@ test.describe('Transactions — Add manual transaction', () => {
       .click();
 
     // After a successful create the modal closes and the page reloads.
-    // We should either see the new transaction in the list or no error is shown.
-    // Give the page time to process the server action.
-    await page.waitForTimeout(2_000);
-
-    // The modal should have closed (no more "Cancel" button in the modal)
-    const modalCancelButton = page
-      .locator('form[action="?/create"]')
-      .getByRole('button', { name: /cancel/i });
-    await expect(modalCancelButton).not.toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole('heading', { name: 'Add Transaction' })).not.toBeVisible({
+      timeout: 10_000,
+    });
   });
 });
 
@@ -79,21 +80,22 @@ test.describe('Transactions — Search and filter', () => {
     await authenticatedPage.goto('/transactions');
   });
 
-  test('should perform a text search', async ({ authenticatedPage: page }) => {
-    const searchInput = page.getByPlaceholder(/search by name, merchant, or amount/i);
-    await searchInput.fill('grocery');
-    await page.getByRole('button', { name: 'Search' }).click();
+  /** Open the filter panel, retrying until hydration lets the click through. */
+  async function openFilterPanel(page: import('@playwright/test').Page) {
+    await clickAndExpectVisible(
+      page.getByRole('button', { name: 'Show filters' }),
+      page.locator('#filterAccount'),
+    );
+  }
 
-    // The URL should now contain a search query parameter
-    await expect(page).toHaveURL(/search=grocery/);
+  test('should perform a text search', async ({ authenticatedPage: page }) => {
+    // Search applies automatically (debounced) as you type.
+    const searchInput = page.getByPlaceholder(/search by name, merchant, or amount/i);
+    await fillAndExpectUrl(page, searchInput, 'grocery', /search=grocery/);
   });
 
   test('should toggle the filter panel', async ({ authenticatedPage: page }) => {
-    // Click the filter button (has a funnel icon)
-    const filterButtons = page
-      .locator('button')
-      .filter({ has: page.locator('svg path[d*="M3 4a1"]') });
-    await filterButtons.first().click();
+    await openFilterPanel(page);
 
     // The filter panel should show with account, category, date fields
     await expect(page.locator('#filterAccount')).toBeVisible();
@@ -101,14 +103,14 @@ test.describe('Transactions — Search and filter', () => {
     await expect(page.locator('#filterStartDate')).toBeVisible();
     await expect(page.locator('#filterEndDate')).toBeVisible();
     await expect(page.getByRole('button', { name: /apply filters/i })).toBeVisible();
+
+    // Toggling again hides the panel
+    await page.getByRole('button', { name: 'Hide filters' }).click();
+    await expect(page.locator('#filterAccount')).not.toBeVisible();
   });
 
   test('should apply date filters', async ({ authenticatedPage: page }) => {
-    // Open filter panel
-    const filterButtons = page
-      .locator('button')
-      .filter({ has: page.locator('svg path[d*="M3 4a1"]') });
-    await filterButtons.first().click();
+    await openFilterPanel(page);
 
     await page.locator('#filterStartDate').fill('2025-01-01');
     await page.locator('#filterEndDate').fill('2025-12-31');
@@ -119,20 +121,12 @@ test.describe('Transactions — Search and filter', () => {
   });
 
   test('should clear all filters', async ({ authenticatedPage: page }) => {
-    // Apply a search first
+    // Apply a search and a date filter first
     await page.goto('/transactions?search=test&startDate=2025-01-01');
 
-    // Open filter panel
-    const filterButtons = page
-      .locator('button')
-      .filter({ has: page.locator('svg path[d*="M3 4a1"]') });
-    await filterButtons.first().click();
+    await openFilterPanel(page);
 
-    // Look for the Clear All button
-    const clearButton = page.getByRole('button', { name: /clear all/i });
-    if (await clearButton.isVisible().catch(() => false)) {
-      await clearButton.click();
-      await expect(page).toHaveURL(/\/transactions$/);
-    }
+    await page.getByRole('button', { name: /clear all/i }).click();
+    await expect(page).toHaveURL(/\/transactions$/);
   });
 });

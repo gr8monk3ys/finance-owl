@@ -17,10 +17,21 @@ export const load: PageServerLoad = async ({ locals }) => {
       widgetLayout,
       safeToSpend,
     ] = await Promise.all([
-      api('/analytics/dashboard', { accessToken: locals.accessToken }),
+      api('/analytics/dashboard', { accessToken: locals.accessToken }).catch(() => ({
+        currentMonthSpending: 0,
+        lastMonthSpending: 0,
+        spendingChange: 0,
+        categoryBreakdown: [],
+        topMerchants: [],
+        recentTransactions: [],
+      })),
       api('/accounts/net-worth', { accessToken: locals.accessToken }),
-      api('/analytics/net-worth/history?days=90', { accessToken: locals.accessToken }),
-      api('/analytics/spending/trend?months=6', { accessToken: locals.accessToken }),
+      api('/analytics/net-worth/history?days=90', { accessToken: locals.accessToken }).catch(
+        () => [],
+      ),
+      api('/analytics/spending/trend?months=6', { accessToken: locals.accessToken }).catch(
+        () => [],
+      ),
       api('/budgets/summary', { accessToken: locals.accessToken }).catch(() => null),
       api('/budgets', { accessToken: locals.accessToken }).catch(() => []),
       api('/subscriptions/upcoming?days=30', { accessToken: locals.accessToken }).catch(() => []),

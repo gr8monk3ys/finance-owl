@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { clickAndExpectVisible } from './helpers';
 
 test.describe('Accounts — Page load', () => {
   test.beforeEach(async ({ authenticatedPage }) => {
@@ -7,7 +8,8 @@ test.describe('Accounts — Page load', () => {
 
   test('should load the accounts page', async ({ authenticatedPage: page }) => {
     await expect(page).toHaveTitle(/Accounts/);
-    await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible();
+    // The top bar renders an h1 with the same name, so target the page heading.
+    await expect(page.getByRole('heading', { level: 2, name: 'Accounts' })).toBeVisible();
   });
 
   test('should display the Add Manual button', async ({ authenticatedPage: page }) => {
@@ -40,10 +42,17 @@ test.describe('Accounts — Add manual account', () => {
     await authenticatedPage.goto('/accounts');
   });
 
-  test('should open the Add Manual Account modal', async ({ authenticatedPage: page }) => {
-    await page.getByRole('button', { name: /add manual/i }).click();
+  /** Open the Add Manual Account modal, retrying until hydration lets the click through. */
+  async function openManualModal(page: import('@playwright/test').Page) {
+    await clickAndExpectVisible(
+      page.getByRole('button', { name: /add manual/i }).first(),
+      page.getByRole('heading', { name: 'Add Manual Account' }),
+    );
+  }
 
-    await expect(page.getByText('Add Manual Account')).toBeVisible();
+  test('should open the Add Manual Account modal', async ({ authenticatedPage: page }) => {
+    await openManualModal(page);
+
     await expect(page.locator('#name')).toBeVisible();
     await expect(page.locator('#type')).toBeVisible();
     await expect(page.locator('#institutionName')).toBeVisible();
@@ -51,7 +60,7 @@ test.describe('Accounts — Add manual account', () => {
   });
 
   test('should fill out and submit a manual account', async ({ authenticatedPage: page }) => {
-    await page.getByRole('button', { name: /add manual/i }).click();
+    await openManualModal(page);
 
     await page.locator('#name').fill('E2E Test Checking');
     await page.locator('#type').selectOption('checking');
@@ -66,19 +75,20 @@ test.describe('Accounts — Add manual account', () => {
 
     // After success, the modal closes and the page reloads with the new account.
     // The modal title should no longer be visible.
-    await expect(page.getByText('Add Manual Account')).not.toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('heading', { name: 'Add Manual Account' })).not.toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test('should close the modal with the Cancel button', async ({ authenticatedPage: page }) => {
-    await page.getByRole('button', { name: /add manual/i }).click();
-    await expect(page.getByText('Add Manual Account')).toBeVisible();
+    await openManualModal(page);
 
     await page.getByRole('button', { name: /cancel/i }).click();
-    await expect(page.getByText('Add Manual Account')).not.toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Add Manual Account' })).not.toBeVisible();
   });
 
   test('should show account type options in the dropdown', async ({ authenticatedPage: page }) => {
-    await page.getByRole('button', { name: /add manual/i }).click();
+    await openManualModal(page);
 
     const typeSelect = page.locator('#type');
     const options = typeSelect.locator('option');

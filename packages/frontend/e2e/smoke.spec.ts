@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { fillAndExpectUrl } from './helpers';
 
 test.describe('Web Smoke', () => {
   test.describe.configure({ mode: 'serial' });
@@ -47,9 +48,8 @@ test.describe('Web Smoke', () => {
     await page.goto('/transactions');
 
     const search = page.getByPlaceholder('Search by name, merchant, or amount…');
-    await search.fill('Payroll');
-
-    await expect(page).toHaveURL(/\/transactions\?search=Payroll/, { timeout: 10_000 });
+    // Retried fill: a value typed before hydration never reaches the binding.
+    await fillAndExpectUrl(page, search, 'Payroll', /\/transactions\?search=Payroll/);
     await expect(page.getByText('Showing results for “Payroll”')).toBeVisible();
 
     await page.getByRole('button', { name: 'Clear' }).click();
