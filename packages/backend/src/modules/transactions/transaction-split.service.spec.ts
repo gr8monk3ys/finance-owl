@@ -115,6 +115,8 @@ describe('TransactionSplitService', () => {
     it('should create splits for a valid transaction', async () => {
       // 1. getTransaction lookup
       mockDb.select.mockReturnValueOnce(mockQuery([mockTransaction]));
+      // FK ownership check: categories usable by this user
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }, { id: 'cat-2' }]));
       // 2. delete existing splits
       mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
       // 3. insert new splits
@@ -209,6 +211,8 @@ describe('TransactionSplitService', () => {
 
       // 1. getTransaction
       mockDb.select.mockReturnValueOnce(mockQuery([negativeTransaction]));
+      // FK ownership check: categories usable by this user
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }, { id: 'cat-2' }]));
       // 2. delete existing splits
       mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
       // 3. insert new splits
@@ -231,6 +235,8 @@ describe('TransactionSplitService', () => {
 
       // 1. getTransaction
       mockDb.select.mockReturnValueOnce(mockQuery([preciseTransaction]));
+      // FK ownership check: categories usable by this user
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }, { id: 'cat-2' }]));
       // 2. delete existing splits
       mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
       // 3. insert new splits
@@ -281,6 +287,8 @@ describe('TransactionSplitService', () => {
       const callOrder: string[] = [];
 
       mockDb.select.mockReturnValueOnce(mockQuery([mockTransaction]));
+      // FK ownership check: categories usable by this user
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }, { id: 'cat-2' }]));
 
       const deleteChain = mockQuery(undefined);
       mockDb.delete.mockImplementationOnce((...args: any[]) => {
@@ -391,6 +399,8 @@ describe('TransactionSplitService', () => {
 
       // 1. getTransaction
       mockDb.select.mockReturnValueOnce(mockQuery([mockTransaction]));
+      // FK ownership check: categories usable by this user
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-3' }, { id: 'cat-4' }]));
       // 2. delete existing splits
       mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
       // 3. insert new splits
@@ -501,6 +511,8 @@ describe('TransactionSplitService', () => {
     it('should accept exactly 2 splits that sum to the transaction amount', async () => {
       // 1. getTransaction
       mockDb.select.mockReturnValueOnce(mockQuery([mockTransaction]));
+      // FK ownership check: categories usable by this user
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }, { id: 'cat-2' }]));
       // 2. delete
       mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
       // 3. insert
@@ -526,6 +538,8 @@ describe('TransactionSplitService', () => {
 
       // 1. getTransaction
       mockDb.select.mockReturnValueOnce(mockQuery([mockTransaction]));
+      // FK ownership check: categories usable by this user
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }, { id: 'cat-2' }, { id: 'cat-3' }, { id: 'cat-4' }]));
       // 2. delete
       mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
       // 3. insert
@@ -546,6 +560,12 @@ describe('TransactionSplitService', () => {
 
       // 1. getTransaction
       mockDb.select.mockReturnValueOnce(mockQuery([mockTransaction]));
+      // FK ownership checks: categories, then household members (the
+      // member check issues two select() calls: the membership subquery
+      // builder and the outer query)
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }, { id: 'cat-2' }]));
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'member-1' }, { id: 'member-2' }]));
       // 2. delete
       mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
       // 3. insert

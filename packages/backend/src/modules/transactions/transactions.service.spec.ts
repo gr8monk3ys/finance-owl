@@ -230,6 +230,9 @@ describe('TransactionsService', () => {
         categorizationSource: 'manual',
       };
 
+      // Ownership checks: account, then category
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'account-1' }]));
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }]));
       mockDb.insert.mockReturnValueOnce(mockQuery([insertedTx]));
 
       const result = await service.createManual(mockUserId, createData);
@@ -258,6 +261,8 @@ describe('TransactionsService', () => {
         categorizationSource: null,
       };
 
+      // Ownership check: account (no categoryId supplied)
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'account-1' }]));
       mockDb.insert.mockReturnValueOnce(mockQuery([insertedTx]));
       mockCategorizationService.categorize.mockResolvedValue({
         categoryId: null,
@@ -289,6 +294,9 @@ describe('TransactionsService', () => {
       };
 
       const chain = mockQuery([insertedTx]);
+      // Ownership checks: account, then category
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'account-1' }]));
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }]));
       mockDb.insert.mockReturnValueOnce(chain);
 
       await service.createManual(mockUserId, createData);

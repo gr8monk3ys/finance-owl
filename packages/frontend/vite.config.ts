@@ -35,7 +35,8 @@ export default defineConfig({
     coverage: {
       provider: 'v8' as const,
       reporter: ['text-summary', 'json-summary'] as const,
-      all: true,
+      // vitest 4 removed the `all` option; `include` now defines the full
+      // coverage universe on its own.
       include: ['src/**/*.{ts,svelte}'],
       exclude: ['src/**/*.d.ts'],
       thresholds: {

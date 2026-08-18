@@ -40,3 +40,6 @@ test-results/
 # Misc
 *.log
 .vercel
+
+# TypeScript incremental build state
+*.tsbuildinfo

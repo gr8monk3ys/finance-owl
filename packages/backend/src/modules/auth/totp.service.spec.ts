@@ -185,8 +185,9 @@ describe('TotpService', () => {
       expect(result).toBe(false);
     });
 
-    it('should return true (pass through) when TOTP is not enabled', async () => {
-      // Arrange
+    it('should fail closed when no TOTP secret is stored', async () => {
+      // verifyCode is only invoked when TOTP is required, so a missing
+      // secret is an inconsistent state and must never grant access.
       const userWithoutTotp = { ...mockUser, totpSecret: null };
       mockUsersService.findById.mockResolvedValue(userWithoutTotp);
       mockUsersService.findByEmail.mockResolvedValue(userWithoutTotp);
@@ -195,7 +196,7 @@ describe('TotpService', () => {
       const result = await service.verifyCode('user-123', '123456');
 
       // Assert
-      expect(result).toBe(true);
+      expect(result).toBe(false);
       expect(mockCryptoService.decrypt).not.toHaveBeenCalled();
       expect(mockVerifySync).not.toHaveBeenCalled();
     });
