@@ -12,7 +12,10 @@ const mockGenerateURI = vi
 const mockVerifySync = vi.fn();
 
 vi.mock('otplib', () => ({
-  TOTP: vi.fn().mockImplementation(() => ({})),
+  // vitest 4: constructor mocks need a regular function implementation
+  TOTP: vi.fn(function TOTPMock() {
+    return {};
+  }),
   generateSecret: (...args: any[]) => mockGenerateSecret(...args),
   generateURI: (...args: any[]) => mockGenerateURI(...args),
   verifySync: (...args: any[]) => mockVerifySync(...args),
