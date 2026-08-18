@@ -29,7 +29,9 @@ function createMockConfigService(
  * Creates a mock nodemailer transport that we can inject via
  * the private `transporter` field.
  */
-function createMockTransporter(sendMailImpl?: (...args: any[]) => Promise<any>) {
+// vitest 4's Mock type is a Procedure|Constructable union that no longer
+// narrows to a plain function type, so accept it opaquely.
+function createMockTransporter(sendMailImpl?: unknown) {
   return {
     sendMail: sendMailImpl ?? vi.fn().mockResolvedValue({ messageId: 'test-id' }),
   };

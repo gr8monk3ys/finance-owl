@@ -15,26 +15,29 @@ import {
 // Mock Stripe at module level
 vi.mock('stripe', () => {
   return {
-    default: vi.fn().mockImplementation(() => ({
-      checkout: {
-        sessions: { create: vi.fn() },
-      },
-      billingPortal: {
-        sessions: { create: vi.fn() },
-      },
-      customers: {
-        create: vi.fn(),
-        update: vi.fn(),
-      },
-      subscriptions: {
-        retrieve: vi.fn(),
-        update: vi.fn(),
-        cancel: vi.fn(),
-      },
-      webhooks: {
-        constructEvent: vi.fn(),
-      },
-    })),
+    // vitest 4: constructor mocks need a regular function implementation
+    default: vi.fn(function StripeMock() {
+      return {
+        checkout: {
+          sessions: { create: vi.fn() },
+        },
+        billingPortal: {
+          sessions: { create: vi.fn() },
+        },
+        customers: {
+          create: vi.fn(),
+          update: vi.fn(),
+        },
+        subscriptions: {
+          retrieve: vi.fn(),
+          update: vi.fn(),
+          cancel: vi.fn(),
+        },
+        webhooks: {
+          constructEvent: vi.fn(),
+        },
+      };
+    }),
   };
 });
 
