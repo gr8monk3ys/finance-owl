@@ -248,7 +248,7 @@ describe('Auth E2E - /auth', () => {
       const mockSession = {
         id: 'session-1',
         userId: TEST_USER.id,
-        refreshToken: 'valid-refresh-token',
+        refreshToken: 'a'.repeat(64),
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         createdAt: '2026-01-01T00:00:00.000Z',
       };
@@ -268,7 +268,7 @@ describe('Auth E2E - /auth', () => {
 
       const res = await request(server)
         .post('/auth/refresh')
-        .send({ refreshToken: 'valid-refresh-token' })
+        .send({ refreshToken: 'a'.repeat(64) })
         .expect(200);
 
       expect(res.body).toHaveProperty('accessToken');
@@ -282,7 +282,7 @@ describe('Auth E2E - /auth', () => {
 
       const res = await request(server)
         .post('/auth/refresh')
-        .send({ refreshToken: 'invalid-token' })
+        .send({ refreshToken: 'b'.repeat(64) })
         .expect(401);
 
       expect(res.body.message).toBe('Invalid refresh token');
@@ -292,7 +292,7 @@ describe('Auth E2E - /auth', () => {
       const expiredSession = {
         id: 'session-expired',
         userId: TEST_USER.id,
-        refreshToken: 'expired-token',
+        refreshToken: 'c'.repeat(64),
         expiresAt: new Date(Date.now() - 1000).toISOString(), // 1s ago
         createdAt: '2026-01-01T00:00:00.000Z',
       };
@@ -302,7 +302,7 @@ describe('Auth E2E - /auth', () => {
 
       const res = await request(server)
         .post('/auth/refresh')
-        .send({ refreshToken: 'expired-token' })
+        .send({ refreshToken: 'c'.repeat(64) })
         .expect(401);
 
       expect(res.body.message).toBe('Refresh token expired');
@@ -433,7 +433,7 @@ describe('Auth E2E - /auth', () => {
       const res = await request(server)
         .post('/auth/logout')
         .set('Authorization', `Bearer ${token}`)
-        .send({ refreshToken: 'some-refresh-token' })
+        .send({ refreshToken: 'd'.repeat(64) })
         .expect(200);
 
       expect(res.body.message).toBe('Logged out');
