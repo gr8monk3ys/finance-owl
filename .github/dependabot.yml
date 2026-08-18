@@ -41,6 +41,19 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # The root entry scans the whole pnpm workspace lockfile, so the
+      # Expo-SDK-pinned mobile packages must be ignored here as well as in
+      # the /packages/mobile entry (they are upgraded together via
+      # `npx expo install --fix` during SDK upgrades).
+      - dependency-name: "expo"
+      - dependency-name: "expo-*"
+      - dependency-name: "react"
+      - dependency-name: "@types/react"
+      - dependency-name: "react-native"
+      - dependency-name: "react-native-*"
+      - dependency-name: "@react-navigation/*"
+      - dependency-name: "@sentry/react-native"
 
   # ──────────────────────────────────────────────
   # Backend dependencies
@@ -166,6 +179,7 @@ updates:
       - dependency-name: "react-native"
       - dependency-name: "react-native-*"
       - dependency-name: "@react-navigation/*"
+      - dependency-name: "@sentry/react-native"
 
   # ──────────────────────────────────────────────
   # GitHub Actions
