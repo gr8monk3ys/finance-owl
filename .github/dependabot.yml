@@ -42,6 +42,11 @@ updates:
           - minor
           - patch
     ignore:
+      # zod 4 is a breaking API migration across every schema in
+      # @finance-owl/shared and its backend/frontend consumers — take it as
+      # a deliberate migration, not a routine bump. Minors/patches allowed.
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
       # The root entry scans the whole pnpm workspace lockfile, so the
       # Expo-SDK-pinned mobile packages must be ignored here as well as in
       # the /packages/mobile entry (they are upgraded together via
