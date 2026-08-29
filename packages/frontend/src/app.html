@@ -6,6 +6,34 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="theme-color" content="#1e293b" />
 		<link rel="manifest" href="%sveltekit.assets%/manifest.json" />
+		<script>
+			/*
+			 * Progressive-enhancement flag for scroll-reveal animations.
+			 *
+			 * Content is visible by default in CSS; the hidden-then-reveal rules are
+			 * scoped under `html.js`, so JS opts *in* to the animation and a JS
+			 * failure can never leave a section at opacity: 0.
+			 *
+			 * The failsafe covers the case where this inline script runs but the app
+			 * never hydrates (blocked module, runtime error, stale service-worker
+			 * bundle): if nothing calls __foHydrated() shortly after load, we drop
+			 * back to the no-JS state and the content simply appears.
+			 */
+			(function () {
+				try {
+					var root = document.documentElement;
+					root.classList.add('js');
+					var failsafe = window.setTimeout(function () {
+						root.classList.remove('js');
+					}, 2500);
+					window.__foHydrated = function () {
+						window.clearTimeout(failsafe);
+					};
+				} catch (e) {
+					/* no-op: without this flag the content is visible, which is the safe state */
+				}
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
