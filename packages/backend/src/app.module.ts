@@ -45,6 +45,9 @@ import { SupportModule } from './modules/support/support.module';
           limit: 100,
         },
       ],
+      // E2E suites drive many logins from a single address; production
+      // deployments must never set DISABLE_RATE_LIMITING.
+      skipIf: () => process.env.DISABLE_RATE_LIMITING === '1',
     }),
     DatabaseModule,
     CacheModule,

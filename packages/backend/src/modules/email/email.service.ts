@@ -1,17 +1,8 @@
-import {
-  Injectable,
-  Inject,
-  Logger,
-  OnModuleInit,
-  OnModuleDestroy,
-} from '@nestjs/common';
+import { Injectable, Inject, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
-import {
-  DATABASE_TOKEN,
-  type DrizzleDB,
-} from '../../database/database.module';
+import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { emailQueue } from './email-queue.schema';
 import {
   billReminderHtml,
@@ -82,10 +73,7 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
       'SMTP_FROM',
       'FinanceOwl <noreply@financeowl.app>',
     );
-    this.appUrl = this.configService.get<string>(
-      'FRONTEND_URL',
-      'http://localhost:3000',
-    );
+    this.appUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
     this.settingsUrl = `${this.appUrl}/settings/notifications`;
   }
 
@@ -95,10 +83,7 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
     this.initTransport();
 
     // Start queue processor
-    this.queueTimer = setInterval(
-      () => this.processQueue(),
-      EmailService.QUEUE_INTERVAL_MS,
-    );
+    this.queueTimer = setInterval(() => this.processQueue(), EmailService.QUEUE_INTERVAL_MS);
   }
 
   onModuleDestroy() {
@@ -108,9 +93,7 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
     }
 
     if (this.queue.size > 0) {
-      this.logger.warn(
-        `Module destroying with ${this.queue.size} unsent email(s) in queue`,
-      );
+      this.logger.warn(`Module destroying with ${this.queue.size} unsent email(s) in queue`);
     }
   }
 
@@ -145,10 +128,7 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
       host,
       port,
       secure: port === 465,
-      auth:
-        user && pass
-          ? { user, pass }
-          : undefined,
+      auth: user && pass ? { user, pass } : undefined,
     });
 
     this.logger.log(`Email transport initialised (${host}:${port})`);
@@ -163,16 +143,9 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
    * On transient failure the email is placed in an in-memory retry
    * queue with up to 3 attempts using exponential backoff.
    */
-  async sendEmail(
-    to: string,
-    subject: string,
-    html: string,
-    text?: string,
-  ): Promise<boolean> {
+  async sendEmail(to: string, subject: string, html: string, text?: string): Promise<boolean> {
     if (!this.transporter) {
-      this.logger.warn(
-        `Email not sent (SMTP not configured): ${subject} to ${to}`,
-      );
+      this.logger.warn(`Email not sent (SMTP not configured): ${subject} to ${to}`);
 
       // Persist to the email_queue table so it can be sent later
       try {
@@ -182,13 +155,9 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
           body: html,
           status: 'pending',
         });
-        this.logger.debug(
-          `Unsent email queued in database: "${subject}" -> ${to}`,
-        );
+        this.logger.debug(`Unsent email queued in database: "${subject}" -> ${to}`);
       } catch (err) {
-        this.logger.error(
-          `Failed to queue unsent email to database: ${err}`,
-        );
+        this.logger.error(`Failed to queue unsent email to database: ${err}`);
       }
 
       return false;
@@ -208,9 +177,7 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
       this.logger.log(`Email sent: "${subject}" -> ${to}`);
       return true;
     } catch (error) {
-      this.logger.error(
-        `Failed to send email "${subject}" to ${to}: ${error}`,
-      );
+      this.logger.error(`Failed to send email "${subject}" to ${to}: ${error}`);
 
       // Enqueue for retry
       this.enqueue(to, subject, html, plainText);
@@ -220,12 +187,7 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
 
   // ── In-memory retry queue ──────────────────────────────────────────
 
-  private enqueue(
-    to: string,
-    subject: string,
-    html: string,
-    text: string,
-  ): void {
+  private enqueue(to: string, subject: string, html: string, text: string): void {
     const id = `eq-${++this.idCounter}-${Date.now()}`;
     const entry: QueuedEmail = {
       id,
@@ -285,8 +247,7 @@ export class EmailService implements OnModuleInit, OnModuleDestroy {
           );
         } else {
           // Exponential backoff: BASE * 2^(attempt-1)
-          const delay =
-            EmailService.BASE_DELAY_MS * Math.pow(2, entry.attempts - 1);
+          const delay = EmailService.BASE_DELAY_MS * Math.pow(2, entry.attempts - 1);
           entry.nextRetryAt = Date.now() + delay;
           this.logger.warn(
             `Email retry ${entry.attempts}/${entry.maxAttempts} failed, next retry in ${Math.round(delay / 1000)}s: "${entry.subject}" -> ${entry.to}`,

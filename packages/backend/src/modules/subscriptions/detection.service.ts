@@ -146,7 +146,7 @@ const FREQUENCY_ANNUAL_MULTIPLIER: Record<string, number> = {
 const AMOUNT_CLUSTER_TOLERANCE = 0.05;
 
 /** Coefficient of variation ceiling: reject groups above this (30% for variable bills) */
-const MAX_CV_FOR_VARIABLE_BILLS = 0.30;
+const MAX_CV_FOR_VARIABLE_BILLS = 0.3;
 
 /** CV threshold for fixed-price subscriptions */
 const FIXED_PRICE_CV_THRESHOLD = 0.05;
@@ -399,25 +399,25 @@ const CATEGORY_KEYWORDS: [string, SubscriptionCategory][] = [
  */
 const KNOWN_SERVICES: Record<string, string> = {
   // Netflix
-  'netflix': 'netflix',
+  netflix: 'netflix',
   'netflix.com': 'netflix',
   'netflix inc': 'netflix',
   'netflix.com inc': 'netflix',
   'netflix digital': 'netflix',
   // Spotify
-  'spotify': 'spotify',
+  spotify: 'spotify',
   'spotify usa': 'spotify',
   'spotify ab': 'spotify',
   'spotify premium': 'spotify',
   'spotify technology': 'spotify',
   // Hulu
-  'hulu': 'hulu',
+  hulu: 'hulu',
   'hulu llc': 'hulu',
   'hulu.com': 'hulu',
   // Disney+
   'disney+': 'disney+',
   'disney plus': 'disney+',
-  'disneyplus': 'disney+',
+  disneyplus: 'disney+',
   'walt disney': 'disney+',
   'disney streaming': 'disney+',
   // Amazon
@@ -432,14 +432,14 @@ const KNOWN_SERVICES: Record<string, string> = {
   'apple music': 'apple music',
   'apple.com/bill': 'apple services',
   'apple.com': 'apple services',
-  'itunes': 'apple services',
+  itunes: 'apple services',
   'apple tv+': 'apple tv+',
   'apple tv plus': 'apple tv+',
   'apple icloud': 'icloud',
-  'icloud': 'icloud',
+  icloud: 'icloud',
   'apple one': 'apple one',
   // Adobe
-  'adobe': 'adobe',
+  adobe: 'adobe',
   'adobe systems': 'adobe',
   'adobe inc': 'adobe',
   'adobe creative': 'adobe',
@@ -449,11 +449,11 @@ const KNOWN_SERVICES: Record<string, string> = {
   'google youtube': 'youtube premium',
   'google*youtube': 'youtube premium',
   // Microsoft
-  'microsoft': 'microsoft 365',
-  'msft': 'microsoft 365',
+  microsoft: 'microsoft 365',
+  msft: 'microsoft 365',
   'microsoft 365': 'microsoft 365',
   'office 365': 'microsoft 365',
-  'xbox': 'xbox',
+  xbox: 'xbox',
   'xbox game pass': 'xbox game pass',
   'xbox live': 'xbox live',
   // Google
@@ -463,8 +463,8 @@ const KNOWN_SERVICES: Record<string, string> = {
   'google*': 'google services',
   // HBO
   'hbo max': 'hbo max',
-  'hbo': 'hbo max',
-  'max': 'hbo max',
+  hbo: 'hbo max',
+  max: 'hbo max',
 };
 
 /**
@@ -472,11 +472,11 @@ const KNOWN_SERVICES: Record<string, string> = {
  * Applied in order.
  */
 const MERCHANT_STRIP_PATTERNS: RegExp[] = [
-  /\s*#\d+$/,                                          // Store numbers: "Planet Fitness #1234"
-  /\s*store\s*\d+$/i,                                  // "Store 123"
-  /\s*-\s*\d+$/,                                       // "Merchant - 1234"
-  /\s+\d{4,}$/,                                        // Trailing long numbers
-  /\*[a-z0-9]+$/i,                                     // "GOOGLE*YOUTUBE" -> strip *YOUTUBE handled separately
+  /\s*#\d+$/, // Store numbers: "Planet Fitness #1234"
+  /\s*store\s*\d+$/i, // "Store 123"
+  /\s*-\s*\d+$/, // "Merchant - 1234"
+  /\s+\d{4,}$/, // Trailing long numbers
+  /\*[a-z0-9]+$/i, // "GOOGLE*YOUTUBE" -> strip *YOUTUBE handled separately
   /\s+(inc|llc|ltd|co|corp|corporation|gmbh|ag|plc|lp|sa|sarl|srl|bv|nv)\.?$/i,
   /\s+(subscription|membership|monthly|annual|premium|basic|pro|plus|service)$/i,
   /\s+(payment|billing|bill|recurring|auto-pay|autopay)$/i,
@@ -507,12 +507,7 @@ export class DetectionService {
         categoryId: schema.transactions.categoryId,
       })
       .from(schema.transactions)
-      .where(
-        and(
-          eq(schema.transactions.userId, userId),
-          eq(schema.transactions.pending, false),
-        ),
-      )
+      .where(and(eq(schema.transactions.userId, userId), eq(schema.transactions.pending, false)))
       .orderBy(desc(schema.transactions.date));
 
     if (userTransactions.length === 0) {
@@ -544,12 +539,7 @@ export class DetectionService {
         categoryId: schema.transactions.categoryId,
       })
       .from(schema.transactions)
-      .where(
-        and(
-          eq(schema.transactions.userId, userId),
-          eq(schema.transactions.pending, false),
-        ),
-      )
+      .where(and(eq(schema.transactions.userId, userId), eq(schema.transactions.pending, false)))
       .orderBy(desc(schema.transactions.date));
 
     if (userTransactions.length === 0) {
@@ -571,10 +561,7 @@ export class DetectionService {
    * Pure analysis function -- no database access.
    * This is the core algorithm, fully testable without mocks.
    */
-  analyzeTransactions(
-    transactions: TransactionRecord[],
-    referenceDate?: Date,
-  ): DetectionResult {
+  analyzeTransactions(transactions: TransactionRecord[], referenceDate?: Date): DetectionResult {
     const now = referenceDate ?? new Date();
     const groups = this.groupByNormalizedMerchant(transactions);
     const active: DetectedSubscription[] = [];
@@ -618,10 +605,7 @@ export class DetectionService {
     active.sort((a, b) => b.confidenceScore - a.confidenceScore);
 
     // Calculate totals
-    const totalAnnualEstimate = active.reduce(
-      (sum, s) => sum + s.annualCostProjection,
-      0,
-    );
+    const totalAnnualEstimate = active.reduce((sum, s) => sum + s.annualCostProjection, 0);
     const totalMonthlyEstimate = Math.round((totalAnnualEstimate / 12) * 100) / 100;
 
     return {
@@ -656,9 +640,7 @@ export class DetectionService {
     const serviceMap = new Map<string, DuplicateGroup['subscriptions']>();
 
     for (const sub of subscriptions) {
-      const normalizedName = this.normalizeServiceName(
-        sub.merchantName ?? sub.name,
-      );
+      const normalizedName = this.normalizeServiceName(sub.merchantName ?? sub.name);
 
       if (!serviceMap.has(normalizedName)) {
         serviceMap.set(normalizedName, []);
@@ -868,11 +850,7 @@ export class DetectionService {
    * Returns true if more than CANCELLATION_MISSED_CYCLES expected intervals
    * have passed since the last charge.
    */
-  detectCancellation(
-    lastChargeDate: Date,
-    frequencyDays: number,
-    referenceDate?: Date,
-  ): boolean {
+  detectCancellation(lastChargeDate: Date, frequencyDays: number, referenceDate?: Date): boolean {
     const now = referenceDate ?? new Date();
     const daysSinceLastCharge = Math.round(
       (now.getTime() - lastChargeDate.getTime()) / (1000 * 60 * 60 * 24),
@@ -938,9 +916,9 @@ export class DetectionService {
       score += 32;
     } else if (cv < FIXED_PRICE_CV_THRESHOLD) {
       score += 28;
-    } else if (cv < 0.10) {
+    } else if (cv < 0.1) {
       score += 22;
-    } else if (cv < 0.20) {
+    } else if (cv < 0.2) {
       score += 15;
     } else {
       score += 8;
@@ -949,9 +927,7 @@ export class DetectionService {
     // ── Interval regularity: 0-35 points ────────────────────────────────
     const expectedInterval = FREQUENCY_DAYS[frequency] ?? 30;
     if (intervals.length > 0) {
-      const intervalDeviations = intervals.map((i) =>
-        Math.abs(i - expectedInterval),
-      );
+      const intervalDeviations = intervals.map((i) => Math.abs(i - expectedInterval));
       const medianDeviation = this.median(intervalDeviations);
 
       if (medianDeviation <= 1) {
@@ -1009,9 +985,7 @@ export class DetectionService {
 
   // ─── Private: Grouping ────────────────────────────────────────────────────
 
-  private groupByNormalizedMerchant(
-    transactions: TransactionRecord[],
-  ): MerchantGroup[] {
+  private groupByNormalizedMerchant(transactions: TransactionRecord[]): MerchantGroup[] {
     const map = new Map<string, MerchantGroup>();
 
     for (const tx of transactions) {
@@ -1064,9 +1038,7 @@ export class DetectionService {
     // The dominant sign is the direction of charges
     const dominantIsPositive = positiveCount >= negativeCount;
 
-    return transactions.filter((t) =>
-      dominantIsPositive ? t.amount > 0 : t.amount < 0,
-    );
+    return transactions.filter((t) => (dominantIsPositive ? t.amount > 0 : t.amount < 0));
   }
 
   // ─── Private: Amount Clustering ───────────────────────────────────────────
@@ -1078,14 +1050,10 @@ export class DetectionService {
    * - Multiple subscription tiers from same merchant (individual vs family plan)
    * - Price changes over time
    */
-  clusterAmounts(
-    transactions: { date: string; amount: number }[],
-  ): AmountCluster[] {
+  clusterAmounts(transactions: { date: string; amount: number }[]): AmountCluster[] {
     if (transactions.length === 0) return [];
 
-    const sorted = transactions.slice().sort(
-      (a, b) => Math.abs(a.amount) - Math.abs(b.amount),
-    );
+    const sorted = transactions.slice().sort((a, b) => Math.abs(a.amount) - Math.abs(b.amount));
 
     const clusters: AmountCluster[] = [];
     let currentCluster: AmountCluster = {
@@ -1097,15 +1065,14 @@ export class DetectionService {
     for (let i = 1; i < sorted.length; i++) {
       const amount = Math.abs(sorted[i].amount);
       const tolerance = currentCluster.centroid * AMOUNT_CLUSTER_TOLERANCE;
-      const maxTolerance = Math.max(tolerance, 0.50); // Minimum $0.50 tolerance
+      const maxTolerance = Math.max(tolerance, 0.5); // Minimum $0.50 tolerance
 
       if (Math.abs(amount - currentCluster.centroid) <= maxTolerance) {
         currentCluster.amounts.push(amount);
         currentCluster.transactions.push(sorted[i]);
         // Update centroid
         currentCluster.centroid =
-          currentCluster.amounts.reduce((s, a) => s + a, 0) /
-          currentCluster.amounts.length;
+          currentCluster.amounts.reduce((s, a) => s + a, 0) / currentCluster.amounts.length;
       } else {
         clusters.push(currentCluster);
         currentCluster = {
@@ -1134,8 +1101,7 @@ export class DetectionService {
       .slice()
       .sort(
         (a, b) =>
-          this.parseTransactionDate(a.date).getTime() -
-          this.parseTransactionDate(b.date).getTime(),
+          this.parseTransactionDate(a.date).getTime() - this.parseTransactionDate(b.date).getTime(),
       );
 
     // Calculate intervals between consecutive transactions (in days)
@@ -1276,9 +1242,7 @@ export class DetectionService {
     const lowerBound = q1 - 1.5 * iqrValue;
     const upperBound = q3 + 1.5 * iqrValue;
 
-    const cleaned = intervals.filter(
-      (i) => i >= lowerBound && i <= upperBound,
-    );
+    const cleaned = intervals.filter((i) => i >= lowerBound && i <= upperBound);
 
     // If we removed everything, fall back to original
     return cleaned.length > 0 ? cleaned : intervals;
@@ -1344,10 +1308,7 @@ export class DetectionService {
 
   // ─── Private: Persistence ─────────────────────────────────────────────────
 
-  private async upsertDetected(
-    userId: string,
-    detected: DetectedSubscription[],
-  ): Promise<void> {
+  private async upsertDetected(userId: string, detected: DetectedSubscription[]): Promise<void> {
     for (const sub of detected) {
       const merchantKey = sub.normalizedMerchantName;
 

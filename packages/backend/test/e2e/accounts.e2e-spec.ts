@@ -75,9 +75,7 @@ describe('Accounts E2E - /accounts', () => {
     });
 
     it('should return 401 without authentication', async () => {
-      await request(server)
-        .get('/accounts')
-        .expect(401);
+      await request(server).get('/accounts').expect(401);
     });
   });
 
@@ -303,10 +301,7 @@ describe('Accounts E2E - /accounts', () => {
     });
 
     it('should return 401 without authentication', async () => {
-      await request(server)
-        .post('/accounts/manual')
-        .send(validAccount)
-        .expect(401);
+      await request(server).post('/accounts/manual').send(validAccount).expect(401);
     });
   });
 
@@ -365,9 +360,7 @@ describe('Accounts E2E - /accounts', () => {
     });
 
     it('should return 404 when updating non-existent account', async () => {
-      ctx.mockAccountsService.update.mockRejectedValue(
-        new NotFoundException('Account not found'),
-      );
+      ctx.mockAccountsService.update.mockRejectedValue(new NotFoundException('Account not found'));
 
       await request(server)
         .patch('/accounts/acct-nonexistent')
@@ -389,16 +382,11 @@ describe('Accounts E2E - /accounts', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(204);
 
-      expect(ctx.mockAccountsService.remove).toHaveBeenCalledWith(
-        TEST_USER.id,
-        'acct-001',
-      );
+      expect(ctx.mockAccountsService.remove).toHaveBeenCalledWith(TEST_USER.id, 'acct-001');
     });
 
     it('should return 404 when deleting non-existent account', async () => {
-      ctx.mockAccountsService.remove.mockRejectedValue(
-        new NotFoundException('Account not found'),
-      );
+      ctx.mockAccountsService.remove.mockRejectedValue(new NotFoundException('Account not found'));
 
       await request(server)
         .delete('/accounts/acct-nonexistent')
@@ -426,10 +414,7 @@ describe('Accounts E2E - /accounts', () => {
     it('should scope findAll to the authenticated user', async () => {
       ctx.mockAccountsService.findAll.mockResolvedValue([]);
 
-      await request(server)
-        .get('/accounts')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(200);
+      await request(server).get('/accounts').set('Authorization', `Bearer ${token}`).expect(200);
 
       expect(ctx.mockAccountsService.findAll).toHaveBeenCalledWith(TEST_USER.id);
     });
@@ -456,9 +441,7 @@ describe('Accounts E2E - /accounts', () => {
     });
 
     it('should scope update to the authenticated user', async () => {
-      ctx.mockAccountsService.update.mockRejectedValue(
-        new NotFoundException('Account not found'),
-      );
+      ctx.mockAccountsService.update.mockRejectedValue(new NotFoundException('Account not found'));
 
       await request(server)
         .patch('/accounts/acct-other')
@@ -474,19 +457,14 @@ describe('Accounts E2E - /accounts', () => {
     });
 
     it('should scope deletion to the authenticated user', async () => {
-      ctx.mockAccountsService.remove.mockRejectedValue(
-        new NotFoundException('Account not found'),
-      );
+      ctx.mockAccountsService.remove.mockRejectedValue(new NotFoundException('Account not found'));
 
       await request(server)
         .delete('/accounts/acct-other')
         .set('Authorization', `Bearer ${token}`)
         .expect(404);
 
-      expect(ctx.mockAccountsService.remove).toHaveBeenCalledWith(
-        TEST_USER.id,
-        'acct-other',
-      );
+      expect(ctx.mockAccountsService.remove).toHaveBeenCalledWith(TEST_USER.id, 'acct-other');
     });
   });
 });

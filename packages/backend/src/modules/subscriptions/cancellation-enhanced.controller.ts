@@ -1,17 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { CurrentUser } from '../../common/decorators';
 import { CancellationService } from './cancellation.service';
-import {
-  CancellationProvidersService,
-  type ProviderEntry,
-} from './cancellation-providers.service';
+import { CancellationProvidersService, type ProviderEntry } from './cancellation-providers.service';
 import { IsString, IsOptional } from 'class-validator';
 
 class InitiateCancellationDto {
@@ -41,11 +31,7 @@ export class CancellationEnhancedController {
     @Param('subscriptionId') subscriptionId: string,
     @Body() dto: InitiateCancellationDto,
   ) {
-    return this.cancellationService.requestCancellation(
-      userId,
-      subscriptionId,
-      dto.reason,
-    );
+    return this.cancellationService.requestCancellation(userId, subscriptionId, dto.reason);
   }
 
   /**
@@ -53,14 +39,8 @@ export class CancellationEnhancedController {
    * Check the status of a cancellation request.
    */
   @Get('status/:cancellationId')
-  getStatus(
-    @CurrentUser('id') userId: string,
-    @Param('cancellationId') cancellationId: string,
-  ) {
-    return this.cancellationService.getCancellationRequest(
-      userId,
-      cancellationId,
-    );
+  getStatus(@CurrentUser('id') userId: string, @Param('cancellationId') cancellationId: string) {
+    return this.cancellationService.getCancellationRequest(userId, cancellationId);
   }
 
   /**
@@ -97,14 +77,8 @@ export class CancellationEnhancedController {
 
     return {
       provider,
-      emailTemplate: this.providersService.generateCancellationEmail(
-        displayName,
-        null,
-      ),
-      phoneScript: this.providersService.generateCancellationScript(
-        displayName,
-        name,
-      ),
+      emailTemplate: this.providersService.generateCancellationEmail(displayName, null),
+      phoneScript: this.providersService.generateCancellationScript(displayName, name),
     };
   }
 
@@ -126,9 +100,7 @@ export class CancellationEnhancedController {
    * Get a pre-written cancellation email for a provider.
    */
   @Get('email-template/:name')
-  getEmailTemplate(
-    @Param('name') name: string,
-  ): { template: string } {
+  getEmailTemplate(@Param('name') name: string): { template: string } {
     return {
       template: this.providersService.generateCancellationEmail(name, null),
     };
@@ -139,9 +111,7 @@ export class CancellationEnhancedController {
    * Get a phone cancellation script for a provider.
    */
   @Get('phone-script/:name')
-  getPhoneScript(
-    @Param('name') name: string,
-  ): { script: string } {
+  getPhoneScript(@Param('name') name: string): { script: string } {
     return {
       script: this.providersService.generateCancellationScript(name, name),
     };

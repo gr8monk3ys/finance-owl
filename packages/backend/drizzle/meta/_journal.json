@@ -15,6 +15,13 @@
       "when": 1771189271311,
       "tag": "0001_gray_serpent_society",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787077068956,
+      "tag": "0002_quiet_daimon_hellstrom",
+      "breakpoints": true
     }
   ]
 }

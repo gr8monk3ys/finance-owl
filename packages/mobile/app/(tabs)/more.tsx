@@ -28,13 +28,7 @@ interface SettingsItem {
   onPress?: () => void;
 }
 
-function SettingsIcon({
-  icon,
-  color,
-}: {
-  icon: SettingsItem['icon'];
-  color: string;
-}) {
+function SettingsIcon({ icon, color }: { icon: SettingsItem['icon']; color: string }) {
   const size = 20;
   switch (icon) {
     case 'shield':
@@ -64,23 +58,8 @@ function SettingsIcon({
     case 'creditcard':
       return (
         <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-          <Rect
-            x={1}
-            y={4}
-            width={22}
-            height={16}
-            rx={2}
-            stroke={color}
-            strokeWidth={2}
-          />
-          <Line
-            x1={1}
-            y1={10}
-            x2={23}
-            y2={10}
-            stroke={color}
-            strokeWidth={2}
-          />
+          <Rect x={1} y={4} width={22} height={16} rx={2} stroke={color} strokeWidth={2} />
+          <Line x1={1} y1={10} x2={23} y2={10} stroke={color} strokeWidth={2} />
         </Svg>
       );
     case 'link':
@@ -98,13 +77,7 @@ function SettingsIcon({
     case 'help':
       return (
         <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-          <Circle
-            cx={12}
-            cy={12}
-            r={10}
-            stroke={color}
-            strokeWidth={2}
-          />
+          <Circle cx={12} cy={12} r={10} stroke={color} strokeWidth={2} />
           <Path
             d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"
             stroke={color}
@@ -117,13 +90,7 @@ function SettingsIcon({
     case 'info':
       return (
         <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-          <Circle
-            cx={12}
-            cy={12}
-            r={10}
-            stroke={color}
-            strokeWidth={2}
-          />
+          <Circle cx={12} cy={12} r={10} stroke={color} strokeWidth={2} />
           <Line
             x1={12}
             y1={16}
@@ -232,12 +199,23 @@ function SecurityScreen({ visible, onClose }: SecurityScreenProps) {
   }
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+      onRequestClose={onClose}
+    >
       <View style={settingsStyles.container}>
         <View style={settingsStyles.header}>
           <TouchableOpacity onPress={onClose}>
             <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-              <Path d="M15 18l-6-6 6-6" stroke={colors.surface[400]} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              <Path
+                d="M15 18l-6-6 6-6"
+                stroke={colors.surface[400]}
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </Svg>
           </TouchableOpacity>
           <Text style={settingsStyles.headerTitle}>Security</Text>
@@ -253,7 +231,14 @@ function SecurityScreen({ visible, onClose }: SecurityScreenProps) {
               <View style={settingsStyles.card}>
                 <View style={settingsStyles.cardRow}>
                   <View style={settingsStyles.cardRowLeft}>
-                    <View style={[settingsStyles.statusDot, { backgroundColor: twoFAEnabled ? colors.primary[500] : colors.surface[500] }]} />
+                    <View
+                      style={[
+                        settingsStyles.statusDot,
+                        {
+                          backgroundColor: twoFAEnabled ? colors.primary[500] : colors.surface[500],
+                        },
+                      ]}
+                    />
                     <View>
                       <Text style={settingsStyles.cardRowTitle}>Two-Factor Authentication</Text>
                       <Text style={settingsStyles.cardRowSubtitle}>
@@ -261,8 +246,22 @@ function SecurityScreen({ visible, onClose }: SecurityScreenProps) {
                       </Text>
                     </View>
                   </View>
-                  <View style={[settingsStyles.badge, { backgroundColor: twoFAEnabled ? colors.primary[600] + '30' : colors.surface[700] }]}>
-                    <Text style={[settingsStyles.badgeText, { color: twoFAEnabled ? colors.primary[400] : colors.surface[400] }]}>
+                  <View
+                    style={[
+                      settingsStyles.badge,
+                      {
+                        backgroundColor: twoFAEnabled
+                          ? colors.primary[600] + '30'
+                          : colors.surface[700],
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        settingsStyles.badgeText,
+                        { color: twoFAEnabled ? colors.primary[400] : colors.surface[400] },
+                      ]}
+                    >
                       {twoFAEnabled ? 'Active' : 'Off'}
                     </Text>
                   </View>
@@ -279,9 +278,33 @@ function SecurityScreen({ visible, onClose }: SecurityScreenProps) {
                 <View style={settingsStyles.cardRow}>
                   <View style={settingsStyles.cardRowLeft}>
                     <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-                      <Rect x={2} y={3} width={20} height={14} rx={2} stroke={colors.surface[400]} strokeWidth={2} />
-                      <Line x1={8} y1={21} x2={16} y2={21} stroke={colors.surface[400]} strokeWidth={2} strokeLinecap="round" />
-                      <Line x1={12} y1={17} x2={12} y2={21} stroke={colors.surface[400]} strokeWidth={2} strokeLinecap="round" />
+                      <Rect
+                        x={2}
+                        y={3}
+                        width={20}
+                        height={14}
+                        rx={2}
+                        stroke={colors.surface[400]}
+                        strokeWidth={2}
+                      />
+                      <Line
+                        x1={8}
+                        y1={21}
+                        x2={16}
+                        y2={21}
+                        stroke={colors.surface[400]}
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                      />
+                      <Line
+                        x1={12}
+                        y1={17}
+                        x2={12}
+                        y2={21}
+                        stroke={colors.surface[400]}
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                      />
                     </Svg>
                     <View>
                       <Text style={settingsStyles.cardRowTitle}>Connected Devices</Text>
@@ -442,12 +465,23 @@ function NotificationsScreen({ visible, onClose }: NotificationsScreenProps) {
   }
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+      onRequestClose={onClose}
+    >
       <View style={settingsStyles.container}>
         <View style={settingsStyles.header}>
           <TouchableOpacity onPress={onClose}>
             <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-              <Path d="M15 18l-6-6 6-6" stroke={colors.surface[400]} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              <Path
+                d="M15 18l-6-6 6-6"
+                stroke={colors.surface[400]}
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </Svg>
           </TouchableOpacity>
           <Text style={settingsStyles.headerTitle}>Notifications</Text>
@@ -672,8 +706,7 @@ const settingsStyles = StyleSheet.create({
 export default function MoreScreen() {
   const { user, logout } = useAuthStore();
   const webUrl = process.env.EXPO_PUBLIC_WEB_URL?.replace(/\/$/, '') ?? null;
-  const supportEmail =
-    process.env.EXPO_PUBLIC_SUPPORT_EMAIL?.trim() || 'support@financeowl.com';
+  const supportEmail = process.env.EXPO_PUBLIC_SUPPORT_EMAIL?.trim() || 'support@financeowl.com';
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
   const [showSecurity, setShowSecurity] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -720,10 +753,7 @@ export default function MoreScreen() {
       {
         text: 'Email Support',
         onPress: () => {
-          void openUrl(
-            `mailto:${supportEmail}?subject=Finance%20Owl%20Support`,
-            'Help & Support',
-          );
+          void openUrl(`mailto:${supportEmail}?subject=Finance%20Owl%20Support`, 'Help & Support');
         },
       },
     ];
@@ -739,11 +769,7 @@ export default function MoreScreen() {
 
     buttons.push({ text: 'Cancel', style: 'cancel' as const });
 
-    Alert.alert(
-      'Help & Support',
-      'Need help with billing, security, or a bug report?',
-      buttons,
-    );
+    Alert.alert('Help & Support', 'Need help with billing, security, or a bug report?', buttons);
   }
 
   function handleAbout() {
@@ -837,16 +863,11 @@ export default function MoreScreen() {
   ];
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.content}
-    >
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       {/* User card */}
       <View style={styles.userCard}>
         <View style={styles.userAvatar}>
-          <Text style={styles.userAvatarText}>
-            {user?.name?.charAt(0).toUpperCase() ?? '?'}
-          </Text>
+          <Text style={styles.userAvatarText}>{user?.name?.charAt(0).toUpperCase() ?? '?'}</Text>
         </View>
         <View style={styles.userInfo}>
           <Text style={styles.userName}>{user?.name ?? 'User'}</Text>
@@ -859,18 +880,10 @@ export default function MoreScreen() {
         {settingsItems.map((item) => (
           <Pressable
             key={item.title}
-            style={({ pressed }) => [
-              styles.settingsItem,
-              pressed && styles.settingsItemPressed,
-            ]}
+            style={({ pressed }) => [styles.settingsItem, pressed && styles.settingsItemPressed]}
             onPress={item.onPress}
           >
-            <View
-              style={[
-                styles.settingsIcon,
-                { backgroundColor: item.accentColor + '18' },
-              ]}
-            >
+            <View style={[styles.settingsIcon, { backgroundColor: item.accentColor + '18' }]}>
               <SettingsIcon icon={item.icon} color={item.accentColor} />
             </View>
             <View style={styles.settingsTextContainer}>
@@ -892,10 +905,7 @@ export default function MoreScreen() {
 
       {/* Sign out */}
       <Pressable
-        style={({ pressed }) => [
-          styles.signOutButton,
-          pressed && styles.signOutButtonPressed,
-        ]}
+        style={({ pressed }) => [styles.signOutButton, pressed && styles.signOutButtonPressed]}
         onPress={handleLogout}
       >
         <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">

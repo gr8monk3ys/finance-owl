@@ -110,10 +110,7 @@ export class HouseholdsService {
         userEmail: schema.users.email,
       })
       .from(schema.householdMembers)
-      .leftJoin(
-        schema.users,
-        eq(schema.householdMembers.userId, schema.users.id),
-      )
+      .leftJoin(schema.users, eq(schema.householdMembers.userId, schema.users.id))
       .where(eq(schema.householdMembers.householdId, householdId));
 
     return { ...household, members };
@@ -232,9 +229,7 @@ export class HouseholdsService {
       throw new BadRequestException('Cannot remove yourself as the owner');
     }
 
-    await this.db
-      .delete(schema.householdMembers)
-      .where(eq(schema.householdMembers.id, memberId));
+    await this.db.delete(schema.householdMembers).where(eq(schema.householdMembers.id, memberId));
   }
 
   async shareAccount(userId: string, householdId: string, accountId: string) {
@@ -244,12 +239,7 @@ export class HouseholdsService {
     const [account] = await this.db
       .select()
       .from(schema.accounts)
-      .where(
-        and(
-          eq(schema.accounts.id, accountId),
-          eq(schema.accounts.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.accounts.id, accountId), eq(schema.accounts.userId, userId)))
       .limit(1);
 
     if (!account) throw new NotFoundException('Account not found');
@@ -293,10 +283,7 @@ export class HouseholdsService {
       );
   }
 
-  async getSharedAccounts(
-    userId: string,
-    householdId: string,
-  ): Promise<SharedAccountInfo[]> {
+  async getSharedAccounts(userId: string, householdId: string): Promise<SharedAccountInfo[]> {
     await this.assertMember(userId, householdId);
 
     const shared = await this.db
@@ -312,14 +299,8 @@ export class HouseholdsService {
         sharedAt: schema.sharedAccounts.sharedAt,
       })
       .from(schema.sharedAccounts)
-      .leftJoin(
-        schema.accounts,
-        eq(schema.sharedAccounts.accountId, schema.accounts.id),
-      )
-      .leftJoin(
-        schema.users,
-        eq(schema.sharedAccounts.sharedBy, schema.users.id),
-      )
+      .leftJoin(schema.accounts, eq(schema.sharedAccounts.accountId, schema.accounts.id))
+      .leftJoin(schema.users, eq(schema.sharedAccounts.sharedBy, schema.users.id))
       .where(eq(schema.sharedAccounts.householdId, householdId));
 
     return shared;
@@ -374,9 +355,7 @@ export class HouseholdsService {
       .where(eq(schema.householdMembers.householdId, householdId));
 
     // Delete the household
-    await this.db
-      .delete(schema.households)
-      .where(eq(schema.households.id, householdId));
+    await this.db.delete(schema.households).where(eq(schema.households.id, householdId));
   }
 
   // -- Helpers --
@@ -405,11 +384,7 @@ export class HouseholdsService {
     return member;
   }
 
-  private async assertMemberWithRole(
-    userId: string,
-    householdId: string,
-    roles: string[],
-  ) {
+  private async assertMemberWithRole(userId: string, householdId: string, roles: string[]) {
     const member = await this.assertMember(userId, householdId);
     if (!roles.includes(member.role)) {
       throw new ForbiddenException('Insufficient permissions');

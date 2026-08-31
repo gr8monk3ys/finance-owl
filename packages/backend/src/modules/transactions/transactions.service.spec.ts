@@ -25,8 +25,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -81,9 +80,9 @@ describe('TransactionsService', () => {
       set: vi.fn().mockResolvedValue(undefined),
       del: vi.fn().mockResolvedValue(undefined),
       delPattern: vi.fn().mockResolvedValue(0),
-      wrap: vi.fn().mockImplementation(
-        (_key: string, _ttl: number, factory: () => Promise<any>) => factory(),
-      ),
+      wrap: vi
+        .fn()
+        .mockImplementation((_key: string, _ttl: number, factory: () => Promise<any>) => factory()),
     };
 
     service = new TransactionsService(mockDb, mockCacheService as any);
@@ -97,9 +96,7 @@ describe('TransactionsService', () => {
       const totalQuery = mockQuery([{ total: 2 }]);
       const dataQuery = mockQuery([mockTransaction]);
 
-      mockDb.select
-        .mockReturnValueOnce(totalQuery)
-        .mockReturnValueOnce(dataQuery);
+      mockDb.select.mockReturnValueOnce(totalQuery).mockReturnValueOnce(dataQuery);
 
       const result = await service.findAll(mockUserId, {});
 
@@ -116,9 +113,7 @@ describe('TransactionsService', () => {
       const totalQuery = mockQuery([{ total: 100 }]);
       const dataQuery = mockQuery([]);
 
-      mockDb.select
-        .mockReturnValueOnce(totalQuery)
-        .mockReturnValueOnce(dataQuery);
+      mockDb.select.mockReturnValueOnce(totalQuery).mockReturnValueOnce(dataQuery);
 
       const result = await service.findAll(mockUserId, { page: 3, limit: 10 });
 
@@ -134,9 +129,7 @@ describe('TransactionsService', () => {
       const totalQuery = mockQuery([{ total: 0 }]);
       const dataQuery = mockQuery([]);
 
-      mockDb.select
-        .mockReturnValueOnce(totalQuery)
-        .mockReturnValueOnce(dataQuery);
+      mockDb.select.mockReturnValueOnce(totalQuery).mockReturnValueOnce(dataQuery);
 
       const result = await service.findAll(mockUserId, { limit: 500 });
 
@@ -147,9 +140,7 @@ describe('TransactionsService', () => {
       const totalQuery = mockQuery([{ total: 1 }]);
       const dataQuery = mockQuery([mockTransaction]);
 
-      mockDb.select
-        .mockReturnValueOnce(totalQuery)
-        .mockReturnValueOnce(dataQuery);
+      mockDb.select.mockReturnValueOnce(totalQuery).mockReturnValueOnce(dataQuery);
 
       const result = await service.findAll(mockUserId, {
         startDate: '2026-01-01',
@@ -163,9 +154,7 @@ describe('TransactionsService', () => {
       const totalQuery = mockQuery([{ total: 11 }]);
       const dataQuery = mockQuery([]);
 
-      mockDb.select
-        .mockReturnValueOnce(totalQuery)
-        .mockReturnValueOnce(dataQuery);
+      mockDb.select.mockReturnValueOnce(totalQuery).mockReturnValueOnce(dataQuery);
 
       const result = await service.findAll(mockUserId, { limit: 5 });
 
@@ -176,9 +165,7 @@ describe('TransactionsService', () => {
       const totalQuery = mockQuery([{ total: 1 }]);
       const dataQuery = mockQuery([mockTransaction]);
 
-      mockDb.select
-        .mockReturnValueOnce(totalQuery)
-        .mockReturnValueOnce(dataQuery);
+      mockDb.select.mockReturnValueOnce(totalQuery).mockReturnValueOnce(dataQuery);
 
       const result = await service.findAll(mockUserId, {
         search: 'coffee',
@@ -192,9 +179,7 @@ describe('TransactionsService', () => {
       const totalQuery = mockQuery([{ total: 0 }]);
       const dataQuery = mockQuery([]);
 
-      mockDb.select
-        .mockReturnValueOnce(totalQuery)
-        .mockReturnValueOnce(dataQuery);
+      mockDb.select.mockReturnValueOnce(totalQuery).mockReturnValueOnce(dataQuery);
 
       const result = await service.findAll(mockUserId, {});
 
@@ -219,9 +204,7 @@ describe('TransactionsService', () => {
     it('should throw NotFoundException when transaction not found', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.findById(mockUserId, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findById(mockUserId, 'non-existent')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -247,6 +230,9 @@ describe('TransactionsService', () => {
         categorizationSource: 'manual',
       };
 
+      // Ownership checks: account, then category
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'account-1' }]));
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }]));
       mockDb.insert.mockReturnValueOnce(mockQuery([insertedTx]));
 
       const result = await service.createManual(mockUserId, createData);
@@ -256,7 +242,6 @@ describe('TransactionsService', () => {
       // Should NOT call auto-categorization because categoryId was provided
       expect(mockCategorizationService.categorize).not.toHaveBeenCalled();
     });
-
 
     it('should return transaction without category when auto-categorization fails', async () => {
       const createData = {
@@ -276,6 +261,8 @@ describe('TransactionsService', () => {
         categorizationSource: null,
       };
 
+      // Ownership check: account (no categoryId supplied)
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'account-1' }]));
       mockDb.insert.mockReturnValueOnce(mockQuery([insertedTx]));
       mockCategorizationService.categorize.mockResolvedValue({
         categoryId: null,
@@ -307,13 +294,14 @@ describe('TransactionsService', () => {
       };
 
       const chain = mockQuery([insertedTx]);
+      // Ownership checks: account, then category
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'account-1' }]));
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'cat-1' }]));
       mockDb.insert.mockReturnValueOnce(chain);
 
       await service.createManual(mockUserId, createData);
 
-      expect(chain.values).toHaveBeenCalledWith(
-        expect.objectContaining({ pending: false }),
-      );
+      expect(chain.values).toHaveBeenCalledWith(expect.objectContaining({ pending: false }));
     });
   });
 
@@ -359,9 +347,9 @@ describe('TransactionsService', () => {
     it('should throw NotFoundException when updating non-existent transaction', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.update(mockUserId, 'non-existent', { notes: 'test' }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.update(mockUserId, 'non-existent', { notes: 'test' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException when update returns nothing', async () => {
@@ -394,17 +382,15 @@ describe('TransactionsService', () => {
       const linkedTx = { ...mockTransaction, isManual: false };
       mockDb.select.mockReturnValueOnce(mockQuery([linkedTx]));
 
-      await expect(
-        service.remove(mockUserId, mockTransactionId),
-      ).rejects.toThrow('Can only delete manual transactions');
+      await expect(service.remove(mockUserId, mockTransactionId)).rejects.toThrow(
+        'Can only delete manual transactions',
+      );
     });
 
     it('should throw NotFoundException when transaction does not exist', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.remove(mockUserId, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.remove(mockUserId, 'non-existent')).rejects.toThrow(NotFoundException);
     });
   });
 

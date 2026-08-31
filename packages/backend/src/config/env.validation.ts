@@ -103,9 +103,7 @@ export function validate(config: Record<string, unknown>) {
   });
 
   if (errors.length > 0) {
-    const messages = errors
-      .flatMap((err) => Object.values(err.constraints || {}))
-      .join('\n  - ');
+    const messages = errors.flatMap((err) => Object.values(err.constraints || {})).join('\n  - ');
     throw new Error(`Environment validation failed:\n  - ${messages}`);
   }
 

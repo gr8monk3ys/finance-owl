@@ -29,7 +29,9 @@ function createMockConfigService(
  * Creates a mock nodemailer transport that we can inject via
  * the private `transporter` field.
  */
-function createMockTransporter(sendMailImpl?: (...args: any[]) => Promise<any>) {
+// vitest 4's Mock type is a Procedure|Constructable union that no longer
+// narrows to a plain function type, so accept it opaquely.
+function createMockTransporter(sendMailImpl?: unknown) {
   return {
     sendMail: sendMailImpl ?? vi.fn().mockResolvedValue({ messageId: 'test-id' }),
   };
@@ -91,11 +93,7 @@ describe('EmailService', () => {
     });
 
     it('should auto-generate plain text from HTML when text is not provided', async () => {
-      await service.sendEmail(
-        'user@example.com',
-        'Subject',
-        '<p>Hello <strong>World</strong></p>',
-      );
+      await service.sendEmail('user@example.com', 'Subject', '<p>Hello <strong>World</strong></p>');
 
       const callArgs = mockSendMail.mock.calls[0][0];
       expect(callArgs.text).toBeDefined();
@@ -123,11 +121,7 @@ describe('EmailService', () => {
     it('should return false when transporter is null', async () => {
       setPrivateField(service, 'transporter', null);
 
-      const result = await service.sendEmail(
-        'user@test.com',
-        'Subject',
-        '<p>body</p>',
-      );
+      const result = await service.sendEmail('user@test.com', 'Subject', '<p>body</p>');
 
       expect(result).toBe(false);
     });
@@ -151,11 +145,7 @@ describe('EmailService', () => {
     it('should enqueue email when send fails and return true', async () => {
       mockSendMail.mockRejectedValueOnce(new Error('Connection refused'));
 
-      const result = await service.sendEmail(
-        'user@test.com',
-        'Failed Email',
-        '<p>body</p>',
-      );
+      const result = await service.sendEmail('user@test.com', 'Failed Email', '<p>body</p>');
 
       // Returns true because it is queued for retry
       expect(result).toBe(true);
@@ -329,12 +319,8 @@ describe('EmailService', () => {
           { name: 'Groceries', amount: 350 },
           { name: 'Dining', amount: 250 },
         ],
-        upcomingBills: [
-          { name: 'Rent', amount: 1500, dueDate: '2026-02-20' },
-        ],
-        budgetStatuses: [
-          { name: 'Groceries', spent: 350, limit: 400, percentUsed: 87.5 },
-        ],
+        upcomingBills: [{ name: 'Rent', amount: 1500, dueDate: '2026-02-20' }],
+        budgetStatuses: [{ name: 'Groceries', spent: 350, limit: 400, percentUsed: 87.5 }],
       });
 
       expect(result).toBe(true);

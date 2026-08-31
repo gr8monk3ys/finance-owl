@@ -22,8 +22,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -48,9 +47,9 @@ describe('BudgetsService', () => {
       set: vi.fn().mockResolvedValue(undefined),
       del: vi.fn().mockResolvedValue(undefined),
       delPattern: vi.fn().mockResolvedValue(0),
-      wrap: vi.fn().mockImplementation(
-        (_key: string, _ttl: number, factory: () => Promise<any>) => factory(),
-      ),
+      wrap: vi
+        .fn()
+        .mockImplementation((_key: string, _ttl: number, factory: () => Promise<any>) => factory()),
     };
 
     service = new BudgetsService(mockDb, mockCacheService as any);
@@ -92,9 +91,9 @@ describe('BudgetsService', () => {
       // 6. Rollover amount for budget 2 (rollover=true)
       mockDb.select
         .mockReturnValueOnce(mockQuery(mockBudgets))
-        .mockReturnValueOnce(mockQuery([]))           // child categories budget-1
+        .mockReturnValueOnce(mockQuery([])) // child categories budget-1
         .mockReturnValueOnce(mockQuery([{ total: 750 }])) // spent budget-1
-        .mockReturnValueOnce(mockQuery([]))           // child categories budget-2
+        .mockReturnValueOnce(mockQuery([])) // child categories budget-2
         .mockReturnValueOnce(mockQuery([{ total: 750 }])) // spent budget-2
         .mockReturnValueOnce(mockQuery([{ rolloverAmount: 0 }])); // rollover budget-2
 
@@ -175,9 +174,7 @@ describe('BudgetsService', () => {
     it('should throw NotFoundException when budget not found', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.findById(mockUserId, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findById(mockUserId, 'non-existent')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -271,9 +268,9 @@ describe('BudgetsService', () => {
     it('should throw NotFoundException when updating non-existent budget', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.update(mockUserId, 'non-existent', { amount: 500 }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.update(mockUserId, 'non-existent', { amount: 500 })).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -298,9 +295,7 @@ describe('BudgetsService', () => {
     it('should throw NotFoundException when deleting non-existent budget', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(service.remove(mockUserId, 'non-existent')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.remove(mockUserId, 'non-existent')).rejects.toThrow(NotFoundException);
     });
   });
 

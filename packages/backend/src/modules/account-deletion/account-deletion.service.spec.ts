@@ -1,9 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  BadRequestException,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { AccountDeletionService } from './account-deletion.service';
 
 function mockQuery(data: any) {
@@ -25,8 +21,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -50,9 +45,7 @@ describe('AccountDeletionService', () => {
     updatedAt: new Date('2025-01-01'),
   };
 
-  const futureDate = new Date(
-    Date.now() + 14 * 24 * 60 * 60 * 1000,
-  ).toISOString();
+  const futureDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
 
   const pastDate = new Date(Date.now() - 1000).toISOString();
 
@@ -99,7 +92,9 @@ describe('AccountDeletionService', () => {
     };
 
     mockBillingService = {
-      cancelSubscription: vi.fn().mockResolvedValue({ canceled: true, effectiveDate: new Date().toISOString() }),
+      cancelSubscription: vi
+        .fn()
+        .mockResolvedValue({ canceled: true, effectiveDate: new Date().toISOString() }),
     };
 
     service = new AccountDeletionService(
@@ -116,13 +111,9 @@ describe('AccountDeletionService', () => {
   // ---------------------------------------------------------------------------
   describe('requestDeletion', () => {
     it('should throw ConflictException if deletion is already pending', async () => {
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([mockPendingDeletion]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([mockPendingDeletion]));
 
-      await expect(
-        service.requestDeletion(mockUserId),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.requestDeletion(mockUserId)).rejects.toThrow(ConflictException);
     });
 
     it('should throw NotFoundException if user does not exist', async () => {
@@ -131,9 +122,7 @@ describe('AccountDeletionService', () => {
       // User not found
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.requestDeletion(mockUserId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.requestDeletion(mockUserId)).rejects.toThrow(NotFoundException);
     });
 
     it('should create a deletion request with 14-day grace period', async () => {
@@ -142,9 +131,7 @@ describe('AccountDeletionService', () => {
       // User found
       mockDb.select.mockReturnValueOnce(mockQuery([mockUser]));
       // Insert deletion request
-      mockDb.insert.mockReturnValueOnce(
-        mockQuery([mockPendingDeletion]),
-      );
+      mockDb.insert.mockReturnValueOnce(mockQuery([mockPendingDeletion]));
 
       const result = await service.requestDeletion(mockUserId, 'Switching services');
 
@@ -168,9 +155,7 @@ describe('AccountDeletionService', () => {
     it('should throw NotFoundException if no pending deletion exists', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.cancelDeletion(mockUserId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.cancelDeletion(mockUserId)).rejects.toThrow(NotFoundException);
     });
 
     it('should throw BadRequestException if grace period has expired', async () => {
@@ -180,9 +165,7 @@ describe('AccountDeletionService', () => {
       };
       mockDb.select.mockReturnValueOnce(mockQuery([expiredDeletion]));
 
-      await expect(
-        service.cancelDeletion(mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.cancelDeletion(mockUserId)).rejects.toThrow(BadRequestException);
     });
 
     it('should cancel a pending deletion and send confirmation email', async () => {
@@ -212,17 +195,13 @@ describe('AccountDeletionService', () => {
     it('should throw NotFoundException if no pending deletion exists', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.executeDeletion(mockUserId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.executeDeletion(mockUserId)).rejects.toThrow(NotFoundException);
     });
 
     it('should throw BadRequestException if grace period has not expired', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([mockPendingDeletion]));
 
-      await expect(
-        service.executeDeletion(mockUserId),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.executeDeletion(mockUserId)).rejects.toThrow(BadRequestException);
     });
 
     it('should execute deletion when grace period has passed', async () => {
@@ -329,9 +308,7 @@ describe('AccountDeletionService', () => {
         { id: 'pi-1', plaidItemId: 'plaid-item-1', userId: mockUserId, accessToken: 'enc-token-1' },
       ];
 
-      mockBankSyncService.unlinkItem.mockRejectedValueOnce(
-        new Error('Plaid API error'),
-      );
+      mockBankSyncService.unlinkItem.mockRejectedValueOnce(new Error('Plaid API error'));
 
       // Find pending deletion
       mockDb.select.mockReturnValueOnce(mockQuery([readyDeletion]));
@@ -406,10 +383,7 @@ describe('AccountDeletionService', () => {
 
       await service.executeDeletion(mockUserId);
 
-      expect(mockBillingService.cancelSubscription).toHaveBeenCalledWith(
-        mockUserId,
-        false,
-      );
+      expect(mockBillingService.cancelSubscription).toHaveBeenCalledWith(mockUserId, false);
     });
 
     it('should continue deletion when Stripe cancellation fails', async () => {
@@ -425,9 +399,7 @@ describe('AccountDeletionService', () => {
         status: 'active',
       };
 
-      mockBillingService.cancelSubscription.mockRejectedValueOnce(
-        new Error('Stripe API error'),
-      );
+      mockBillingService.cancelSubscription.mockRejectedValueOnce(new Error('Stripe API error'));
 
       // Find pending deletion
       mockDb.select.mockReturnValueOnce(mockQuery([readyDeletion]));
@@ -488,9 +460,7 @@ describe('AccountDeletionService', () => {
     });
 
     it('should return pending_deletion with days remaining', async () => {
-      mockDb.select.mockReturnValueOnce(
-        mockQuery([mockPendingDeletion]),
-      );
+      mockDb.select.mockReturnValueOnce(mockQuery([mockPendingDeletion]));
 
       const result = await service.getDeletionStatus(mockUserId);
 

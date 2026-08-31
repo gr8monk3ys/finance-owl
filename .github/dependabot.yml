@@ -41,6 +41,24 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # zod 4 is a breaking API migration across every schema in
+      # @finance-owl/shared and its backend/frontend consumers — take it as
+      # a deliberate migration, not a routine bump. Minors/patches allowed.
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
+      # The root entry scans the whole pnpm workspace lockfile, so the
+      # Expo-SDK-pinned mobile packages must be ignored here as well as in
+      # the /packages/mobile entry (they are upgraded together via
+      # `npx expo install --fix` during SDK upgrades).
+      - dependency-name: "expo"
+      - dependency-name: "expo-*"
+      - dependency-name: "react"
+      - dependency-name: "@types/react"
+      - dependency-name: "react-native"
+      - dependency-name: "react-native-*"
+      - dependency-name: "@react-navigation/*"
+      - dependency-name: "@sentry/react-native"
 
   # ──────────────────────────────────────────────
   # Backend dependencies
@@ -154,6 +172,20 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # These are pinned to the installed Expo SDK (see `expo` in
+      # packages/mobile/package.json). Bumping them independently breaks
+      # `expo-doctor` and the React Native runtime; they are upgraded
+      # together via `npx expo install --fix` during SDK upgrades.
+      - dependency-name: "expo"
+      - dependency-name: "expo-*"
+      - dependency-name: "react"
+      - dependency-name: "@types/react"
+      - dependency-name: "react-native"
+      - dependency-name: "react-native-*"
+      - dependency-name: "@react-navigation/*"
+      - dependency-name: "@sentry/react-native"
+      - dependency-name: "typescript"
 
   # ──────────────────────────────────────────────
   # GitHub Actions
@@ -179,6 +211,11 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # Same-owner reusable workflows live in the PRIVATE gr8monk3ys/github
+      # repo; Dependabot cannot reach it (git_dependencies_not_reachable)
+      # and fails every weekly run. They are pinned manually, not versioned.
+      - dependency-name: "gr8monk3ys/*"
 
   # ──────────────────────────────────────────────
   # Docker base images

@@ -42,18 +42,18 @@ The backend is organized into 60+ NestJS modules under `packages/backend/src/mod
 
 **Core domains:**
 
-| Category | Modules |
-|----------|---------|
-| Banking | `accounts`, `transactions`, `bank-sync`, `plaid`, `import`, `categories` |
-| Budgeting | `budgets`, `bills`, `subscriptions`, `smart-savings`, `savings-goals` |
-| Investing | `investments`, `crypto`, `real-estate`, `assets`, `benchmarking` |
-| Credit | `credit`, `credit-simulator`, `debt-payoff` |
-| Planning | `retirement`, `tax`, `calculators`, `forecasting` |
-| AI | `ai`, `recommendations`, `anomalies`, `financial-health` |
-| Auth | `auth`, `identity`, `users`, `privacy` |
-| Billing | `billing` (Stripe integration) |
-| Social | `households`, `advisor-sharing`, `social`, `referrals`, `challenges` |
-| Platform | `notifications`, `email`, `reports`, `data-export`, `audit`, `observability`, `health` |
+| Category  | Modules                                                                                |
+| --------- | -------------------------------------------------------------------------------------- |
+| Banking   | `accounts`, `transactions`, `bank-sync`, `plaid`, `import`, `categories`               |
+| Budgeting | `budgets`, `bills`, `subscriptions`, `smart-savings`, `savings-goals`                  |
+| Investing | `investments`, `crypto`, `real-estate`, `assets`, `benchmarking`                       |
+| Credit    | `credit`, `credit-simulator`, `debt-payoff`                                            |
+| Planning  | `retirement`, `tax`, `calculators`, `forecasting`                                      |
+| AI        | `ai`, `recommendations`, `anomalies`, `financial-health`                               |
+| Auth      | `auth`, `identity`, `users`, `privacy`                                                 |
+| Billing   | `billing` (Stripe integration)                                                         |
+| Social    | `households`, `advisor-sharing`, `social`, `referrals`, `challenges`                   |
+| Platform  | `notifications`, `email`, `reports`, `data-export`, `audit`, `observability`, `health` |
 
 ### Common Infrastructure
 
@@ -162,15 +162,15 @@ ChromaDB stores vector embeddings of transaction descriptions for semantic searc
 
 ### Docker Compose Services
 
-| Service | Image | Port | Purpose |
-|---------|-------|------|---------|
-| `caddy` | caddy:2-alpine | 80/443 | Reverse proxy, automatic TLS |
-| `frontend` | Custom | 3000 | SvelteKit app |
-| `backend` | Custom | 4000 | NestJS API |
-| `postgres` | postgres:16-alpine | 5432 | Primary database |
-| `redis` | redis:7-alpine | 6379 | Cache, sessions, job queues |
-| `ollama` | ollama/ollama | 11434 | Local LLM inference |
-| `chromadb` | chromadb/chroma | 8000 | Vector database |
+| Service    | Image              | Port   | Purpose                      |
+| ---------- | ------------------ | ------ | ---------------------------- |
+| `caddy`    | caddy:2-alpine     | 80/443 | Reverse proxy, automatic TLS |
+| `frontend` | Custom             | 3000   | SvelteKit app                |
+| `backend`  | Custom             | 4000   | NestJS API                   |
+| `postgres` | postgres:16-alpine | 5432   | Primary database             |
+| `redis`    | redis:7-alpine     | 6379   | Cache, sessions, job queues  |
+| `ollama`   | ollama/ollama      | 11434  | Local LLM inference          |
+| `chromadb` | chromadb/chroma    | 8000   | Vector database              |
 
 ### CI/CD
 

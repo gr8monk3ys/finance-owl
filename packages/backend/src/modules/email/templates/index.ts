@@ -1,19 +1,10 @@
-export {
-  baseLayout,
-  escapeHtml,
-  formatCurrency,
-  formatDate,
-} from './base-layout.template';
+export { baseLayout, escapeHtml, formatCurrency, formatDate } from './base-layout.template';
 export {
   billReminderHtml,
   billReminderText,
   type BillReminderData,
 } from './bill-reminder.template';
-export {
-  budgetAlertHtml,
-  budgetAlertText,
-  type BudgetAlertData,
-} from './budget-alert.template';
+export { budgetAlertHtml, budgetAlertText, type BudgetAlertData } from './budget-alert.template';
 export {
   weeklyDigestHtml,
   weeklyDigestText,
@@ -32,8 +23,4 @@ export {
   securityAlertText,
   type SecurityAlertData,
 } from './security-alert.template';
-export {
-  welcomeHtml,
-  welcomeText,
-  type WelcomeData,
-} from './welcome.template';
+export { welcomeHtml, welcomeText, type WelcomeData } from './welcome.template';

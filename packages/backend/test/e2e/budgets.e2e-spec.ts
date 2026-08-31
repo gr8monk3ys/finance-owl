@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
-import {
-  NotFoundException,
-  BadRequestException,
-  ConflictException,
-} from '@nestjs/common';
+import { NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
 import request from 'supertest';
 import {
   createE2EApp,
@@ -110,9 +106,7 @@ describe('Budgets E2E - /budgets', () => {
     });
 
     it('should return 401 without authentication', async () => {
-      await request(server)
-        .get('/budgets')
-        .expect(401);
+      await request(server).get('/budgets').expect(401);
     });
   });
 
@@ -167,9 +161,7 @@ describe('Budgets E2E - /budgets', () => {
     });
 
     it('should return 404 for non-existent budget', async () => {
-      ctx.mockBudgetsService.findById.mockRejectedValue(
-        new NotFoundException('Budget not found'),
-      );
+      ctx.mockBudgetsService.findById.mockRejectedValue(new NotFoundException('Budget not found'));
 
       await request(server)
         .get('/budgets/budget-nonexistent')
@@ -178,9 +170,7 @@ describe('Budgets E2E - /budgets', () => {
     });
 
     it('should not expose budgets belonging to other users', async () => {
-      ctx.mockBudgetsService.findById.mockRejectedValue(
-        new NotFoundException('Budget not found'),
-      );
+      ctx.mockBudgetsService.findById.mockRejectedValue(new NotFoundException('Budget not found'));
 
       await request(server)
         .get('/budgets/budget-other-user')
@@ -279,9 +269,7 @@ describe('Budgets E2E - /budgets', () => {
 
     it('should return 409 when duplicate budget exists for same category and period', async () => {
       ctx.mockBudgetsService.create.mockRejectedValue(
-        new ConflictException(
-          'A budget already exists for this category and period.',
-        ),
+        new ConflictException('A budget already exists for this category and period.'),
       );
 
       await request(server)
@@ -292,10 +280,7 @@ describe('Budgets E2E - /budgets', () => {
     });
 
     it('should return 401 without authentication', async () => {
-      await request(server)
-        .post('/budgets')
-        .send(validBudget)
-        .expect(401);
+      await request(server).post('/budgets').send(validBudget).expect(401);
     });
   });
 
@@ -339,9 +324,7 @@ describe('Budgets E2E - /budgets', () => {
     });
 
     it('should return 404 when updating non-existent budget', async () => {
-      ctx.mockBudgetsService.update.mockRejectedValue(
-        new NotFoundException('Budget not found'),
-      );
+      ctx.mockBudgetsService.update.mockRejectedValue(new NotFoundException('Budget not found'));
 
       await request(server)
         .patch('/budgets/budget-nonexistent')
@@ -363,16 +346,11 @@ describe('Budgets E2E - /budgets', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(204);
 
-      expect(ctx.mockBudgetsService.remove).toHaveBeenCalledWith(
-        TEST_USER.id,
-        'budget-001',
-      );
+      expect(ctx.mockBudgetsService.remove).toHaveBeenCalledWith(TEST_USER.id, 'budget-001');
     });
 
     it('should return 404 when deleting non-existent budget', async () => {
-      ctx.mockBudgetsService.remove.mockRejectedValue(
-        new NotFoundException('Budget not found'),
-      );
+      ctx.mockBudgetsService.remove.mockRejectedValue(new NotFoundException('Budget not found'));
 
       await request(server)
         .delete('/budgets/budget-nonexistent')

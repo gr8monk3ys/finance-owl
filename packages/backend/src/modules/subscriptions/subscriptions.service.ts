@@ -293,16 +293,11 @@ export class SubscriptionsService {
       monthlyTotal: Math.round(monthlyTotal * 100) / 100,
       annualTotal: Math.round(monthlyTotal * 12 * 100) / 100,
       activeCount: subscriptions.length,
-      byCategory: Array.from(categoryMap.values()).sort(
-        (a, b) => b.total - a.total,
-      ),
+      byCategory: Array.from(categoryMap.values()).sort((a, b) => b.total - a.total),
     };
   }
 
-  async getUpcomingBills(
-    userId: string,
-    days: number = 30,
-  ): Promise<UpcomingBill[]> {
+  async getUpcomingBills(userId: string, days: number = 30): Promise<UpcomingBill[]> {
     const activeSubscriptions = await this.db
       .select({
         id: schema.recurringTransactions.id,
@@ -333,12 +328,7 @@ export class SubscriptionsService {
     const bills: UpcomingBill[] = [];
 
     for (const sub of activeSubscriptions) {
-      const projectedDates = this.projectDates(
-        sub.nextExpectedDate,
-        sub.frequency,
-        today,
-        endDate,
-      );
+      const projectedDates = this.projectDates(sub.nextExpectedDate, sub.frequency, today, endDate);
 
       for (const date of projectedDates) {
         bills.push({
@@ -354,11 +344,7 @@ export class SubscriptionsService {
       }
     }
 
-    bills.sort(
-      (a, b) =>
-        new Date(a.expectedDate).getTime() -
-        new Date(b.expectedDate).getTime(),
-    );
+    bills.sort((a, b) => new Date(a.expectedDate).getTime() - new Date(b.expectedDate).getTime());
 
     return bills;
   }

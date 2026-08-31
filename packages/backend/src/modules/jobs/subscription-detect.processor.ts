@@ -35,22 +35,16 @@ export class SubscriptionDetectProcessor extends WorkerHost {
 
     // Run for all users
     this.logger.log('Running subscription detection for all users');
-    const users = await this.db
-      .select({ id: schema.users.id })
-      .from(schema.users);
+    const users = await this.db.select({ id: schema.users.id }).from(schema.users);
 
     for (const user of users) {
       try {
         await this.detectionService.detectForUser(user.id);
       } catch (error) {
-        this.logger.error(
-          `Subscription detection failed for user ${user.id}: ${error}`,
-        );
+        this.logger.error(`Subscription detection failed for user ${user.id}: ${error}`);
       }
     }
 
-    this.logger.log(
-      `Subscription detection complete for ${users.length} users`,
-    );
+    this.logger.log(`Subscription detection complete for ${users.length} users`);
   }
 }

@@ -1,10 +1,4 @@
-import {
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-  Logger,
-} from '@nestjs/common';
+import { Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
 import type { Request } from 'express';
@@ -98,9 +92,7 @@ export class SentryExceptionFilter extends BaseExceptionFilter {
       if (exception instanceof Error) {
         Sentry.captureException(exception);
       } else {
-        Sentry.captureException(
-          new Error(`Non-Error exception: ${String(exception)}`),
-        );
+        Sentry.captureException(new Error(`Non-Error exception: ${String(exception)}`));
       }
     });
   }

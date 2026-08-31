@@ -7,9 +7,7 @@ import { QUEUES } from './jobs.module';
 export class BillReminderScheduler implements OnModuleInit {
   private readonly logger = new Logger(BillReminderScheduler.name);
 
-  constructor(
-    @InjectQueue(QUEUES.ALERTS) private alertsQueue: Queue,
-  ) {}
+  constructor(@InjectQueue(QUEUES.ALERTS) private alertsQueue: Queue) {}
 
   async onModuleInit() {
     // Daily bill reminder check at 9:00 AM
@@ -22,8 +20,6 @@ export class BillReminderScheduler implements OnModuleInit {
       },
     );
 
-    this.logger.log(
-      'Bill reminder scheduler initialized (daily at 9:00 AM)',
-    );
+    this.logger.log('Bill reminder scheduler initialized (daily at 9:00 AM)');
   }
 }

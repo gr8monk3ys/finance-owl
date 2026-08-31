@@ -6,6 +6,9 @@ import { useRouter, useSegments } from 'expo-router';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { colors } from '../src/utils/theme';
 import ErrorBoundary from '../src/components/ErrorBoundary';
+import BiometricLockScreen from '../src/components/BiometricLockScreen';
+import { useBiometricAuth } from '../src/hooks/useBiometricAuth';
+import { useAppStateTimeout } from '../src/hooks/useAppStateTimeout';
 import { configureSentry, Sentry } from '../src/lib/sentry';
 
 // Initialize Sentry as early as possible
@@ -56,10 +59,7 @@ function RootLayout() {
   // - The device supports biometrics and user has enrolled
   const inAuthGroup = segments[0] === '(auth)';
   const showBiometricLock =
-    isAuthenticated &&
-    !inAuthGroup &&
-    isBiometricAvailable &&
-    (isLocked || requiresAuth);
+    isAuthenticated && !inAuthGroup && isBiometricAvailable && (isLocked || requiresAuth);
 
   if (isLoading) {
     return (
@@ -83,11 +83,7 @@ function RootLayout() {
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
       </Stack>
-      {showBiometricLock && (
-        <BiometricLockScreen
-          onAuthenticate={handleBiometricAuth}
-        />
-      )}
+      {showBiometricLock && <BiometricLockScreen onAuthenticate={handleBiometricAuth} />}
     </>
   );
 }

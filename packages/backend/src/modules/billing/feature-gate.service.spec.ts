@@ -1,10 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FeatureGateService } from './feature-gate.service';
-import {
-  FEATURES,
-  PLAN_FEATURES,
-  FEATURE_PLAN_MAP,
-} from './plans';
+import { FEATURES, PLAN_FEATURES, FEATURE_PLAN_MAP } from './plans';
 
 describe('FeatureGateService', () => {
   let service: FeatureGateService;
@@ -33,10 +29,7 @@ describe('FeatureGateService', () => {
 
       const result = await service.canAccess('user-1', FEATURES.BASIC_BUDGETS);
 
-      expect(mockBillingService.canAccess).toHaveBeenCalledWith(
-        'user-1',
-        FEATURES.BASIC_BUDGETS,
-      );
+      expect(mockBillingService.canAccess).toHaveBeenCalledWith('user-1', FEATURES.BASIC_BUDGETS);
       expect(result).toBe(true);
     });
 
@@ -143,10 +136,7 @@ describe('FeatureGateService', () => {
 
       const result = await service.hasMinimumPlan('user-1', 'pro');
 
-      expect(mockBillingService.hasMinimumPlan).toHaveBeenCalledWith(
-        'user-1',
-        'pro',
-      );
+      expect(mockBillingService.hasMinimumPlan).toHaveBeenCalledWith('user-1', 'pro');
       expect(result).toBe(true);
     });
 
@@ -170,10 +160,7 @@ describe('FeatureGateService', () => {
 
       const result = await service.checkLinkedAccountLimit('free-user', 2);
 
-      expect(mockBillingService.checkLinkedAccountLimit).toHaveBeenCalledWith(
-        'free-user',
-        2,
-      );
+      expect(mockBillingService.checkLinkedAccountLimit).toHaveBeenCalledWith('free-user', 2);
       expect(result).toEqual(limitResult);
     });
 

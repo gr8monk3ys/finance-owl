@@ -1,17 +1,9 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PlaidProvider } from './plaid.provider';
 import { MxProvider } from './mx.provider';
 import { FinicityProvider } from './finicity.provider';
-import type {
-  BankAggregatorProvider,
-  AggregatorName,
-} from './aggregator.interface';
+import type { BankAggregatorProvider, AggregatorName } from './aggregator.interface';
 
 /**
  * Factory that manages all registered bank aggregator providers.

@@ -18,8 +18,7 @@ export class PlaidSandboxService {
     private readonly plaidProvider: PlaidProvider,
     private readonly configService: ConfigService,
   ) {
-    this.isSandbox =
-      this.configService.get<string>('PLAID_ENV', 'sandbox') === 'sandbox';
+    this.isSandbox = this.configService.get<string>('PLAID_ENV', 'sandbox') === 'sandbox';
   }
 
   /**
@@ -27,9 +26,7 @@ export class PlaidSandboxService {
    */
   private assertSandbox() {
     if (!this.isSandbox) {
-      throw new ForbiddenException(
-        'Sandbox endpoints are only available when PLAID_ENV=sandbox',
-      );
+      throw new ForbiddenException('Sandbox endpoints are only available when PLAID_ENV=sandbox');
     }
   }
 
@@ -48,22 +45,17 @@ export class PlaidSandboxService {
     this.assertSandbox();
 
     const institutionId = options?.institutionId ?? 'ins_109508';
-    const products = (options?.products ?? ['transactions']).map(
-      (p) => p as Products,
-    );
+    const products = (options?.products ?? ['transactions']).map((p) => p as Products);
 
-    this.logger.log(
-      `Creating sandbox public token for institution ${institutionId}`,
-    );
+    this.logger.log(`Creating sandbox public token for institution ${institutionId}`);
 
-    const response =
-      await this.plaidProvider.client.sandboxPublicTokenCreate({
-        institution_id: institutionId,
-        initial_products: products,
-        options: {
-          webhook: this.configService.get<string>('PLAID_WEBHOOK_URL'),
-        },
-      });
+    const response = await this.plaidProvider.client.sandboxPublicTokenCreate({
+      institution_id: institutionId,
+      initial_products: products,
+      options: {
+        webhook: this.configService.get<string>('PLAID_WEBHOOK_URL'),
+      },
+    });
 
     return {
       publicToken: response.data.public_token,
@@ -81,9 +73,7 @@ export class PlaidSandboxService {
   ): Promise<{ fired: boolean }> {
     this.assertSandbox();
 
-    const code =
-      webhookCode ??
-      SandboxItemFireWebhookRequestWebhookCodeEnum.DefaultUpdate;
+    const code = webhookCode ?? SandboxItemFireWebhookRequestWebhookCodeEnum.DefaultUpdate;
 
     this.logger.log(`Firing sandbox webhook: ${code}`);
 
@@ -99,9 +89,7 @@ export class PlaidSandboxService {
    * Reset the login for a sandbox item, putting it into an
    * ITEM_LOGIN_REQUIRED state. Useful for testing re-authentication flows.
    */
-  async resetSandboxLogin(
-    accessToken: string,
-  ): Promise<{ reset: boolean }> {
+  async resetSandboxLogin(accessToken: string): Promise<{ reset: boolean }> {
     this.assertSandbox();
 
     this.logger.log('Resetting sandbox item login');

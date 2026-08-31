@@ -66,11 +66,7 @@ describe('WebAuthnService', () => {
     };
 
     // Construct directly to avoid NestJS DI issues in unit tests
-    service = new (WebAuthnService as any)(
-      mockDb,
-      mockConfigService,
-      mockCacheService,
-    );
+    service = new (WebAuthnService as any)(mockDb, mockConfigService, mockCacheService);
   });
 
   describe('generateRegistrationOptions', () => {
@@ -189,12 +185,12 @@ describe('WebAuthnService', () => {
       mockCacheService.get.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        service.verifyRegistration('user-123', mockRegBody),
-      ).rejects.toThrow(BadRequestException);
-      await expect(
-        service.verifyRegistration('user-123', mockRegBody),
-      ).rejects.toThrow('No challenge found. Please request a new challenge.');
+      await expect(service.verifyRegistration('user-123', mockRegBody)).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.verifyRegistration('user-123', mockRegBody)).rejects.toThrow(
+        'No challenge found. Please request a new challenge.',
+      );
     });
 
     it('should throw when verification fails', async () => {
@@ -206,12 +202,12 @@ describe('WebAuthnService', () => {
       });
 
       // Act & Assert
-      await expect(
-        service.verifyRegistration('user-123', mockRegBody),
-      ).rejects.toThrow(BadRequestException);
-      await expect(
-        service.verifyRegistration('user-123', mockRegBody),
-      ).rejects.toThrow('WebAuthn verification failed');
+      await expect(service.verifyRegistration('user-123', mockRegBody)).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.verifyRegistration('user-123', mockRegBody)).rejects.toThrow(
+        'WebAuthn verification failed',
+      );
     });
   });
 
@@ -316,12 +312,12 @@ describe('WebAuthnService', () => {
       mockCacheService.get.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        service.verifyAuthentication(mockAuthBody, 'user-123'),
-      ).rejects.toThrow(BadRequestException);
-      await expect(
-        service.verifyAuthentication(mockAuthBody, 'user-123'),
-      ).rejects.toThrow('No challenge found. Please request a new challenge.');
+      await expect(service.verifyAuthentication(mockAuthBody, 'user-123')).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.verifyAuthentication(mockAuthBody, 'user-123')).rejects.toThrow(
+        'No challenge found. Please request a new challenge.',
+      );
     });
 
     it('should throw when credential is not found', async () => {
@@ -329,12 +325,12 @@ describe('WebAuthnService', () => {
       mockDb.limit.mockResolvedValue([]);
 
       // Act & Assert
-      await expect(
-        service.verifyAuthentication(mockAuthBody, 'user-123'),
-      ).rejects.toThrow(BadRequestException);
-      await expect(
-        service.verifyAuthentication(mockAuthBody, 'user-123'),
-      ).rejects.toThrow('Credential not found');
+      await expect(service.verifyAuthentication(mockAuthBody, 'user-123')).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.verifyAuthentication(mockAuthBody, 'user-123')).rejects.toThrow(
+        'Credential not found',
+      );
     });
 
     it('should throw when authentication verification fails', async () => {
@@ -347,12 +343,12 @@ describe('WebAuthnService', () => {
       });
 
       // Act & Assert
-      await expect(
-        service.verifyAuthentication(mockAuthBody, 'user-123'),
-      ).rejects.toThrow(BadRequestException);
-      await expect(
-        service.verifyAuthentication(mockAuthBody, 'user-123'),
-      ).rejects.toThrow('WebAuthn authentication failed');
+      await expect(service.verifyAuthentication(mockAuthBody, 'user-123')).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.verifyAuthentication(mockAuthBody, 'user-123')).rejects.toThrow(
+        'WebAuthn authentication failed',
+      );
     });
 
     it('should use anonymous challenge key when no userId is provided', async () => {

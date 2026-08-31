@@ -41,10 +41,7 @@ export interface ImportOptions {
 export class ImportService {
   private readonly logger = new Logger(ImportService.name);
 
-  constructor(
-    @Inject(DATABASE_TOKEN) private db: DrizzleDB,
-
-  ) {}
+  constructor(@Inject(DATABASE_TOKEN) private db: DrizzleDB) {}
 
   // ── CSV Parsing ─────────────────────────────────────────────────────────
 
@@ -62,9 +59,7 @@ export class ImportService {
     const lines = content.split(/\r?\n/);
 
     if (lines.length < 2) {
-      throw new BadRequestException(
-        'CSV file must have at least a header row and one data row',
-      );
+      throw new BadRequestException('CSV file must have at least a header row and one data row');
     }
 
     const headers = this.parseCSVLine(lines[0]);
@@ -87,12 +82,7 @@ export class ImportService {
     }
 
     // Parse transactions using the mapping
-    const transactions = this.parseCSVRows(
-      headers,
-      rows,
-      mapping,
-      detectedFormat,
-    );
+    const transactions = this.parseCSVRows(headers, rows, mapping, detectedFormat);
 
     return {
       headers,
@@ -207,10 +197,7 @@ export class ImportService {
     };
   }
 
-  private buildMappingFromHeaders(
-    headers: string[],
-    formatKey: string,
-  ): ColumnMapping {
+  private buildMappingFromHeaders(headers: string[], formatKey: string): ColumnMapping {
     const lower = headers.map((h) => h.toLowerCase().trim());
 
     switch (formatKey) {
@@ -225,10 +212,7 @@ export class ImportService {
       case 'ynab': {
         return {
           date: lower.indexOf('date'),
-          description: Math.max(
-            lower.indexOf('payee'),
-            lower.indexOf('memo'),
-          ),
+          description: Math.max(lower.indexOf('payee'), lower.indexOf('memo')),
           amount: lower.indexOf('outflow'),
         };
       }
@@ -250,11 +234,7 @@ export class ImportService {
     const lower = headers.map((h) => h.toLowerCase().trim());
 
     const dateIdx = lower.findIndex(
-      (h) =>
-        h === 'date' ||
-        h === 'transaction date' ||
-        h === 'posted date' ||
-        h.includes('date'),
+      (h) => h === 'date' || h === 'transaction date' || h === 'posted date' || h.includes('date'),
     );
 
     const descIdx = lower.findIndex(
@@ -271,9 +251,7 @@ export class ImportService {
       (h) => h === 'amount' || h === 'total' || h.includes('amount'),
     );
 
-    const categoryIdx = lower.findIndex(
-      (h) => h === 'category' || h.includes('category'),
-    );
+    const categoryIdx = lower.findIndex((h) => h === 'category' || h.includes('category'));
 
     const debitIdx = lower.findIndex(
       (h) => h === 'debit' || h === 'withdrawal' || h.includes('debit'),
@@ -349,11 +327,7 @@ export class ImportService {
           amount,
         };
 
-        if (
-          mapping.category !== undefined &&
-          mapping.category >= 0 &&
-          row[mapping.category]
-        ) {
+        if (mapping.category !== undefined && mapping.category >= 0 && row[mapping.category]) {
           tx.category = row[mapping.category].trim();
         }
 
@@ -385,8 +359,7 @@ export class ImportService {
   private parseOFXSgml(content: string): ParsedTransaction[] {
     const transactions: ParsedTransaction[] = [];
 
-    const stmtTrnRegex =
-      /<STMTTRN>([\s\S]*?)(?:<\/STMTTRN>|(?=<STMTTRN>|<\/BANKTRANLIST))/gi;
+    const stmtTrnRegex = /<STMTTRN>([\s\S]*?)(?:<\/STMTTRN>|(?=<STMTTRN>|<\/BANKTRANLIST))/gi;
     let match: RegExpExecArray | null;
 
     while ((match = stmtTrnRegex.exec(content)) !== null) {
@@ -395,9 +368,7 @@ export class ImportService {
       const dtPosted = this.extractOFXTag(block, 'DTPOSTED');
       const trnAmt = this.extractOFXTag(block, 'TRNAMT');
       const name =
-        this.extractOFXTag(block, 'NAME') ||
-        this.extractOFXTag(block, 'MEMO') ||
-        'Unknown';
+        this.extractOFXTag(block, 'NAME') || this.extractOFXTag(block, 'MEMO') || 'Unknown';
       const memo = this.extractOFXTag(block, 'MEMO');
       const fitId = this.extractOFXTag(block, 'FITID');
 
@@ -434,9 +405,7 @@ export class ImportService {
       const dtPosted = this.extractXMLTag(block, 'DTPOSTED');
       const trnAmt = this.extractXMLTag(block, 'TRNAMT');
       const name =
-        this.extractXMLTag(block, 'NAME') ||
-        this.extractXMLTag(block, 'MEMO') ||
-        'Unknown';
+        this.extractXMLTag(block, 'NAME') || this.extractXMLTag(block, 'MEMO') || 'Unknown';
       const memo = this.extractXMLTag(block, 'MEMO');
       const fitId = this.extractXMLTag(block, 'FITID');
 
@@ -505,16 +474,11 @@ export class ImportService {
       })
       .from(schema.transactions)
       .where(
-        and(
-          eq(schema.transactions.userId, userId),
-          eq(schema.transactions.accountId, accountId),
-        ),
+        and(eq(schema.transactions.userId, userId), eq(schema.transactions.accountId, accountId)),
       );
 
     const existingSet = new Set(
-      existing.map(
-        (t) => `${t.date}|${t.amount}|${t.name.toLowerCase().trim()}`,
-      ),
+      existing.map((t) => `${t.date}|${t.amount}|${t.name.toLowerCase().trim()}`),
     );
 
     return parsed.map((tx, idx) => {
@@ -546,12 +510,7 @@ export class ImportService {
     const [account] = await this.db
       .select()
       .from(schema.accounts)
-      .where(
-        and(
-          eq(schema.accounts.id, accountId),
-          eq(schema.accounts.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.accounts.id, accountId), eq(schema.accounts.userId, userId)))
       .limit(1);
 
     if (!account) {
@@ -567,16 +526,11 @@ export class ImportService {
       })
       .from(schema.transactions)
       .where(
-        and(
-          eq(schema.transactions.userId, userId),
-          eq(schema.transactions.accountId, accountId),
-        ),
+        and(eq(schema.transactions.userId, userId), eq(schema.transactions.accountId, accountId)),
       );
 
     const existingSet = new Set(
-      existing.map(
-        (t) => `${t.date}|${t.amount}|${t.name.toLowerCase().trim()}`,
-      ),
+      existing.map((t) => `${t.date}|${t.amount}|${t.name.toLowerCase().trim()}`),
     );
 
     let importedCount = 0;
@@ -661,10 +615,7 @@ export class ImportService {
         accountName: schema.accounts.name,
       })
       .from(importHistory)
-      .leftJoin(
-        schema.accounts,
-        eq(importHistory.accountId, schema.accounts.id),
-      )
+      .leftJoin(schema.accounts, eq(importHistory.accountId, schema.accounts.id))
       .where(eq(importHistory.userId, userId))
       .orderBy(desc(importHistory.importedAt));
   }
@@ -697,34 +648,18 @@ export class ImportService {
         key: 'ynab',
         name: 'YNAB Export',
         description: 'Exported from You Need A Budget',
-        expectedColumns: [
-          'Account',
-          'Date',
-          'Payee',
-          'Category',
-          'Memo',
-          'Outflow',
-          'Inflow',
-        ],
+        expectedColumns: ['Account', 'Date', 'Payee', 'Category', 'Memo', 'Outflow', 'Inflow'],
       },
       {
         key: 'bank_debit_credit',
         name: 'Bank Generic (Debit/Credit)',
-        description:
-          'Common bank export with separate debit and credit columns',
-        expectedColumns: [
-          'Date',
-          'Description',
-          'Debit',
-          'Credit',
-          'Balance',
-        ],
+        description: 'Common bank export with separate debit and credit columns',
+        expectedColumns: ['Date', 'Description', 'Debit', 'Credit', 'Balance'],
       },
       {
         key: 'ofx',
         name: 'OFX / QFX',
-        description:
-          'Open Financial Exchange format, supported by most banks',
+        description: 'Open Financial Exchange format, supported by most banks',
         expectedColumns: ['DTPOSTED', 'TRNAMT', 'NAME', 'MEMO', 'FITID'],
       },
     ];

@@ -21,7 +21,15 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Allow sandboxes with a preinstalled Chromium at a fixed path
+        // (e.g. PW_CHROMIUM_PATH=/opt/pw-browsers/chromium) to run the
+        // suite without downloading a matching browser build.
+        ...(process.env.PW_CHROMIUM_PATH
+          ? { launchOptions: { executablePath: process.env.PW_CHROMIUM_PATH } }
+          : {}),
+      },
     },
     {
       name: 'firefox',

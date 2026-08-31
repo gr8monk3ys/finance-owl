@@ -73,15 +73,15 @@ This is a deliberate design decision. No additional CSRF tokens are required.
 
 ### Helmet Configuration
 
-| Header | Value |
-|--------|-------|
-| HSTS | `max-age=31536000; includeSubDomains; preload` |
-| X-Frame-Options | `DENY` |
-| X-Content-Type-Options | `nosniff` |
-| Referrer-Policy | `strict-origin-when-cross-origin` |
-| COEP | Enabled |
-| COOP | Enabled |
-| CORP | `same-origin` |
+| Header                 | Value                                          |
+| ---------------------- | ---------------------------------------------- |
+| HSTS                   | `max-age=31536000; includeSubDomains; preload` |
+| X-Frame-Options        | `DENY`                                         |
+| X-Content-Type-Options | `nosniff`                                      |
+| Referrer-Policy        | `strict-origin-when-cross-origin`              |
+| COEP                   | Enabled                                        |
+| COOP                   | Enabled                                        |
+| CORP                   | `same-origin`                                  |
 
 ### Content Security Policy
 

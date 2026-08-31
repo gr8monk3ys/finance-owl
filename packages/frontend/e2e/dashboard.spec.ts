@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { clickAndExpectVisible } from './helpers';
 
 test.describe('Dashboard', () => {
   // Every test in this block uses the pre-authenticated page fixture
@@ -14,7 +15,9 @@ test.describe('Dashboard', () => {
   });
 
   test('should display the net worth summary card', async ({ authenticatedPage: page }) => {
-    await expect(page.getByText('Net Worth')).toBeVisible();
+    // Exact match to avoid also matching prose that mentions "net worth";
+    // first() because the Net Worth widget can repeat the label.
+    await expect(page.getByText('Net Worth', { exact: true }).first()).toBeVisible();
   });
 
   test('should display the monthly spending card', async ({ authenticatedPage: page }) => {
@@ -30,15 +33,16 @@ test.describe('Dashboard', () => {
   });
 
   test('should open and close the customize modal', async ({ authenticatedPage: page }) => {
-    await page.getByRole('button', { name: /customize/i }).click();
+    await clickAndExpectVisible(
+      page.getByRole('button', { name: /customize/i }),
+      page.getByRole('heading', { name: 'Customize Dashboard' }),
+    );
 
-    // Modal title
-    await expect(page.getByText('Customize Dashboard')).toBeVisible();
     await expect(page.getByText('Toggle widgets on or off')).toBeVisible();
 
     // Close modal
     await page.getByRole('button', { name: /cancel/i }).click();
-    await expect(page.getByText('Customize Dashboard')).not.toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Customize Dashboard' })).not.toBeVisible();
   });
 });
 
@@ -47,37 +51,41 @@ test.describe('Dashboard — Sidebar navigation', () => {
     await authenticatedPage.goto('/dashboard');
   });
 
+  // Scope to the sidebar navigation — dashboard widgets can render links
+  // with the same names (e.g. quick actions).
+  const sidebar = (page: import('@playwright/test').Page) => page.getByRole('navigation');
+
   test('should navigate to Accounts via sidebar', async ({ authenticatedPage: page }) => {
-    await page.getByRole('link', { name: 'Accounts' }).click();
+    await sidebar(page).getByRole('link', { name: 'Accounts', exact: true }).click();
     await expect(page).toHaveURL(/\/accounts/);
-    await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Accounts' })).toBeVisible();
   });
 
   test('should navigate to Transactions via sidebar', async ({ authenticatedPage: page }) => {
-    await page.getByRole('link', { name: 'Transactions' }).click();
+    await sidebar(page).getByRole('link', { name: 'Transactions', exact: true }).click();
     await expect(page).toHaveURL(/\/transactions/);
-    await expect(page.getByRole('heading', { name: 'Transactions' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Transactions' })).toBeVisible();
   });
 
   test('should navigate to Budgets via sidebar', async ({ authenticatedPage: page }) => {
-    await page.getByRole('link', { name: 'Budgets' }).click();
+    await sidebar(page).getByRole('link', { name: 'Budgets', exact: true }).click();
     await expect(page).toHaveURL(/\/budgets/);
-    await expect(page.getByRole('heading', { name: 'Budgets' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Budgets' })).toBeVisible();
   });
 
   test('should navigate to Savings Goals via sidebar', async ({ authenticatedPage: page }) => {
-    await page.getByRole('link', { name: 'Savings Goals' }).click();
+    await sidebar(page).getByRole('link', { name: 'Savings Goals', exact: true }).click();
     await expect(page).toHaveURL(/\/savings/);
   });
 
   test('should navigate to Reports via sidebar', async ({ authenticatedPage: page }) => {
-    await page.getByRole('link', { name: 'Reports' }).click();
+    await sidebar(page).getByRole('link', { name: 'Reports', exact: true }).click();
     await expect(page).toHaveURL(/\/reports/);
   });
 
   test('should highlight the active nav item', async ({ authenticatedPage: page }) => {
     // On the dashboard page, the Dashboard link should have the active indicator
-    const dashboardLink = page.getByRole('link', { name: 'Dashboard' });
+    const dashboardLink = sidebar(page).getByRole('link', { name: 'Dashboard', exact: true });
     await expect(dashboardLink).toHaveClass(/text-white/);
   });
 });

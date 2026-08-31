@@ -17,9 +17,7 @@ export class SavingsGoalsService {
     return goals.map((goal) => ({
       ...goal,
       progress:
-        goal.targetAmount > 0
-          ? Math.min((goal.currentAmount / goal.targetAmount) * 100, 100)
-          : 0,
+        goal.targetAmount > 0 ? Math.min((goal.currentAmount / goal.targetAmount) * 100, 100) : 0,
     }));
   }
 
@@ -27,9 +25,7 @@ export class SavingsGoalsService {
     const [goal] = await this.db
       .select()
       .from(savingsGoals)
-      .where(
-        and(eq(savingsGoals.id, id), eq(savingsGoals.userId, userId)),
-      )
+      .where(and(eq(savingsGoals.id, id), eq(savingsGoals.userId, userId)))
       .limit(1);
 
     if (!goal) throw new NotFoundException('Savings goal not found');
@@ -43,9 +39,7 @@ export class SavingsGoalsService {
     return {
       ...goal,
       progress:
-        goal.targetAmount > 0
-          ? Math.min((goal.currentAmount / goal.targetAmount) * 100, 100)
-          : 0,
+        goal.targetAmount > 0 ? Math.min((goal.currentAmount / goal.targetAmount) * 100, 100) : 0,
       contributions,
     };
   }
@@ -94,9 +88,7 @@ export class SavingsGoalsService {
         ...data,
         updatedAt: new Date(),
       })
-      .where(
-        and(eq(savingsGoals.id, id), eq(savingsGoals.userId, userId)),
-      )
+      .where(and(eq(savingsGoals.id, id), eq(savingsGoals.userId, userId)))
       .returning();
 
     return updated;
@@ -106,9 +98,7 @@ export class SavingsGoalsService {
     await this.findById(userId, id);
     await this.db
       .delete(savingsGoals)
-      .where(
-        and(eq(savingsGoals.id, id), eq(savingsGoals.userId, userId)),
-      );
+      .where(and(eq(savingsGoals.id, id), eq(savingsGoals.userId, userId)));
   }
 
   async addContribution(
@@ -148,11 +138,7 @@ export class SavingsGoalsService {
     return contribution;
   }
 
-  async removeContribution(
-    userId: string,
-    goalId: string,
-    contributionId: string,
-  ) {
+  async removeContribution(userId: string, goalId: string, contributionId: string) {
     // Verify goal ownership
     const goal = await this.findById(userId, goalId);
 
@@ -160,18 +146,13 @@ export class SavingsGoalsService {
       .select()
       .from(savingsContributions)
       .where(
-        and(
-          eq(savingsContributions.id, contributionId),
-          eq(savingsContributions.goalId, goalId),
-        ),
+        and(eq(savingsContributions.id, contributionId), eq(savingsContributions.goalId, goalId)),
       )
       .limit(1);
 
     if (!contribution) throw new NotFoundException('Contribution not found');
 
-    await this.db
-      .delete(savingsContributions)
-      .where(eq(savingsContributions.id, contributionId));
+    await this.db.delete(savingsContributions).where(eq(savingsContributions.id, contributionId));
 
     const newCurrentAmount = Math.max(0, goal.currentAmount - contribution.amount);
     const isCompleted = newCurrentAmount >= goal.targetAmount;
@@ -188,17 +169,13 @@ export class SavingsGoalsService {
   }
 
   async getSummary(userId: string) {
-    const goals = await this.db
-      .select()
-      .from(savingsGoals)
-      .where(eq(savingsGoals.userId, userId));
+    const goals = await this.db.select().from(savingsGoals).where(eq(savingsGoals.userId, userId));
 
     const totalSaved = goals.reduce((sum, g) => sum + g.currentAmount, 0);
     const totalTarget = goals.reduce((sum, g) => sum + g.targetAmount, 0);
     const activeGoals = goals.filter((g) => !g.isCompleted).length;
     const completedGoals = goals.filter((g) => g.isCompleted).length;
-    const savingsRate =
-      totalTarget > 0 ? (totalSaved / totalTarget) * 100 : 0;
+    const savingsRate = totalTarget > 0 ? (totalSaved / totalTarget) * 100 : 0;
 
     return {
       totalSaved,

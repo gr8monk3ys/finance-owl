@@ -110,9 +110,7 @@ describe('Auth E2E - /auth', () => {
         .expect(400);
 
       expect(res.body.message).toEqual(
-        expect.arrayContaining([
-          expect.stringContaining('at least 8 characters'),
-        ]),
+        expect.arrayContaining([expect.stringContaining('at least 8 characters')]),
       );
     });
 
@@ -127,9 +125,7 @@ describe('Auth E2E - /auth', () => {
         .expect(400);
 
       expect(res.body.message).toEqual(
-        expect.arrayContaining([
-          expect.stringContaining('uppercase letter'),
-        ]),
+        expect.arrayContaining([expect.stringContaining('uppercase letter')]),
       );
     });
 
@@ -144,9 +140,7 @@ describe('Auth E2E - /auth', () => {
         .expect(400);
 
       expect(res.body.message).toEqual(
-        expect.arrayContaining([
-          expect.stringContaining('one number'),
-        ]),
+        expect.arrayContaining([expect.stringContaining('one number')]),
       );
     });
 
@@ -224,17 +218,11 @@ describe('Auth E2E - /auth', () => {
     });
 
     it('should return 400 when email is missing', async () => {
-      await request(server)
-        .post('/auth/login')
-        .send({ password: 'SomePass123!' })
-        .expect(400);
+      await request(server).post('/auth/login').send({ password: 'SomePass123!' }).expect(400);
     });
 
     it('should return 400 when password is missing', async () => {
-      await request(server)
-        .post('/auth/login')
-        .send({ email: 'user@test.com' })
-        .expect(400);
+      await request(server).post('/auth/login').send({ email: 'user@test.com' }).expect(400);
     });
 
     it('should return 400 when TOTP is required but not provided', async () => {
@@ -260,7 +248,7 @@ describe('Auth E2E - /auth', () => {
       const mockSession = {
         id: 'session-1',
         userId: TEST_USER.id,
-        refreshToken: 'valid-refresh-token',
+        refreshToken: 'a'.repeat(64),
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         createdAt: '2026-01-01T00:00:00.000Z',
       };
@@ -280,7 +268,7 @@ describe('Auth E2E - /auth', () => {
 
       const res = await request(server)
         .post('/auth/refresh')
-        .send({ refreshToken: 'valid-refresh-token' })
+        .send({ refreshToken: 'a'.repeat(64) })
         .expect(200);
 
       expect(res.body).toHaveProperty('accessToken');
@@ -294,7 +282,7 @@ describe('Auth E2E - /auth', () => {
 
       const res = await request(server)
         .post('/auth/refresh')
-        .send({ refreshToken: 'invalid-token' })
+        .send({ refreshToken: 'b'.repeat(64) })
         .expect(401);
 
       expect(res.body.message).toBe('Invalid refresh token');
@@ -304,7 +292,7 @@ describe('Auth E2E - /auth', () => {
       const expiredSession = {
         id: 'session-expired',
         userId: TEST_USER.id,
-        refreshToken: 'expired-token',
+        refreshToken: 'c'.repeat(64),
         expiresAt: new Date(Date.now() - 1000).toISOString(), // 1s ago
         createdAt: '2026-01-01T00:00:00.000Z',
       };
@@ -314,17 +302,14 @@ describe('Auth E2E - /auth', () => {
 
       const res = await request(server)
         .post('/auth/refresh')
-        .send({ refreshToken: 'expired-token' })
+        .send({ refreshToken: 'c'.repeat(64) })
         .expect(401);
 
       expect(res.body.message).toBe('Refresh token expired');
     });
 
     it('should return 400 when refreshToken field is missing', async () => {
-      await request(server)
-        .post('/auth/refresh')
-        .send({})
-        .expect(400);
+      await request(server).post('/auth/refresh').send({}).expect(400);
     });
   });
 
@@ -418,9 +403,7 @@ describe('Auth E2E - /auth', () => {
     });
 
     it('should return 401 without token', async () => {
-      await request(server)
-        .get('/auth/me')
-        .expect(401);
+      await request(server).get('/auth/me').expect(401);
     });
 
     it('should return 401 with expired token', async () => {
@@ -428,10 +411,7 @@ describe('Auth E2E - /auth', () => {
       // Small delay to ensure the token is truly expired
       await new Promise((resolve) => setTimeout(resolve, 50));
 
-      await request(server)
-        .get('/auth/me')
-        .set('Authorization', `Bearer ${expired}`)
-        .expect(401);
+      await request(server).get('/auth/me').set('Authorization', `Bearer ${expired}`).expect(401);
     });
 
     it('should return 401 with malformed token', async () => {
@@ -453,7 +433,7 @@ describe('Auth E2E - /auth', () => {
       const res = await request(server)
         .post('/auth/logout')
         .set('Authorization', `Bearer ${token}`)
-        .send({ refreshToken: 'some-refresh-token' })
+        .send({ refreshToken: 'd'.repeat(64) })
         .expect(200);
 
       expect(res.body.message).toBe('Logged out');
@@ -467,9 +447,7 @@ describe('Auth E2E - /auth', () => {
     it('should return isFirstRun true when no users exist', async () => {
       ctx.mockUsersService.count.mockResolvedValue(0);
 
-      const res = await request(server)
-        .get('/auth/first-run')
-        .expect(200);
+      const res = await request(server).get('/auth/first-run').expect(200);
 
       expect(res.body.isFirstRun).toBe(true);
     });
@@ -477,9 +455,7 @@ describe('Auth E2E - /auth', () => {
     it('should return isFirstRun false when users exist', async () => {
       ctx.mockUsersService.count.mockResolvedValue(5);
 
-      const res = await request(server)
-        .get('/auth/first-run')
-        .expect(200);
+      const res = await request(server).get('/auth/first-run').expect(200);
 
       expect(res.body.isFirstRun).toBe(false);
     });
@@ -488,9 +464,7 @@ describe('Auth E2E - /auth', () => {
       ctx.mockUsersService.count.mockResolvedValue(0);
 
       // No Authorization header
-      await request(server)
-        .get('/auth/first-run')
-        .expect(200);
+      await request(server).get('/auth/first-run').expect(200);
     });
   });
 
@@ -522,9 +496,7 @@ describe('Auth E2E - /auth', () => {
     });
 
     it('should return 401 without authentication', async () => {
-      await request(server)
-        .get('/auth/sessions')
-        .expect(401);
+      await request(server).get('/auth/sessions').expect(401);
     });
   });
 });

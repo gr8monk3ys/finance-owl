@@ -11,17 +11,13 @@ interface TransactionItemProps {
 
 function isIncome(tx: Transaction): boolean {
   const debtTypes: AccountType[] = ['credit_card', 'loan', 'mortgage'];
-  const amount = debtTypes.includes(tx.accountType ?? 'checking')
-    ? -tx.amount
-    : tx.amount;
+  const amount = debtTypes.includes(tx.accountType ?? 'checking') ? -tx.amount : tx.amount;
   return amount < 0;
 }
 
 function getDisplayAmount(tx: Transaction): string {
   const debtTypes: AccountType[] = ['credit_card', 'loan', 'mortgage'];
-  const amount = debtTypes.includes(tx.accountType ?? 'checking')
-    ? -tx.amount
-    : tx.amount;
+  const amount = debtTypes.includes(tx.accountType ?? 'checking') ? -tx.amount : tx.amount;
   return formatCurrency(amount);
 }
 
@@ -60,18 +56,13 @@ export default function TransactionItem({ transaction, onPress }: TransactionIte
               <Text style={styles.metaDivider}>|</Text>
               {transaction.categoryColor && (
                 <View
-                  style={[
-                    styles.categoryDot,
-                    { backgroundColor: transaction.categoryColor },
-                  ]}
+                  style={[styles.categoryDot, { backgroundColor: transaction.categoryColor }]}
                 />
               )}
               <Text
                 style={[
                   styles.meta,
-                  transaction.categoryColor
-                    ? { color: transaction.categoryColor }
-                    : undefined,
+                  transaction.categoryColor ? { color: transaction.categoryColor } : undefined,
                 ]}
               >
                 {transaction.categoryName}
@@ -89,12 +80,7 @@ export default function TransactionItem({ transaction, onPress }: TransactionIte
 
       {/* Amount */}
       <View style={styles.amountContainer}>
-        <Text
-          style={[
-            styles.amount,
-            income ? styles.amountIncome : styles.amountExpense,
-          ]}
-        >
+        <Text style={[styles.amount, income ? styles.amountIncome : styles.amountExpense]}>
           {income ? '+' : ''}
           {getDisplayAmount(transaction)}
         </Text>

@@ -9,7 +9,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
-import { randomBytes } from 'crypto';
+import { randomBytes, createHash } from 'crypto';
 import { eq } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
@@ -80,7 +80,7 @@ export class AuthService {
     const [session] = await this.db
       .select()
       .from(schema.sessions)
-      .where(eq(schema.sessions.refreshToken, refreshToken))
+      .where(eq(schema.sessions.refreshToken, this.hashRefreshToken(refreshToken)))
       .limit(1);
 
     if (!session) {
@@ -88,16 +88,12 @@ export class AuthService {
     }
 
     if (new Date(session.expiresAt) < new Date()) {
-      await this.db
-        .delete(schema.sessions)
-        .where(eq(schema.sessions.id, session.id));
+      await this.db.delete(schema.sessions).where(eq(schema.sessions.id, session.id));
       throw new UnauthorizedException('Refresh token expired');
     }
 
     // Delete old session (rotate refresh token)
-    await this.db
-      .delete(schema.sessions)
-      .where(eq(schema.sessions.id, session.id));
+    await this.db.delete(schema.sessions).where(eq(schema.sessions.id, session.id));
 
     const user = await this.usersService.findById(session.userId);
     if (!user) {
@@ -107,11 +103,7 @@ export class AuthService {
     return this.createTokens(user.id, user.email);
   }
 
-  async changePassword(
-    userId: string,
-    currentPassword: string,
-    newPassword: string,
-  ) {
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
     const found = await this.usersService.findById(userId);
     if (!found) {
       throw new UnauthorizedException('User not found');
@@ -136,9 +128,7 @@ export class AuthService {
     await this.usersService.updatePassword(userId, passwordHash);
 
     // Invalidate all sessions
-    await this.db
-      .delete(schema.sessions)
-      .where(eq(schema.sessions.userId, userId));
+    await this.db.delete(schema.sessions).where(eq(schema.sessions.userId, userId));
 
     return this.createTokens(userId, user.email);
   }
@@ -146,13 +136,11 @@ export class AuthService {
   async logout(refreshToken: string) {
     await this.db
       .delete(schema.sessions)
-      .where(eq(schema.sessions.refreshToken, refreshToken));
+      .where(eq(schema.sessions.refreshToken, this.hashRefreshToken(refreshToken)));
   }
 
   async logoutAll(userId: string) {
-    await this.db
-      .delete(schema.sessions)
-      .where(eq(schema.sessions.userId, userId));
+    await this.db.delete(schema.sessions).where(eq(schema.sessions.userId, userId));
   }
 
   async getActiveSessions(userId: string) {
@@ -189,23 +177,25 @@ export class AuthService {
     // Use cryptographically secure random bytes for refresh token (not UUID)
     const refreshToken = randomBytes(32).toString('hex');
     const refreshExpiry = this.configService.get('JWT_REFRESH_EXPIRY', '7d');
-    const expiresAt = new Date(
-      Date.now() + this.parseDuration(refreshExpiry),
-    ).toISOString();
+    const expiresAt = new Date(Date.now() + this.parseDuration(refreshExpiry)).toISOString();
 
+    // Only a SHA-256 digest of the refresh token is persisted, so a leaked
+    // database dump cannot be replayed against /auth/refresh.
     await this.db.insert(schema.sessions).values({
       userId,
-      refreshToken,
+      refreshToken: this.hashRefreshToken(refreshToken),
       expiresAt,
     });
 
     return {
       accessToken,
       refreshToken,
-      expiresIn: this.parseDuration(
-        this.configService.get('JWT_ACCESS_EXPIRY', '15m'),
-      ) / 1000,
+      expiresIn: this.parseDuration(this.configService.get('JWT_ACCESS_EXPIRY', '15m')) / 1000,
     };
+  }
+
+  private hashRefreshToken(token: string): string {
+    return createHash('sha256').update(token).digest('hex');
   }
 
   private parseDuration(duration: string): number {

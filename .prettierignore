@@ -4,3 +4,7 @@ build
 .svelte-kit
 drizzle
 pnpm-lock.yaml
+.vercel
+.expo
+coverage
+playwright-report

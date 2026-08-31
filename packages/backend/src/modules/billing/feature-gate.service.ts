@@ -1,11 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BillingService } from './billing.service';
-import {
-  type PlanTier,
-  PLAN_FEATURES,
-  FEATURE_PLAN_MAP,
-  canAccessFeature,
-} from './plans';
+import { type PlanTier, PLAN_FEATURES, FEATURE_PLAN_MAP, canAccessFeature } from './plans';
 
 /**
  * Service that provides feature gating logic.
@@ -27,10 +22,7 @@ export class FeatureGateService {
   /**
    * Check if user has at least the given plan tier.
    */
-  async hasMinimumPlan(
-    userId: string,
-    plan: PlanTier,
-  ): Promise<boolean> {
+  async hasMinimumPlan(userId: string, plan: PlanTier): Promise<boolean> {
     return this.billingService.hasMinimumPlan(userId, plan);
   }
 

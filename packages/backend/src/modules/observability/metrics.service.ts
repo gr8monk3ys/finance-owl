@@ -22,12 +22,8 @@ export class MetricsService {
     return {
       totalRequests: this.requestCount,
       totalErrors: this.errorCount,
-      errorRate:
-        this.requestCount > 0 ? this.errorCount / this.requestCount : 0,
-      avgResponseTime:
-        sorted.length > 0
-          ? sorted.reduce((a, b) => a + b, 0) / sorted.length
-          : 0,
+      errorRate: this.requestCount > 0 ? this.errorCount / this.requestCount : 0,
+      avgResponseTime: sorted.length > 0 ? sorted.reduce((a, b) => a + b, 0) / sorted.length : 0,
       p50ResponseTime: sorted[Math.floor(sorted.length * 0.5)] ?? 0,
       p95ResponseTime: sorted[Math.floor(sorted.length * 0.95)] ?? 0,
       p99ResponseTime: sorted[Math.floor(sorted.length * 0.99)] ?? 0,

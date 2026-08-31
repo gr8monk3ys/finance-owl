@@ -1,15 +1,6 @@
-import {
-  Injectable,
-  Inject,
-  Logger,
-  OnModuleInit,
-  OnModuleDestroy,
-} from '@nestjs/common';
+import { Injectable, Inject, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
-import {
-  DATABASE_TOKEN,
-  type DrizzleDB,
-} from '../../database/database.module';
+import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 import { NotificationTriggerService } from './notification-trigger.service';
 
@@ -24,9 +15,7 @@ import { NotificationTriggerService } from './notification-trigger.service';
  * The interval fires every 24 hours; on startup it runs once immediately.
  */
 @Injectable()
-export class NotificationSchedulerService
-  implements OnModuleInit, OnModuleDestroy
-{
+export class NotificationSchedulerService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(NotificationSchedulerService.name);
 
   private dailyTimer: ReturnType<typeof setInterval> | null = null;
@@ -41,14 +30,10 @@ export class NotificationSchedulerService
 
   onModuleInit() {
     // Fire once on startup (non-blocking), then every 24 h
-    this.runDailyChecks().catch((err) =>
-      this.logger.error('Initial daily check failed', err),
-    );
+    this.runDailyChecks().catch((err) => this.logger.error('Initial daily check failed', err));
 
     this.dailyTimer = setInterval(() => {
-      this.runDailyChecks().catch((err) =>
-        this.logger.error('Scheduled daily check failed', err),
-      );
+      this.runDailyChecks().catch((err) => this.logger.error('Scheduled daily check failed', err));
     }, NotificationSchedulerService.DAY_MS);
 
     this.logger.log('Notification scheduler started (24 h interval)');
@@ -102,10 +87,7 @@ export class NotificationSchedulerService
       .from(schema.recurringTransactions)
       .leftJoin(
         schema.notificationPreferences,
-        eq(
-          schema.recurringTransactions.userId,
-          schema.notificationPreferences.userId,
-        ),
+        eq(schema.recurringTransactions.userId, schema.notificationPreferences.userId),
       )
       .where(
         and(
@@ -121,9 +103,7 @@ export class NotificationSchedulerService
       if (!bill.nextExpectedDate) continue;
 
       const dueDate = new Date(bill.nextExpectedDate + 'T00:00:00');
-      const daysBefore = Math.round(
-        (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-      );
+      const daysBefore = Math.round((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
       // Use user's preference or default of 3
       const reminderWindow = bill.reminderDays ?? 3;
@@ -172,8 +152,7 @@ export class NotificationSchedulerService
         if (limit <= 0) continue;
 
         const percentUsed = (spent / limit) * 100;
-        const budgetName =
-          budget.name ?? `Budget ${budget.id.slice(0, 8)}`;
+        const budgetName = budget.name ?? `Budget ${budget.id.slice(0, 8)}`;
 
         // Determine which thresholds have been crossed
         const thresholds = [75, 90, 100];
@@ -182,11 +161,7 @@ export class NotificationSchedulerService
           if (percentUsed < threshold) continue;
 
           // Check if we already sent an alert for this threshold+budget combo
-          const alreadySent = await this.hasRecentAlert(
-            budget.userId,
-            budget.id,
-            threshold,
-          );
+          const alreadySent = await this.hasRecentAlert(budget.userId, budget.id, threshold);
 
           if (alreadySent) continue;
 
@@ -200,10 +175,7 @@ export class NotificationSchedulerService
           sent++;
         }
       } catch (err) {
-        this.logger.error(
-          `Failed to check budget utilization for budget=${budget.id}`,
-          err,
-        );
+        this.logger.error(`Failed to check budget utilization for budget=${budget.id}`, err);
       }
     }
 
@@ -216,9 +188,7 @@ export class NotificationSchedulerService
    * Compute total spending for a budget in the current period.
    * Uses category-based transaction sums for the current month.
    */
-  private async getSpentForBudget(
-    budget: typeof schema.budgets.$inferSelect,
-  ): Promise<number> {
+  private async getSpentForBudget(budget: typeof schema.budgets.$inferSelect): Promise<number> {
     const now = new Date();
     const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const periodStartStr = periodStart.toISOString().split('T')[0];

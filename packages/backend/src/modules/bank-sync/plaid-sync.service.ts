@@ -23,20 +23,12 @@ export class PlaidSyncService {
     private cryptoService: CryptoService,
   ) {}
 
-  async syncTransactionsForItem(
-    plaidItemId: string,
-    userId: string,
-  ): Promise<SyncStats> {
+  async syncTransactionsForItem(plaidItemId: string, userId: string): Promise<SyncStats> {
     // Get the Plaid item with encrypted access token
     const [item] = await this.db
       .select()
       .from(schema.plaidItems)
-      .where(
-        and(
-          eq(schema.plaidItems.id, plaidItemId),
-          eq(schema.plaidItems.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.plaidItems.id, plaidItemId), eq(schema.plaidItems.userId, userId)))
       .limit(1);
 
     if (!item) {
@@ -68,10 +60,7 @@ export class PlaidSyncService {
     const syncPages: TransactionSyncResult[] = [];
     let hasMore = true;
     while (hasMore) {
-      const result = await this.plaidProvider.syncTransactions(
-        accessToken,
-        cursor,
-      );
+      const result = await this.plaidProvider.syncTransactions(accessToken, cursor);
       syncPages.push(result);
       cursor = result.cursor;
       hasMore = result.hasMore;
@@ -131,7 +120,10 @@ export class PlaidSyncService {
   ) {
     // Check if transaction already exists
     const existing = await dbTx
-      .select({ id: schema.transactions.id, categorizationSource: schema.transactions.categorizationSource })
+      .select({
+        id: schema.transactions.id,
+        categorizationSource: schema.transactions.categorizationSource,
+      })
       .from(schema.transactions)
       .where(eq(schema.transactions.plaidTransactionId, tx.externalId))
       .limit(1);
@@ -139,8 +131,7 @@ export class PlaidSyncService {
     if (existing.length > 0) {
       // Update existing transaction, but preserve user-set category
       const preserveCategory =
-        existing[0].categorizationSource === 'user' ||
-        existing[0].categorizationSource === 'rule';
+        existing[0].categorizationSource === 'user' || existing[0].categorizationSource === 'rule';
 
       const updateData: Record<string, unknown> = {
         amount: tx.amount,

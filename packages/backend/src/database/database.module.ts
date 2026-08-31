@@ -1,10 +1,4 @@
-import {
-  Module,
-  Global,
-  Logger,
-  OnModuleDestroy,
-  Inject,
-} from '@nestjs/common';
+import { Module, Global, Logger, OnModuleDestroy, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
@@ -23,8 +17,7 @@ export const DATABASE_POOL_TOKEN = 'DATABASE_POOL';
     {
       provide: DATABASE_POOL_TOKEN,
       useFactory: (configService: ConfigService) => {
-        const isProduction =
-          configService.get<string>('NODE_ENV') === 'production';
+        const isProduction = configService.get<string>('NODE_ENV') === 'production';
 
         let poolConfig: PoolConfig;
 
@@ -45,8 +38,7 @@ export const DATABASE_POOL_TOKEN = 'DATABASE_POOL';
       provide: DATABASE_TOKEN,
       useFactory: async (pool: Pool, configService: ConfigService) => {
         const logger = new Logger('DatabaseModule');
-        const isProduction =
-          configService.get<string>('NODE_ENV') === 'production';
+        const isProduction = configService.get<string>('NODE_ENV') === 'production';
 
         if (isProduction) {
           const poolConfig = getPoolConfig();
@@ -73,9 +65,7 @@ export const DATABASE_POOL_TOKEN = 'DATABASE_POOL';
             );
           }
         } else {
-          logger.warn(
-            'No migrations folder found — run `pnpm db:generate` then `pnpm db:migrate`',
-          );
+          logger.warn('No migrations folder found — run `pnpm db:generate` then `pnpm db:migrate`');
         }
 
         logger.log('PostgreSQL database initialized');

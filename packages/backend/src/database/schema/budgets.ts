@@ -34,9 +34,7 @@ export const budgets = pgTable('budgets', {
   }),
   name: text('name'),
   budgetType: text('budget_type').notNull().default('category'), // 'category' | 'overall'
-  amount: numeric('amount', { precision: 19, scale: 4 })
-    .$type<number>()
-    .notNull(),
+  amount: numeric('amount', { precision: 19, scale: 4 }).$type<number>().notNull(),
   period: text('period').notNull(), // weekly, biweekly, monthly, quarterly, annual
   rollover: boolean('rollover').notNull().default(false),
   rolloverCap: numeric('rollover_cap', { precision: 19, scale: 4 }).$type<number>(),
@@ -56,9 +54,7 @@ export const budgetPeriods = pgTable('budget_periods', {
     .references(() => budgets.id, { onDelete: 'cascade' }),
   startDate: text('start_date').notNull(),
   endDate: text('end_date').notNull(),
-  budgetedAmount: numeric('budgeted_amount', { precision: 19, scale: 4 })
-    .$type<number>()
-    .notNull(),
+  budgetedAmount: numeric('budgeted_amount', { precision: 19, scale: 4 }).$type<number>().notNull(),
   spentAmount: numeric('spent_amount', { precision: 19, scale: 4 })
     .$type<number>()
     .notNull()
@@ -80,9 +76,7 @@ export const budgetAlerts = pgTable('budget_alerts', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   thresholdPercent: integer('threshold_percent').notNull(),
-  actualPercent: numeric('actual_percent', { precision: 7, scale: 2 })
-    .$type<number>()
-    .notNull(),
+  actualPercent: numeric('actual_percent', { precision: 7, scale: 2 }).$type<number>().notNull(),
   periodStart: text('period_start').notNull(),
   acknowledged: boolean('acknowledged').notNull().default(false),
   createdAt: timestamp('created_at').notNull().defaultNow(),

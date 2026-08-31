@@ -62,15 +62,8 @@ export class BillingController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Post('billing/checkout')
-  async createCheckout(
-    @CurrentUser('id') userId: string,
-    @Body() dto: CreateCheckoutDto,
-  ) {
-    return this.billingService.createCheckoutSessionByPlan(
-      userId,
-      dto.planId,
-      dto.interval,
-    );
+  async createCheckout(@CurrentUser('id') userId: string, @Body() dto: CreateCheckoutDto) {
+    return this.billingService.createCheckoutSessionByPlan(userId, dto.planId, dto.interval);
   }
 
   @ApiOperation({ summary: 'Create a Stripe customer portal session' })
@@ -133,14 +126,8 @@ export class BillingController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Throttle({ default: { ttl: 60000, limit: 10 } })
   @Post('billing/check-feature')
-  async checkFeature(
-    @CurrentUser('id') userId: string,
-    @Body() body: { feature: string },
-  ) {
-    const hasAccess = await this.billingService.canAccess(
-      userId,
-      body.feature,
-    );
+  async checkFeature(@CurrentUser('id') userId: string, @Body() body: { feature: string }) {
+    const hasAccess = await this.billingService.canAccess(userId, body.feature);
     return { feature: body.feature, hasAccess };
   }
 

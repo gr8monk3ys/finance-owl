@@ -34,12 +34,7 @@ export class BankSyncService {
     const [item] = await this.db
       .select()
       .from(schema.plaidItems)
-      .where(
-        and(
-          eq(schema.plaidItems.id, plaidItemId),
-          eq(schema.plaidItems.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.plaidItems.id, plaidItemId), eq(schema.plaidItems.userId, userId)))
       .limit(1);
 
     if (!item) throw new NotFoundException('Plaid item not found');
@@ -48,11 +43,7 @@ export class BankSyncService {
     return this.plaidProvider.createUpdateLinkToken(accessToken);
   }
 
-  async exchangeAndStore(
-    userId: string,
-    publicToken: string,
-    providerName?: string,
-  ) {
+  async exchangeAndStore(userId: string, publicToken: string, providerName?: string) {
     const provider = providerName
       ? this.aggregatorFactory.getProvider(providerName)
       : this.aggregatorFactory.getDefaultProvider();
@@ -115,12 +106,7 @@ export class BankSyncService {
     const [item] = await this.db
       .select()
       .from(schema.plaidItems)
-      .where(
-        and(
-          eq(schema.plaidItems.id, plaidItemId),
-          eq(schema.plaidItems.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.plaidItems.id, plaidItemId), eq(schema.plaidItems.userId, userId)))
       .limit(1);
 
     if (!item) throw new NotFoundException('Plaid item not found');
@@ -158,12 +144,7 @@ export class BankSyncService {
     const [item] = await this.db
       .select()
       .from(schema.plaidItems)
-      .where(
-        and(
-          eq(schema.plaidItems.id, plaidItemId),
-          eq(schema.plaidItems.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.plaidItems.id, plaidItemId), eq(schema.plaidItems.userId, userId)))
       .limit(1);
 
     if (!item) throw new NotFoundException('Plaid item not found');
@@ -177,13 +158,9 @@ export class BankSyncService {
     }
 
     // Delete accounts linked to this item
-    await this.db
-      .delete(schema.accounts)
-      .where(eq(schema.accounts.plaidItemId, plaidItemId));
+    await this.db.delete(schema.accounts).where(eq(schema.accounts.plaidItemId, plaidItemId));
 
-    await this.db
-      .delete(schema.plaidItems)
-      .where(eq(schema.plaidItems.id, plaidItemId));
+    await this.db.delete(schema.plaidItems).where(eq(schema.plaidItems.id, plaidItemId));
   }
 
   async getPlaidItems(userId: string) {
@@ -200,11 +177,7 @@ export class BankSyncService {
       .where(eq(schema.plaidItems.userId, userId));
   }
 
-  async updateItemStatus(
-    plaidItemId: string,
-    status: string,
-    errorCode?: string,
-  ) {
+  async updateItemStatus(plaidItemId: string, status: string, errorCode?: string) {
     await this.db
       .update(schema.plaidItems)
       .set({
@@ -227,12 +200,7 @@ export class BankSyncService {
     const [item] = await this.db
       .select()
       .from(schema.plaidItems)
-      .where(
-        and(
-          eq(schema.plaidItems.id, plaidItemId),
-          eq(schema.plaidItems.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.plaidItems.id, plaidItemId), eq(schema.plaidItems.userId, userId)))
       .limit(1);
 
     if (!item) throw new NotFoundException('Plaid item not found');

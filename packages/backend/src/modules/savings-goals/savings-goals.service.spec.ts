@@ -21,8 +21,7 @@ function mockQuery(data: any) {
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
-  chain.then = (resolve: any, reject?: any) =>
-    Promise.resolve(data).then(resolve, reject);
+  chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
 }
 
@@ -146,9 +145,7 @@ describe('SavingsGoalsService', () => {
     it('should throw NotFoundException when goal not found', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.findById(mockUserId, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findById(mockUserId, 'non-existent')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -211,9 +208,7 @@ describe('SavingsGoalsService', () => {
   describe('update', () => {
     it('should update a goal after ownership verification', async () => {
       // findById: goal + contributions
-      mockDb.select
-        .mockReturnValueOnce(mockQuery([mockGoal]))
-        .mockReturnValueOnce(mockQuery([]));
+      mockDb.select.mockReturnValueOnce(mockQuery([mockGoal])).mockReturnValueOnce(mockQuery([]));
 
       const updatedGoal = { ...mockGoal, targetAmount: 8000 };
       mockDb.update.mockReturnValueOnce(mockQuery([updatedGoal]));
@@ -228,9 +223,9 @@ describe('SavingsGoalsService', () => {
     it('should throw NotFoundException for non-existent goal', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.update(mockUserId, 'non-existent', { name: 'Updated' }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.update(mockUserId, 'non-existent', { name: 'Updated' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -240,9 +235,7 @@ describe('SavingsGoalsService', () => {
   describe('remove', () => {
     it('should delete a goal after ownership verification', async () => {
       // findById: goal + contributions
-      mockDb.select
-        .mockReturnValueOnce(mockQuery([mockGoal]))
-        .mockReturnValueOnce(mockQuery([]));
+      mockDb.select.mockReturnValueOnce(mockQuery([mockGoal])).mockReturnValueOnce(mockQuery([]));
 
       mockDb.delete.mockReturnValueOnce(mockQuery(undefined));
 
@@ -254,9 +247,7 @@ describe('SavingsGoalsService', () => {
     it('should throw NotFoundException for non-existent goal', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      await expect(
-        service.remove(mockUserId, 'non-existent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.remove(mockUserId, 'non-existent')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -266,21 +257,14 @@ describe('SavingsGoalsService', () => {
   describe('addContribution', () => {
     it('should add contribution and update currentAmount', async () => {
       // findById: goal + contributions
-      mockDb.select
-        .mockReturnValueOnce(mockQuery([mockGoal]))
-        .mockReturnValueOnce(mockQuery([]));
+      mockDb.select.mockReturnValueOnce(mockQuery([mockGoal])).mockReturnValueOnce(mockQuery([]));
 
       // Insert contribution
       mockDb.insert.mockReturnValueOnce(mockQuery([mockContribution]));
       // Update goal
       mockDb.update.mockReturnValueOnce(mockQuery(undefined));
 
-      const result = await service.addContribution(
-        mockUserId,
-        mockGoalId,
-        500,
-        'Monthly savings',
-      );
+      const result = await service.addContribution(mockUserId, mockGoalId, 500, 'Monthly savings');
 
       expect(result.amount).toBe(500);
       expect(mockDb.update).toHaveBeenCalled();
@@ -313,9 +297,7 @@ describe('SavingsGoalsService', () => {
 
     it('should not mark goal as completed when contribution is insufficient', async () => {
       // findById: goal + contributions
-      mockDb.select
-        .mockReturnValueOnce(mockQuery([mockGoal]))
-        .mockReturnValueOnce(mockQuery([]));
+      mockDb.select.mockReturnValueOnce(mockQuery([mockGoal])).mockReturnValueOnce(mockQuery([]));
 
       const contribution = { ...mockContribution, amount: 100 };
       mockDb.insert.mockReturnValueOnce(mockQuery([contribution]));
@@ -336,9 +318,7 @@ describe('SavingsGoalsService', () => {
 
     it('should use current date when no date is provided', async () => {
       // findById: goal + contributions
-      mockDb.select
-        .mockReturnValueOnce(mockQuery([mockGoal]))
-        .mockReturnValueOnce(mockQuery([]));
+      mockDb.select.mockReturnValueOnce(mockQuery([mockGoal])).mockReturnValueOnce(mockQuery([]));
 
       const insertChain = mockQuery([mockContribution]);
       mockDb.insert.mockReturnValueOnce(insertChain);
@@ -362,9 +342,7 @@ describe('SavingsGoalsService', () => {
   describe('removeContribution', () => {
     it('should remove contribution and decrease currentAmount', async () => {
       // findById: goal + contributions
-      mockDb.select
-        .mockReturnValueOnce(mockQuery([mockGoal]))
-        .mockReturnValueOnce(mockQuery([]));
+      mockDb.select.mockReturnValueOnce(mockQuery([mockGoal])).mockReturnValueOnce(mockQuery([]));
 
       // Find contribution
       mockDb.select.mockReturnValueOnce(mockQuery([mockContribution]));
@@ -413,9 +391,7 @@ describe('SavingsGoalsService', () => {
 
     it('should throw NotFoundException when contribution not found', async () => {
       // findById: goal + contributions
-      mockDb.select
-        .mockReturnValueOnce(mockQuery([mockGoal]))
-        .mockReturnValueOnce(mockQuery([]));
+      mockDb.select.mockReturnValueOnce(mockQuery([mockGoal])).mockReturnValueOnce(mockQuery([]));
 
       // Find contribution - not found
       mockDb.select.mockReturnValueOnce(mockQuery([]));
@@ -461,9 +437,7 @@ describe('SavingsGoalsService', () => {
     });
 
     it('should handle zero totalTarget without division error', async () => {
-      const goals = [
-        { ...mockGoal, currentAmount: 0, targetAmount: 0, isCompleted: 0 },
-      ];
+      const goals = [{ ...mockGoal, currentAmount: 0, targetAmount: 0, isCompleted: 0 }];
 
       mockDb.select.mockReturnValueOnce(mockQuery(goals));
 

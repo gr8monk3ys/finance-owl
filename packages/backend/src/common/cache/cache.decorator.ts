@@ -37,11 +37,7 @@ const CACHE_SERVICE_PROPERTY = Symbol('__cacheService__');
  * @param ttlSeconds   Time-to-live in seconds
  */
 export function Cacheable(keyTemplate: string, ttlSeconds: number) {
-  return function (
-    _target: object,
-    _propertyKey: string | symbol,
-    descriptor: PropertyDescriptor,
-  ) {
+  return function (_target: object, _propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value as (...args: unknown[]) => unknown;
 
     descriptor.value = async function (this: Record<string, unknown>, ...args: unknown[]) {
@@ -51,7 +47,11 @@ export function Cacheable(keyTemplate: string, ttlSeconds: number) {
       }
 
       const key = resolveKey(keyTemplate, originalMethod, args);
-      return cache.wrap(key, ttlSeconds, () => originalMethod.apply(this, args) as Promise<unknown>);
+      return cache.wrap(
+        key,
+        ttlSeconds,
+        () => originalMethod.apply(this, args) as Promise<unknown>,
+      );
     };
 
     // Preserve the original name for debugging
@@ -78,11 +78,7 @@ export function Cacheable(keyTemplate: string, ttlSeconds: number) {
  * ```
  */
 export function CacheEvict(keyPattern: string) {
-  return function (
-    _target: object,
-    _propertyKey: string | symbol,
-    descriptor: PropertyDescriptor,
-  ) {
+  return function (_target: object, _propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value as (...args: unknown[]) => unknown;
 
     descriptor.value = async function (this: Record<string, unknown>, ...args: unknown[]) {
@@ -160,8 +156,8 @@ function extractParamNames(fn: (...args: unknown[]) => unknown): string[] {
     .map((p) => {
       // Strip default values, type annotations, decorators, and destructuring
       const cleaned = p
-        .replace(/=.*$/s, '')   // default values
-        .replace(/:.*/s, '')    // TS type annotations
+        .replace(/=.*$/s, '') // default values
+        .replace(/:.*/s, '') // TS type annotations
         .replace(/\/\*.*?\*\//g, '') // block comments
         .trim();
       return cleaned;

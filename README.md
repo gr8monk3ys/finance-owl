@@ -19,16 +19,16 @@ Finance Owl gives you complete control over your financial data. Track accounts,
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | NestJS 11, Drizzle ORM, PostgreSQL 16, Redis 7, BullMQ |
-| Frontend | SvelteKit 2, Svelte 5, TailwindCSS 4, Chart.js |
-| Mobile | Expo 52, React Native 0.76, Zustand |
-| Shared | Zod validation schemas, TypeScript |
-| AI (optional) | Ollama (local LLM), ChromaDB (vector store) |
-| Integrations | Plaid (banking), Stripe (billing), Sentry (monitoring) |
-| Infrastructure | Caddy (reverse proxy/TLS), Docker Compose |
-| Monorepo | pnpm workspaces, Turborepo |
+| Layer          | Technology                                             |
+| -------------- | ------------------------------------------------------ |
+| Backend        | NestJS 11, Drizzle ORM, PostgreSQL 16, Redis 7, BullMQ |
+| Frontend       | SvelteKit 2, Svelte 5, TailwindCSS 4, Chart.js         |
+| Mobile         | Expo 52, React Native 0.76, Zustand                    |
+| Shared         | Zod validation schemas, TypeScript                     |
+| AI (optional)  | Ollama (local LLM), ChromaDB (vector store)            |
+| Integrations   | Plaid (banking), Stripe (billing), Sentry (monitoring) |
+| Infrastructure | Caddy (reverse proxy/TLS), Docker Compose              |
+| Monorepo       | pnpm workspaces, Turborepo                             |
 
 ## Quick Start
 
@@ -99,31 +99,31 @@ finance-owl/
 
 Run from the repository root:
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start all packages in watch mode |
-| `pnpm launch:check` | Audit launch prerequisites, public assets, envs, and release blockers |
-| `pnpm launch:verify` | Run the launch audit plus code-level verification commands |
-| `pnpm build` | Build all packages |
-| `pnpm lint` | Lint all packages |
-| `pnpm typecheck` | Type-check all packages |
-| `pnpm test` | Run unit tests |
-| `pnpm test:integration` | Run integration tests |
-| `pnpm test:e2e` | Run end-to-end tests |
-| `pnpm format` | Format code with Prettier |
-| `pnpm format:check` | Check formatting |
+| Command                 | Description                                                           |
+| ----------------------- | --------------------------------------------------------------------- |
+| `pnpm dev`              | Start all packages in watch mode                                      |
+| `pnpm launch:check`     | Audit launch prerequisites, public assets, envs, and release blockers |
+| `pnpm launch:verify`    | Run the launch audit plus code-level verification commands            |
+| `pnpm build`            | Build all packages                                                    |
+| `pnpm lint`             | Lint all packages                                                     |
+| `pnpm typecheck`        | Type-check all packages                                               |
+| `pnpm test`             | Run unit tests                                                        |
+| `pnpm test:integration` | Run integration tests                                                 |
+| `pnpm test:e2e`         | Run end-to-end tests                                                  |
+| `pnpm format`           | Format code with Prettier                                             |
+| `pnpm format:check`     | Check formatting                                                      |
 
 Backend-specific (run with `pnpm --filter @finance-owl/backend`):
 
-| Command | Description |
-|---------|-------------|
+| Command       | Description                      |
+| ------------- | -------------------------------- |
 | `db:generate` | Generate Drizzle migration files |
-| `db:migrate` | Push schema to database |
-| `db:studio` | Open Drizzle Studio GUI |
-| `db:seed` | Seed the database |
-| `db:backup` | Back up the database |
-| `db:restore` | Restore a database backup |
-| `db:reset` | Reset the database |
+| `db:migrate`  | Push schema to database          |
+| `db:studio`   | Open Drizzle Studio GUI          |
+| `db:seed`     | Seed the database                |
+| `db:backup`   | Back up the database             |
+| `db:restore`  | Restore a database backup        |
+| `db:reset`    | Reset the database               |
 
 ## Documentation
 

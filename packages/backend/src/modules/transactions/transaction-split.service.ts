@@ -1,10 +1,5 @@
-import {
-  Injectable,
-  Inject,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
-import { eq, and } from 'drizzle-orm';
+import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import { eq, and, inArray, isNull, or } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 
@@ -46,6 +41,9 @@ export class TransactionSplitService {
     // Validate splits sum to the original transaction amount
     this.validateSplitAmounts(transaction.amount, splits);
 
+    // Client-supplied FK references must be usable by this user
+    await this.assertSplitReferencesUsable(userId, splits);
+
     // Remove any existing splits
     await this.db
       .delete(schema.transactionSplits)
@@ -67,6 +65,53 @@ export class TransactionSplitService {
 
     // Return splits with category info
     return this.getSplitsWithCategories(transactionId);
+  }
+
+  /**
+   * Verify every referenced categoryId belongs to the user (or is a system
+   * default) and every householdMemberId is in a household the user is a
+   * member of. Prevents cross-tenant references in split rows.
+   */
+  private async assertSplitReferencesUsable(userId: string, splits: SplitInput[]): Promise<void> {
+    const categoryIds = [
+      ...new Set(splits.map((s) => s.categoryId).filter((v): v is string => !!v)),
+    ];
+    if (categoryIds.length > 0) {
+      const found = await this.db
+        .select({ id: schema.categories.id })
+        .from(schema.categories)
+        .where(
+          and(
+            inArray(schema.categories.id, categoryIds),
+            or(eq(schema.categories.userId, userId), isNull(schema.categories.userId)),
+          ),
+        );
+      if (found.length !== categoryIds.length) {
+        throw new BadRequestException('Category not found');
+      }
+    }
+
+    const memberIds = [
+      ...new Set(splits.map((s) => s.householdMemberId).filter((v): v is string => !!v)),
+    ];
+    if (memberIds.length > 0) {
+      const myHouseholds = this.db
+        .select({ householdId: schema.householdMembers.householdId })
+        .from(schema.householdMembers)
+        .where(eq(schema.householdMembers.userId, userId));
+      const found = await this.db
+        .select({ id: schema.householdMembers.id })
+        .from(schema.householdMembers)
+        .where(
+          and(
+            inArray(schema.householdMembers.id, memberIds),
+            inArray(schema.householdMembers.householdId, myHouseholds),
+          ),
+        );
+      if (found.length !== memberIds.length) {
+        throw new BadRequestException('Household member not found');
+      }
+    }
   }
 
   /**
@@ -106,9 +151,7 @@ export class TransactionSplitService {
   /**
    * Get splits with joined category information
    */
-  private async getSplitsWithCategories(
-    transactionId: string,
-  ): Promise<Split[]> {
+  private async getSplitsWithCategories(transactionId: string): Promise<Split[]> {
     const results = await this.db
       .select({
         id: schema.transactionSplits.id,
@@ -123,10 +166,7 @@ export class TransactionSplitService {
         categoryIcon: schema.categories.icon,
       })
       .from(schema.transactionSplits)
-      .leftJoin(
-        schema.categories,
-        eq(schema.transactionSplits.categoryId, schema.categories.id),
-      )
+      .leftJoin(schema.categories, eq(schema.transactionSplits.categoryId, schema.categories.id))
       .where(eq(schema.transactionSplits.transactionId, transactionId));
 
     return results;
@@ -142,12 +182,7 @@ export class TransactionSplitService {
         amount: schema.transactions.amount,
       })
       .from(schema.transactions)
-      .where(
-        and(
-          eq(schema.transactions.id, transactionId),
-          eq(schema.transactions.userId, userId),
-        ),
-      )
+      .where(and(eq(schema.transactions.id, transactionId), eq(schema.transactions.userId, userId)))
       .limit(1);
 
     if (!transaction) {
@@ -160,14 +195,9 @@ export class TransactionSplitService {
   /**
    * Validate that split amounts sum to the original transaction amount
    */
-  private validateSplitAmounts(
-    originalAmount: number,
-    splits: SplitInput[],
-  ): void {
+  private validateSplitAmounts(originalAmount: number, splits: SplitInput[]): void {
     if (splits.length < 2) {
-      throw new BadRequestException(
-        'At least 2 splits are required',
-      );
+      throw new BadRequestException('At least 2 splits are required');
     }
 
     const splitTotal = splits.reduce((sum, s) => sum + s.amount, 0);

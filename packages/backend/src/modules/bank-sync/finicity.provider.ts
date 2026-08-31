@@ -44,20 +44,11 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
 
   constructor(private configService: ConfigService) {
     this.appKey = this.configService.get<string>('FINICITY_APP_KEY', '');
-    this.partnerId = this.configService.get<string>(
-      'FINICITY_PARTNER_ID',
-      '',
-    );
-    this.partnerSecret = this.configService.get<string>(
-      'FINICITY_PARTNER_SECRET',
-      '',
-    );
+    this.partnerId = this.configService.get<string>('FINICITY_PARTNER_ID', '');
+    this.partnerSecret = this.configService.get<string>('FINICITY_PARTNER_SECRET', '');
 
     const env = this.configService.get<string>('FINICITY_ENV', 'sandbox');
-    this.baseUrl =
-      env === 'production'
-        ? 'https://api.finicity.com'
-        : 'https://api.finicity.com'; // Finicity uses the same base; sandbox vs production is per-account
+    this.baseUrl = env === 'production' ? 'https://api.finicity.com' : 'https://api.finicity.com'; // Finicity uses the same base; sandbox vs production is per-account
   }
 
   onModuleInit() {
@@ -77,10 +68,7 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
   // BankAggregatorProvider implementation
   // ---------------------------------------------------------------------------
 
-  async createLinkToken(
-    userId: string,
-    options?: LinkTokenOptions,
-  ): Promise<LinkTokenResult> {
+  async createLinkToken(userId: string, options?: LinkTokenOptions): Promise<LinkTokenResult> {
     this.ensureAvailable();
     await this.ensurePartnerToken();
 
@@ -112,13 +100,10 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
 
     // Finicity Connect callback carries customerId and institutionLoginId
     // encoded as "customerId:institutionLoginId" from the frontend
-    const { customerId, institutionLoginId } =
-      this.parseFinicityCallbackToken(publicToken);
+    const { customerId, institutionLoginId } = this.parseFinicityCallbackToken(publicToken);
 
     // Fetch accounts associated with this institution login
-    const accounts = await this.getAccounts(
-      `${customerId}:${institutionLoginId}`,
-    );
+    const accounts = await this.getAccounts(`${customerId}:${institutionLoginId}`);
 
     // Attempt to get institution info
     let institutionId: string | null = null;
@@ -156,8 +141,7 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
     this.ensureAvailable();
     await this.ensurePartnerToken();
 
-    const { customerId, institutionLoginId } =
-      this.parseAccessToken(accessToken);
+    const { customerId, institutionLoginId } = this.parseAccessToken(accessToken);
 
     const response = await this.request<{
       accounts: Array<{
@@ -249,8 +233,7 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
               : null,
             pending: tx.status === 'pending',
             category: tx.categorization?.category ?? null,
-            personalFinanceCategory:
-              tx.categorization?.bestRepresentation ?? null,
+            personalFinanceCategory: tx.categorization?.bestRepresentation ?? null,
           });
         }
 
@@ -274,11 +257,7 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
     const fromDate = cursor ?? this.daysAgo(30);
     const toDate = new Date().toISOString().slice(0, 10);
 
-    const transactions = await this.getTransactions(
-      accessToken,
-      fromDate,
-      toDate,
-    );
+    const transactions = await this.getTransactions(accessToken, fromDate, toDate);
 
     return {
       added: transactions,
@@ -289,9 +268,7 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
     };
   }
 
-  async getInvestmentHoldings(
-    accessToken: string,
-  ): Promise<AggregatorHolding[]> {
+  async getInvestmentHoldings(accessToken: string): Promise<AggregatorHolding[]> {
     this.ensureAvailable();
     await this.ensurePartnerToken();
 
@@ -336,8 +313,7 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
     this.ensureAvailable();
     await this.ensurePartnerToken();
 
-    const { customerId, institutionLoginId } =
-      this.parseAccessToken(accessToken);
+    const { customerId, institutionLoginId } = this.parseAccessToken(accessToken);
 
     await this.request(
       'DELETE',
@@ -351,8 +327,7 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
     try {
       await this.ensurePartnerToken();
 
-      const { customerId, institutionLoginId } =
-        this.parseAccessToken(accessToken);
+      const { customerId, institutionLoginId } = this.parseAccessToken(accessToken);
 
       // Attempt to fetch the accounts. If this succeeds, the connection is healthy.
       const accounts = await this.getAccounts(accessToken);
@@ -391,34 +366,26 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
    */
   private async ensurePartnerToken(): Promise<void> {
     // Refresh if token is expired or will expire within 5 minutes
-    if (
-      this.partnerToken &&
-      this.partnerTokenExpiry > Date.now() + 5 * 60 * 1000
-    ) {
+    if (this.partnerToken && this.partnerTokenExpiry > Date.now() + 5 * 60 * 1000) {
       return;
     }
 
-    const response = await fetch(
-      `${this.baseUrl}/aggregation/v2/partners/authentication`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          'Finicity-App-Key': this.appKey,
-        },
-        body: JSON.stringify({
-          partnerId: this.partnerId,
-          partnerSecret: this.partnerSecret,
-        }),
+    const response = await fetch(`${this.baseUrl}/aggregation/v2/partners/authentication`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'Finicity-App-Key': this.appKey,
       },
-    );
+      body: JSON.stringify({
+        partnerId: this.partnerId,
+        partnerSecret: this.partnerSecret,
+      }),
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Finicity partner authentication failed (${response.status}): ${errorText}`,
-      );
+      throw new Error(`Finicity partner authentication failed (${response.status}): ${errorText}`);
     }
 
     const data = (await response.json()) as { token: string };
@@ -433,11 +400,7 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
   // Internal HTTP helper
   // ---------------------------------------------------------------------------
 
-  private async request<T>(
-    method: string,
-    path: string,
-    body?: unknown,
-  ): Promise<T> {
+  private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
     await this.ensurePartnerToken();
 
     const url = `${this.baseUrl}${path}`;
@@ -456,9 +419,7 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Finicity API error ${response.status}: ${errorText}`,
-      );
+      throw new Error(`Finicity API error ${response.status}: ${errorText}`);
     }
 
     if (response.status === 204) return {} as T;

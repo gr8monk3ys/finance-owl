@@ -7,22 +7,13 @@ import {
   Logger,
 } from '@nestjs/common';
 import { eq, and, gte, lte, sql, desc, inArray, isNull, or } from 'drizzle-orm';
-import {
-  DATABASE_TOKEN,
-  type DrizzleDB,
-} from '../../database/database.module';
+import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
 import * as schema from '../../database/schema';
 
 // ── Constants ───────────────────────────────────────────────────────
 
-const VALID_PERIODS = [
-  'weekly',
-  'biweekly',
-  'monthly',
-  'quarterly',
-  'annual',
-] as const;
+const VALID_PERIODS = ['weekly', 'biweekly', 'monthly', 'quarterly', 'annual'] as const;
 type BudgetPeriod = (typeof VALID_PERIODS)[number];
 
 const VALID_BUDGET_TYPES = ['category', 'overall'] as const;
@@ -139,9 +130,7 @@ export class BudgetsService {
     }
 
     if (budgetType === 'category' && !data.categoryId) {
-      throw new BadRequestException(
-        'categoryId is required for category-type budgets',
-      );
+      throw new BadRequestException('categoryId is required for category-type budgets');
     }
 
     // Prevent duplicate category budgets for the same period
@@ -163,6 +152,23 @@ export class BudgetsService {
         throw new ConflictException(
           'A budget already exists for this category and period. Update the existing budget instead.',
         );
+      }
+    }
+
+    // A budget may only be attached to a household the caller belongs to
+    if (data.householdId) {
+      const [membership] = await this.db
+        .select({ id: schema.householdMembers.id })
+        .from(schema.householdMembers)
+        .where(
+          and(
+            eq(schema.householdMembers.householdId, data.householdId),
+            eq(schema.householdMembers.userId, userId),
+          ),
+        )
+        .limit(1);
+      if (!membership) {
+        throw new BadRequestException('Household not found');
       }
     }
 
@@ -194,9 +200,7 @@ export class BudgetsService {
     const [budget] = await this.db
       .select()
       .from(schema.budgets)
-      .where(
-        and(eq(schema.budgets.id, id), eq(schema.budgets.userId, userId)),
-      )
+      .where(and(eq(schema.budgets.id, id), eq(schema.budgets.userId, userId)))
       .limit(1);
 
     if (!budget) throw new NotFoundException('Budget not found');
@@ -206,9 +210,7 @@ export class BudgetsService {
   async update(userId: string, id: string, data: UpdateBudgetInput) {
     await this.findById(userId, id);
 
-    const normalizedPeriod = data.period
-      ? this.validatePeriod(data.period)
-      : undefined;
+    const normalizedPeriod = data.period ? this.validatePeriod(data.period) : undefined;
     if (data.amount !== undefined) this.validateAmount(data.amount);
 
     const updatePayload: Record<string, unknown> = {
@@ -218,8 +220,7 @@ export class BudgetsService {
     if (data.amount !== undefined) updatePayload.amount = data.amount;
     if (normalizedPeriod !== undefined) updatePayload.period = normalizedPeriod;
     if (data.rollover !== undefined) updatePayload.rollover = data.rollover;
-    if (data.rolloverCap !== undefined)
-      updatePayload.rolloverCap = data.rolloverCap;
+    if (data.rolloverCap !== undefined) updatePayload.rolloverCap = data.rolloverCap;
     if (data.isActive !== undefined) updatePayload.isActive = data.isActive;
     if (data.alertThresholds !== undefined)
       updatePayload.alertThresholds = JSON.stringify(data.alertThresholds);
@@ -227,9 +228,7 @@ export class BudgetsService {
     const [updated] = await this.db
       .update(schema.budgets)
       .set(updatePayload)
-      .where(
-        and(eq(schema.budgets.id, id), eq(schema.budgets.userId, userId)),
-      )
+      .where(and(eq(schema.budgets.id, id), eq(schema.budgets.userId, userId)))
       .returning();
 
     await this.invalidateBudgetCaches(userId);
@@ -240,9 +239,7 @@ export class BudgetsService {
     await this.findById(userId, id);
     await this.db
       .delete(schema.budgets)
-      .where(
-        and(eq(schema.budgets.id, id), eq(schema.budgets.userId, userId)),
-      );
+      .where(and(eq(schema.budgets.id, id), eq(schema.budgets.userId, userId)));
     await this.invalidateBudgetCaches(userId);
   }
 
@@ -257,9 +254,7 @@ export class BudgetsService {
       conditions.push(eq(schema.budgets.isActive, true));
     }
     if (options?.householdId) {
-      conditions.push(
-        eq(schema.budgets.householdId, options.householdId),
-      );
+      conditions.push(eq(schema.budgets.householdId, options.householdId));
     }
 
     const budgets = await this.db
@@ -281,10 +276,7 @@ export class BudgetsService {
         categoryIcon: schema.categories.icon,
       })
       .from(schema.budgets)
-      .leftJoin(
-        schema.categories,
-        eq(schema.budgets.categoryId, schema.categories.id),
-      )
+      .leftJoin(schema.categories, eq(schema.budgets.categoryId, schema.categories.id))
       .where(and(...conditions))
       .orderBy(schema.categories.sortOrder);
 
@@ -294,8 +286,7 @@ export class BudgetsService {
     for (const budget of budgets) {
       const normalizedPeriod = this.normalizePeriod(budget.period);
       const amount = this.toNumber(budget.amount);
-      const rolloverCap =
-        budget.rolloverCap === null ? null : this.toNumber(budget.rolloverCap);
+      const rolloverCap = budget.rolloverCap === null ? null : this.toNumber(budget.rolloverCap);
       const { start, end } = this.getPeriodDates(
         normalizedPeriod,
         now,
@@ -306,48 +297,30 @@ export class BudgetsService {
       if (budget.budgetType === 'overall') {
         spent = await this.getTotalSpent(userId, start, end);
       } else {
-        spent = await this.getSpentForCategory(
-          userId,
-          budget.categoryId!,
-          start,
-          end,
-        );
+        spent = await this.getSpentForCategory(userId, budget.categoryId!, start, end);
       }
 
-      const rolloverAmount = budget.rollover
-        ? await this.getRolloverAmount(budget.id, start)
-        : 0;
+      const rolloverAmount = budget.rollover ? await this.getRolloverAmount(budget.id, start) : 0;
 
       const effectiveBudget = amount + rolloverAmount;
       const remaining = effectiveBudget - spent;
-      const percentUsed =
-        effectiveBudget > 0 ? (spent / effectiveBudget) * 100 : 0;
+      const percentUsed = effectiveBudget > 0 ? (spent / effectiveBudget) * 100 : 0;
 
       // Calculate days remaining and projection
       const startDate = new Date(start);
       const endDate = new Date(end);
-      const today = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-      );
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const totalDays = Math.max(
         1,
-        Math.ceil(
-          (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-        ) + 1,
+        Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
       );
       const daysElapsed = Math.max(
         1,
-        Math.ceil(
-          (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-        ) + 1,
+        Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
       );
       const daysRemaining = Math.max(
         0,
-        Math.ceil(
-          (endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-        ),
+        Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)),
       );
 
       const dailyRate = spent / daysElapsed;
@@ -367,9 +340,7 @@ export class BudgetsService {
         id: budget.id,
         name:
           budget.name ??
-          (budget.budgetType === 'overall'
-            ? 'Overall Spending'
-            : budget.categoryName),
+          (budget.budgetType === 'overall' ? 'Overall Spending' : budget.categoryName),
         budgetType: budget.budgetType,
         categoryId: budget.categoryId,
         categoryName: budget.categoryName,
@@ -408,25 +379,18 @@ export class BudgetsService {
     const totalRemaining = totalBudgeted - totalSpent;
     const overBudgetCount = budgets.filter((b) => b.spent > b.effectiveBudget).length;
     const onTrackCount = budgets.filter((b) => b.onTrack).length;
-    const projectedTotalSpend = budgets.reduce(
-      (s, b) => s + b.projectedSpend,
-      0,
-    );
+    const projectedTotalSpend = budgets.reduce((s, b) => s + b.projectedSpend, 0);
 
     return {
       totalBudgeted,
       totalSpent,
       totalRemaining,
-      percentUsed:
-        totalBudgeted > 0
-          ? Math.round((totalSpent / totalBudgeted) * 10000) / 100
-          : 0,
+      percentUsed: totalBudgeted > 0 ? Math.round((totalSpent / totalBudgeted) * 10000) / 100 : 0,
       budgetCount: budgets.length,
       overBudgetCount,
       onTrackCount,
       projectedTotalSpend: Math.round(projectedTotalSpend * 100) / 100,
-      projectedSurplusOrDeficit:
-        Math.round((totalBudgeted - projectedTotalSpend) * 100) / 100,
+      projectedSurplusOrDeficit: Math.round((totalBudgeted - projectedTotalSpend) * 100) / 100,
     };
   }
 
@@ -465,8 +429,7 @@ export class BudgetsService {
 
             alerts.push({
               budgetId: budget.id,
-              budgetName:
-                budget.name || budget.categoryName || 'Overall Spending',
+              budgetName: budget.name || budget.categoryName || 'Overall Spending',
               thresholdPercent: threshold,
               actualPercent: budget.percentUsed,
               spent: budget.spent,
@@ -501,25 +464,15 @@ export class BudgetsService {
     for (const budget of budgets) {
       const normalizedPeriod = this.normalizePeriod(budget.period);
       const amount = this.toNumber(budget.amount);
-      const rolloverCap =
-        budget.rolloverCap === null ? null : this.toNumber(budget.rolloverCap);
-      const { start: prevStart, end: prevEnd } =
-        this.getPreviousPeriodDates(normalizedPeriod, now);
-      const { start: currStart, end: currEnd } = this.getPeriodDates(
-        normalizedPeriod,
-        now,
-      );
+      const rolloverCap = budget.rolloverCap === null ? null : this.toNumber(budget.rolloverCap);
+      const { start: prevStart, end: prevEnd } = this.getPreviousPeriodDates(normalizedPeriod, now);
+      const { start: currStart, end: currEnd } = this.getPeriodDates(normalizedPeriod, now);
 
       let spent: number;
       if (budget.budgetType === 'overall') {
         spent = await this.getTotalSpent(userId, prevStart, prevEnd);
       } else if (budget.categoryId) {
-        spent = await this.getSpentForCategory(
-          userId,
-          budget.categoryId,
-          prevStart,
-          prevEnd,
-        );
+        spent = await this.getSpentForCategory(userId, budget.categoryId, prevStart, prevEnd);
       } else {
         continue;
       }
@@ -580,9 +533,7 @@ export class BudgetsService {
 
   // ── Household budgets ─────────────────────────────────────────────
 
-  async findHouseholdBudgets(
-    householdId: string,
-  ): Promise<BudgetWithSpent[]> {
+  async findHouseholdBudgets(householdId: string): Promise<BudgetWithSpent[]> {
     // Get all members of the household
     const members = await this.db
       .select({ userId: schema.householdMembers.userId })
@@ -614,16 +565,8 @@ export class BudgetsService {
         categoryIcon: schema.categories.icon,
       })
       .from(schema.budgets)
-      .leftJoin(
-        schema.categories,
-        eq(schema.budgets.categoryId, schema.categories.id),
-      )
-      .where(
-        and(
-          eq(schema.budgets.householdId, householdId),
-          eq(schema.budgets.isActive, true),
-        ),
-      )
+      .leftJoin(schema.categories, eq(schema.budgets.categoryId, schema.categories.id))
+      .where(and(eq(schema.budgets.householdId, householdId), eq(schema.budgets.isActive, true)))
       .orderBy(schema.categories.sortOrder);
 
     const now = new Date();
@@ -632,8 +575,7 @@ export class BudgetsService {
     for (const budget of budgets) {
       const normalizedPeriod = this.normalizePeriod(budget.period);
       const amount = this.toNumber(budget.amount);
-      const rolloverCap =
-        budget.rolloverCap === null ? null : this.toNumber(budget.rolloverCap);
+      const rolloverCap = budget.rolloverCap === null ? null : this.toNumber(budget.rolloverCap);
       const { start, end } = this.getPeriodDates(
         normalizedPeriod,
         now,
@@ -646,48 +588,30 @@ export class BudgetsService {
         if (budget.budgetType === 'overall') {
           totalSpent += await this.getTotalSpent(memberId, start, end);
         } else if (budget.categoryId) {
-          totalSpent += await this.getSpentForCategory(
-            memberId,
-            budget.categoryId,
-            start,
-            end,
-          );
+          totalSpent += await this.getSpentForCategory(memberId, budget.categoryId, start, end);
         }
       }
 
-      const rolloverAmount = budget.rollover
-        ? await this.getRolloverAmount(budget.id, start)
-        : 0;
+      const rolloverAmount = budget.rollover ? await this.getRolloverAmount(budget.id, start) : 0;
 
       const effectiveBudget = amount + rolloverAmount;
       const remaining = effectiveBudget - totalSpent;
-      const percentUsed =
-        effectiveBudget > 0 ? (totalSpent / effectiveBudget) * 100 : 0;
+      const percentUsed = effectiveBudget > 0 ? (totalSpent / effectiveBudget) * 100 : 0;
 
       const startDate = new Date(start);
       const endDate = new Date(end);
-      const today = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-      );
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const totalDays = Math.max(
         1,
-        Math.ceil(
-          (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-        ) + 1,
+        Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
       );
       const daysElapsed = Math.max(
         1,
-        Math.ceil(
-          (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-        ) + 1,
+        Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1,
       );
       const daysRemaining = Math.max(
         0,
-        Math.ceil(
-          (endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-        ),
+        Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)),
       );
       const projectedSpend = (totalSpent / daysElapsed) * totalDays;
 
@@ -733,9 +657,7 @@ export class BudgetsService {
 
   // ── Forecast: predict end-of-period spending ──────────────────────
 
-  async forecastEndOfPeriod(
-    userId: string,
-  ): Promise<
+  async forecastEndOfPeriod(userId: string): Promise<
     Array<{
       budgetId: string;
       budgetName: string;
@@ -751,8 +673,7 @@ export class BudgetsService {
     const budgets = await this.findAll(userId);
 
     return budgets.map((b) => {
-      const dailyAllowance =
-        b.daysRemaining > 0 ? b.remaining / b.daysRemaining : 0;
+      const dailyAllowance = b.daysRemaining > 0 ? b.remaining / b.daysRemaining : 0;
 
       let status: 'on_track' | 'at_risk' | 'over_budget';
       if (b.percentUsed >= 100) {
@@ -769,8 +690,7 @@ export class BudgetsService {
         currentSpent: b.spent,
         budgetAmount: b.effectiveBudget,
         projectedSpend: b.projectedSpend,
-        projectedSurplus:
-          Math.round((b.effectiveBudget - b.projectedSpend) * 100) / 100,
+        projectedSurplus: Math.round((b.effectiveBudget - b.projectedSpend) * 100) / 100,
         daysRemaining: b.daysRemaining,
         dailyAllowance: Math.round(Math.max(0, dailyAllowance) * 100) / 100,
         status,
@@ -818,11 +738,7 @@ export class BudgetsService {
     return Number(result?.total) || 0;
   }
 
-  private async getTotalSpent(
-    userId: string,
-    startDate: string,
-    endDate: string,
-  ): Promise<number> {
+  private async getTotalSpent(userId: string, startDate: string, endDate: string): Promise<number> {
     const [result] = await this.db
       .select({
         total:
@@ -843,10 +759,7 @@ export class BudgetsService {
     return Number(result?.total) || 0;
   }
 
-  private async getRolloverAmount(
-    budgetId: string,
-    currentPeriodStart: string,
-  ): Promise<number> {
+  private async getRolloverAmount(budgetId: string, currentPeriodStart: string): Promise<number> {
     const [period] = await this.db
       .select({ rolloverAmount: schema.budgetPeriods.rolloverAmount })
       .from(schema.budgetPeriods)
@@ -922,10 +835,7 @@ export class BudgetsService {
     }
   }
 
-  getPreviousPeriodDates(
-    period: string,
-    now: Date = new Date(),
-  ): { start: string; end: string } {
+  getPreviousPeriodDates(period: string, now: Date = new Date()): { start: string; end: string } {
     const fmt = (d: Date) => d.toISOString().split('T')[0];
 
     switch (period) {
@@ -959,8 +869,7 @@ export class BudgetsService {
       }
       case 'quarterly': {
         const quarter = Math.floor(now.getMonth() / 3) - 1;
-        const year =
-          quarter < 0 ? now.getFullYear() - 1 : now.getFullYear();
+        const year = quarter < 0 ? now.getFullYear() - 1 : now.getFullYear();
         const q = quarter < 0 ? 3 : quarter;
         const start = new Date(year, q * 3, 1);
         const end = new Date(year, q * 3 + 3, 0);
@@ -984,9 +893,7 @@ export class BudgetsService {
     const normalizedPeriod = this.normalizePeriod(period);
 
     if (!VALID_PERIODS.includes(normalizedPeriod)) {
-      throw new BadRequestException(
-        `Invalid period. Must be one of: ${VALID_PERIODS.join(', ')}`,
-      );
+      throw new BadRequestException(`Invalid period. Must be one of: ${VALID_PERIODS.join(', ')}`);
     }
 
     return normalizedPeriod;
@@ -1009,9 +916,7 @@ export class BudgetsService {
     }
   }
 
-  private getAlertSeverity(
-    threshold: number,
-  ): 'info' | 'warning' | 'danger' | 'critical' {
+  private getAlertSeverity(threshold: number): 'info' | 'warning' | 'danger' | 'critical' {
     if (threshold <= 50) return 'info';
     if (threshold <= 75) return 'warning';
     if (threshold <= 100) return 'danger';

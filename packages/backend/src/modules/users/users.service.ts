@@ -32,14 +32,11 @@ export class UsersService {
   }
 
   async create(data: { name: string; email: string; passwordHash: string }) {
-    const [user] = await this.db
-      .insert(schema.users)
-      .values(data)
-      .returning({
-        id: schema.users.id,
-        email: schema.users.email,
-        name: schema.users.name,
-      });
+    const [user] = await this.db.insert(schema.users).values(data).returning({
+      id: schema.users.id,
+      email: schema.users.email,
+      name: schema.users.name,
+    });
     return user;
   }
 
@@ -62,9 +59,7 @@ export class UsersService {
   }
 
   async count() {
-    const result = await this.db
-      .select({ id: schema.users.id })
-      .from(schema.users);
+    const result = await this.db.select({ id: schema.users.id }).from(schema.users);
     return result.length;
   }
 }

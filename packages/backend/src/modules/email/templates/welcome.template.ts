@@ -5,13 +5,7 @@
  * Includes a greeting, getting started steps, and feature highlights.
  */
 
-import {
-  baseLayout,
-  card,
-  ctaButton,
-  divider,
-  escapeHtml,
-} from './base-layout.template';
+import { baseLayout, card, ctaButton, divider, escapeHtml } from './base-layout.template';
 
 export interface WelcomeData {
   userName: string;
@@ -26,19 +20,22 @@ export function welcomeHtml(data: WelcomeData): string {
     {
       number: '1',
       title: 'Connect Your Accounts',
-      description: 'Link your bank accounts, credit cards, and investment accounts for a complete financial picture.',
+      description:
+        'Link your bank accounts, credit cards, and investment accounts for a complete financial picture.',
       icon: '&#x1F3E6;',
     },
     {
       number: '2',
       title: 'Set Up Budgets',
-      description: 'Create spending budgets for different categories to stay on track with your financial goals.',
+      description:
+        'Create spending budgets for different categories to stay on track with your financial goals.',
       icon: '&#x1F4CA;',
     },
     {
       number: '3',
       title: 'Configure Alerts',
-      description: 'Customize notifications for bill reminders, budget alerts, and unusual transactions.',
+      description:
+        'Customize notifications for bill reminders, budget alerts, and unusual transactions.',
       icon: '&#x1F514;',
     },
   ];
@@ -68,9 +65,21 @@ export function welcomeHtml(data: WelcomeData): string {
 
   const features = [
     { icon: '&#x1F4B0;', name: 'Smart Savings', description: 'AI-powered savings recommendations' },
-    { icon: '&#x1F4C8;', name: 'Investment Tracking', description: 'Monitor your portfolio performance' },
-    { icon: '&#x1F6E1;', name: 'Anomaly Detection', description: 'Get alerted to unusual transactions' },
-    { icon: '&#x1F4DD;', name: 'Weekly Digests', description: 'Stay informed with financial summaries' },
+    {
+      icon: '&#x1F4C8;',
+      name: 'Investment Tracking',
+      description: 'Monitor your portfolio performance',
+    },
+    {
+      icon: '&#x1F6E1;',
+      name: 'Anomaly Detection',
+      description: 'Get alerted to unusual transactions',
+    },
+    {
+      icon: '&#x1F4DD;',
+      name: 'Weekly Digests',
+      description: 'Stay informed with financial summaries',
+    },
   ];
 
   const featuresHtml = features

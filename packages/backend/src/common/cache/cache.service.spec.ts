@@ -260,10 +260,7 @@ describe('CacheService', () => {
     it('should call factory again after cache entry expires', async () => {
       vi.useFakeTimers();
 
-      const factory = vi
-        .fn()
-        .mockResolvedValueOnce('first')
-        .mockResolvedValueOnce('second');
+      const factory = vi.fn().mockResolvedValueOnce('first').mockResolvedValueOnce('second');
 
       const first = await service.wrap('key', 5, factory);
       expect(first).toBe('first');
@@ -280,13 +277,9 @@ describe('CacheService', () => {
     });
 
     it('should propagate factory errors without caching', async () => {
-      const factory = vi
-        .fn()
-        .mockRejectedValue(new Error('DB connection lost'));
+      const factory = vi.fn().mockRejectedValue(new Error('DB connection lost'));
 
-      await expect(service.wrap('failing', 60, factory)).rejects.toThrow(
-        'DB connection lost',
-      );
+      await expect(service.wrap('failing', 60, factory)).rejects.toThrow('DB connection lost');
 
       // Nothing should have been cached
       const cached = await service.get('failing');
