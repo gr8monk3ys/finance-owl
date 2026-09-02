@@ -1,0 +1,17 @@
+# Gitleaks false positives, by fingerprint (commit:file:rule:line).
+# Verified 2026-09-01 by inspecting each blob; none is a live credential.
+
+# packages/backend/.env.example — literal placeholder "replace-with-a-64-character-hex-key"
+30c194b59e7d666f40910373e6e32d3dbb888283:packages/backend/.env.example:generic-api-key:24
+# .github/workflows/ci.yml — CI test fixture ENCRYPTION_KEY (0123456789abcdef... repeated), not a real key
+c2c533037c6f2e98983847de01efd51715ca395f:.github/workflows/ci.yml:generic-api-key:323
+# scripts/dev.mjs — literal Stripe test-key placeholder string, not a key
+6e8fc8b241bb038b621c0a38755059a0091993ff:scripts/dev.mjs:stripe-access-token:143
+# packages/frontend/src/routes/auth/register/+page.svelte — passwordStrength.color — a CSS hex colour, not a key
+e985f0f04a19017bf01c23e433262d09fe622152:packages/frontend/src/routes/auth/register/+page.svelte:generic-api-key:152
+# .github/workflows/ci.yml — CI test fixture ENCRYPTION_KEY (0123456789abcdef... repeated), not a real key
+c6956c6047bc4a0ef94cda55c4f6c962869bd8c3:.github/workflows/ci.yml:generic-api-key:218
+# .github/workflows/ci.yml — CI test fixture ENCRYPTION_KEY (0123456789abcdef... repeated), not a real key
+3c65bdf1e67b0d8ba243964d37200cb323f537b1:.github/workflows/ci.yml:generic-api-key:218
+# packages/frontend/src/routes/auth/register/+page.svelte — passwordStrength.color — a CSS hex colour, not a key
+3c65bdf1e67b0d8ba243964d37200cb323f537b1:packages/frontend/src/routes/auth/register/+page.svelte:generic-api-key:152
