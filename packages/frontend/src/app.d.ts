@@ -13,6 +13,14 @@ declare global {
       code?: string;
     }
   }
+
+  interface Window {
+    /**
+     * Set by the inline bootstrap in app.html. Calling it cancels the failsafe
+     * that removes the `js` class when the app fails to hydrate.
+     */
+    __foHydrated?: () => void;
+  }
 }
 
 export {};
