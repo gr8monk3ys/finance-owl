@@ -1,0 +1,63 @@
+permissions: read-all
+
+name: Dependabot lockfile
+
+# Dependabot does not regenerate bun.lock for this repo — every PR it opens
+# edits only package.json, so `bun install --frozen-lockfile` fails in CI with
+# "lockfile had changes, but lockfile is frozen" and nothing else ever runs.
+# This regenerates the lockfile on the PR branch so the real checks can.
+#
+# Workflows triggered by Dependabot get a read-only GITHUB_TOKEN by default;
+# the `permissions` block on the job below is what allows the push back.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "packages/*/package.json"
+
+concurrency:
+  group: dependabot-lockfile-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  BUN_VERSION: "1.4.2"
+
+jobs:
+  sync:
+    name: Sync bun.lock
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.actor == 'dependabot[bot]'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: ${{ github.head_ref }}
+          # Needed so the push below is authenticated as this workflow.
+          persist-credentials: true
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      # Resolution honours bunfig.toml, so minimumReleaseAge still applies: a
+      # bump to a version published in the last 7 days fails here rather than
+      # slipping in. That is the intended outcome — dependabot.yml carries a
+      # matching 7-day cooldown, so the two should rarely disagree.
+      - name: Regenerate the lockfile
+        run: bun install
+
+      - name: Commit it if it moved
+        run: |
+          if git diff --quiet -- bun.lock; then
+            echo "bun.lock already matches package.json; nothing to do."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bun.lock
+          git commit -m "chore(deps): sync bun.lock with package.json"
+          git push
