@@ -84,10 +84,17 @@ updates:
       - backend
       - automated
     groups:
+      # Majors included deliberately. NestJS releases its packages in lockstep
+      # and they must move together: @nestjs/core 12 against @nestjs/common 11
+      # does not work, and @nestjs/swagger 12 already failed for exactly that
+      # reason (#160 — it imports loadPackageSync, which @nestjs/common 11 does
+      # not export). Dependabot opened #184, #185 and #186 as three separate
+      # major bumps of the same upgrade; grouping makes it one reviewable PR.
       nestjs:
         patterns:
           - "@nestjs/*"
         update-types:
+          - major
           - minor
           - patch
       drizzle:
