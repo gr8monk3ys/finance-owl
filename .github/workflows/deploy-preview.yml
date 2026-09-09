@@ -11,10 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: "22"
-  PNPM_VERSION: "9.15.0"
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  BUN_VERSION: "1.4.2"
 
 jobs:
   deploy-preview:
@@ -27,38 +24,61 @@ jobs:
     permissions:
       pull-requests: write
 
+    # Job-scoped, not workflow-scoped: only this job needs them.
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
     steps:
+      # VERCEL_TOKEN is not configured on this repo, and a preview deploy
+      # nobody can run should not paint every PR red. Skip cleanly instead,
+      # and start working the moment the secret is added.
+      - name: Check for Vercel credentials
+        id: creds
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::VERCEL_TOKEN is not set - skipping the preview deploy."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        if: steps.creds.outputs.configured == 'true'
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        if: steps.creds.outputs.configured == 'true'
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        if: steps.creds.outputs.configured == 'true'
+        run: bun install --frozen-lockfile
 
       - name: Install Vercel CLI
-        run: pnpm add -g vercel@59.1.4
+        if: steps.creds.outputs.configured == 'true'
+        run: bun add -g vercel@59.1.4
 
       - name: Pull Vercel environment
+        if: steps.creds.outputs.configured == 'true'
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build project
+        if: steps.creds.outputs.configured == 'true'
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy to Vercel (preview)
         id: deploy
+        if: steps.creds.outputs.configured == 'true'
         run: |
           url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "preview-url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Comment preview URL on PR
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b
+        if: steps.creds.outputs.configured == 'true'
         env:
           PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
           COMMIT_SHA: ${{ github.sha }}

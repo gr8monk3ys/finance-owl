@@ -1,0 +1,15 @@
+[install]
+# Supply-chain guard: never resolve a version published less than 7 days ago.
+# The window in which a compromised release is caught and yanked is the same
+# window in which an install would otherwise pick it up. Pairs with the
+# matching `cooldown` in .github/dependabot.yml.
+#
+# Bun also declines to run install scripts unless the package is listed in
+# `trustedDependencies` in package.json, so postinstall code from the
+# dependency tree cannot execute unreviewed. That default is deliberate.
+minimumReleaseAge = 604800
+
+# Playwright is the one exception: @playwright/test pins the browser build it
+# downloads, so the package and the browsers have to move together and the
+# range cannot lag a week behind. It is dev-only and never ships.
+minimumReleaseAgeExcludes = ["@playwright/test", "playwright", "playwright-core"]

@@ -76,7 +76,9 @@ export class EncryptionService implements OnModuleInit {
     const iv = randomBytes(EncryptionService.IV_LENGTH);
     const derivedKey = await this.deriveKey(salt, version);
 
-    const cipher = createCipheriv('aes-256-gcm', derivedKey, iv);
+    const cipher = createCipheriv('aes-256-gcm', derivedKey, iv, {
+      authTagLength: EncryptionService.AUTH_TAG_LENGTH,
+    });
     const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
     const authTag = cipher.getAuthTag();
 
@@ -132,7 +134,11 @@ export class EncryptionService implements OnModuleInit {
     const encrypted = combined.subarray(offset);
 
     const derivedKey = await this.deriveKey(salt, version);
-    const decipher = createDecipheriv('aes-256-gcm', derivedKey, iv);
+    // Pin the tag length: without it GCM accepts truncated 4-15 byte tags,
+    // which weakens the integrity check this decrypt path relies on.
+    const decipher = createDecipheriv('aes-256-gcm', derivedKey, iv, {
+      authTagLength: EncryptionService.AUTH_TAG_LENGTH,
+    });
     decipher.setAuthTag(authTag);
 
     try {

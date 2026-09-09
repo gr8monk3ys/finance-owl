@@ -485,9 +485,9 @@ async function setup(): Promise<void> {
   console.log('');
   console.log('  Next steps:');
   console.log('    1. Start PostgreSQL and Redis (docker-compose up -d)');
-  console.log('    2. Run migrations: pnpm --filter @finance-owl/backend db:migrate');
-  console.log('    3. Seed the database: pnpm --filter @finance-owl/backend db:seed');
-  console.log('    4. Start the app: pnpm dev');
+  console.log('    2. Run migrations: bun run --filter @finance-owl/backend db:migrate');
+  console.log('    3. Seed the database: bun run --filter @finance-owl/backend db:seed');
+  console.log('    4. Start the app: bun run dev');
   console.log('');
 }
 

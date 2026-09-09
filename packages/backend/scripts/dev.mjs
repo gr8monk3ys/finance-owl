@@ -3,7 +3,7 @@ import { spawn, spawnSync } from 'node:child_process';
 const backendPort = process.env.BACKEND_PORT || process.env.PORT || '4000';
 
 const build = spawnSync(
-  'pnpm',
+  'bun',
   ['run', 'build'],
   {
     stdio: 'inherit',

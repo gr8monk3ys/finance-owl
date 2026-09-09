@@ -7,7 +7,7 @@
  * Usage:
  *   npx tsx scripts/backup.ts                     # default ./backups/
  *   npx tsx scripts/backup.ts --output /tmp/bak    # custom directory
- *   pnpm db:backup
+ *   bun run db:backup
  */
 
 import { execFileSync, execSync } from 'child_process';
@@ -106,6 +106,10 @@ function rotateBackups(backupDir: string): void {
     .map((filename): BackupFile | null => {
       const date = parseDateFromFilename(filename);
       if (!date) return null;
+      // `filename` is a readdirSync entry of `backupDir` — never a path,
+      // never caller-supplied — and is further constrained to
+      // /^backup_.*\.sql\.gz$/ by the filter above.
+      // nosemgrep: path-join-resolve-traversal
       return { filename, fullPath: path.join(backupDir, filename), date };
     })
     .filter((f): f is BackupFile => f !== null)

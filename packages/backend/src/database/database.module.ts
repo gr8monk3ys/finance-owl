@@ -61,11 +61,13 @@ export const DATABASE_POOL_TOKEN = 'DATABASE_POOL';
             }
           } else {
             logger.log(
-              'Skipping automatic database migrations in development. Run `pnpm --filter @finance-owl/backend db:migrate` when schema changes.',
+              'Skipping automatic database migrations in development. Run `bun run --filter @finance-owl/backend db:migrate` when schema changes.',
             );
           }
         } else {
-          logger.warn('No migrations folder found — run `pnpm db:generate` then `pnpm db:migrate`');
+          logger.warn(
+            'No migrations folder found — run `bun run db:generate` then `bun run db:migrate`',
+          );
         }
 
         logger.log('PostgreSQL database initialized');

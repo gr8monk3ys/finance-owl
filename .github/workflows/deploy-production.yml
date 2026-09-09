@@ -11,8 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  NODE_VERSION: "22"
-  PNPM_VERSION: "9.15.0"
+  BUN_VERSION: "1.4.2"
   REGISTRY: ghcr.io
   IMAGE_PREFIX: ${{ github.repository }}
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -99,23 +98,18 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Build shared
-        run: pnpm build --filter @finance-owl/shared
+        run: bun run build --filter @finance-owl/shared
 
       - name: Run migrations
-        run: pnpm --filter @finance-owl/backend db:migrate
+        run: bun run --filter @finance-owl/backend db:migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
@@ -136,20 +130,15 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Install Vercel CLI
-        run: pnpm add -g vercel@latest
+        run: bun add -g vercel@latest
 
       - name: Pull Vercel environment
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}

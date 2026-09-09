@@ -7,7 +7,7 @@
  * Usage:
  *   npx tsx scripts/restore.ts ./backups/backup_2025-01-15_10-30.sql.gz
  *   npx tsx scripts/restore.ts --force ./backups/backup_2025-01-15_10-30.sql.gz
- *   pnpm db:restore -- ./backups/backup_2025-01-15_10-30.sql.gz
+ *   bun run db:restore ./backups/backup_2025-01-15_10-30.sql.gz
  */
 
 import { execFileSync } from 'child_process';

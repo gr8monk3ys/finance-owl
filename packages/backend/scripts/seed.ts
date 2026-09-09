@@ -8,7 +8,7 @@
  *
  * Usage:
  *   npx tsx scripts/seed.ts
- *   pnpm db:seed
+ *   bun run db:seed
  */
 
 import { drizzle } from 'drizzle-orm/node-postgres';

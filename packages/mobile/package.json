@@ -9,7 +9,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "check:expo": "npx expo-doctor",
+    "check:expo": "expo-doctor",
     "release:check": "node ./scripts/check-release-readiness.mjs",
     "prebuild": "expo prebuild",
     "export:ios": "expo export --platform ios --output-dir dist/ios",
@@ -24,9 +24,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@babel/runtime": "^7.29.0",
     "@react-navigation/bottom-tabs": "^7.15.5",
     "@sentry/react-native": "^6.22.0",
     "expo": "~52.0.49",
+    "expo-asset": "~11.0.5",
     "expo-constants": "~17.0.8",
     "expo-haptics": "~14.0.1",
     "expo-linking": "~7.0.5",
@@ -46,8 +48,19 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
+    "@types/node": "^22",
     "@types/react": "~18.3.28",
     "babel-plugin-module-resolver": "^5.0.3",
+    "babel-preset-expo": "~12.0.12",
+    "expo-doctor": "^1.20.4",
     "typescript": "~5.6.3"
+  },
+  "expo": {
+    "install": {
+      "exclude": [
+        "@sentry/react-native",
+        "@react-navigation/bottom-tabs"
+      ]
+    }
   }
 }

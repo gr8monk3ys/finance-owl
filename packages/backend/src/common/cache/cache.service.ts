@@ -308,5 +308,9 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 function globToRegex(glob: string): RegExp {
   const escaped = glob.replace(/[.+^${}()|[\]\\]/g, '\\$&');
   const regexStr = escaped.replace(/\*/g, '.*').replace(/\?/g, '.');
+  // Every regex metacharacter is escaped above, so the only quantifiers in
+  // the result are the `.*`/`.` this function itself substitutes for `*`/`?`.
+  // No nesting, no ReDoS.
+  // nosemgrep: detect-non-literal-regexp
   return new RegExp(`^${regexStr}$`);
 }

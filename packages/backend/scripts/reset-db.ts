@@ -6,7 +6,7 @@
  *
  * Usage:
  *   npx tsx scripts/reset-db.ts
- *   pnpm db:reset
+ *   bun run db:reset
  *
  * WARNING: This will destroy all data in the database. Do not use in production.
  */
