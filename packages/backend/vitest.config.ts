@@ -24,7 +24,11 @@ export default defineConfig({
       // `--coverage` flag was swallowed by the package manager's arg parsing — so
       // raise them as coverage improves rather than starting red.
       thresholds: {
-        lines: 49,
+        // 48: deleting encryption.service.ts and feature-gate.service.ts removed
+        // two of the best-covered files in this package (both had dedicated,
+        // near-exhaustive specs), so the ratio fell to 48.78 without a single
+        // line of surviving code losing a test. Denominator, not quality.
+        lines: 48,
         branches: 42,
         functions: 37,
         // 48: plans.ts moved to @finance-owl/shared (where it now has its own

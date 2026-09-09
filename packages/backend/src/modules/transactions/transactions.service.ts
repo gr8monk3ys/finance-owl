@@ -3,6 +3,7 @@ import { eq, and, gte, lte, like, desc, sql, count, isNull, or } from 'drizzle-o
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
 import * as schema from '../../database/schema';
+import { paginate } from '@finance-owl/shared';
 
 interface TransactionFilters {
   accountId?: string;
@@ -110,15 +111,7 @@ export class TransactionsService {
         .limit(limit)
         .offset(offset);
 
-      return {
-        data,
-        meta: {
-          page,
-          limit,
-          total: totalResult.total,
-          totalPages: Math.ceil(totalResult.total / limit),
-        },
-      };
+      return paginate(data, totalResult.total, page, limit);
     }
 
     // No search — standard query
@@ -159,15 +152,7 @@ export class TransactionsService {
       .limit(limit)
       .offset(offset);
 
-    return {
-      data,
-      meta: {
-        page,
-        limit,
-        total: totalResult.total,
-        totalPages: Math.ceil(totalResult.total / limit),
-      },
-    };
+    return paginate(data, totalResult.total, page, limit);
   }
 
   async findById(userId: string, id: string) {

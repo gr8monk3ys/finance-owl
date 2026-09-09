@@ -4,7 +4,7 @@ import { createAccountSchema, updateAccountSchema, accountTypeEnum } from './acc
 import { createTransactionSchema, transactionFilterSchema } from './transactions';
 import { createCategorySchema } from './categories';
 import { createBudgetSchema, budgetPeriodEnum } from './budgets';
-import { paginationSchema } from './pagination';
+import { paginationSchema, paginate } from './pagination';
 
 const UUID = '123e4567-e89b-12d3-a456-426614174000';
 
@@ -289,5 +289,26 @@ describe('paginationSchema', () => {
   it('caps limit at 100', () => {
     expect(paginationSchema.safeParse({ limit: 100 }).success).toBe(true);
     expect(paginationSchema.safeParse({ limit: 101 }).success).toBe(false);
+  });
+});
+
+describe('paginate', () => {
+  it('wraps rows in the nested meta envelope the API returns', () => {
+    expect(paginate(['a', 'b'], 5, 2, 2)).toEqual({
+      data: ['a', 'b'],
+      meta: { page: 2, limit: 2, total: 5, totalPages: 3 },
+    });
+  });
+
+  it('rounds a partial last page up', () => {
+    expect(paginate([], 101, 1, 50).meta.totalPages).toBe(3);
+  });
+
+  it('reports no pages when there is nothing to page over', () => {
+    expect(paginate([], 0, 1, 50).meta.totalPages).toBe(0);
+  });
+
+  it('does not divide by a zero limit', () => {
+    expect(paginate([], 10, 1, 0).meta.totalPages).toBe(0);
   });
 });
