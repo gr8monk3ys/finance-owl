@@ -1,6 +1,5 @@
 import {
   Injectable,
-  Inject,
   UnauthorizedException,
   ConflictException,
   BadRequestException,
@@ -9,23 +8,31 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
-import { randomBytes, createHash } from 'crypto';
-import { eq } from 'drizzle-orm';
-import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
-import * as schema from '../../database/schema';
+import ms, { type StringValue } from 'ms';
 import { UsersService } from '../users/users.service';
+import { SessionService } from './session.service';
 import { TotpService } from './totp.service';
 import type { JwtPayload } from './strategies/jwt.strategy';
+
+const DEFAULT_ACCESS_EXPIRY = '15m';
+const DEFAULT_REFRESH_EXPIRY = '7d';
+
+const ARGON2_OPTIONS = {
+  type: argon2.argon2id,
+  memoryCost: 65536, // 64 MB
+  timeCost: 3,
+  parallelism: 4,
+} as const;
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
-    @Inject(DATABASE_TOKEN) private db: DrizzleDB,
     private jwtService: JwtService,
     private configService: ConfigService,
     private usersService: UsersService,
+    private sessionService: SessionService,
     private totpService: TotpService,
   ) {}
 
@@ -35,12 +42,7 @@ export class AuthService {
       throw new ConflictException('Email already registered');
     }
 
-    const passwordHash = await argon2.hash(password, {
-      type: argon2.argon2id,
-      memoryCost: 65536, // 64 MB
-      timeCost: 3,
-      parallelism: 4,
-    });
+    const passwordHash = await argon2.hash(password, ARGON2_OPTIONS);
     const user = await this.usersService.create({ name, email, passwordHash });
 
     return this.createTokens(user.id, user.email);
@@ -77,25 +79,10 @@ export class AuthService {
   }
 
   async refreshTokens(refreshToken: string) {
-    const [session] = await this.db
-      .select()
-      .from(schema.sessions)
-      .where(eq(schema.sessions.refreshToken, this.hashRefreshToken(refreshToken)))
-      .limit(1);
+    // Rotation: the presented token is consumed here, before anything else can fail.
+    const userId = await this.sessionService.rotate(refreshToken);
 
-    if (!session) {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
-
-    if (new Date(session.expiresAt) < new Date()) {
-      await this.db.delete(schema.sessions).where(eq(schema.sessions.id, session.id));
-      throw new UnauthorizedException('Refresh token expired');
-    }
-
-    // Delete old session (rotate refresh token)
-    await this.db.delete(schema.sessions).where(eq(schema.sessions.id, session.id));
-
-    const user = await this.usersService.findById(session.userId);
+    const user = await this.usersService.findById(userId);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
@@ -104,12 +91,7 @@ export class AuthService {
   }
 
   async changePassword(userId: string, currentPassword: string, newPassword: string) {
-    const found = await this.usersService.findById(userId);
-    if (!found) {
-      throw new UnauthorizedException('User not found');
-    }
-
-    const user = await this.usersService.findByEmail(found.email);
+    const user = await this.usersService.findCredentialsById(userId);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
@@ -119,41 +101,25 @@ export class AuthService {
       throw new UnauthorizedException('Current password is incorrect');
     }
 
-    const passwordHash = await argon2.hash(newPassword, {
-      type: argon2.argon2id,
-      memoryCost: 65536,
-      timeCost: 3,
-      parallelism: 4,
-    });
+    const passwordHash = await argon2.hash(newPassword, ARGON2_OPTIONS);
     await this.usersService.updatePassword(userId, passwordHash);
 
-    // Invalidate all sessions
-    await this.db.delete(schema.sessions).where(eq(schema.sessions.userId, userId));
+    // A changed password invalidates every session issued under the old one.
+    await this.sessionService.revokeAll(userId);
 
     return this.createTokens(userId, user.email);
   }
 
   async logout(refreshToken: string) {
-    await this.db
-      .delete(schema.sessions)
-      .where(eq(schema.sessions.refreshToken, this.hashRefreshToken(refreshToken)));
+    await this.sessionService.revoke(refreshToken);
   }
 
   async logoutAll(userId: string) {
-    await this.db.delete(schema.sessions).where(eq(schema.sessions.userId, userId));
+    await this.sessionService.revokeAll(userId);
   }
 
   async getActiveSessions(userId: string) {
-    return this.db
-      .select({
-        id: schema.sessions.id,
-        userAgent: schema.sessions.userAgent,
-        ipAddress: schema.sessions.ipAddress,
-        createdAt: schema.sessions.createdAt,
-        expiresAt: schema.sessions.expiresAt,
-      })
-      .from(schema.sessions)
-      .where(eq(schema.sessions.userId, userId));
+    return this.sessionService.list(userId);
   }
 
   async createTokensForUser(userId: string) {
@@ -170,44 +136,43 @@ export class AuthService {
   private async createTokens(userId: string, email: string) {
     const payload: JwtPayload = { sub: userId, email };
 
+    const accessExpiry = this.configService.get<string>('JWT_ACCESS_EXPIRY', DEFAULT_ACCESS_EXPIRY);
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: this.configService.get('JWT_ACCESS_EXPIRY', '15m'),
+      expiresIn: accessExpiry as StringValue,
     });
 
-    // Use cryptographically secure random bytes for refresh token (not UUID)
-    const refreshToken = randomBytes(32).toString('hex');
-    const refreshExpiry = this.configService.get('JWT_REFRESH_EXPIRY', '7d');
-    const expiresAt = new Date(Date.now() + this.parseDuration(refreshExpiry)).toISOString();
-
-    // Only a SHA-256 digest of the refresh token is persisted, so a leaked
-    // database dump cannot be replayed against /auth/refresh.
-    await this.db.insert(schema.sessions).values({
+    const refreshExpiry = this.configService.get<string>(
+      'JWT_REFRESH_EXPIRY',
+      DEFAULT_REFRESH_EXPIRY,
+    );
+    const refreshToken = await this.sessionService.issue(
       userId,
-      refreshToken: this.hashRefreshToken(refreshToken),
-      expiresAt,
-    });
+      this.durationMs('JWT_REFRESH_EXPIRY', refreshExpiry),
+    );
 
     return {
       accessToken,
       refreshToken,
-      expiresIn: this.parseDuration(this.configService.get('JWT_ACCESS_EXPIRY', '15m')) / 1000,
+      expiresIn: this.durationMs('JWT_ACCESS_EXPIRY', accessExpiry) / 1000,
     };
   }
 
-  private hashRefreshToken(token: string): string {
-    return createHash('sha256').update(token).digest('hex');
-  }
-
-  private parseDuration(duration: string): number {
-    const match = duration.match(/^(\d+)([smhd])$/);
-    if (!match) return 15 * 60 * 1000;
-    const [, value, unit] = match;
-    const multipliers: Record<string, number> = {
-      s: 1000,
-      m: 60 * 1000,
-      h: 60 * 60 * 1000,
-      d: 24 * 60 * 60 * 1000,
-    };
-    return parseInt(value) * (multipliers[unit] || 60 * 1000);
+  /**
+   * Parse an expiry with `ms` — the same parser `@nestjs/jwt` applies to these
+   * exact config values. The hand-rolled parser this replaces accepted only
+   * `30s`/`15m`/`2h`/`7d` and silently fell back to 15 minutes for anything
+   * else, so `JWT_REFRESH_EXPIRY=1w` minted a JWT whose session row expired a
+   * week early. `env.validation.ts` rejects unparseable values at boot; this
+   * throws rather than guessing if one reaches us anyway.
+   */
+  private durationMs(key: string, value: string): number {
+    const parsed = ms(value as StringValue);
+    if (typeof parsed !== 'number' || !Number.isFinite(parsed) || parsed <= 0) {
+      this.logger.error(`${key} is not a valid duration: "${value}"`);
+      throw new Error(
+        `${key} must be a positive duration understood by ms (e.g. 30s, 15m, 2h, 7d, 1w), got "${value}"`,
+      );
+    }
+    return parsed;
   }
 }

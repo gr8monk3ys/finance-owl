@@ -9,6 +9,18 @@ import {
   Matches,
 } from 'class-validator';
 
+/**
+ * Durations accepted by `ms`, the parser both `@nestjs/jwt` and `AuthService`
+ * use for the JWT expiries. A unit is required: bare numbers mean milliseconds
+ * to `ms` but seconds to `jsonwebtoken`, and that ambiguity is not worth
+ * shipping.
+ */
+export const MS_DURATION_PATTERN =
+  /^\d+(?:\.\d+)?\s*(?:ms|msecs?|milliseconds?|s|secs?|seconds?|m|mins?|minutes?|h|hrs?|hours?|d|days?|w|weeks?|y|yrs?|years?)$/i;
+
+const durationMessage = (name: string) =>
+  `${name} must be a duration with a unit, e.g. 30s, 15m, 2h, 7d or 1w`;
+
 class EnvironmentVariables {
   @IsString()
   @IsNotEmpty({ message: 'JWT_SECRET is required' })
@@ -54,10 +66,12 @@ class EnvironmentVariables {
 
   @IsOptional()
   @IsString()
+  @Matches(MS_DURATION_PATTERN, { message: durationMessage('JWT_ACCESS_EXPIRY') })
   JWT_ACCESS_EXPIRY?: string;
 
   @IsOptional()
   @IsString()
+  @Matches(MS_DURATION_PATTERN, { message: durationMessage('JWT_REFRESH_EXPIRY') })
   JWT_REFRESH_EXPIRY?: string;
 
   @IsOptional()

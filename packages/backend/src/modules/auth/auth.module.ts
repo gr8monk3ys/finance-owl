@@ -6,6 +6,7 @@ import type { StringValue } from 'ms';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { SessionService } from './session.service';
 import { WebAuthnService } from './webauthn.service';
 import { WebAuthnController } from './webauthn.controller';
 import { TotpService } from './totp.service';
@@ -37,6 +38,7 @@ import { CacheModule } from '../../common/cache/cache.module';
   ],
   providers: [
     AuthService,
+    SessionService,
     WebAuthnService,
     TotpService,
     JwtStrategy,
