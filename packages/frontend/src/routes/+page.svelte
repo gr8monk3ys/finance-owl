@@ -6,6 +6,10 @@
   let sections: HTMLElement[] = $state([]);
 
   onMount(() => {
+    // Tell the app.html bootstrap that hydration happened, so it stops its
+    // failsafe from tearing the `js` class (and the animation) back off.
+    window.__foHydrated?.();
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -1051,8 +1055,16 @@
 </main>
 
 <style>
-  /* Scroll animation styles */
-  .animate-on-scroll {
+  /*
+   * Scroll-reveal animation as a progressive enhancement.
+   *
+   * The settled (visible) state is the DEFAULT: `.animate-on-scroll` carries no
+   * opacity/transform of its own, so if JavaScript never runs, every section
+   * renders normally. The hidden-then-reveal rules only apply once the inline
+   * bootstrap in app.html has put `js` on <html> (and it removes that class
+   * again if the app fails to hydrate), which is what opts a page in.
+   */
+  :global(html.js) .animate-on-scroll {
     opacity: 0;
     transform: translateY(24px);
     transition:
@@ -1060,25 +1072,36 @@
       transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .animate-on-scroll.visible {
+  :global(html.js) .animate-on-scroll.visible {
     opacity: 1;
     transform: translateY(0);
   }
 
   /* Stagger children in grids */
-  .animate-on-scroll:nth-child(2) {
+  :global(html.js) .animate-on-scroll:nth-child(2) {
     transition-delay: 80ms;
   }
-  .animate-on-scroll:nth-child(3) {
+  :global(html.js) .animate-on-scroll:nth-child(3) {
     transition-delay: 160ms;
   }
-  .animate-on-scroll:nth-child(4) {
+  :global(html.js) .animate-on-scroll:nth-child(4) {
     transition-delay: 240ms;
   }
-  .animate-on-scroll:nth-child(5) {
+  :global(html.js) .animate-on-scroll:nth-child(5) {
     transition-delay: 320ms;
   }
-  .animate-on-scroll:nth-child(6) {
+  :global(html.js) .animate-on-scroll:nth-child(6) {
     transition-delay: 400ms;
+  }
+
+  /* No motion for anyone who asked for none - the content is simply present. */
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .animate-on-scroll,
+    :global(html.js) .animate-on-scroll.visible {
+      opacity: 1;
+      transform: none;
+      transition: none;
+      transition-delay: 0ms;
+    }
   }
 </style>
