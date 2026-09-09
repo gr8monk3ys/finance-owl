@@ -270,3 +270,31 @@ export function getAllPlans(): PlanDefinition[] {
 export function getPlanLimits(tier: PlanTier): PlanLimits {
   return PLANS[tier]?.limits ?? PLANS.free.limits;
 }
+
+/**
+ * Format a plan's monthly price for display, e.g. `$0`, `$9.99/mo`.
+ *
+ * Lives here rather than in each client so a price can never be shown that
+ * disagrees with what billing actually charges — the frontend previously
+ * carried four hand-copied plan tables, one of which quoted $4.99 for a
+ * $9.99 tier under a tier name (`family`) that does not exist.
+ */
+export function formatPlanPrice(tier: PlanTier, interval: 'month' | 'year' = 'month'): string {
+  const plan = PLANS[tier];
+  const amount = interval === 'year' ? plan.yearlyPrice : plan.monthlyPrice;
+  if (amount === 0) return '$0';
+  const formatted = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(amount);
+  return `${formatted}/${interval === 'year' ? 'yr' : 'mo'}`;
+}
+
+/**
+ * The tiers a user can upgrade *to*, cheapest first. Excludes `free`.
+ */
+export function getUpgradeTiers(): PlanDefinition[] {
+  return PLAN_UPGRADE_TIERS.map((tier) => PLANS[tier]);
+}
+
+const PLAN_UPGRADE_TIERS: PlanTier[] = ['pro', 'premium'];

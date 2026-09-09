@@ -10,7 +10,7 @@ import {
   getRequiredPlan,
   getAllPlans,
   getPlanLimits,
-} from './plans';
+} from '@finance-owl/shared';
 
 // Mock Stripe at module level
 vi.mock('stripe', () => {

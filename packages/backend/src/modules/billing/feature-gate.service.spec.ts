@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FeatureGateService } from './feature-gate.service';
-import { FEATURES, PLAN_FEATURES, FEATURE_PLAN_MAP } from './plans';
+import { FEATURES, PLAN_FEATURES, FEATURE_PLAN_MAP } from '@finance-owl/shared';
 
 describe('FeatureGateService', () => {
   let service: FeatureGateService;

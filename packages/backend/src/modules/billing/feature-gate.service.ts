@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BillingService } from './billing.service';
-import { type PlanTier, PLAN_FEATURES, FEATURE_PLAN_MAP, canAccessFeature } from './plans';
+import {
+  type PlanTier,
+  PLAN_FEATURES,
+  FEATURE_PLAN_MAP,
+  canAccessFeature,
+} from '@finance-owl/shared';
 
 /**
  * Service that provides feature gating logic.

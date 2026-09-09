@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { BillingService } from '../../modules/billing/billing.service';
-import { type PlanTier } from '../../modules/billing/plans';
+import { type PlanTier } from '@finance-owl/shared';
 
 export const PREMIUM_FEATURE_KEY = 'premiumFeature';
 export const REQUIRED_PLAN_KEY = 'requiredPlan';

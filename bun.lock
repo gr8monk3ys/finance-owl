@@ -19,6 +19,7 @@
       "name": "@finance-owl/backend",
       "version": "0.1.0",
       "dependencies": {
+        "@finance-owl/shared": "workspace:*",
         "@nestjs/bullmq": "^11.0.5",
         "@nestjs/common": "^11.2.1",
         "@nestjs/config": "^4.0.4",

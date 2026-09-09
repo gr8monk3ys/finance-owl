@@ -2,6 +2,7 @@
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Badge } from '$components/ui';
+  import { getAllPlans, type PlanTier } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -15,71 +16,27 @@
   const currentPlanName = $derived(data.subscription?.planName || data.features?.plan || 'free');
   const isScheduledForCancel = $derived(data.subscription?.cancelAtPeriodEnd === true);
 
-  interface PlanDisplay {
-    name: string;
-    title: string;
-    description: string;
-    monthlyPrice: number;
-    yearlyPrice: number;
-    features: string[];
-    highlighted: boolean;
-    badge?: string;
-  }
+  /**
+   * Same shared PLANS table the pricing page and the billing guards use, so
+   * this screen cannot quote a price the backend does not charge.
+   */
+  const PRESENTATION: Record<PlanTier, { highlighted: boolean; badge?: string }> = {
+    free: { highlighted: false },
+    pro: { highlighted: true, badge: 'Most Popular' },
+    premium: { highlighted: false },
+  };
 
-  const planDisplays: PlanDisplay[] = [
-    {
-      name: 'free',
-      title: 'Free',
-      description: 'For getting started with personal finance tracking.',
-      monthlyPrice: 0,
-      yearlyPrice: 0,
-      features: [
-        '2 linked bank accounts',
-        'Basic budgets & analytics',
-        'Manual accounts',
-        '5 AI chat messages / day',
-        '3 months transaction history',
-      ],
-      highlighted: false,
-    },
-    {
-      name: 'pro',
-      title: 'Pro',
-      description: 'Full-featured finance management for power users.',
-      monthlyPrice: 9.99,
-      yearlyPrice: 99.99,
-      features: [
-        'Unlimited linked accounts',
-        'Unlimited AI chat & insights',
-        'Subscription tracking',
-        'Bill negotiation',
-        'Smart savings',
-        'Investment tracking',
-        'Advanced reports & CSV export',
-        'Custom categories',
-        'Unlimited transaction history',
-        'Priority support',
-      ],
-      highlighted: true,
-      badge: 'Most Popular',
-    },
-    {
-      name: 'premium',
-      title: 'Premium',
-      description: 'Share finances and budgets with your household.',
-      monthlyPrice: 19.99,
-      yearlyPrice: 199.99,
-      features: [
-        'Everything in Pro',
-        'Household sharing (up to 10)',
-        'Family budgets & goals',
-        'Advisor sharing',
-        'API access',
-        'Dedicated support',
-      ],
-      highlighted: false,
-    },
-  ];
+  const planDisplays = getAllPlans().map((plan) => ({
+    name: plan.name,
+    title: plan.displayName,
+    description: plan.description,
+    monthlyPrice: plan.monthlyPrice,
+    yearlyPrice: plan.yearlyPrice,
+    features: plan.features,
+    ...PRESENTATION[plan.name],
+  }));
+
+  type PlanDisplay = (typeof planDisplays)[number];
 
   function getPrice(plan: PlanDisplay): string {
     if (plan.name === 'free') return '$0';
