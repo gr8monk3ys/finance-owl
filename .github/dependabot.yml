@@ -202,6 +202,10 @@ updates:
       - dependency-name: "@babel/core"
         update-types:
           - version-update:semver-major
+      # babel-preset-expo tracks the SDK, not semver in isolation: 12.x is
+      # SDK 52's preset, and Dependabot has already proposed 57.x. The
+      # `expo-*` pattern above does not match this name.
+      - dependency-name: "babel-preset-expo"
 
   # ──────────────────────────────────────────────
   # GitHub Actions
