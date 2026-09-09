@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { BillingService } from './billing.service';
-import { type PlanTier, isAtLeastPlan, getRequiredPlan } from './plans';
+import { type PlanTier, isAtLeastPlan, getRequiredPlan } from '@finance-owl/shared';
 
 // ---------------------------------------------------------------------------
 // Metadata keys

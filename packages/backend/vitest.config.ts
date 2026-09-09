@@ -27,7 +27,9 @@ export default defineConfig({
         lines: 49,
         branches: 42,
         functions: 37,
-        statements: 49,
+        // 48: plans.ts moved to @finance-owl/shared (where it now has its own
+        // spec), which removed well-covered lines from this package's denominator.
+        statements: 48,
       },
     },
   },

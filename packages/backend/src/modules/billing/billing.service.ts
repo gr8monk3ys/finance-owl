@@ -20,7 +20,7 @@ import {
   canAccessFeature,
   isAtLeastPlan,
   getPlanLimits,
-} from './plans';
+} from '@finance-owl/shared';
 
 // ---------------------------------------------------------------------------
 // Types

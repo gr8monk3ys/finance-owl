@@ -1,21 +1,30 @@
 <script lang="ts">
+  import { getPlanDefinition, type PlanTier } from '@finance-owl/shared';
+
   interface Props {
-    plan?: 'premium' | 'family';
+    /**
+     * A real PlanTier. This was `'premium' | 'family'`; `family` is not a
+     * tier the backend has, and the label was hardcoded alongside it.
+     */
+    plan?: PlanTier;
     size?: 'xs' | 'sm';
     class?: string;
   }
 
-  let { plan = 'premium', size = 'xs', class: className = '' }: Props = $props();
+  let { plan = 'pro', size = 'xs', class: className = '' }: Props = $props();
 
-  const colors: Record<string, string> = {
-    premium: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
-    family: 'bg-purple-500/15 text-purple-400 border-purple-500/20',
+  const colors: Record<PlanTier, string> = {
+    free: 'bg-surface-500/15 text-surface-300 border-surface-500/20',
+    pro: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+    premium: 'bg-purple-500/15 text-purple-400 border-purple-500/20',
   };
 
   const sizes: Record<string, string> = {
     xs: 'px-1.5 py-0.5 text-[9px]',
     sm: 'px-2 py-0.5 text-[10px]',
   };
+
+  const label = $derived(getPlanDefinition(plan)?.displayName ?? plan);
 </script>
 
 <span
@@ -30,5 +39,5 @@
       clip-rule="evenodd"
     />
   </svg>
-  {plan === 'family' ? 'Family' : 'Premium'}
+  {label}
 </span>

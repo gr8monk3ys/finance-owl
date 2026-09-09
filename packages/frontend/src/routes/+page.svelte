@@ -1,5 +1,16 @@
 <script lang="ts">
   import { publicRoutes } from '$lib/config/public';
+  import { PLANS, type PlanTier } from '@finance-owl/shared';
+
+  // The marketing copy here is bespoke, but the prices are not: read them
+  // from the same PLANS table billing enforces so this page cannot advertise
+  // a number checkout will not honour.
+  const planPrice = (tier: PlanTier) =>
+    PLANS[tier].monthlyPrice === 0
+      ? '$0'
+      : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+          PLANS[tier].monthlyPrice,
+        );
   import { onMount } from 'svelte';
 
   // Intersection observer for scroll animations
@@ -766,7 +777,7 @@
           <h3 class="text-lg font-semibold text-white">Free</h3>
           <p class="mt-2 text-sm text-gray-400">Perfect for getting started</p>
           <div class="mt-6">
-            <span class="text-4xl font-bold text-white">$0</span>
+            <span class="text-4xl font-bold text-white">{planPrice('free')}</span>
             <span class="text-gray-500">/month</span>
           </div>
           <ul class="mt-8 space-y-3">
@@ -807,7 +818,7 @@
           <h3 class="text-lg font-semibold text-white">Pro</h3>
           <p class="mt-2 text-sm text-gray-400">For people who want the full toolkit</p>
           <div class="mt-6">
-            <span class="text-4xl font-bold text-white">$9.99</span>
+            <span class="text-4xl font-bold text-white">{planPrice('pro')}</span>
             <span class="text-gray-500">/month</span>
           </div>
           <ul class="mt-8 space-y-3">
@@ -839,7 +850,7 @@
           <h3 class="text-lg font-semibold text-white">Premium</h3>
           <p class="mt-2 text-sm text-gray-400">For households planning together</p>
           <div class="mt-6">
-            <span class="text-4xl font-bold text-white">$19.99</span>
+            <span class="text-4xl font-bold text-white">{planPrice('premium')}</span>
             <span class="text-gray-500">/month</span>
           </div>
           <ul class="mt-8 space-y-3">
