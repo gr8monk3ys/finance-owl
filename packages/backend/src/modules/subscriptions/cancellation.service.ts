@@ -3,19 +3,28 @@ import { eq, and, desc } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 import { cancellationRequests } from './cancellation.schema';
-import {
-  findCancellationInfo,
-  getGenericCancellationInfo,
-  type CancellationInfo,
-} from './cancellation-instructions';
+import { cancellationInstructionsFor, type CancellationInstructions } from './cancellation-catalog';
+import { monthlyMultiplier } from './frequency';
 
-const FREQUENCY_ANNUAL_MULTIPLIER: Record<string, number> = {
-  weekly: 52,
-  biweekly: 26,
-  monthly: 12,
-  quarterly: 4,
-  annual: 1,
-};
+/**
+ * Cancellation progress plus the money it has saved. This used to be two
+ * endpoints -- `cancellations/stats` and `cancellation/savings` -- computing
+ * overlapping numbers from different frequency tables, so the same user could
+ * see two different savings figures depending on which page they opened.
+ */
+export interface CancellationStats {
+  totalRequested: number;
+  totalPending: number;
+  totalCompleted: number;
+  estimatedMonthlySavings: number;
+  estimatedAnnualSavings: number;
+  cancelledSubscriptions: {
+    name: string;
+    amount: number;
+    frequency: string;
+    cancelledAt: string | null;
+  }[];
+}
 
 @Injectable()
 export class CancellationService {
@@ -38,9 +47,14 @@ export class CancellationService {
       throw new NotFoundException('Subscription not found');
     }
 
-    // Generate cancellation instructions
     const merchantName = subscription.merchantName || subscription.name;
-    const instructions = this.getCancellationInstructions(merchantName);
+    const instructions = cancellationInstructionsFor(merchantName);
+    const contactInfo = {
+      phone: instructions.phone,
+      email: instructions.email,
+      website: instructions.website,
+      chatUrl: instructions.chatUrl,
+    };
 
     const [request] = await this.db
       .insert(cancellationRequests)
@@ -50,12 +64,7 @@ export class CancellationService {
         status: 'pending',
         method: instructions.methods[0] || 'self_service',
         cancellationInstructions: JSON.stringify(instructions.steps),
-        providerContactInfo: JSON.stringify({
-          phone: instructions.phone || null,
-          email: instructions.email || null,
-          website: instructions.website || null,
-          chatUrl: instructions.chatUrl || null,
-        }),
+        providerContactInfo: JSON.stringify(contactInfo),
         reason: reason || null,
       })
       .returning();
@@ -63,12 +72,7 @@ export class CancellationService {
     return {
       ...request,
       cancellationInstructions: instructions.steps,
-      providerContactInfo: {
-        phone: instructions.phone || null,
-        email: instructions.email || null,
-        website: instructions.website || null,
-        chatUrl: instructions.chatUrl || null,
-      },
+      providerContactInfo: contactInfo,
     };
   }
 
@@ -204,15 +208,10 @@ export class CancellationService {
     return updated;
   }
 
-  getCancellationInstructions(merchantName: string): CancellationInfo {
-    const info = findCancellationInfo(merchantName);
-    if (info) {
-      return info;
-    }
-    return getGenericCancellationInfo(merchantName);
-  }
-
-  async getCancellationInstructionsForSubscription(userId: string, subscriptionId: string) {
+  async getCancellationInstructionsForSubscription(
+    userId: string,
+    subscriptionId: string,
+  ): Promise<CancellationInstructions> {
     const [subscription] = await this.db
       .select({
         name: schema.recurringTransactions.name,
@@ -231,47 +230,62 @@ export class CancellationService {
       throw new NotFoundException('Subscription not found');
     }
 
-    const merchantName = subscription.merchantName || subscription.name;
-    return this.getCancellationInstructions(merchantName);
+    return cancellationInstructionsFor(subscription.merchantName || subscription.name);
   }
 
-  async getCancellationStats(userId: string) {
+  /**
+   * Cancellation progress and the savings it has produced, in one pass over the
+   * user's requests. Monthly and annual figures are derived from the same
+   * per-cadence multiplier, so they cannot disagree with each other.
+   */
+  async getCancellationStats(userId: string): Promise<CancellationStats> {
     const requests = await this.db
       .select({
         status: cancellationRequests.status,
+        subscriptionName: schema.recurringTransactions.name,
+        merchantName: schema.recurringTransactions.merchantName,
         estimatedAmount: schema.recurringTransactions.estimatedAmount,
         frequency: schema.recurringTransactions.frequency,
+        cancelledAt: cancellationRequests.cancellationConfirmedAt,
       })
       .from(cancellationRequests)
       .leftJoin(
         schema.recurringTransactions,
         eq(cancellationRequests.subscriptionId, schema.recurringTransactions.id),
       )
-      .where(eq(cancellationRequests.userId, userId));
+      .where(eq(cancellationRequests.userId, userId))
+      .orderBy(desc(cancellationRequests.createdAt));
 
-    let totalRequested = 0;
     let totalCompleted = 0;
+    let totalPending = 0;
     let estimatedMonthlySavings = 0;
-    let estimatedAnnualSavings = 0;
+    const cancelledSubscriptions: CancellationStats['cancelledSubscriptions'] = [];
 
-    for (const req of requests) {
-      totalRequested++;
-
-      if (req.status === 'completed' && req.estimatedAmount && req.frequency) {
+    for (const request of requests) {
+      if (request.status === 'completed') {
         totalCompleted++;
-        const annualMultiplier = FREQUENCY_ANNUAL_MULTIPLIER[req.frequency] ?? 12;
-        const annualAmount = req.estimatedAmount * annualMultiplier;
-        estimatedAnnualSavings += annualAmount;
-        estimatedMonthlySavings += annualAmount / 12;
+
+        if (request.estimatedAmount && request.frequency) {
+          estimatedMonthlySavings += request.estimatedAmount * monthlyMultiplier(request.frequency);
+          cancelledSubscriptions.push({
+            name: request.merchantName ?? request.subscriptionName ?? 'Unknown',
+            amount: request.estimatedAmount,
+            frequency: request.frequency,
+            cancelledAt: request.cancelledAt,
+          });
+        }
+      } else if (request.status === 'pending' || request.status === 'in_progress') {
+        totalPending++;
       }
     }
 
     return {
-      totalRequested,
+      totalRequested: requests.length,
+      totalPending,
       totalCompleted,
-      totalPending: totalRequested - totalCompleted,
       estimatedMonthlySavings: Math.round(estimatedMonthlySavings * 100) / 100,
-      estimatedAnnualSavings: Math.round(estimatedAnnualSavings * 100) / 100,
+      estimatedAnnualSavings: Math.round(estimatedMonthlySavings * 12 * 100) / 100,
+      cancelledSubscriptions,
     };
   }
 }

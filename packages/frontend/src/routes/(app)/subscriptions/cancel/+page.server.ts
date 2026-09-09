@@ -7,9 +7,9 @@ export const load: PageServerLoad = async ({ locals }) => {
   try {
     const [subscriptions, history, savings, providers] = await Promise.all([
       api('/subscriptions', { accessToken: locals.accessToken }),
-      api('/subscriptions/cancellation/history', { accessToken: locals.accessToken }),
-      api('/subscriptions/cancellation/savings', { accessToken: locals.accessToken }),
-      api('/subscriptions/cancellation/providers', { accessToken: locals.accessToken }),
+      api('/subscriptions/cancellations', { accessToken: locals.accessToken }),
+      api('/subscriptions/cancellations/stats', { accessToken: locals.accessToken }),
+      api('/subscriptions/cancellations/providers', { accessToken: locals.accessToken }),
     ]);
 
     // Filter to only active subscriptions
@@ -28,8 +28,9 @@ export const load: PageServerLoad = async ({ locals }) => {
       subscriptions: [],
       history: [],
       savings: {
-        totalCancelled: 0,
+        totalRequested: 0,
         totalPending: 0,
+        totalCompleted: 0,
         estimatedMonthlySavings: 0,
         estimatedAnnualSavings: 0,
         cancelledSubscriptions: [],
@@ -50,7 +51,7 @@ export const actions: Actions = {
     }
 
     try {
-      const result = await api(`/subscriptions/cancellation/initiate/${subscriptionId}`, {
+      const result = await api(`/subscriptions/${subscriptionId}/cancel`, {
         method: 'POST',
         body: { reason: reason || undefined },
         accessToken: locals.accessToken,
@@ -71,7 +72,7 @@ export const actions: Actions = {
 
     try {
       const result = await api(
-        `/subscriptions/cancellation/provider/${encodeURIComponent(providerName)}`,
+        `/subscriptions/cancellations/providers/${encodeURIComponent(providerName)}`,
         { accessToken: locals.accessToken },
       );
       return { success: true, providerResult: result };

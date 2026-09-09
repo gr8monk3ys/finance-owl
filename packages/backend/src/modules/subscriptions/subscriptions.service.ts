@@ -2,6 +2,7 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
+import { frequencyDays, monthlyMultiplier } from './frequency';
 
 export interface SubscriptionSummary {
   monthlyTotal: number;
@@ -35,22 +36,6 @@ export interface PriceChange {
   latestAmount: number;
   changePercent: number;
 }
-
-const FREQUENCY_MONTHLY_MULTIPLIER: Record<string, number> = {
-  weekly: 4.33,
-  biweekly: 2.17,
-  monthly: 1,
-  quarterly: 1 / 3,
-  annual: 1 / 12,
-};
-
-const FREQUENCY_DAYS: Record<string, number> = {
-  weekly: 7,
-  biweekly: 14,
-  monthly: 30,
-  quarterly: 90,
-  annual: 365,
-};
 
 @Injectable()
 export class SubscriptionsService {
@@ -268,7 +253,7 @@ export class SubscriptionsService {
     >();
 
     for (const sub of subscriptions) {
-      const multiplier = FREQUENCY_MONTHLY_MULTIPLIER[sub.frequency] ?? 1;
+      const multiplier = monthlyMultiplier(sub.frequency);
       const monthlyAmount = sub.estimatedAmount * multiplier;
       monthlyTotal += monthlyAmount;
 
@@ -417,7 +402,7 @@ export class SubscriptionsService {
       return [];
     }
 
-    const intervalDays = FREQUENCY_DAYS[frequency] ?? 30;
+    const intervalDays = frequencyDays(frequency);
     const dates: string[] = [];
     const current = new Date(nextExpectedDate + 'T00:00:00');
 

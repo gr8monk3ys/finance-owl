@@ -5,8 +5,6 @@ import { SubscriptionsController } from './subscriptions.controller';
 import { DetectionService } from './detection.service';
 import { CancellationService } from './cancellation.service';
 import { CancellationController } from './cancellation.controller';
-import { CancellationProvidersService } from './cancellation-providers.service';
-import { CancellationEnhancedController } from './cancellation-enhanced.controller';
 import { SubscriptionDetectProcessor } from '../jobs/subscription-detect.processor';
 import { SubscriptionDetectScheduler } from '../jobs/subscription-detect.scheduler';
 
@@ -16,16 +14,12 @@ import { SubscriptionDetectScheduler } from '../jobs/subscription-detect.schedul
     SubscriptionsService,
     DetectionService,
     CancellationService,
-    CancellationProvidersService,
     SubscriptionDetectProcessor,
     SubscriptionDetectScheduler,
   ],
-  controllers: [CancellationController, CancellationEnhancedController, SubscriptionsController],
-  exports: [
-    SubscriptionsService,
-    DetectionService,
-    CancellationService,
-    CancellationProvidersService,
-  ],
+  // CancellationController is declared first: its literal `cancellations/...`
+  // routes would otherwise be shadowed by SubscriptionsController's `:id`.
+  controllers: [CancellationController, SubscriptionsController],
+  exports: [SubscriptionsService, DetectionService, CancellationService],
 })
 export class SubscriptionsModule {}
