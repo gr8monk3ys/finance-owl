@@ -398,7 +398,7 @@ jobs:
         run: bun run --filter @finance-owl/mobile lint
 
       - name: Validate Expo configuration
-        run: bun run --filter @finance-owl/mobile run check:expo
+        run: bun run --filter @finance-owl/mobile check:expo
 
       - name: Export iOS bundle
         run: bun run --filter @finance-owl/mobile export:ios
