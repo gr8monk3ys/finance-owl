@@ -90,8 +90,14 @@ export class ScheduleRegistrar implements OnModuleInit {
     }
 
     for (const schedule of skipped) {
+      // Redis remembers a scheduler across restarts, so turning the flag back
+      // off has to actively remove it. Otherwise the flag would be one-way:
+      // enable once and the cron keeps firing forever.
+      const removed = await this.queues[schedule.queue].removeJobScheduler(schedule.id);
+
       this.logger.warn(
-        `Schedule "${schedule.id}" is off: set ${schedule.requiresFlag}=true to enable — ${schedule.description}`,
+        `Schedule "${schedule.id}" is off${removed ? ' (removed from Redis)' : ''}: ` +
+          `set ${schedule.requiresFlag}=true to enable — ${schedule.description}`,
       );
     }
   }

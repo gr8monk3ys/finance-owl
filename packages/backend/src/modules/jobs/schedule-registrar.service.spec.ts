@@ -7,14 +7,21 @@ import { JOBS, type ScheduleDefinition } from './schedules';
 import { collectProcessorKeys, isScheduledJobHandler } from './scheduled-job-handler';
 import { ScheduleRegistrar } from './schedule-registrar.service';
 
-type FakeQueue = { upsertJobScheduler: ReturnType<typeof vi.fn> };
+type FakeQueue = {
+  upsertJobScheduler: ReturnType<typeof vi.fn>;
+  removeJobScheduler: ReturnType<typeof vi.fn>;
+};
+
+function fakeQueue(): FakeQueue {
+  return { upsertJobScheduler: vi.fn(), removeJobScheduler: vi.fn().mockResolvedValue(false) };
+}
 
 function fakeQueues(): Record<QueueName, FakeQueue> {
   return {
-    [QUEUES.TRANSACTION_SYNC]: { upsertJobScheduler: vi.fn() },
-    [QUEUES.SUBSCRIPTION_DETECT]: { upsertJobScheduler: vi.fn() },
-    [QUEUES.ALERTS]: { upsertJobScheduler: vi.fn() },
-    [QUEUES.BACKUP]: { upsertJobScheduler: vi.fn() },
+    [QUEUES.TRANSACTION_SYNC]: fakeQueue(),
+    [QUEUES.SUBSCRIPTION_DETECT]: fakeQueue(),
+    [QUEUES.ALERTS]: fakeQueue(),
+    [QUEUES.BACKUP]: fakeQueue(),
   };
 }
 
@@ -146,6 +153,26 @@ describe('ScheduleRegistrar', () => {
     await registrar.register([{ ...billReminderSchedule, requiresFlag: 'MAIL_ON' }]);
 
     expect(queues[QUEUES.ALERTS].upsertJobScheduler).not.toHaveBeenCalled();
+  });
+
+  it('removes a skipped schedule from Redis, so the flag can be turned back off', async () => {
+    const registrar = build({ queues, providers: [] });
+
+    await registrar.register([{ ...billReminderSchedule, requiresFlag: 'MAIL_ON' }]);
+
+    expect(queues[QUEUES.ALERTS].removeJobScheduler).toHaveBeenCalledWith('daily-bill-reminder');
+  });
+
+  it('leaves an active schedule in place rather than removing it', async () => {
+    const registrar = build({
+      queues,
+      providers: [handler(QUEUES.ALERTS, JOBS.BILL_REMINDER)],
+      env: { MAIL_ON: '1' },
+    });
+
+    await registrar.register([{ ...billReminderSchedule, requiresFlag: 'MAIL_ON' }]);
+
+    expect(queues[QUEUES.ALERTS].removeJobScheduler).not.toHaveBeenCalled();
   });
 
   it('registers a flagged schedule once the flag is set', async () => {
