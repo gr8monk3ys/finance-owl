@@ -15,4 +15,27 @@ export interface PaginatedResponse<T> {
   };
 }
 
+/**
+ * Build the pagination envelope every paginated endpoint returns.
+ *
+ * This is the single source of the wire shape: callers must not hand-roll
+ * `{ data, meta }` literals, or the nested/flat drift this replaces comes back.
+ */
+export function paginate<T>(
+  data: T[],
+  total: number,
+  page: number,
+  limit: number,
+): PaginatedResponse<T> {
+  return {
+    data,
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: limit > 0 ? Math.ceil(total / limit) : 0,
+    },
+  };
+}
+
 export type PaginationInput = z.infer<typeof paginationSchema>;

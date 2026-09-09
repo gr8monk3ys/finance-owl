@@ -24,7 +24,6 @@ import { CryptoModule } from '@/common/crypto/crypto.module';
 import { UsersService } from '@/modules/users/users.service';
 import { TotpService } from '@/modules/auth/totp.service';
 import { CryptoService } from '@/common/crypto/crypto.service';
-import { EncryptionService } from '@/common/crypto/encryption.service';
 import { TransactionsService } from '@/modules/transactions/transactions.service';
 import { TransactionsController } from '@/modules/transactions/transactions.controller';
 import { TransactionSplitService } from '@/modules/transactions/transaction-split.service';
@@ -176,11 +175,6 @@ function createMockServices() {
       encrypt: vi.fn().mockReturnValue('encrypted'),
       decrypt: vi.fn().mockReturnValue('decrypted'),
     },
-    mockEncryptionService: {
-      encrypt: vi.fn().mockReturnValue('encrypted-data'),
-      decrypt: vi.fn().mockReturnValue('decrypted-data'),
-      onModuleInit: vi.fn(),
-    },
   };
 }
 
@@ -263,8 +257,6 @@ export async function createE2EApp(): Promise<E2ETestContext> {
     .useValue(mocks.mockTotpService)
     .overrideProvider(CryptoService)
     .useValue(mocks.mockCryptoService)
-    .overrideProvider(EncryptionService)
-    .useValue(mocks.mockEncryptionService)
     .compile();
 
   const app = moduleFixture.createNestApplication();
