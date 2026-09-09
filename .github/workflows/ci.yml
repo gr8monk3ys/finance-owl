@@ -245,8 +245,10 @@ jobs:
       - name: Run database migrations
         run: pnpm --filter @finance-owl/backend db:migrate
 
+      # `pnpm --filter <pkg> test --coverage` fails with "Unknown option:
+      # 'coverage'" — pnpm parses the flag itself. `exec` hands it to vitest.
       - name: Run backend unit tests
-        run: pnpm --filter @finance-owl/backend test --coverage
+        run: pnpm --filter @finance-owl/backend exec vitest run --coverage
 
       - name: Run backend integration tests
         run: pnpm --filter @finance-owl/backend test:integration
@@ -322,7 +324,11 @@ jobs:
       JWT_REFRESH_SECRET: ci-test-jwt-refresh-secret-not-for-prod
       ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       NODE_ENV: test
-      API_URL: http://localhost:4000
+      # 127.0.0.1, not localhost: node resolves localhost to ::1 first and the
+      # backend listens on IPv4 only, which is the ECONNREFUSED ::1:4000 seen
+      # before this job started the API at all.
+      API_URL: http://127.0.0.1:4000
+      PLAYWRIGHT_API_URL: http://127.0.0.1:4000
       DISABLE_RATE_LIMITING: "1"
 
     steps:
@@ -353,8 +359,28 @@ jobs:
       - name: Run database migrations
         run: pnpm --filter @finance-owl/backend db:migrate
 
+      # Playwright's own webServer only boots the SvelteKit dev server on
+      # :3000; the e2e fixtures seed users and data through the REST API.
+      - name: Start backend API
+        run: |
+          pnpm --filter @finance-owl/backend exec node dist/main.js &
+          echo "$!" > /tmp/backend.pid
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:4000/health >/dev/null 2>&1; then
+              echo "Backend is up."
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Backend did not become healthy within 60s."
+          exit 1
+
       - name: Run Playwright E2E tests
         run: pnpm --filter @finance-owl/frontend exec playwright test --project=chromium
+
+      - name: Stop backend API
+        if: always()
+        run: kill "$(cat /tmp/backend.pid)" 2>/dev/null || true
 
       - name: Upload Playwright report
         if: failure()

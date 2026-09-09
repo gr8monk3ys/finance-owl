@@ -12,6 +12,10 @@ updates:
       time: "09:00"
       timezone: America/New_York
     open-pull-requests-limit: 2
+    # Wait out the window in which a freshly published (possibly
+    # compromised) version would otherwise be proposed automatically.
+    cooldown:
+      default-days: 7
     reviewers:
       - natalyscaturchio
     labels:
@@ -71,6 +75,8 @@ updates:
       time: "09:00"
       timezone: America/New_York
     open-pull-requests-limit: 2
+    cooldown:
+      default-days: 7
     reviewers:
       - natalyscaturchio
     labels:
@@ -117,6 +123,8 @@ updates:
       time: "09:00"
       timezone: America/New_York
     open-pull-requests-limit: 2
+    cooldown:
+      default-days: 7
     reviewers:
       - natalyscaturchio
     labels:
@@ -159,6 +167,8 @@ updates:
       time: "09:00"
       timezone: America/New_York
     open-pull-requests-limit: 2
+    cooldown:
+      default-days: 7
     reviewers:
       - natalyscaturchio
     labels:
@@ -198,6 +208,8 @@ updates:
       time: "09:00"
       timezone: America/New_York
     open-pull-requests-limit: 2
+    cooldown:
+      default-days: 7
     reviewers:
       - natalyscaturchio
     labels:
@@ -228,6 +240,8 @@ updates:
       time: "09:00"
       timezone: America/New_York
     open-pull-requests-limit: 1
+    cooldown:
+      default-days: 7
     reviewers:
       - natalyscaturchio
     labels:

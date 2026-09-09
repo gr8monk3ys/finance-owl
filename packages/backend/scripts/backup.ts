@@ -106,6 +106,10 @@ function rotateBackups(backupDir: string): void {
     .map((filename): BackupFile | null => {
       const date = parseDateFromFilename(filename);
       if (!date) return null;
+      // `filename` is a readdirSync entry of `backupDir` — never a path,
+      // never caller-supplied — and is further constrained to
+      // /^backup_.*\.sql\.gz$/ by the filter above.
+      // nosemgrep: path-join-resolve-traversal
       return { filename, fullPath: path.join(backupDir, filename), date };
     })
     .filter((f): f is BackupFile => f !== null)

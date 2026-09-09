@@ -35,6 +35,13 @@ export interface ImportOptions {
   skipDuplicates: boolean;
 }
 
+/**
+ * The OFX/QFX tags this service reads. Closed on purpose: the tag is
+ * interpolated into a RegExp, so keeping it a union of literals means no
+ * part of an uploaded statement can ever reach the pattern.
+ */
+type OfxTag = 'DTPOSTED' | 'TRNAMT' | 'NAME' | 'MEMO' | 'FITID';
+
 // ─── Service ────────────────────────────────────────────────────────────────
 
 @Injectable()
@@ -428,13 +435,18 @@ export class ImportService {
     return transactions;
   }
 
-  private extractOFXTag(block: string, tag: string): string | null {
+  private extractOFXTag(block: string, tag: OfxTag): string | null {
+    // `tag` is an OfxTag, a closed union of literals; nothing from the
+    // imported file reaches the pattern.
+    // nosemgrep: detect-non-literal-regexp
     const regex = new RegExp(`<${tag}>([^<\\r\\n]+)`, 'i');
     const match = regex.exec(block);
     return match ? match[1].trim() : null;
   }
 
-  private extractXMLTag(block: string, tag: string): string | null {
+  private extractXMLTag(block: string, tag: OfxTag): string | null {
+    // Closed union of literal tags — see extractOFXTag above.
+    // nosemgrep: detect-non-literal-regexp
     const regex = new RegExp(`<${tag}>([^<]*)</${tag}>`, 'i');
     const match = regex.exec(block);
     return match ? match[1].trim() : null;
