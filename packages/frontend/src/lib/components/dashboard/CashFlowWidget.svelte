@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt, formatDateWith } from '@finance-owl/shared';
 
   interface MonthlyTrend {
     month: string;
@@ -13,19 +14,10 @@
 
   let { monthlyTrend }: Props = $props();
 
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
-
   const labels = $derived(
     monthlyTrend.map((t) => {
       const [y, m] = t.month.split('-');
-      return new Date(Number(y), Number(m) - 1).toLocaleDateString('en-US', {
-        month: 'short',
-      });
+      return formatDateWith(new Date(Number(y), Number(m) - 1), { month: 'short' });
     }),
   );
 

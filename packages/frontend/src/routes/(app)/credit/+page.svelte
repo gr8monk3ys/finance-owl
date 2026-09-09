@@ -2,6 +2,7 @@
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
+  import { formatDate, formatDateWith, formatMonthYearShort } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -200,14 +201,8 @@
     simulationResult = null;
   }
 
-  function formatDate(dateStr: string): string {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
-
   function formatAlertDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
+    return formatDateWith(dateStr, {
       month: 'short',
       day: 'numeric',
       hour: 'numeric',
@@ -218,8 +213,7 @@
   // Chart data
   const historyLabels = $derived(
     (data.history || []).map((h: any) => {
-      const d = new Date(h.reportDate + 'T00:00:00');
-      return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+      return formatMonthYearShort(h.reportDate);
     }),
   );
   const historyData = $derived((data.history || []).map((h: any) => h.score));

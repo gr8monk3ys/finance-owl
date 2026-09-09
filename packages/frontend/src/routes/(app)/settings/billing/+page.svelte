@@ -2,7 +2,7 @@
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Badge } from '$components/ui';
-  import { getAllPlans, type PlanTier } from '@finance-owl/shared';
+  import { getAllPlans, formatCurrency, formatDateLong, type PlanTier } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -60,22 +60,6 @@
   function getPlanId(planName: string): string | undefined {
     const plan = data.plans?.find((p: any) => p.name === planName);
     return plan?.id;
-  }
-
-  function formatDate(dateStr: string | null | undefined): string {
-    if (!dateStr) return '--';
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  }
-
-  function formatCurrency(amount: number, currency: string = 'usd'): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency.toUpperCase(),
-    }).format(amount);
   }
 
   function getStatusColor(status: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' {
@@ -172,9 +156,9 @@
         {#if data.subscription?.currentPeriodEnd}
           <p class="mt-2 text-xs text-surface-400">
             {#if isScheduledForCancel}
-              Cancels on {formatDate(data.subscription.currentPeriodEnd)}
+              Cancels on {formatDateLong(data.subscription.currentPeriodEnd)}
             {:else}
-              Next billing date: {formatDate(data.subscription.currentPeriodEnd)}
+              Next billing date: {formatDateLong(data.subscription.currentPeriodEnd)}
             {/if}
           </p>
         {/if}
@@ -459,13 +443,13 @@
             {#each data.invoices as invoice}
               <tr>
                 <td class="py-3 pr-4 text-surface-300">
-                  {formatDate(invoice.paidAt || invoice.createdAt)}
+                  {formatDateLong(invoice.paidAt || invoice.createdAt)}
                 </td>
                 <td class="px-4 py-3 text-surface-300">
                   {invoice.description || 'Subscription payment'}
                 </td>
                 <td class="px-4 py-3 text-right text-white">
-                  {formatCurrency(invoice.amount, invoice.currency)}
+                  {formatCurrency(invoice.amount, { currency: invoice.currency })}
                 </td>
                 <td class="px-4 py-3 text-center">
                   <Badge variant={getStatusColor(invoice.status)} size="sm">

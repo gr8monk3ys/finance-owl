@@ -2,6 +2,7 @@ import type { Handle } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import * as Sentry from '@sentry/sveltekit';
 import { API_URL } from '$lib/server/api';
+import { setAuthCookies, type AuthTokens } from '$lib/server/auth';
 
 // Initialize Sentry on the server side (optional - only if DSN is provided)
 const sentryDsn = process.env.PUBLIC_SENTRY_DSN;
@@ -65,22 +66,9 @@ export const handle: Handle = async ({ event, resolve }) => {
         const refreshed = await tryRefreshToken(refreshToken);
         if (refreshed) {
           event.locals.user = refreshed.user;
-          event.locals.accessToken = refreshed.accessToken;
+          event.locals.accessToken = refreshed.tokens.accessToken;
 
-          event.cookies.set('access_token', refreshed.accessToken, {
-            path: '/',
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 60 * 15, // 15 minutes
-          });
-          event.cookies.set('refresh_token', refreshed.refreshToken, {
-            path: '/',
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 60 * 60 * 24 * 7, // 7 days
-          });
+          setAuthCookies(event.cookies, refreshed.tokens);
         } else {
           clearAuthCookies(event);
         }
@@ -96,22 +84,9 @@ export const handle: Handle = async ({ event, resolve }) => {
     const refreshed = await tryRefreshToken(refreshToken);
     if (refreshed) {
       event.locals.user = refreshed.user;
-      event.locals.accessToken = refreshed.accessToken;
+      event.locals.accessToken = refreshed.tokens.accessToken;
 
-      event.cookies.set('access_token', refreshed.accessToken, {
-        path: '/',
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 15,
-      });
-      event.cookies.set('refresh_token', refreshed.refreshToken, {
-        path: '/',
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7,
-      });
+      setAuthCookies(event.cookies, refreshed.tokens);
     }
   }
 
@@ -147,10 +122,15 @@ async function tryRefreshToken(refreshToken: string) {
     if (!meRes.ok) return null;
 
     const user = await meRes.json();
+    // The whole token payload is carried through, `expiresIn` included, so the
+    // cookie lifetime follows the API's JWT_ACCESS_EXPIRY instead of a literal.
     return {
       user,
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
+      tokens: {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        expiresIn: tokens.expiresIn,
+      } satisfies AuthTokens,
     };
   } catch {
     return null;

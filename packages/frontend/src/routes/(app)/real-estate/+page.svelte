@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrencyWhole as fmt } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -14,14 +15,6 @@
       showAddModal = false;
     }
   });
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0,
-    }).format(amount);
-  }
 
   function formatPropertyType(type: string): string {
     const labels: Record<string, string> = {

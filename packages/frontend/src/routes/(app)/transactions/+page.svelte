@@ -6,6 +6,7 @@
   import { untrack } from 'svelte';
   import { Card, Button, Modal } from '$components/ui';
   import { getBudgetCategoryTree } from '$lib/utils/budgets';
+  import { formatCurrency } from '@finance-owl/shared';
   import {
     buildTransactionSearchParams,
     formatTransactionDate,
@@ -41,10 +42,7 @@
 
   function formatAmount(amount: number, type: string): string {
     const val = ['credit_card', 'loan', 'mortgage'].includes(type) ? -amount : amount;
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(val);
+    return formatCurrency(val);
   }
 
   // Group transactions by date label

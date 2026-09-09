@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   interface Bill {
     name: string;
@@ -15,13 +16,6 @@
   }
 
   let { bills }: Props = $props();
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   const todayStr = new Date().toISOString().split('T')[0];
 

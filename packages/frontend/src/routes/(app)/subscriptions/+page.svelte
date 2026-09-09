@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal, Badge } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as fmt, formatDate, formatDateWith } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -21,19 +22,6 @@
       editingSubscription = null;
     }
   });
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
-
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return 'Unknown';
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
 
   function daysUntil(dateStr: string): number {
     const target = new Date(dateStr + 'T00:00:00');
@@ -782,7 +770,7 @@
               <div class="flex items-start gap-4">
                 <div class="flex flex-col items-center">
                   <span class="text-xs font-medium uppercase text-surface-500">
-                    {day.date.toLocaleDateString('en-US', { weekday: 'short' })}
+                    {formatDateWith(day.date, { weekday: 'short' })}
                   </span>
                   <span
                     class="text-2xl font-bold {day.isToday ? 'text-emerald-400' : 'text-white'}"
@@ -790,7 +778,7 @@
                     {day.date.getDate()}
                   </span>
                   <span class="text-xs text-surface-500">
-                    {day.date.toLocaleDateString('en-US', { month: 'short' })}
+                    {formatDateWith(day.date, { month: 'short' })}
                   </span>
                 </div>
                 <div class="flex-1 space-y-1.5">

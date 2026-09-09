@@ -3,16 +3,9 @@
   import { goto } from '$app/navigation';
   import { Card, Button } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
-
-  function fmt(amount: number | null | undefined): string {
-    if (amount === null || amount === undefined) return '--';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   function fmtPercent(value: number | null | undefined): string {
     if (value === null || value === undefined) return '--';

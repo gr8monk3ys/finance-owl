@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatDate as fmtDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -15,15 +16,6 @@
       showCreateModal = false;
     }
   });
-
-  function fmtDate(dateStr: string | null): string {
-    if (!dateStr) return 'Never';
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  }
 
   function isExpired(expiresAt: string | null): boolean {
     if (!expiresAt) return false;

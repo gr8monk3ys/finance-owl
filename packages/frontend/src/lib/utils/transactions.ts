@@ -1,3 +1,5 @@
+import { formatDate, formatMonthYear } from '@finance-owl/shared';
+
 export interface TransactionFilters {
   search?: string;
   accountId?: string;
@@ -8,12 +10,7 @@ export interface TransactionFilters {
 }
 
 export function formatTransactionDate(dateStr: string): string {
-  const date = new Date(`${dateStr}T00:00:00`);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  return formatDate(dateStr);
 }
 
 export function getTransactionDateGroupLabel(dateStr: string, now = new Date()): string {
@@ -31,7 +28,7 @@ export function getTransactionDateGroupLabel(dateStr: string, now = new Date()):
     return 'This Month';
   }
 
-  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  return formatMonthYear(date);
 }
 
 export function getMerchantInitials(name: string): string {

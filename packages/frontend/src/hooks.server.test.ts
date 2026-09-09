@@ -139,6 +139,50 @@ describe('server auth hook', () => {
     );
   });
 
+  it('gives the refreshed cookie the lifetime the API reports', async () => {
+    const cookies = createCookies({
+      access_token: 'expired-access-token',
+      refresh_token: 'refresh-token',
+    });
+    const event = createEvent('/dashboard', cookies);
+    const resolve = vi.fn().mockResolvedValue(new Response('ok'));
+    global.fetch = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('unauthorized', { status: 401 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            accessToken: 'new-access-token',
+            refreshToken: 'new-refresh-token',
+            // JWT_ACCESS_EXPIRY=1h on the API.
+            expiresIn: 3600,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ id: '1', email: 'demo@financeowl.com', name: 'Demo User' }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+      ) as typeof fetch;
+
+    await handle({ event: event as never, resolve });
+
+    // The refresh path used to re-hardcode 15 minutes, so a longer server-side
+    // token still evicted the user at the quarter hour.
+    expect(cookies.set).toHaveBeenCalledWith(
+      'access_token',
+      'new-access-token',
+      expect.objectContaining({ maxAge: 3600, httpOnly: true, sameSite: 'lax', path: '/' }),
+    );
+    expect(cookies.set).toHaveBeenCalledWith(
+      'refresh_token',
+      'new-refresh-token',
+      expect.objectContaining({ maxAge: 604800 }),
+    );
+  });
+
   it('clears invalid cookies and redirects when refresh fails', async () => {
     const cookies = createCookies({
       access_token: 'expired-access-token',

@@ -3,6 +3,7 @@
   import { invalidateAll, goto } from '$app/navigation';
   import { Card, Button, Modal, Spinner } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as fmt, formatDate, formatDateLong } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -27,13 +28,6 @@
       providerLookup = form.providerResult;
     }
   });
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   function getFrequencyLabel(frequency: string): string {
     const labels: Record<string, string> = {
@@ -879,11 +873,7 @@
                   {statusLabels[req.status]?.label ?? req.status}
                 </span>
                 <span class="text-xs text-surface-500">
-                  {new Date(req.createdAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
+                  {formatDate(req.createdAt)}
                 </span>
                 {#if req.reason}
                   <span class="text-xs text-surface-500">&middot; {req.reason}</span>
@@ -934,7 +924,7 @@ I am writing to formally request the immediate cancellation of my ${selectedProv
 Account Details:
 - Service: ${selectedProvider.name}
 - Account Email: [YOUR ACCOUNT EMAIL]
-- Date of Request: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+- Date of Request: ${formatDateLong(new Date())}
 
 Please process this cancellation and confirm in writing that:
 1. My subscription has been cancelled

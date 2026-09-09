@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   // Inputs
   let initialDeposit = $state(5000);
@@ -117,10 +118,6 @@
 
   function round(v: number): number {
     return Math.round(v * 100) / 100;
-  }
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
   }
 
   function fmtShort(amount: number): string {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt, formatDateShort } from '@finance-owl/shared';
 
   interface Transaction {
     name: string;
@@ -15,18 +16,6 @@
   }
 
   let { transactions }: Props = $props();
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
-
-  function formatDate(dateStr: string): string {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  }
 
   const recentTx = $derived(transactions.slice(0, 7));
 </script>
@@ -46,7 +35,7 @@
               {tx.merchantName || tx.name}
             </p>
             <p class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-surface-400">
-              {formatDate(tx.date)}
+              {formatDateShort(tx.date)}
               {#if tx.categoryName}
                 <span class="inline-flex items-center gap-1 text-surface-300">
                   <span

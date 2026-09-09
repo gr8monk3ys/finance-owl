@@ -3,6 +3,12 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import {
+    formatCurrency as fmt,
+    formatDate,
+    formatDateLong,
+    formatDateWith,
+  } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -18,13 +24,6 @@
       currentStep = 3;
     }
   });
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   function getFrequencyLabel(frequency: string): string {
     const labels: Record<string, string> = {
@@ -192,10 +191,7 @@
               <div class="mt-2 flex justify-between text-sm">
                 <span class="text-surface-400">Next billing</span>
                 <span class="text-surface-300">
-                  {new Date(data.subscription.nextExpectedDate + 'T00:00:00').toLocaleDateString(
-                    'en-US',
-                    { month: 'short', day: 'numeric', year: 'numeric' },
-                  )}
+                  {formatDate(data.subscription.nextExpectedDate)}
                 </span>
               </div>
             {/if}
@@ -596,7 +592,7 @@
         <div class="mb-4 text-sm">
           <span class="text-surface-400">Requested:</span>
           <span class="ml-1 text-surface-300">
-            {new Date(request.createdAt).toLocaleDateString('en-US', {
+            {formatDateWith(request.createdAt, {
               month: 'long',
               day: 'numeric',
               year: 'numeric',
@@ -725,14 +721,7 @@
                 <p class="mt-1 text-xs text-green-400/80">
                   This subscription has been cancelled and marked as inactive.
                   {#if request.cancellationConfirmedAt}
-                    Confirmed on {new Date(request.cancellationConfirmedAt).toLocaleDateString(
-                      'en-US',
-                      {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                      },
-                    )}.
+                    Confirmed on {formatDateLong(request.cancellationConfirmedAt)}.
                   {/if}
                   You are saving an estimated {fmt(annualSavings)} per year.
                 </p>

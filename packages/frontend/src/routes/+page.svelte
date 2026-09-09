@@ -1,16 +1,12 @@
 <script lang="ts">
   import { publicRoutes } from '$lib/config/public';
-  import { PLANS, type PlanTier } from '@finance-owl/shared';
+  import { PLANS, formatCurrency, type PlanTier } from '@finance-owl/shared';
 
   // The marketing copy here is bespoke, but the prices are not: read them
   // from the same PLANS table billing enforces so this page cannot advertise
   // a number checkout will not honour.
   const planPrice = (tier: PlanTier) =>
-    PLANS[tier].monthlyPrice === 0
-      ? '$0'
-      : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-          PLANS[tier].monthlyPrice,
-        );
+    PLANS[tier].monthlyPrice === 0 ? '$0' : formatCurrency(PLANS[tier].monthlyPrice);
   import { onMount } from 'svelte';
 
   // Intersection observer for scroll animations

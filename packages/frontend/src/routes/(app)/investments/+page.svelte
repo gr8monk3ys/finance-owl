@@ -4,6 +4,7 @@
   import { Card, Button } from '$components/ui';
   import { DonutChart, LineChart } from '$components/charts';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as fmt, formatDateShort } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -24,13 +25,6 @@
 
   function selectPeriod(period: string) {
     goto(`/investments?period=${period}`, { invalidateAll: true });
-  }
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
   }
 
   function fmtPct(pct: number): string {
@@ -66,12 +60,9 @@
   const hasHoldings = $derived(data.summary.holdingCount > 0);
 
   // Performance chart data
-  function formatDate(dateStr: string): string {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  }
-
-  const perfChartLabels = $derived(data.performance.periodData.map((p: any) => formatDate(p.date)));
+  const perfChartLabels = $derived(
+    data.performance.periodData.map((p: any) => formatDateShort(p.date)),
+  );
   const perfChartData = $derived(data.performance.periodData.map((p: any) => p.value));
   const hasPerfData = $derived(data.performance.periodData.length > 1);
 

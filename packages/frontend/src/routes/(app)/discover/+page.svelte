@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as fmt, formatDate as fmtDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -22,23 +23,6 @@
       generateLoading = false;
     }
   });
-
-  function fmt(amount: number | null | undefined): string {
-    if (amount === null || amount === undefined) return 'Unknown';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
-
-  function fmtDate(date: string | null): string {
-    if (!date) return '--';
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  }
 
   function propertyTypeLabel(type: string): string {
     const labels: Record<string, string> = {

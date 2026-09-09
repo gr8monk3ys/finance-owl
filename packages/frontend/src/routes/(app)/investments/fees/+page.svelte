@@ -2,17 +2,11 @@
   import { Card } from '$components/ui';
   import { BarChart } from '$components/charts';
   import type { PageData } from './$types';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   let { data } = $props<{ data: PageData }>();
 
   // ---------- Formatters ----------
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   function fmtPct(ratio: number): string {
     return `${(ratio * 100).toFixed(2)}%`;

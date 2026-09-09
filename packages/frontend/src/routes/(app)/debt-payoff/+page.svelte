@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as fmt, formatDate as fmtDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -58,24 +59,8 @@
     { value: 'other', label: 'Other' },
   ];
 
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
-
   function fmtPct(rate: number): string {
     return rate.toFixed(2) + '%';
-  }
-
-  function fmtDate(dateStr: string): string {
-    if (!dateStr) return '--';
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
   }
 
   function getDebtTypeLabel(type: string): string {

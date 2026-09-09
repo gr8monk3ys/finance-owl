@@ -2,6 +2,7 @@
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as formatAmount, formatDate } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -64,28 +65,6 @@
   function openLinkTx() {
     linkTxId = '';
     showLinkTx = true;
-  }
-
-  function formatDate(dateStr: string): string {
-    if (!dateStr) return 'Unknown';
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      });
-    } catch {
-      return dateStr;
-    }
-  }
-
-  function formatAmount(amount: number | null): string {
-    if (amount === null || amount === undefined) return '--';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
   }
 
   function handleDragOver(e: DragEvent) {

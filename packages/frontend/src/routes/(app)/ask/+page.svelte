@@ -2,6 +2,7 @@
   import { Card, Button, Spinner } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency, formatDate } from '@finance-owl/shared';
 
   interface ChatMessage {
     role: 'user' | 'assistant';
@@ -69,22 +70,6 @@
 
   function useSuggestion(q: string) {
     question = q;
-  }
-
-  function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
-
-  function formatDate(dateStr: string): string {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
   }
 
   function formatTimeAgo(dateStr: string): string {

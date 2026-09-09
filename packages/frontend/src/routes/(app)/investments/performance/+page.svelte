@@ -3,17 +3,11 @@
   import { Card, Button } from '$components/ui';
   import { LineChart } from '$components/charts';
   import type { PageData } from './$types';
+  import { formatCurrency as fmt, formatDateShort } from '@finance-owl/shared';
 
   let { data } = $props<{ data: PageData }>();
 
   const periods = ['1M', '3M', '6M', '1Y', 'YTD', 'ALL'] as const;
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   function fmtPct(pct: number): string {
     const sign = pct >= 0 ? '+' : '';
@@ -30,12 +24,9 @@
     goto(`/investments/performance?period=${period}`, { invalidateAll: true });
   }
 
-  function formatDate(dateStr: string): string {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  }
-
-  const chartLabels = $derived(data.performance.periodData.map((p: any) => formatDate(p.date)));
+  const chartLabels = $derived(
+    data.performance.periodData.map((p: any) => formatDateShort(p.date)),
+  );
   const chartData = $derived(data.performance.periodData.map((p: any) => p.value));
   const hasData = $derived(data.performance.periodData.length > 1);
 

@@ -2,6 +2,7 @@
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
   import { Button, Card } from '$components/ui';
+  import { formatDateWith } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -58,8 +59,7 @@
   }
 
   function formatDate(dateStr: string | null): string {
-    if (!dateStr) return 'N/A';
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    return formatDateWith(dateStr, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

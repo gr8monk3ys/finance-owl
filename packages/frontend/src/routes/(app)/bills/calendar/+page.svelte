@@ -3,6 +3,7 @@
   import { goto, invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as fmt, formatDateWith, formatMonthYear } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -20,12 +21,7 @@
   const year = $derived(data.year);
   const month = $derived(data.month);
 
-  const monthLabel = $derived(
-    new Date(year, month - 1, 1).toLocaleDateString('en-US', {
-      month: 'long',
-      year: 'numeric',
-    }),
-  );
+  const monthLabel = $derived(formatMonthYear(new Date(year, month - 1, 1)));
 
   function prevMonth() {
     let newMonth = month - 1;
@@ -174,16 +170,8 @@
     showDayDetail = true;
   }
 
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
-
   function formatFullDate(dateStr: string): string {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('en-US', {
+    return formatDateWith(dateStr, {
       weekday: 'long',
       month: 'long',
       day: 'numeric',

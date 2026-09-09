@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Modal } from '$components/ui';
+  import { formatDate } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -50,14 +51,6 @@
     if (impact > 0) return 'text-green-400';
     if (impact < 0) return 'text-red-400';
     return 'text-surface-400';
-  }
-
-  function formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
   }
 
   function getScenarioLabel(type: string): string {

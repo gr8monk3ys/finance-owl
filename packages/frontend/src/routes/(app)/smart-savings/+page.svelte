@@ -4,19 +4,13 @@
   import { Card, Button, Modal } from '$components/ui';
   import { LineChart, BarChart } from '$components/charts';
   import type { PageData } from './$types';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   let { data } = $props<{ data: PageData }>();
 
   let showCreateModal = $state(false);
   let selectedRuleType = $state<string>('round_up');
   let analyzing = $state(false);
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   function fmtPct(value: number): string {
     return `${value.toFixed(1)}%`;

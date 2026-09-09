@@ -3,6 +3,7 @@
   import { Card, Button } from '$components/ui';
   import { BarChart, DonutChart, LineChart } from '$components/charts';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -60,13 +61,6 @@
         break;
       }
     }
-  }
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
   }
 
   // Spending chart data

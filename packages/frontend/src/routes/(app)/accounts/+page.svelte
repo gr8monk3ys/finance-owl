@@ -4,6 +4,7 @@
   import { Card, Button, Modal } from '$components/ui';
   import PlaidLink from '$lib/components/plaid/PlaidLink.svelte';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -106,10 +107,7 @@
   function formatBalance(balance: number | null, type: string): string {
     if (balance === null) return '--';
     const val = ['credit_card', 'loan', 'mortgage'].includes(type) ? -balance : balance;
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(val);
+    return formatCurrency(val);
   }
 
   function formatType(type: string): string {

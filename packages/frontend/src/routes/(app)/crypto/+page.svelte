@@ -2,6 +2,7 @@
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
+  import { formatDate, formatDateShort, formatMonthYearShort } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -152,11 +153,6 @@
     return value.toLocaleString('en-US', { maximumFractionDigits: 8 });
   }
 
-  function formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
-
   function formatTimestamp(dateStr: string | null | undefined): string {
     if (!dateStr) return 'Never';
     const date = new Date(dateStr);
@@ -214,11 +210,8 @@
   const priceChartLabels = $derived(
     chartData.map((p: [number, number]) => {
       const d = new Date(p[0]);
-      if (chartPeriod <= 7)
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      if (chartPeriod <= 90)
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+      if (chartPeriod <= 90) return formatDateShort(d);
+      return formatMonthYearShort(d);
     }),
   );
   const priceChartData = $derived(chartData.map((p: [number, number]) => p[1]));

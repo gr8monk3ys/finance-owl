@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as fmt, formatDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -37,13 +38,6 @@
   );
 
   // --- Helpers ---
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
-
   function statusBadge(status: string): string {
     switch (status) {
       case 'pending':
@@ -104,15 +98,6 @@
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     return Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-  }
-
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-';
-    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
   }
 
   function openStartModal(bill: any): void {
