@@ -70,9 +70,15 @@ describe('CryptoService', () => {
       const plaintext = 'sensitive data';
       const encrypted = cryptoService.encrypt(plaintext);
 
-      // Tamper with the ciphertext by changing a character
-      const tampered = encrypted.slice(0, -1) + 'X';
+      // Tamper with the ciphertext by changing its last character. Pick a
+      // replacement that differs from the original: hardcoding 'X' left the
+      // string untouched whenever the ciphertext already ended in 'X', which
+      // is 1 base64 character in 64 — a ~1.6% flake, since an untampered
+      // value decrypts fine and the assertion then fails.
+      const last = encrypted.at(-1);
+      const tampered = encrypted.slice(0, -1) + (last === 'X' ? 'Y' : 'X');
 
+      expect(tampered).not.toBe(encrypted);
       expect(() => cryptoService.decrypt(tampered)).toThrow();
     });
   });

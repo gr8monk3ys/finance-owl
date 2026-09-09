@@ -14,8 +14,6 @@ concurrency:
 
 env:
   BUN_VERSION: "1.4.2"
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
 jobs:
   # ──────────────────────────────────────────────
@@ -321,9 +319,17 @@ jobs:
           key: node-modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       # Bun has no `--filter ... exec`, so run the binary from the package.
+      # `--with-deps` shells out to apt-get, and the runner image ships
+      # Google's Chrome repo, which has been serving a Packages.gz whose hash
+      # does not match its Release file ("E: Failed to fetch ... Hash Sum
+      # mismatch") and takes the whole apt run down with it. Playwright
+      # downloads its own chromium build and only needs Ubuntu's own libs, so
+      # drop that list first.
       - name: Install Playwright browsers
         working-directory: packages/frontend
-        run: bun x playwright install --with-deps chromium
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          bun x playwright install --with-deps chromium
 
       - name: Build all packages
         run: bun run build --filter='!@finance-owl/mobile'

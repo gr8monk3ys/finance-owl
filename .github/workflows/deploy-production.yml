@@ -14,8 +14,6 @@ env:
   BUN_VERSION: "1.4.2"
   REGISTRY: ghcr.io
   IMAGE_PREFIX: ${{ github.repository }}
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
 jobs:
   # ──────────────────────────────────────────────
