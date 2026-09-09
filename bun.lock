@@ -47,7 +47,7 @@
         "passport": "^0.7.0",
         "passport-jwt": "^4.0.1",
         "pg": "^8.23.0",
-        "plaid": "^45.0.0",
+        "plaid": "^47.0.0",
         "reflect-metadata": "^0.2.2",
         "rxjs": "^7.8.2",
         "stripe": "^20.4.1",
@@ -2375,7 +2375,7 @@
 
     "pkg-up": ["pkg-up@3.1.0", "", { "dependencies": { "find-up": "^3.0.0" } }, "sha512-nDywThFk1i4BQK4twPQ6TA4RT8bDY96yeuCVBWL3ePARCiEKDRSrNGbFIgUJpLp+XeIR65v8ra7WuJOFUBtkMA=="],
 
-    "plaid": ["plaid@45.0.0", "", { "dependencies": { "axios": "^1.7.4" } }, "sha512-JuK7VKPEdH4muxic35ZyzjFA3Xc+DURkIE/O5A1QQGZfBzOgsQgYBovgGzd/+Z5Jl5dBTV43S9HQX3GSorymUw=="],
+    "plaid": ["plaid@47.0.0", "", { "dependencies": { "axios": "^1.7.4" } }, "sha512-oRybIQOIPeGGjdQ2BW0NLKaOAkR+xtnO9lWtoeNUyXe3IKTd2SoUbi/gBHFjqDGyeh09x4oxEkkYjclZISQXAg=="],
 
     "playwright": ["playwright@1.63.0", "", { "dependencies": { "playwright-core": "1.63.0" }, "bin": { "playwright": "cli.js" } }, "sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg=="],
 
