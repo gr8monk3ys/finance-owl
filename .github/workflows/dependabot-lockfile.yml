@@ -32,6 +32,8 @@ jobs:
     if: github.actor == 'dependabot[bot]'
     permissions:
       contents: write
+      # Needed for the close/reopen below, not for the push.
+      pull-requests: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
@@ -51,9 +53,11 @@ jobs:
         run: bun install
 
       - name: Commit it if it moved
+        id: sync
         run: |
           if git diff --quiet -- bun.lock; then
             echo "bun.lock already matches package.json; nothing to do."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
@@ -61,3 +65,17 @@ jobs:
           git add bun.lock
           git commit -m "chore(deps): sync bun.lock with package.json"
           git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # A push authenticated with GITHUB_TOKEN deliberately does not trigger
+      # further workflow runs, so the commit above lands and CI never re-runs
+      # — the PR is left reporting "no checks reported". Closing and
+      # reopening emits `pull_request: reopened`, which does trigger them.
+      - name: Re-run the checks against the synced lockfile
+        if: steps.sync.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr close "$PR"
+          gh pr reopen "$PR"
