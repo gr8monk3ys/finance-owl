@@ -9,7 +9,15 @@ import {
   billingCustomers,
   invoices,
   usageTracking,
+  stripeEvents,
 } from './billing.schema';
+import { STRIPE_CLIENT } from './stripe.provider';
+import {
+  StripePriceCatalog,
+  UnknownStripePriceError,
+  type BillingInterval,
+  type PaidPlanTier,
+} from './stripe-prices';
 import * as usersSchema from '../../database/schema/users';
 import {
   type PlanTier,
@@ -25,6 +33,43 @@ import {
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
+
+function isEpochSeconds(value: number | null | undefined): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+/** The only subscription statuses we ever persist. */
+export type SubscriptionStatus = 'active' | 'trialing' | 'past_due' | 'canceled';
+
+/**
+ * Every Stripe subscription status, mapped to the internal status exactly once.
+ *
+ * Typed against `Stripe.Subscription.Status` so a new status introduced by a
+ * Stripe API upgrade is a compile error here instead of a silent fallback.
+ */
+const SUBSCRIPTION_STATUS_MAP: Record<Stripe.Subscription.Status, SubscriptionStatus> = {
+  active: 'active',
+  trialing: 'trialing',
+  past_due: 'past_due',
+  unpaid: 'past_due',
+  incomplete: 'past_due',
+  incomplete_expired: 'canceled',
+  canceled: 'canceled',
+  paused: 'canceled',
+};
+
+/**
+ * Everything we persist about a Stripe subscription, derived in one place so
+ * the checkout and subscription-updated paths cannot disagree.
+ */
+export interface SubscriptionState {
+  plan: PaidPlanTier;
+  status: SubscriptionStatus;
+  stripePriceId: string;
+  currentPeriodStart: string | null;
+  currentPeriodEnd: string | null;
+  cancelAtPeriodEnd: 0 | 1;
+}
 
 export interface SubscriptionInfo {
   planName: PlanTier;
@@ -45,17 +90,14 @@ export interface SubscriptionInfo {
 @Injectable()
 export class BillingService {
   private readonly logger = new Logger(BillingService.name);
-  private stripe: Stripe;
+  private readonly priceCatalog: StripePriceCatalog;
 
   constructor(
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
     private configService: ConfigService,
+    @Inject(STRIPE_CLIENT) private readonly stripe: Stripe,
   ) {
-    const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
-    if (!secretKey) {
-      this.logger.warn('STRIPE_SECRET_KEY is not configured. Billing features will not work.');
-    }
-    this.stripe = new Stripe(secretKey || 'sk_not_configured');
+    this.priceCatalog = new StripePriceCatalog((envVar) => this.configService.get<string>(envVar));
   }
 
   // -------------------------------------------------------------------------
@@ -240,7 +282,7 @@ export class BillingService {
       throw new BadRequestException('Cannot checkout for the free plan');
     }
 
-    const priceId = this.getStripePriceId(plan.name, interval);
+    const priceId = this.getStripePriceId(plan.name as PlanTier, interval);
     if (!priceId) {
       throw new BadRequestException('Stripe price not configured for this plan and interval');
     }
@@ -285,7 +327,13 @@ export class BillingService {
 
   /**
    * Process an incoming Stripe webhook event.
-   * Verifies the signature, then dispatches to the appropriate handler.
+   * Verifies the signature, then dispatches to the appropriate handler exactly once.
+   *
+   * Handlers write to several tables without a surrounding transaction, and a
+   * handler that throws answers 500 so Stripe redelivers the event. Claiming
+   * the event ID before dispatch means a redelivery of an event we already
+   * finished is a no-op; the claim is released when a handler throws so the
+   * retry can still make progress.
    */
   async handleWebhook(body: Buffer, signature: string): Promise<{ received: true }> {
     const webhookSecret = this.configService.getOrThrow<string>('STRIPE_WEBHOOK_SECRET');
@@ -298,8 +346,58 @@ export class BillingService {
       throw new BadRequestException('Invalid webhook signature');
     }
 
-    this.logger.log(`Processing Stripe webhook: ${event.type}`);
+    if (!event.id) {
+      throw new BadRequestException('Stripe webhook event is missing an id');
+    }
 
+    const claimed = await this.claimWebhookEvent(event);
+    if (!claimed) {
+      this.logger.log(`Ignoring already-processed Stripe webhook ${event.id} (${event.type})`);
+      return { received: true };
+    }
+
+    this.logger.log(`Processing Stripe webhook ${event.id} (${event.type})`);
+
+    try {
+      await this.dispatchWebhookEvent(event);
+    } catch (err) {
+      await this.releaseWebhookEvent(event.id);
+      throw err;
+    }
+
+    return { received: true };
+  }
+
+  /**
+   * Record the event ID so a redelivery is skipped. Returns false when the
+   * event was already claimed by an earlier (or concurrent) delivery.
+   */
+  private async claimWebhookEvent(event: Stripe.Event): Promise<boolean> {
+    const claimed = await this.db
+      .insert(stripeEvents)
+      .values({ id: event.id, type: event.type })
+      .onConflictDoNothing()
+      .returning({ id: stripeEvents.id });
+
+    return claimed.length > 0;
+  }
+
+  /**
+   * Drop the claim so Stripe's retry re-runs the handler. Never throws: the
+   * original handler failure is what the caller must see.
+   */
+  private async releaseWebhookEvent(eventId: string): Promise<void> {
+    try {
+      await this.db.delete(stripeEvents).where(eq(stripeEvents.id, eventId));
+    } catch (err) {
+      this.logger.error(
+        `Failed to release the claim on Stripe webhook ${eventId}; its retry will be skipped`,
+        err,
+      );
+    }
+  }
+
+  private async dispatchWebhookEvent(event: Stripe.Event): Promise<void> {
     switch (event.type) {
       case 'checkout.session.completed':
         await this.handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
@@ -322,8 +420,6 @@ export class BillingService {
       default:
         this.logger.log(`Unhandled event type: ${event.type}`);
     }
-
-    return { received: true };
   }
 
   // -------------------------------------------------------------------------
@@ -703,18 +799,8 @@ export class BillingService {
     }));
   }
 
-  private getStripePriceId(planName: string, interval: 'month' | 'year'): string | undefined {
-    const envMap: Record<string, string> = {
-      pro_month: 'STRIPE_PRICE_PRO_MONTHLY',
-      pro_year: 'STRIPE_PRICE_PRO_YEARLY',
-      premium_month: 'STRIPE_PRICE_PREMIUM_MONTHLY',
-      premium_year: 'STRIPE_PRICE_PREMIUM_YEARLY',
-    };
-
-    const envKey = envMap[`${planName}_${interval}`];
-    if (!envKey) return undefined;
-
-    return this.configService.get<string>(envKey);
+  private getStripePriceId(planName: PlanTier, interval: BillingInterval): string | undefined {
+    return this.priceCatalog.priceIdFor(planName, interval);
   }
 
   private async getOrCreateStripeCustomer(userId: string): Promise<string> {
@@ -767,34 +853,65 @@ export class BillingService {
   }
 
   /**
-   * Extract period dates from a Stripe subscription.
+   * Extract the *current* billing period from a Stripe subscription.
+   *
+   * Since the 2025 Stripe API the period lives on the subscription items, not
+   * on the subscription; reading `start_date`/`cancel_at` instead left
+   * `currentPeriodEnd` null for every normally-renewing subscription. When a
+   * subscription has several items the earliest boundary is the one the
+   * customer sees as their renewal date.
    */
   private getSubscriptionPeriodDates(sub: Stripe.Subscription): {
-    periodStart: string;
+    periodStart: string | null;
     periodEnd: string | null;
   } {
-    const periodStart = new Date(sub.start_date * 1000).toISOString();
-    const periodEnd = sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null;
+    const items = sub.items?.data ?? [];
+    const starts = items.map((item) => item.current_period_start).filter(isEpochSeconds);
+    const ends = items.map((item) => item.current_period_end).filter(isEpochSeconds);
 
-    return { periodStart, periodEnd };
+    const startEpoch = starts.length > 0 ? Math.min(...starts) : (sub.start_date ?? null);
+    const endEpoch = ends.length > 0 ? Math.min(...ends) : null;
+
+    return {
+      periodStart: startEpoch !== null ? new Date(startEpoch * 1000).toISOString() : null,
+      periodEnd: endEpoch !== null ? new Date(endEpoch * 1000).toISOString() : null,
+    };
   }
 
   /**
-   * Resolve plan name from a Stripe subscription's price ID.
+   * Derive everything we persist about a Stripe subscription.
+   *
+   * This is the only place a Stripe status becomes an internal status and the
+   * only place a Stripe price becomes a plan, so the checkout and
+   * subscription-updated paths cannot disagree. An unknown status or an
+   * unmappable price throws: the webhook returns 500, Stripe retries, and we
+   * find out — far better than storing a wrong plan or a wrong entitlement.
    */
-  private resolvePlanNameFromPrice(priceId: string): PlanTier {
-    const proMonthly = this.configService.get<string>('STRIPE_PRICE_PRO_MONTHLY');
-    const proYearly = this.configService.get<string>('STRIPE_PRICE_PRO_YEARLY');
-    const premiumMonthly = this.configService.get<string>('STRIPE_PRICE_PREMIUM_MONTHLY');
-    const premiumYearly = this.configService.get<string>('STRIPE_PRICE_PREMIUM_YEARLY');
+  private subscriptionStateFrom(sub: Stripe.Subscription): SubscriptionState {
+    const status = SUBSCRIPTION_STATUS_MAP[sub.status];
+    if (!status) {
+      throw new Error(
+        `Unknown Stripe subscription status "${sub.status}" on subscription ${sub.id}. ` +
+          'Refusing to guess an entitlement.',
+      );
+    }
 
-    if (priceId === proMonthly || priceId === proYearly) {
-      return 'pro';
+    const priceId = sub.items?.data?.[0]?.price?.id ?? null;
+    const plan = priceId ? this.priceCatalog.planForPriceId(priceId) : undefined;
+    if (!priceId || !plan) {
+      throw new UnknownStripePriceError(priceId, this.priceCatalog.configuredEnvVars());
     }
-    if (priceId === premiumMonthly || priceId === premiumYearly) {
-      return 'premium';
-    }
-    return 'free';
+
+    const { periodStart, periodEnd } = this.getSubscriptionPeriodDates(sub);
+
+    return {
+      plan,
+      status,
+      stripePriceId: priceId,
+      currentPeriodStart: periodStart,
+      currentPeriodEnd: periodEnd,
+      cancelAtPeriodEnd: sub.cancel_at_period_end ? 1 : 0,
+    };
   }
 
   // -------------------------------------------------------------------------
@@ -813,12 +930,8 @@ export class BillingService {
     const stripeCustomerId = session.customer as string;
 
     const stripeSubscription = await this.stripe.subscriptions.retrieve(stripeSubscriptionId);
-
-    const { periodStart, periodEnd } = this.getSubscriptionPeriodDates(stripeSubscription);
-
-    const stripePriceId = stripeSubscription.items?.data?.[0]?.price?.id ?? null;
-
-    const planName = stripePriceId ? this.resolvePlanNameFromPrice(stripePriceId) : 'pro';
+    const state = this.subscriptionStateFrom(stripeSubscription);
+    const planName = state.plan;
 
     // Resolve plan ID from database
     const plans = await this.getPlans();
@@ -851,11 +964,11 @@ export class BillingService {
       plan: planName,
       stripeCustomerId,
       stripeSubscriptionId,
-      stripePriceId,
-      status: stripeSubscription.status === 'active' ? 'active' : 'trialing',
-      currentPeriodStart: periodStart,
-      currentPeriodEnd: periodEnd,
-      cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end ? 1 : 0,
+      stripePriceId: state.stripePriceId,
+      status: state.status,
+      currentPeriodStart: state.currentPeriodStart,
+      currentPeriodEnd: state.currentPeriodEnd,
+      cancelAtPeriodEnd: state.cancelAtPeriodEnd,
     };
 
     if (existing) {
@@ -882,47 +995,23 @@ export class BillingService {
       return;
     }
 
-    const statusMap: Record<string, string> = {
-      active: 'active',
-      past_due: 'past_due',
-      canceled: 'canceled',
-      trialing: 'trialing',
-      unpaid: 'past_due',
-      incomplete: 'past_due',
-      incomplete_expired: 'canceled',
-      paused: 'canceled',
-    };
-
-    const { periodStart, periodEnd } = this.getSubscriptionPeriodDates(subscription);
-
-    const currentPriceId = subscription.items?.data?.[0]?.price?.id ?? null;
-    let planUpdate: PlanTier | undefined;
-    if (currentPriceId) {
-      planUpdate = this.resolvePlanNameFromPrice(currentPriceId);
-    }
-
-    const updateData: Record<string, unknown> = {
-      status: statusMap[subscription.status] || 'active',
-      currentPeriodStart: periodStart,
-      currentPeriodEnd: periodEnd,
-      cancelAtPeriodEnd: subscription.cancel_at_period_end ? 1 : 0,
-      updatedAt: new Date(),
-    };
-
-    if (currentPriceId) {
-      updateData.stripePriceId = currentPriceId;
-    }
-    if (planUpdate) {
-      updateData.plan = planUpdate;
-    }
+    const state = this.subscriptionStateFrom(subscription);
 
     await this.db
       .update(userSubscriptions)
-      .set(updateData)
+      .set({
+        plan: state.plan,
+        status: state.status,
+        stripePriceId: state.stripePriceId,
+        currentPeriodStart: state.currentPeriodStart,
+        currentPeriodEnd: state.currentPeriodEnd,
+        cancelAtPeriodEnd: state.cancelAtPeriodEnd,
+        updatedAt: new Date(),
+      })
       .where(eq(userSubscriptions.id, existing.id));
 
     this.logger.log(
-      `Subscription updated for user ${existing.userId}: ${subscription.status}${planUpdate ? `, plan: ${planUpdate}` : ''}`,
+      `Subscription updated for user ${existing.userId}: ${subscription.status} -> ${state.status}, plan: ${state.plan}`,
     );
   }
 

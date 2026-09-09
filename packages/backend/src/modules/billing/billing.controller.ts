@@ -135,32 +135,17 @@ export class BillingController {
   // Webhook (raw body required for Stripe signature verification)
   // -------------------------------------------------------------------------
 
+  /**
+   * The one Stripe webhook endpoint. There used to be a second route
+   * (POST /webhooks/stripe) bound to this same handler: with both registered in
+   * the Stripe dashboard every event was delivered — and processed — twice.
+   */
   @ApiExcludeEndpoint()
   @Public()
   @Throttle({ default: { ttl: 60000, limit: 30 } })
   @Post('billing/webhook')
   @HttpCode(HttpStatus.OK)
   async handleWebhook(
-    @Req() req: RawBodyRequest<Request>,
-    @Headers('stripe-signature') signature: string,
-  ) {
-    const rawBody = req.rawBody;
-    if (!rawBody) {
-      throw new Error('Missing raw body for Stripe webhook verification');
-    }
-    return this.billingService.handleWebhook(rawBody, signature);
-  }
-
-  /**
-   * Legacy webhook endpoint for backward compatibility.
-   * New integrations should use POST /billing/webhook.
-   */
-  @ApiExcludeEndpoint()
-  @Public()
-  @Throttle({ default: { ttl: 60000, limit: 30 } })
-  @Post('webhooks/stripe')
-  @HttpCode(HttpStatus.OK)
-  async handleWebhookLegacy(
     @Req() req: RawBodyRequest<Request>,
     @Headers('stripe-signature') signature: string,
   ) {

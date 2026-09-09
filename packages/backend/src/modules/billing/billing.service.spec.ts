@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import type Stripe from 'stripe';
 import { BillingService } from './billing.service';
+import { validate } from '../../config/env.validation';
 import {
   PLAN_FEATURES,
   FEATURE_PLAN_MAP,
@@ -12,34 +14,35 @@ import {
   getPlanLimits,
 } from '@finance-owl/shared';
 
-// Mock Stripe at module level
-vi.mock('stripe', () => {
+/**
+ * The Stripe client is injected, so the fake is handed to the constructor and
+ * every assertion goes through the public interface — no reaching into
+ * `(service as any).stripe`.
+ */
+function createStripeFake() {
   return {
-    // vitest 4: constructor mocks need a regular function implementation
-    default: vi.fn(function StripeMock() {
-      return {
-        checkout: {
-          sessions: { create: vi.fn() },
-        },
-        billingPortal: {
-          sessions: { create: vi.fn() },
-        },
-        customers: {
-          create: vi.fn(),
-          update: vi.fn(),
-        },
-        subscriptions: {
-          retrieve: vi.fn(),
-          update: vi.fn(),
-          cancel: vi.fn(),
-        },
-        webhooks: {
-          constructEvent: vi.fn(),
-        },
-      };
-    }),
+    checkout: {
+      sessions: { create: vi.fn() },
+    },
+    billingPortal: {
+      sessions: { create: vi.fn() },
+    },
+    customers: {
+      create: vi.fn(),
+      update: vi.fn(),
+    },
+    subscriptions: {
+      retrieve: vi.fn(),
+      update: vi.fn(),
+      cancel: vi.fn(),
+    },
+    webhooks: {
+      constructEvent: vi.fn(),
+    },
   };
-});
+}
+
+type StripeFake = ReturnType<typeof createStripeFake>;
 
 function mockQuery(data: any) {
   const chain: any = {};
@@ -56,6 +59,8 @@ function mockQuery(data: any) {
     'values',
     'returning',
     'groupBy',
+    'onConflictDoNothing',
+    'onConflictDoUpdate',
   ];
   for (const m of methods) {
     chain[m] = vi.fn().mockReturnValue(chain);
@@ -64,8 +69,47 @@ function mockQuery(data: any) {
   return chain;
 }
 
+/** The row handed to `.values(...)` on the n-th `db.insert(...)` of a test. */
+function insertedRow(insertMock: any, callIndex = 0) {
+  return insertMock.mock.results[callIndex].value.values.mock.calls[0][0];
+}
+
+/** The patch handed to `.set(...)` on the n-th `db.update(...)` of a test. */
+function updatedRow(updateMock: any, callIndex = 0) {
+  return updateMock.mock.results[callIndex].value.set.mock.calls[0][0];
+}
+
+const PERIOD_START = 1767225600; // 2026-01-01T00:00:00Z
+const PERIOD_END = 1769904000; // 2026-02-01T00:00:00Z
+
+/**
+ * A Stripe subscription as the 2025+ API returns it: the current period lives
+ * on the items, not on the subscription.
+ */
+function stripeSubscription(overrides: Record<string, any> = {}) {
+  return {
+    id: 'sub_123',
+    status: 'active',
+    start_date: 1735689600, // 2025-01-01, deliberately *not* the current period
+    cancel_at: null,
+    cancel_at_period_end: false,
+    items: {
+      data: [
+        {
+          id: 'si_1',
+          current_period_start: PERIOD_START,
+          current_period_end: PERIOD_END,
+          price: { id: 'price_pro_monthly' },
+        },
+      ],
+    },
+    ...overrides,
+  };
+}
+
 describe('BillingService', () => {
   let service: BillingService;
+  let stripe: StripeFake;
   let mockDb: any;
   let mockConfigService: any;
 
@@ -98,6 +142,16 @@ describe('BillingService', () => {
     isActive: 1,
   };
 
+  /** Queue the `stripe_events` claim insert that opens every webhook dispatch. */
+  function claimSucceeds(eventId = 'evt_1') {
+    mockDb.insert.mockReturnValueOnce(mockQuery([{ id: eventId }]));
+  }
+
+  /** Queue a claim that loses to an earlier delivery of the same event. */
+  function claimConflicts() {
+    mockDb.insert.mockReturnValueOnce(mockQuery([]));
+  }
+
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -105,7 +159,7 @@ describe('BillingService', () => {
       select: vi.fn(),
       insert: vi.fn(),
       update: vi.fn(),
-      delete: vi.fn(),
+      delete: vi.fn().mockReturnValue(mockQuery(undefined)),
     };
 
     mockConfigService = {
@@ -126,7 +180,8 @@ describe('BillingService', () => {
       }),
     };
 
-    service = new BillingService(mockDb, mockConfigService);
+    stripe = createStripeFake();
+    service = new BillingService(mockDb, mockConfigService, stripe as unknown as Stripe);
   });
 
   // ---------------------------------------------------------------------------
@@ -402,7 +457,6 @@ describe('BillingService', () => {
     it('should create a new Stripe customer when none exists', async () => {
       mockDb.select.mockReturnValueOnce(mockQuery([]));
 
-      const stripe = (service as any).stripe;
       stripe.customers.create.mockResolvedValue({ id: 'cus_new_123' });
       mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
 
@@ -413,6 +467,10 @@ describe('BillingService', () => {
         email: 'test@example.com',
         name: 'Test User',
         metadata: { userId: mockUserId },
+      });
+      expect(insertedRow(mockDb.insert)).toEqual({
+        userId: mockUserId,
+        stripeCustomerId: 'cus_new_123',
       });
     });
   });
@@ -436,6 +494,41 @@ describe('BillingService', () => {
         service.createCheckoutSessionByPlan(mockUserId, 'plan-free', 'month'),
       ).rejects.toThrow(BadRequestException);
     });
+
+    it('should resolve the configured price ID for the plan and interval', async () => {
+      mockDb.select.mockReturnValueOnce(mockQuery([premiumPlan]));
+      mockDb.select.mockReturnValueOnce(
+        mockQuery([{ userId: mockUserId, stripeCustomerId: 'cus_123' }]),
+      );
+      stripe.checkout.sessions.create.mockResolvedValue({
+        id: 'cs_123',
+        url: 'https://checkout.stripe.com/c/pay/cs_123',
+      });
+
+      const result = await service.createCheckoutSessionByPlan(mockUserId, 'plan-premium', 'year');
+
+      expect(result.sessionId).toBe('cs_123');
+      expect(stripe.checkout.sessions.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          customer: 'cus_123',
+          line_items: [{ price: 'price_premium_yearly', quantity: 1 }],
+        }),
+      );
+    });
+
+    it('should refuse checkout when the price for that interval is not configured', async () => {
+      mockConfigService.get.mockImplementation((key: string, defaultValue?: string) =>
+        key === 'STRIPE_PRICE_PREMIUM_YEARLY' ? undefined : defaultValue,
+      );
+      service = new BillingService(mockDb, mockConfigService, stripe as unknown as Stripe);
+
+      mockDb.select.mockReturnValueOnce(mockQuery([premiumPlan]));
+
+      await expect(
+        service.createCheckoutSessionByPlan(mockUserId, 'plan-premium', 'year'),
+      ).rejects.toThrow(BadRequestException);
+      expect(stripe.checkout.sessions.create).not.toHaveBeenCalled();
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -454,7 +547,6 @@ describe('BillingService', () => {
         mockQuery([{ userId: mockUserId, stripeCustomerId: 'cus_123' }]),
       );
 
-      const stripe = (service as any).stripe;
       stripe.billingPortal.sessions.create.mockResolvedValue({
         url: 'https://billing.stripe.com/session/xxx',
       });
@@ -498,7 +590,6 @@ describe('BillingService', () => {
 
       mockDb.select.mockReturnValueOnce(mockQuery([subscription]));
 
-      const stripe = (service as any).stripe;
       stripe.subscriptions.update.mockResolvedValue({
         cancel_at: Math.floor(Date.now() / 1000) + 86400 * 30,
         cancel_at_period_end: true,
@@ -513,6 +604,25 @@ describe('BillingService', () => {
       expect(stripe.subscriptions.update).toHaveBeenCalledWith('sub_123', {
         cancel_at_period_end: true,
       });
+      expect(updatedRow(mockDb.update)).toMatchObject({ cancelAtPeriodEnd: 1 });
+    });
+
+    it('should fall back to the stored period end when Stripe returns no cancel_at', async () => {
+      const subscription = {
+        id: 'sub-1',
+        userId: mockUserId,
+        stripeSubscriptionId: 'sub_123',
+        status: 'active',
+        currentPeriodEnd: '2026-02-01T00:00:00.000Z',
+      };
+
+      mockDb.select.mockReturnValueOnce(mockQuery([subscription]));
+      stripe.subscriptions.update.mockResolvedValue({ cancel_at: null });
+      mockDb.update.mockReturnValueOnce(mockQuery(undefined));
+
+      const result = await service.cancelSubscription(mockUserId, true);
+
+      expect(result.effectiveDate).toBe('2026-02-01T00:00:00.000Z');
     });
 
     it('should cancel immediately when atPeriodEnd is false', async () => {
@@ -526,7 +636,6 @@ describe('BillingService', () => {
 
       mockDb.select.mockReturnValueOnce(mockQuery([subscription]));
 
-      const stripe = (service as any).stripe;
       stripe.subscriptions.cancel.mockResolvedValue({ id: 'sub_123' });
 
       // getPlans call
@@ -538,6 +647,14 @@ describe('BillingService', () => {
 
       expect(result.canceled).toBe(true);
       expect(stripe.subscriptions.cancel).toHaveBeenCalledWith('sub_123');
+      expect(updatedRow(mockDb.update)).toMatchObject({
+        status: 'canceled',
+        plan: 'free',
+        planId: 'plan-free',
+        stripeSubscriptionId: null,
+        stripePriceId: null,
+        cancelAtPeriodEnd: 0,
+      });
     });
   });
 
@@ -588,7 +705,6 @@ describe('BillingService', () => {
 
       mockDb.select.mockReturnValueOnce(mockQuery([subscription]));
 
-      const stripe = (service as any).stripe;
       stripe.subscriptions.update.mockResolvedValue({
         cancel_at_period_end: false,
       });
@@ -601,6 +717,7 @@ describe('BillingService', () => {
       expect(stripe.subscriptions.update).toHaveBeenCalledWith('sub_123', {
         cancel_at_period_end: false,
       });
+      expect(updatedRow(mockDb.update)).toMatchObject({ cancelAtPeriodEnd: 0 });
     });
   });
 
@@ -781,7 +898,6 @@ describe('BillingService', () => {
   // ---------------------------------------------------------------------------
   describe('handleWebhook', () => {
     it('should throw BadRequestException on invalid signature', async () => {
-      const stripe = (service as any).stripe;
       stripe.webhooks.constructEvent.mockImplementation(() => {
         throw new Error('Invalid signature');
       });
@@ -789,11 +905,23 @@ describe('BillingService', () => {
       await expect(service.handleWebhook(Buffer.from('{}'), 'bad-sig')).rejects.toThrow(
         BadRequestException,
       );
+      expect(mockDb.insert).not.toHaveBeenCalled();
+    });
+
+    it('should reject an event without an id', async () => {
+      stripe.webhooks.constructEvent.mockReturnValue({
+        type: 'invoice.payment_succeeded',
+        data: { object: {} },
+      });
+
+      await expect(service.handleWebhook(Buffer.from('{}'), 'valid-sig')).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should handle checkout.session.completed event', async () => {
-      const stripe = (service as any).stripe;
       stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_checkout',
         type: 'checkout.session.completed',
         data: {
           object: {
@@ -804,14 +932,9 @@ describe('BillingService', () => {
         },
       });
 
-      stripe.subscriptions.retrieve.mockResolvedValue({
-        status: 'active',
-        start_date: Math.floor(Date.now() / 1000),
-        cancel_at: null,
-        cancel_at_period_end: false,
-        items: { data: [{ price: { id: 'price_pro_monthly' } }] },
-      });
+      stripe.subscriptions.retrieve.mockResolvedValue(stripeSubscription());
 
+      claimSucceeds('evt_checkout');
       // getPlans
       mockDb.select.mockReturnValueOnce(mockQuery([freePlan, proPlan, premiumPlan]));
       // Check existing billing customer
@@ -826,21 +949,157 @@ describe('BillingService', () => {
       const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
+      expect(insertedRow(mockDb.insert, 0)).toEqual({
+        id: 'evt_checkout',
+        type: 'checkout.session.completed',
+      });
+      expect(insertedRow(mockDb.insert, 1)).toEqual({
+        userId: mockUserId,
+        stripeCustomerId: 'cus_123',
+      });
+      expect(insertedRow(mockDb.insert, 2)).toEqual({
+        userId: mockUserId,
+        planId: 'plan-pro',
+        plan: 'pro',
+        stripeCustomerId: 'cus_123',
+        stripeSubscriptionId: 'sub_123',
+        stripePriceId: 'price_pro_monthly',
+        status: 'active',
+        currentPeriodStart: new Date(PERIOD_START * 1000).toISOString(),
+        currentPeriodEnd: new Date(PERIOD_END * 1000).toISOString(),
+        cancelAtPeriodEnd: 0,
+      });
+    });
+
+    it('should store the real Stripe status at checkout instead of assuming trialing', async () => {
+      stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_checkout_past_due',
+        type: 'checkout.session.completed',
+        data: {
+          object: {
+            metadata: { userId: mockUserId },
+            subscription: 'sub_123',
+            customer: 'cus_123',
+          },
+        },
+      });
+
+      stripe.subscriptions.retrieve.mockResolvedValue(stripeSubscription({ status: 'past_due' }));
+
+      claimSucceeds('evt_checkout_past_due');
+      mockDb.select.mockReturnValueOnce(mockQuery([freePlan, proPlan, premiumPlan]));
+      mockDb.select.mockReturnValueOnce(
+        mockQuery([{ userId: mockUserId, stripeCustomerId: 'cus_123' }]),
+      );
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
+
+      await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
+
+      // Previously stored as 'trialing', which getSubscription treats as fully entitled.
+      expect(insertedRow(mockDb.insert, 1)).toMatchObject({ status: 'past_due', plan: 'pro' });
+    });
+
+    it('should map a premium yearly price to the premium plan at checkout', async () => {
+      stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_checkout_premium',
+        type: 'checkout.session.completed',
+        data: {
+          object: {
+            metadata: { userId: mockUserId },
+            subscription: 'sub_123',
+            customer: 'cus_123',
+          },
+        },
+      });
+
+      stripe.subscriptions.retrieve.mockResolvedValue(
+        stripeSubscription({
+          items: {
+            data: [
+              {
+                current_period_start: PERIOD_START,
+                current_period_end: PERIOD_END,
+                price: { id: 'price_premium_yearly' },
+              },
+            ],
+          },
+        }),
+      );
+
+      claimSucceeds('evt_checkout_premium');
+      mockDb.select.mockReturnValueOnce(mockQuery([freePlan, proPlan, premiumPlan]));
+      mockDb.select.mockReturnValueOnce(
+        mockQuery([{ userId: mockUserId, stripeCustomerId: 'cus_123' }]),
+      );
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
+
+      await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
+
+      expect(insertedRow(mockDb.insert, 1)).toMatchObject({
+        plan: 'premium',
+        planId: 'plan-premium',
+        stripePriceId: 'price_premium_yearly',
+      });
+    });
+
+    it('should fail loudly on an unrecognised price instead of downgrading to free', async () => {
+      stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_unknown_price',
+        type: 'checkout.session.completed',
+        data: {
+          object: {
+            metadata: { userId: mockUserId },
+            subscription: 'sub_123',
+            customer: 'cus_123',
+          },
+        },
+      });
+
+      stripe.subscriptions.retrieve.mockResolvedValue(
+        stripeSubscription({
+          items: {
+            data: [
+              {
+                current_period_start: PERIOD_START,
+                current_period_end: PERIOD_END,
+                price: { id: 'price_not_in_env' },
+              },
+            ],
+          },
+        }),
+      );
+
+      claimSucceeds('evt_unknown_price');
+
+      await expect(service.handleWebhook(Buffer.from('{}'), 'valid-sig')).rejects.toThrow(
+        /Cannot map Stripe price/,
+      );
+      // Nothing was written to the subscription, and the claim is released so
+      // Stripe's retry can succeed once the price env var is fixed.
+      expect(mockDb.update).not.toHaveBeenCalled();
+      expect(mockDb.delete).toHaveBeenCalledTimes(1);
     });
 
     it('should handle customer.subscription.updated event', async () => {
-      const stripe = (service as any).stripe;
       stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_updated',
         type: 'customer.subscription.updated',
         data: {
-          object: {
-            id: 'sub_123',
-            status: 'active',
-            start_date: Math.floor(Date.now() / 1000),
-            cancel_at: null,
-            cancel_at_period_end: false,
-            items: { data: [{ price: { id: 'price_pro_monthly' } }] },
-          },
+          object: stripeSubscription({
+            status: 'past_due',
+            cancel_at_period_end: true,
+            items: {
+              data: [
+                {
+                  current_period_start: PERIOD_START,
+                  current_period_end: PERIOD_END,
+                  price: { id: 'price_premium_monthly' },
+                },
+              ],
+            },
+          }),
         },
       });
 
@@ -850,17 +1109,44 @@ describe('BillingService', () => {
         stripeSubscriptionId: 'sub_123',
       };
 
+      claimSucceeds('evt_updated');
       mockDb.select.mockReturnValueOnce(mockQuery([existingSub]));
       mockDb.update.mockReturnValueOnce(mockQuery(undefined));
 
       const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
+      expect(updatedRow(mockDb.update)).toMatchObject({
+        plan: 'premium',
+        status: 'past_due',
+        stripePriceId: 'price_premium_monthly',
+        currentPeriodStart: new Date(PERIOD_START * 1000).toISOString(),
+        currentPeriodEnd: new Date(PERIOD_END * 1000).toISOString(),
+        cancelAtPeriodEnd: 1,
+      });
+    });
+
+    it('should reject an unknown Stripe subscription status rather than defaulting to active', async () => {
+      stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_bad_status',
+        type: 'customer.subscription.updated',
+        data: { object: stripeSubscription({ status: 'something_new' }) },
+      });
+
+      claimSucceeds('evt_bad_status');
+      mockDb.select.mockReturnValueOnce(
+        mockQuery([{ id: 'local-sub-1', userId: mockUserId, stripeSubscriptionId: 'sub_123' }]),
+      );
+
+      await expect(service.handleWebhook(Buffer.from('{}'), 'valid-sig')).rejects.toThrow(
+        /Unknown Stripe subscription status/,
+      );
+      expect(mockDb.update).not.toHaveBeenCalled();
     });
 
     it('should handle customer.subscription.deleted event', async () => {
-      const stripe = (service as any).stripe;
       stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_deleted',
         type: 'customer.subscription.deleted',
         data: {
           object: {
@@ -876,6 +1162,7 @@ describe('BillingService', () => {
         stripeSubscriptionId: 'sub_123',
       };
 
+      claimSucceeds('evt_deleted');
       mockDb.select.mockReturnValueOnce(mockQuery([existingSub]));
       mockDb.select.mockReturnValueOnce(mockQuery([freePlan, proPlan]));
       mockDb.update.mockReturnValueOnce(mockQuery(undefined));
@@ -883,11 +1170,19 @@ describe('BillingService', () => {
       const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
+      expect(updatedRow(mockDb.update)).toMatchObject({
+        planId: 'plan-free',
+        plan: 'free',
+        status: 'canceled',
+        stripeSubscriptionId: null,
+        stripePriceId: null,
+        cancelAtPeriodEnd: 0,
+      });
     });
 
     it('should handle invoice.payment_succeeded event', async () => {
-      const stripe = (service as any).stripe;
       stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_paid',
         type: 'invoice.payment_succeeded',
         data: {
           object: {
@@ -901,6 +1196,7 @@ describe('BillingService', () => {
         },
       });
 
+      claimSucceeds('evt_paid');
       mockDb.select.mockReturnValueOnce(
         mockQuery([{ userId: mockUserId, stripeCustomerId: 'cus_123' }]),
       );
@@ -910,11 +1206,20 @@ describe('BillingService', () => {
       const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
+      expect(insertedRow(mockDb.insert, 1)).toMatchObject({
+        userId: mockUserId,
+        stripeInvoiceId: 'inv_123',
+        amount: 9.99,
+        currency: 'usd',
+        status: 'paid',
+        description: 'Pro monthly',
+        invoiceUrl: 'https://stripe.com/invoice/123',
+      });
     });
 
     it('should handle invoice.payment_failed event', async () => {
-      const stripe = (service as any).stripe;
       stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_failed',
         type: 'invoice.payment_failed',
         data: {
           object: {
@@ -933,6 +1238,7 @@ describe('BillingService', () => {
         stripeCustomerId: 'cus_123',
       };
 
+      claimSucceeds('evt_failed');
       mockDb.select.mockReturnValueOnce(mockQuery([existingSub]));
       mockDb.update.mockReturnValueOnce(mockQuery(undefined));
       mockDb.select.mockReturnValueOnce(mockQuery([]));
@@ -941,18 +1247,129 @@ describe('BillingService', () => {
       const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
+      expect(updatedRow(mockDb.update)).toMatchObject({ status: 'past_due' });
+      expect(insertedRow(mockDb.insert, 1)).toMatchObject({
+        userId: mockUserId,
+        stripeInvoiceId: 'inv_fail_123',
+        amount: 9.99,
+        status: 'open',
+        description: 'Failed payment',
+        invoiceUrl: null,
+      });
     });
 
     it('should return received: true for unhandled event types', async () => {
-      const stripe = (service as any).stripe;
       stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_unknown',
         type: 'some.unknown.event',
         data: { object: {} },
       });
+
+      claimSucceeds('evt_unknown');
 
       const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
 
       expect(result).toEqual({ received: true });
     });
+
+    it('should ignore a redelivered event instead of replaying its writes', async () => {
+      stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_checkout',
+        type: 'checkout.session.completed',
+        data: {
+          object: {
+            metadata: { userId: mockUserId },
+            subscription: 'sub_123',
+            customer: 'cus_123',
+          },
+        },
+      });
+
+      claimConflicts();
+
+      const result = await service.handleWebhook(Buffer.from('{}'), 'valid-sig');
+
+      expect(result).toEqual({ received: true });
+      expect(stripe.subscriptions.retrieve).not.toHaveBeenCalled();
+      expect(mockDb.select).not.toHaveBeenCalled();
+      expect(mockDb.update).not.toHaveBeenCalled();
+      // Only the claim attempt itself.
+      expect(mockDb.insert).toHaveBeenCalledTimes(1);
+    });
+
+    it('should release the claim when a handler throws so Stripe can retry', async () => {
+      stripe.webhooks.constructEvent.mockReturnValue({
+        id: 'evt_boom',
+        type: 'invoice.payment_succeeded',
+        data: { object: { id: 'inv_123', customer: 'cus_123', amount_paid: 999 } },
+      });
+
+      claimSucceeds('evt_boom');
+      mockDb.select.mockImplementationOnce(() => {
+        throw new Error('database is down');
+      });
+
+      await expect(service.handleWebhook(Buffer.from('{}'), 'valid-sig')).rejects.toThrow(
+        'database is down',
+      );
+      expect(mockDb.delete).toHaveBeenCalledTimes(1);
+    });
+  });
+});
+
+// -----------------------------------------------------------------------------
+// Startup validation of the Stripe configuration
+// -----------------------------------------------------------------------------
+describe('Stripe environment validation', () => {
+  const baseEnv = {
+    JWT_SECRET: 'a'.repeat(32),
+    JWT_REFRESH_SECRET: 'b'.repeat(32),
+    ENCRYPTION_KEY: 'a'.repeat(64),
+    ENCRYPTION_MASTER_SECRET: 'c'.repeat(32),
+    DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/finance_owl',
+    FRONTEND_URL: 'http://localhost:3000',
+    REDIS_URL: 'redis://localhost:6379',
+  };
+
+  const stripeEnv = {
+    STRIPE_SECRET_KEY: 'sk_test_123',
+    STRIPE_WEBHOOK_SECRET: 'whsec_123',
+    STRIPE_PRICE_PRO_MONTHLY: 'price_pro_monthly',
+    STRIPE_PRICE_PRO_YEARLY: 'price_pro_yearly',
+    STRIPE_PRICE_PREMIUM_MONTHLY: 'price_premium_monthly',
+    STRIPE_PRICE_PREMIUM_YEARLY: 'price_premium_yearly',
+  };
+
+  it('accepts an environment with billing switched off entirely', () => {
+    expect(() => validate({ ...baseEnv })).not.toThrow();
+  });
+
+  it('accepts a fully configured Stripe environment', () => {
+    expect(() => validate({ ...baseEnv, ...stripeEnv })).not.toThrow();
+  });
+
+  it('rejects a Stripe key without the price IDs it needs to map plans', () => {
+    expect(() => validate({ ...baseEnv, STRIPE_SECRET_KEY: 'sk_test_123' })).toThrow(
+      /STRIPE_PRICE_PRO_MONTHLY is required/,
+    );
+  });
+
+  it('rejects a Stripe key without a webhook secret', () => {
+    const { STRIPE_WEBHOOK_SECRET: _omitted, ...withoutWebhookSecret } = stripeEnv;
+    expect(() => validate({ ...baseEnv, ...withoutWebhookSecret })).toThrow(
+      /STRIPE_WEBHOOK_SECRET is required/,
+    );
+  });
+
+  it('rejects a price ID that is not a Stripe price ID', () => {
+    expect(() =>
+      validate({ ...baseEnv, ...stripeEnv, STRIPE_PRICE_PRO_YEARLY: 'prod_oops' }),
+    ).toThrow(/must be a Stripe price ID/);
+  });
+
+  it('rejects the same price ID mapped to two plans', () => {
+    expect(() =>
+      validate({ ...baseEnv, ...stripeEnv, STRIPE_PRICE_PREMIUM_MONTHLY: 'price_pro_monthly' }),
+    ).toThrow(/same Stripe price ID/);
   });
 });

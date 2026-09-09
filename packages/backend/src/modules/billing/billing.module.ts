@@ -3,10 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import { BillingService } from './billing.service';
 import { BillingController } from './billing.controller';
 import { BillingPlanGuard, BillingFeatureGuard } from './billing.guard';
+import { stripeProvider } from './stripe.provider';
 
 @Module({
   imports: [ConfigModule],
-  providers: [BillingService, BillingPlanGuard, BillingFeatureGuard],
+  providers: [stripeProvider, BillingService, BillingPlanGuard, BillingFeatureGuard],
   controllers: [BillingController],
   exports: [BillingService, BillingPlanGuard, BillingFeatureGuard],
 })

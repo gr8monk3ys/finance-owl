@@ -74,6 +74,20 @@ export const invoices = pgTable('invoices', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
+/**
+ * Every Stripe webhook event we have claimed for processing.
+ *
+ * Stripe redelivers an event whenever the endpoint fails or times out, and the
+ * webhook handlers write to several tables without a surrounding transaction,
+ * so a replay used to re-run half-applied work. Claiming the event ID here
+ * first makes a redelivery of an already-processed event a no-op.
+ */
+export const stripeEvents = pgTable('stripe_events', {
+  id: text('id').primaryKey(), // Stripe event ID, e.g. 'evt_1234'
+  type: text('type').notNull(),
+  processedAt: timestamp('processed_at').notNull().defaultNow(),
+});
+
 export const usageTracking = pgTable('usage_tracking', {
   id: text('id')
     .primaryKey()
