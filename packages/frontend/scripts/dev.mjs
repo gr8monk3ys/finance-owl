@@ -3,8 +3,8 @@ import { spawn } from 'node:child_process';
 const frontendPort = process.env.FRONTEND_PORT || process.env.PORT || '3000';
 
 const child = spawn(
-  'pnpm',
-  ['exec', 'vite', 'dev', '--port', frontendPort, '--strictPort'],
+  'bun',
+  ['x', 'vite', 'dev', '--port', frontendPort, '--strictPort'],
   {
     stdio: 'inherit',
     env: process.env,

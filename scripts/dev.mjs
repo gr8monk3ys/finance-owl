@@ -217,7 +217,7 @@ function assertPortAvailable(port, label) {
 
   throw new Error(
     `${label} port ${port} is already in use.\n` +
-      `Stop the existing process, then run \`pnpm dev\` again.\n\n${details}`,
+      `Stop the existing process, then run \`bun run dev\` again.\n\n${details}`,
   );
 }
 
@@ -370,8 +370,8 @@ async function main() {
   await waitForPort(redisPort, 'Redis');
 
   runStep(
-    'pnpm',
-    ['--filter', '@finance-owl/backend', 'db:migrate'],
+    'bun',
+    ['run', '--filter', '@finance-owl/backend', 'db:migrate'],
     'Database migration',
   );
 
@@ -396,7 +396,7 @@ async function main() {
     console.log(`Using Redis port ${redisPort} because 6379 is occupied.`);
   }
 
-  const child = spawn('pnpm', ['run', 'dev:turbo'], {
+  const child = spawn('bun', ['run', 'dev:turbo'], {
     cwd: rootDir,
     stdio: 'inherit',
     env: {

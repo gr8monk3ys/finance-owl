@@ -1,52 +1,66 @@
-FROM node:26-slim AS base
-RUN npm install -g pnpm@9.15.0
+FROM oven/bun:1.4.2-debian AS base
 WORKDIR /app
 
 # Install dependencies
 FROM base AS deps
-# node:*-slim ships no toolchain, so native postinstalls (better-sqlite3, via
+# The image ships no toolchain, so native postinstalls (better-sqlite3, via
 # drizzle-kit) fail and leave the package half-installed.
 RUN apt-get update \
   && apt-get install -y --no-install-recommends python3 make g++ \
   && rm -rf /var/lib/apt/lists/*
-COPY pnpm-workspace.yaml pnpm-lock.yaml* package.json ./
+COPY bun.lock package.json bunfig.toml ./
 COPY packages/backend/package.json packages/backend/
 COPY packages/shared/package.json packages/shared/
-RUN pnpm install --frozen-lockfile --filter @finance-owl/backend...
+COPY packages/frontend/package.json packages/frontend/
+COPY packages/mobile/package.json packages/mobile/
+# --filter keeps mobile's React Native tree out of the image; the workspace
+# manifests above still have to be present for the lockfile to be honoured.
+RUN bun install --frozen-lockfile --filter @finance-owl/backend --filter @finance-owl/shared
 
 # Build shared first — the backend resolves @finance-owl/shared through its
 # dist/ output, so building the backend alone fails to typecheck.
 FROM deps AS build-shared
 COPY packages/shared packages/shared/
 COPY tsconfig.base.json ./
-RUN pnpm --filter @finance-owl/shared build
+RUN bun run --filter @finance-owl/shared build
 
 # Build backend
 FROM build-shared AS build
 COPY packages/backend packages/backend/
-RUN pnpm --filter @finance-owl/backend build
+RUN bun run --filter @finance-owl/backend build
 
 # Production
-FROM node:26-slim AS production
+FROM oven/bun:1.4.2-debian AS production
 RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
-RUN addgroup --system app && adduser --system --ingroup app app
 WORKDIR /app
 
-COPY --from=build /app/packages/backend/dist ./dist
-COPY --from=build /app/packages/backend/drizzle ./drizzle
-COPY --from=build /app/packages/backend/package.json ./
-COPY --from=build /app/packages/backend/node_modules ./node_modules
+# Keep the workspace layout. Bun installs a package's own dependencies under
+# packages/<name>/node_modules and only the shared store at the root, so
+# flattening dist/ next to the root node_modules leaves imports like
+# reflect-metadata unresolvable.
+COPY --from=build --chown=bun:bun /app/package.json ./
+COPY --from=build --chown=bun:bun /app/node_modules ./node_modules
+COPY --from=build --chown=bun:bun /app/packages/shared ./packages/shared
+COPY --from=build --chown=bun:bun /app/packages/backend/node_modules ./packages/backend/node_modules
+COPY --from=build --chown=bun:bun /app/packages/backend/dist ./packages/backend/dist
+COPY --from=build --chown=bun:bun /app/packages/backend/drizzle ./packages/backend/drizzle
+COPY --from=build --chown=bun:bun /app/packages/backend/package.json ./packages/backend/
+
+WORKDIR /app/packages/backend
 
 ENV NODE_ENV=production
 ENV PORT=4000
 
-RUN mkdir -p /app/data && chown -R app:app /app/data
+# oven/bun already ships a non-root `bun` user (uid 1000); use it rather than
+# adding another — the base image has no adduser/addgroup.
+RUN mkdir -p /app/data && chown -R bun:bun /app/data
 
 EXPOSE 4000
 
-USER app
+USER bun
 
+# main.ts sets a global `api` prefix, so the route is /api/health.
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD curl -f http://localhost:${PORT}/api/health || exit 1
 
-CMD ["node", "--max-old-space-size=512", "dist/main"]
+CMD ["bun", "run", "dist/main.js"]

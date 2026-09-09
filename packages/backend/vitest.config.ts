@@ -21,7 +21,7 @@ export default defineConfig({
       ],
       // Ratchet, not an aspiration: these are the levels the suite
       // actually reaches today. CI never enforced them before — the
-      // `--coverage` flag was swallowed by pnpm's own arg parsing — so
+      // `--coverage` flag was swallowed by the package manager's arg parsing — so
       // raise them as coverage improves rather than starting red.
       thresholds: {
         lines: 49,

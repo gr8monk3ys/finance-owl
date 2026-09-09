@@ -17,8 +17,7 @@ permissions:
   contents: read
 
 env:
-  NODE_VERSION: "22"
-  PNPM_VERSION: "9.15.0"
+  BUN_VERSION: "1.4.2"
 
 jobs:
   # ──────────────────────────────────────────────
@@ -31,23 +30,26 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
-      - name: Run pnpm audit (production)
-        run: pnpm audit --prod --audit-level=high
+      # `bun audit` covers the whole tree, dev dependencies included — there
+      # is no --prod equivalent, and no need for one here. image-size (metro,
+      # via react-native) has no patched release at all, so both of its
+      # advisories are ignored by GHSA id rather than left to fail the job.
+      - name: Run bun audit (high and above)
+        run: >-
+          bun audit --audit-level=high
+          --ignore GHSA-w3rx-r6r6-pgpr
+          --ignore GHSA-5p2g-fcmc-qvqq
 
-      - name: Run pnpm audit (all)
-        run: pnpm audit --audit-level=critical
+      # Informational: everything, including low/moderate and the two above.
+      - name: Run bun audit (full, informational)
+        run: bun audit
         continue-on-error: true
 
   # ──────────────────────────────────────────────

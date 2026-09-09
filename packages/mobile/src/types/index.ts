@@ -26,13 +26,7 @@ export interface RegisterRequest {
 // ── Accounts ─────────────────────────────────────────────────────────────────
 
 export type AccountType =
-  | 'checking'
-  | 'savings'
-  | 'credit_card'
-  | 'investment'
-  | 'loan'
-  | 'mortgage'
-  | 'other';
+  'checking' | 'savings' | 'credit_card' | 'investment' | 'loan' | 'mortgage' | 'other';
 
 export interface Account {
   id: string;

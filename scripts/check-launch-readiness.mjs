@@ -178,10 +178,10 @@ async function startFrontendPreview() {
 	const port = await findOpenPort();
 	const baseUrl = `http://127.0.0.1:${port}`;
 	const child = spawn(
-		'pnpm',
-		['--filter', '@finance-owl/frontend', 'exec', 'vite', 'preview', '--host', '127.0.0.1', '--port', String(port)],
+		'bun',
+		['x', 'vite', 'preview', '--host', '127.0.0.1', '--port', String(port)],
 		{
-			cwd: rootDir,
+			cwd: path.join(rootDir, 'packages', 'frontend'),
 			stdio: 'ignore',
 			env: process.env
 		}
@@ -622,7 +622,7 @@ if (shouldVerify) {
 
 	for (const [label, args] of commands) {
 		try {
-			runCommand('pnpm', args);
+			runCommand('bun', args);
 			addCheck(verifySection, 'PASS', label, `${label} completed successfully.`);
 		} catch (error) {
 			addCheck(
@@ -630,7 +630,7 @@ if (shouldVerify) {
 				'FAIL',
 				label,
 				error instanceof Error ? error.message : `${label} failed.`,
-				`Run \`pnpm ${args.join(' ')}\` and fix the failure before launch.`
+				`Run \`bun ${args.join(' ')}\` and fix the failure before launch.`
 			);
 		}
 	}
@@ -648,11 +648,9 @@ if (shouldVerify) {
 
 			try {
 				runCommand(
-					'pnpm',
+					'bun',
 					[
-						'--filter',
-						'@finance-owl/frontend',
-						'exec',
+						'x',
 						'playwright',
 						'test',
 						'e2e/navigation.spec.ts',
@@ -673,7 +671,7 @@ if (shouldVerify) {
 			}
 
 			try {
-				runCommand('pnpm', ['--filter', '@finance-owl/frontend', 'test:e2e:critical'], previewEnv);
+				runCommand('bun', ['run', '--filter', '@finance-owl/frontend', 'test:e2e:critical'], previewEnv);
 				addCheck(verifySection, 'PASS', 'Critical browser suite', `Playwright critical suite passed against ${preview.baseUrl}.`);
 			} catch (error) {
 				addCheck(
@@ -686,7 +684,7 @@ if (shouldVerify) {
 			}
 
 			try {
-				runCommand('pnpm', ['--filter', '@finance-owl/frontend', 'quality:lighthouse'], previewEnv);
+				runCommand('bun', ['run', '--filter', '@finance-owl/frontend', 'quality:lighthouse'], previewEnv);
 				addCheck(verifySection, 'PASS', 'Lighthouse gate', `Lighthouse thresholds passed against ${preview.baseUrl}.`);
 			} catch (error) {
 				addCheck(
@@ -716,7 +714,7 @@ if (shouldVerify) {
 			'WARN',
 			'Browser and Lighthouse gates',
 			`API_URL ${apiUrl || '(unset)'} is not reachable, so preview-based verification was skipped.`,
-			'Start the backend API and rerun pnpm launch:verify to exercise Playwright and Lighthouse.'
+			'Start the backend API and rerun bun run launch:verify to exercise Playwright and Lighthouse.'
 		);
 	}
 }

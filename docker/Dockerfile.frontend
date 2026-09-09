@@ -1,42 +1,48 @@
-FROM node:26-slim AS base
-RUN npm install -g pnpm@9.15.0
+FROM oven/bun:1.4.2-debian AS base
 WORKDIR /app
 
 # Install dependencies
 FROM base AS deps
-COPY pnpm-workspace.yaml pnpm-lock.yaml* package.json ./
+COPY bun.lock package.json bunfig.toml ./
 COPY packages/frontend/package.json packages/frontend/
 COPY packages/shared/package.json packages/shared/
-RUN pnpm install --frozen-lockfile --filter @finance-owl/frontend --filter @finance-owl/shared
+COPY packages/backend/package.json packages/backend/
+COPY packages/mobile/package.json packages/mobile/
+# --filter keeps the backend and mobile trees out of the image; the workspace
+# manifests above still have to be present for the lockfile to be honoured.
+RUN bun install --frozen-lockfile --filter @finance-owl/frontend --filter @finance-owl/shared
 
 # Build shared
 FROM deps AS build-shared
 COPY packages/shared packages/shared/
 COPY tsconfig.base.json ./
-RUN pnpm --filter @finance-owl/shared build
+RUN bun run --filter @finance-owl/shared build
 
 # Build frontend (force adapter-node for Docker deployment)
 FROM build-shared AS build
 COPY packages/frontend packages/frontend/
 ENV ADAPTER=node
-RUN pnpm --filter @finance-owl/frontend build
+RUN bun run --filter @finance-owl/frontend build
 
 # Production
-FROM node:26-slim AS production
-RUN addgroup --system app && adduser --system --ingroup app app
+FROM oven/bun:1.4.2-debian AS production
 WORKDIR /app
 
-COPY --from=build /app/packages/frontend/build ./build
-COPY --from=build /app/packages/frontend/package.json ./
+# adapter-node emits a self-contained bundle, so only build/ and the manifest
+# are needed at runtime.
+COPY --from=build --chown=bun:bun /app/packages/frontend/build ./build
+COPY --from=build --chown=bun:bun /app/packages/frontend/package.json ./
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
 EXPOSE 3000
 
-USER app
+# oven/bun already ships a non-root `bun` user (uid 1000); the base image has
+# no adduser/addgroup to make another.
+USER bun
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD node -e "fetch('http://localhost:3000').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"
+  CMD bun -e "fetch('http://localhost:3000').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"
 
-CMD ["node", "--max-old-space-size=512", "build"]
+CMD ["bun", "run", "build/index.js"]

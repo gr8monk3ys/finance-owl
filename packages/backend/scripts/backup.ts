@@ -7,7 +7,7 @@
  * Usage:
  *   npx tsx scripts/backup.ts                     # default ./backups/
  *   npx tsx scripts/backup.ts --output /tmp/bak    # custom directory
- *   pnpm db:backup
+ *   bun run db:backup
  */
 
 import { execFileSync, execSync } from 'child_process';

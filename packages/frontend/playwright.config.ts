@@ -43,9 +43,11 @@ export default defineConfig({
   webServer: skipWebServer
     ? undefined
     : {
-        command: 'pnpm dev',
+        command: 'bun run dev',
         url: baseURL,
         reuseExistingServer: !process.env.CI,
-        timeout: 30_000,
+        // CI always starts cold, so vite has to run its dependency optimizer
+        // before it serves anything; 30s was not enough for that.
+        timeout: 120_000,
       },
 });

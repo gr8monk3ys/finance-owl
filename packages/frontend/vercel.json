@@ -1,7 +1,7 @@
 {
   "framework": "sveltekit",
-  "buildCommand": "cd ../.. && pnpm --filter @finance-owl/shared build && pnpm --filter @finance-owl/frontend build",
-  "installCommand": "cd ../.. && pnpm i --frozen-lockfile -F @finance-owl/frontend... -F @finance-owl/shared...",
+  "buildCommand": "cd ../.. && bun run --filter @finance-owl/shared build && bun run --filter @finance-owl/frontend build",
+  "installCommand": "cd ../.. && bun install --frozen-lockfile",
   "outputDirectory": ".svelte-kit/output",
   "headers": [
     {

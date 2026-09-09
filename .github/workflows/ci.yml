@@ -13,8 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: "22"
-  PNPM_VERSION: "9.15.0"
+  BUN_VERSION: "1.4.2"
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
@@ -29,17 +28,12 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Cache node_modules
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -47,7 +41,7 @@ jobs:
           path: |
             node_modules
             packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
   # ──────────────────────────────────────────────
   # Format check
@@ -60,13 +54,9 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Restore node_modules
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -74,10 +64,10 @@ jobs:
           path: |
             node_modules
             packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       - name: Check formatting
-        run: pnpm format:check
+        run: bun run format:check
 
   # ──────────────────────────────────────────────
   # Lint
@@ -90,13 +80,9 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Restore node_modules
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -104,13 +90,13 @@ jobs:
           path: |
             node_modules
             packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       - name: Build shared (required for imports)
-        run: pnpm build --filter @finance-owl/shared
+        run: bun run build --filter @finance-owl/shared
 
       - name: Lint all packages
-        run: pnpm lint
+        run: bun run lint
 
   # ──────────────────────────────────────────────
   # Typecheck
@@ -123,13 +109,9 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Restore node_modules
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -137,13 +119,13 @@ jobs:
           path: |
             node_modules
             packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       - name: Build shared (required for type resolution)
-        run: pnpm build --filter @finance-owl/shared
+        run: bun run build --filter @finance-owl/shared
 
       - name: Typecheck all packages
-        run: pnpm typecheck
+        run: bun run typecheck
 
   # ──────────────────────────────────────────────
   # Unit tests — frontend & shared
@@ -156,13 +138,9 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Restore node_modules
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -170,13 +148,13 @@ jobs:
           path: |
             node_modules
             packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       - name: Build shared
-        run: pnpm build --filter @finance-owl/shared
+        run: bun run build --filter @finance-owl/shared
 
       - name: Run frontend tests
-        run: pnpm --filter @finance-owl/frontend test
+        run: bun run --filter @finance-owl/frontend test
 
   # ──────────────────────────────────────────────
   # Unit tests — backend (with PostgreSQL + Redis)
@@ -227,13 +205,9 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Restore node_modules
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -241,21 +215,19 @@ jobs:
           path: |
             node_modules
             packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       - name: Build shared
-        run: pnpm build --filter @finance-owl/shared
+        run: bun run build --filter @finance-owl/shared
 
       - name: Run database migrations
-        run: pnpm --filter @finance-owl/backend db:migrate
+        run: bun run --filter @finance-owl/backend db:migrate
 
-      # `pnpm --filter <pkg> test --coverage` fails with "Unknown option:
-      # 'coverage'" — pnpm parses the flag itself. `exec` hands it to vitest.
       - name: Run backend unit tests
-        run: pnpm --filter @finance-owl/backend exec vitest run --coverage
+        run: bun run --filter @finance-owl/backend test --coverage
 
       - name: Run backend integration tests
-        run: pnpm --filter @finance-owl/backend test:integration
+        run: bun run --filter @finance-owl/backend test:integration
 
   # ──────────────────────────────────────────────
   # Build verification
@@ -268,13 +240,9 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Restore node_modules
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -282,10 +250,10 @@ jobs:
           path: |
             node_modules
             packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       - name: Build all packages
-        run: pnpm build --filter='!@finance-owl/mobile'
+        run: bun run build --filter='!@finance-owl/mobile'
 
   # ──────────────────────────────────────────────
   # Playwright E2E tests
@@ -340,13 +308,9 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Restore node_modules
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -354,27 +318,29 @@ jobs:
           path: |
             node_modules
             packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
+      # Bun has no `--filter ... exec`, so run the binary from the package.
       - name: Install Playwright browsers
-        run: pnpm --filter @finance-owl/frontend exec playwright install --with-deps chromium
+        working-directory: packages/frontend
+        run: bun x playwright install --with-deps chromium
 
       - name: Build all packages
-        run: pnpm build --filter='!@finance-owl/mobile'
+        run: bun run build --filter='!@finance-owl/mobile'
 
       - name: Run database migrations
-        run: pnpm --filter @finance-owl/backend db:migrate
+        run: bun run --filter @finance-owl/backend db:migrate
 
       # The fixtures sign in as demo@financeowl.com, which only the seed
       # creates — without this every authenticated spec fails on a 401.
       - name: Seed the test database
-        run: pnpm --filter @finance-owl/backend db:seed
+        run: bun run --filter @finance-owl/backend db:seed
 
       # Playwright's own webServer only boots the SvelteKit dev server on
       # :3000; the e2e fixtures seed users and data through the REST API.
       - name: Start backend API
         run: |
-          pnpm --filter @finance-owl/backend exec node dist/main.js > /tmp/backend.log 2>&1 &
+          bun run --filter @finance-owl/backend start > /tmp/backend.log 2>&1 &
           echo "$!" > /tmp/backend.pid
           for i in $(seq 1 60); do
             if curl -fsS http://127.0.0.1:4000/api/health >/dev/null 2>&1; then
@@ -388,7 +354,7 @@ jobs:
           exit 1
 
       - name: Run Playwright E2E tests
-        run: pnpm --filter @finance-owl/frontend exec playwright test --project=chromium
+        run: bun run --filter @finance-owl/frontend test:e2e --project=chromium
 
       - name: Stop backend API
         if: always()
@@ -413,13 +379,9 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Restore node_modules
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -427,19 +389,19 @@ jobs:
           path: |
             node_modules
             packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       - name: Typecheck mobile app
-        run: pnpm --filter @finance-owl/mobile typecheck
+        run: bun run --filter @finance-owl/mobile typecheck
 
       - name: Lint mobile app
-        run: pnpm --filter @finance-owl/mobile lint
+        run: bun run --filter @finance-owl/mobile lint
 
       - name: Validate Expo configuration
-        run: pnpm --filter @finance-owl/mobile run check:expo
+        run: bun run --filter @finance-owl/mobile run check:expo
 
       - name: Export iOS bundle
-        run: pnpm --filter @finance-owl/mobile export:ios
+        run: bun run --filter @finance-owl/mobile export:ios
 
   # ──────────────────────────────────────────────
   # Docker build verification (main branch only)

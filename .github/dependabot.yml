@@ -51,7 +51,7 @@ updates:
       # a deliberate migration, not a routine bump. Minors/patches allowed.
       - dependency-name: "zod"
         update-types: ["version-update:semver-major"]
-      # The root entry scans the whole pnpm workspace lockfile, so the
+      # The root entry scans the whole Bun workspace lockfile, so the
       # Expo-SDK-pinned mobile packages must be ignored here as well as in
       # the /packages/mobile entry (they are upgraded together via
       # `npx expo install --fix` during SDK upgrades).
