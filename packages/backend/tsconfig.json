@@ -6,6 +6,11 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    // Without this, TS accepts `import X from` a CommonJS package but emits a
+    // bare require() and reads `.default`. That only ever worked because those
+    // packages happened to set a `.default`; stripe v22 stopped, and the app
+    // died at boot with "stripe_1.default is not a constructor".
+    "esModuleInterop": true,
     "target": "ES2022",
     "sourceMap": true,
     "outDir": "./dist",
