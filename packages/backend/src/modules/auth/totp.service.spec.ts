@@ -40,7 +40,7 @@ describe('TotpService', () => {
 
     mockUsersService = {
       findById: vi.fn(),
-      findByEmail: vi.fn(),
+      findCredentialsById: vi.fn(),
       setTotpSecret: vi.fn(),
     };
 
@@ -154,8 +154,7 @@ describe('TotpService', () => {
         totpEnabled: true,
         totpSecret: 'encrypted-secret',
       };
-      mockUsersService.findById.mockResolvedValue(userWithTotp);
-      mockUsersService.findByEmail.mockResolvedValue(userWithTotp);
+      mockUsersService.findCredentialsById.mockResolvedValue(userWithTotp);
       mockVerifySync.mockReturnValue({ valid: true });
 
       // Act
@@ -177,8 +176,7 @@ describe('TotpService', () => {
         totpEnabled: true,
         totpSecret: 'encrypted-secret',
       };
-      mockUsersService.findById.mockResolvedValue(userWithTotp);
-      mockUsersService.findByEmail.mockResolvedValue(userWithTotp);
+      mockUsersService.findCredentialsById.mockResolvedValue(userWithTotp);
       mockVerifySync.mockReturnValue({ valid: false });
 
       // Act
@@ -192,8 +190,7 @@ describe('TotpService', () => {
       // verifyCode is only invoked when TOTP is required, so a missing
       // secret is an inconsistent state and must never grant access.
       const userWithoutTotp = { ...mockUser, totpSecret: null };
-      mockUsersService.findById.mockResolvedValue(userWithoutTotp);
-      mockUsersService.findByEmail.mockResolvedValue(userWithoutTotp);
+      mockUsersService.findCredentialsById.mockResolvedValue(userWithoutTotp);
 
       // Act
       const result = await service.verifyCode('user-123', '123456');
@@ -202,6 +199,19 @@ describe('TotpService', () => {
       expect(result).toBe(false);
       expect(mockCryptoService.decrypt).not.toHaveBeenCalled();
       expect(mockVerifySync).not.toHaveBeenCalled();
+    });
+
+    it('should return false, not throw, when the user row is gone', async () => {
+      // verifyCode sits on the login path: a deleted user must fail the login
+      // with a 401 from the caller, never a TypeError from a null dereference.
+      mockUsersService.findCredentialsById.mockResolvedValue(null);
+
+      // Act
+      const result = await service.verifyCode('deleted-user', '123456');
+
+      // Assert
+      expect(result).toBe(false);
+      expect(mockCryptoService.decrypt).not.toHaveBeenCalled();
     });
   });
 
@@ -213,8 +223,7 @@ describe('TotpService', () => {
         totpEnabled: true,
         totpSecret: 'encrypted-secret',
       };
-      mockUsersService.findById.mockResolvedValue(userWithTotp);
-      mockUsersService.findByEmail.mockResolvedValue(userWithTotp);
+      mockUsersService.findCredentialsById.mockResolvedValue(userWithTotp);
       mockVerifySync.mockReturnValue({ valid: true });
 
       // Act
@@ -237,8 +246,7 @@ describe('TotpService', () => {
         totpEnabled: true,
         totpSecret: 'encrypted-secret',
       };
-      mockUsersService.findById.mockResolvedValue(userWithTotp);
-      mockUsersService.findByEmail.mockResolvedValue(userWithTotp);
+      mockUsersService.findCredentialsById.mockResolvedValue(userWithTotp);
       mockVerifySync.mockReturnValue({ valid: false });
 
       // Act & Assert
@@ -250,14 +258,27 @@ describe('TotpService', () => {
     it('should throw BadRequestException when TOTP is not enabled', async () => {
       // Arrange
       const userWithoutTotp = { ...mockUser, totpSecret: null };
-      mockUsersService.findById.mockResolvedValue(userWithoutTotp);
-      mockUsersService.findByEmail.mockResolvedValue(userWithoutTotp);
+      mockUsersService.findCredentialsById.mockResolvedValue(userWithoutTotp);
 
       // Act & Assert
       await expect(service.disableTotp('user-123', '123456')).rejects.toThrow(BadRequestException);
       await expect(service.disableTotp('user-123', '123456')).rejects.toThrow(
         'TOTP is not enabled',
       );
+    });
+
+    it('should throw BadRequestException, not TypeError, when the user row is gone', async () => {
+      // Arrange
+      mockUsersService.findCredentialsById.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.disableTotp('deleted-user', '123456')).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.disableTotp('deleted-user', '123456')).rejects.toThrow(
+        'TOTP is not enabled',
+      );
+      expect(mockUsersService.setTotpSecret).not.toHaveBeenCalled();
     });
   });
 });

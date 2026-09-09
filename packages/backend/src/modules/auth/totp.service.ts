@@ -60,9 +60,9 @@ export class TotpService {
   }
 
   async disableTotp(userId: string, code: string) {
-    const user = await this.usersService.findByEmail(
-      (await this.usersService.findById(userId))!.email,
-    );
+    const user = await this.usersService.findCredentialsById(userId);
+    // A missing row is a deleted user, not a server error: fall through to the
+    // same 400 as "no secret stored" rather than dereferencing null.
     if (!user?.totpSecret) {
       throw new BadRequestException('TOTP is not enabled');
     }
@@ -79,11 +79,10 @@ export class TotpService {
   }
 
   async verifyCode(userId: string, code: string): Promise<boolean> {
-    const user = await this.usersService.findByEmail(
-      (await this.usersService.findById(userId))!.email,
-    );
+    const user = await this.usersService.findCredentialsById(userId);
     // Fail closed: verifyCode is only called when TOTP is required, so a
-    // missing secret means an inconsistent state, never a free pass.
+    // missing user or secret means an inconsistent state, never a free pass.
+    // This is on the login path — it must return false, not throw.
     if (!user?.totpSecret) return false;
 
     // Decrypt the stored secret for verification

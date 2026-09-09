@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ConflictException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -11,25 +10,18 @@ vi.mock('argon2', () => ({
   argon2id: 2, // argon2id algorithm type constant
 }));
 
-// Mock crypto.randomBytes to return predictable values
-const MOCK_REFRESH_TOKEN_HEX = 'a'.repeat(64); // 32 bytes as hex = 64 chars
-// The service persists only the SHA-256 digest of the refresh token
-const MOCK_REFRESH_TOKEN_HASH = createHash('sha256').update(MOCK_REFRESH_TOKEN_HEX).digest('hex');
-const mockRandomBytes = vi.fn().mockReturnValue(Buffer.from(MOCK_REFRESH_TOKEN_HEX, 'hex'));
-vi.mock('crypto', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('crypto')>();
-  return {
-    ...actual,
-    randomBytes: (...args: any[]) => mockRandomBytes(...args),
-  };
-});
+// SessionService owns refresh-token generation and hashing (see
+// session.service.spec.ts); here it is a seam, so a fixed token is enough.
+const MOCK_REFRESH_TOKEN = 'a'.repeat(64);
+
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
 describe('AuthService', () => {
   let service: AuthService;
-  let mockDb: any;
   let mockJwtService: any;
   let mockConfigService: any;
   let mockUsersService: any;
+  let mockSessionService: any;
   let mockTotpService: any;
 
   const mockUser = {
@@ -41,32 +33,8 @@ describe('AuthService', () => {
     createdAt: '2024-01-01T00:00:00.000Z',
   };
 
-  const mockSession = {
-    id: 'session-123',
-    userId: 'user-123',
-    refreshToken: 'refresh-token-123',
-    userAgent: 'Mozilla/5.0',
-    ipAddress: '127.0.0.1',
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    createdAt: '2024-01-01T00:00:00.000Z',
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Create mock database with chainable methods
-    mockDb = {
-      select: vi.fn().mockReturnThis(),
-      insert: vi.fn().mockReturnThis(),
-      delete: vi.fn().mockReturnThis(),
-      update: vi.fn().mockReturnThis(),
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      values: vi.fn().mockReturnThis(),
-      returning: vi.fn().mockReturnThis(),
-      set: vi.fn().mockReturnThis(),
-    };
 
     mockJwtService = {
       sign: vi.fn().mockReturnValue('mock-access-token'),
@@ -86,9 +54,18 @@ describe('AuthService', () => {
     mockUsersService = {
       findByEmail: vi.fn(),
       findById: vi.fn(),
+      findCredentialsById: vi.fn(),
       create: vi.fn(),
       updatePassword: vi.fn(),
       count: vi.fn(),
+    };
+
+    mockSessionService = {
+      issue: vi.fn().mockResolvedValue(MOCK_REFRESH_TOKEN),
+      rotate: vi.fn(),
+      revoke: vi.fn(),
+      revokeAll: vi.fn(),
+      list: vi.fn(),
     };
 
     mockTotpService = {
@@ -97,10 +74,10 @@ describe('AuthService', () => {
 
     // Construct directly to avoid NestJS DI issues in unit tests
     service = new (AuthService as any)(
-      mockDb,
       mockJwtService,
       mockConfigService,
       mockUsersService,
+      mockSessionService,
       mockTotpService,
     );
   });
@@ -137,10 +114,10 @@ describe('AuthService', () => {
         email,
         passwordHash: hashedPassword,
       });
-      expect(mockDb.insert).toHaveBeenCalled();
+      expect(mockSessionService.issue).toHaveBeenCalledWith('user-new', SEVEN_DAYS_MS);
       expect(result).toEqual({
         accessToken: 'mock-access-token',
-        refreshToken: MOCK_REFRESH_TOKEN_HEX,
+        refreshToken: MOCK_REFRESH_TOKEN,
         expiresIn: 900, // 15 minutes in seconds
       });
     });
@@ -177,10 +154,10 @@ describe('AuthService', () => {
       // Assert
       expect(mockUsersService.findByEmail).toHaveBeenCalledWith(email);
       expect(argon2.verify).toHaveBeenCalledWith(mockUser.passwordHash, password);
-      expect(mockDb.insert).toHaveBeenCalled();
+      expect(mockSessionService.issue).toHaveBeenCalledWith(mockUser.id, SEVEN_DAYS_MS);
       expect(result).toEqual({
         accessToken: 'mock-access-token',
-        refreshToken: MOCK_REFRESH_TOKEN_HEX,
+        refreshToken: MOCK_REFRESH_TOKEN,
         expiresIn: 900,
       });
     });
@@ -213,7 +190,7 @@ describe('AuthService', () => {
         'Invalid credentials',
       );
 
-      expect(mockDb.insert).not.toHaveBeenCalled();
+      expect(mockSessionService.issue).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException if TOTP is enabled but code not provided', async () => {
@@ -233,7 +210,7 @@ describe('AuthService', () => {
         code: 'TOTP_REQUIRED',
       });
 
-      expect(mockDb.insert).not.toHaveBeenCalled();
+      expect(mockSessionService.issue).not.toHaveBeenCalled();
     });
 
     it('should accept login when TOTP code is provided and TOTP is enabled', async () => {
@@ -248,78 +225,64 @@ describe('AuthService', () => {
       // Assert
       expect(result).toEqual({
         accessToken: 'mock-access-token',
-        refreshToken: MOCK_REFRESH_TOKEN_HEX,
+        refreshToken: MOCK_REFRESH_TOKEN,
         expiresIn: 900,
       });
+    });
+
+    it('should reject login when TOTP verification fails', async () => {
+      // Arrange — verifyCode fails closed (e.g. the row vanished mid-login)
+      const totpUser = { ...mockUser, totpEnabled: true };
+      mockUsersService.findByEmail.mockResolvedValue(totpUser);
+      vi.mocked(argon2.verify).mockResolvedValue(true);
+      mockTotpService.verifyCode.mockResolvedValue(false);
+
+      // Act & Assert
+      await expect(service.login('test@example.com', 'correct-password', '123456')).rejects.toThrow(
+        'Invalid TOTP code',
+      );
+      expect(mockSessionService.issue).not.toHaveBeenCalled();
     });
   });
 
   describe('refreshTokens', () => {
-    it('should successfully refresh tokens with valid refresh token', async () => {
+    it('should rotate the session and return a new token pair', async () => {
       // Arrange
-      const refreshToken = 'valid-refresh-token';
-      mockDb.select.mockReturnValue(mockDb);
-      mockDb.from.mockReturnValue(mockDb);
-      mockDb.where.mockReturnValue(mockDb);
-      mockDb.limit.mockResolvedValue([mockSession]);
-
+      mockSessionService.rotate.mockResolvedValue(mockUser.id);
       mockUsersService.findById.mockResolvedValue(mockUser);
 
       // Act
-      const result = await service.refreshTokens(refreshToken);
+      const result = await service.refreshTokens('valid-refresh-token');
 
       // Assert
-      expect(mockDb.delete).toHaveBeenCalled(); // Old session deleted
-      expect(mockUsersService.findById).toHaveBeenCalledWith(mockSession.userId);
-      expect(mockDb.insert).toHaveBeenCalled(); // New session created
+      expect(mockSessionService.rotate).toHaveBeenCalledWith('valid-refresh-token');
+      expect(mockUsersService.findById).toHaveBeenCalledWith(mockUser.id);
+      expect(mockSessionService.issue).toHaveBeenCalledWith(mockUser.id, SEVEN_DAYS_MS);
       expect(result).toEqual({
         accessToken: 'mock-access-token',
-        refreshToken: MOCK_REFRESH_TOKEN_HEX,
+        refreshToken: MOCK_REFRESH_TOKEN,
         expiresIn: 900,
       });
     });
 
-    it('should throw UnauthorizedException if refresh token is invalid', async () => {
+    it('should propagate the rejection when the refresh token is invalid', async () => {
       // Arrange
-      mockDb.limit.mockResolvedValue([]);
+      mockSessionService.rotate.mockRejectedValue(
+        new UnauthorizedException('Invalid refresh token'),
+      );
 
       // Act & Assert
-      await expect(service.refreshTokens('invalid-refresh-token')).rejects.toThrow(
-        UnauthorizedException,
-      );
       await expect(service.refreshTokens('invalid-refresh-token')).rejects.toThrow(
         'Invalid refresh token',
       );
 
       expect(mockUsersService.findById).not.toHaveBeenCalled();
-      expect(mockDb.insert).not.toHaveBeenCalled();
-    });
-
-    it('should throw UnauthorizedException if refresh token is expired', async () => {
-      // Arrange
-      const expiredSession = {
-        ...mockSession,
-        expiresAt: new Date(Date.now() - 1000).toISOString(), // Expired 1 second ago
-      };
-      mockDb.limit.mockResolvedValue([expiredSession]);
-
-      // Act & Assert
-      await expect(service.refreshTokens('expired-refresh-token')).rejects.toThrow(
-        UnauthorizedException,
-      );
-      await expect(service.refreshTokens('expired-refresh-token')).rejects.toThrow(
-        'Refresh token expired',
-      );
-
-      // Should delete the expired session
-      expect(mockDb.delete).toHaveBeenCalled();
-      expect(mockUsersService.findById).not.toHaveBeenCalled();
-      expect(mockDb.insert).not.toHaveBeenCalled();
+      expect(mockSessionService.issue).not.toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException if user no longer exists', async () => {
       // Arrange
-      mockDb.limit.mockResolvedValue([mockSession]);
+      mockSessionService.rotate.mockResolvedValue(mockUser.id);
       mockUsersService.findById.mockResolvedValue(null);
 
       // Act & Assert
@@ -328,21 +291,21 @@ describe('AuthService', () => {
       );
       await expect(service.refreshTokens('valid-refresh-token')).rejects.toThrow('User not found');
 
-      expect(mockDb.delete).toHaveBeenCalled(); // Old session should be deleted
-      expect(mockDb.insert).not.toHaveBeenCalled();
+      // The presented token is consumed either way — it must not be replayable
+      expect(mockSessionService.rotate).toHaveBeenCalled();
+      expect(mockSessionService.issue).not.toHaveBeenCalled();
     });
   });
 
   describe('changePassword', () => {
-    it('should successfully change password and return new tokens', async () => {
+    it('should change the password in a single credential lookup', async () => {
       // Arrange
       const userId = 'user-123';
       const currentPassword = 'old-password';
       const newPassword = 'new-password';
       const newPasswordHash = 'new-hashed-password';
 
-      mockUsersService.findById.mockResolvedValue(mockUser);
-      mockUsersService.findByEmail.mockResolvedValue(mockUser);
+      mockUsersService.findCredentialsById.mockResolvedValue(mockUser);
       vi.mocked(argon2.verify).mockResolvedValue(true);
       vi.mocked(argon2.hash).mockResolvedValue(newPasswordHash);
 
@@ -350,8 +313,10 @@ describe('AuthService', () => {
       const result = await service.changePassword(userId, currentPassword, newPassword);
 
       // Assert
-      expect(mockUsersService.findById).toHaveBeenCalledWith(userId);
-      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(mockUser.email);
+      expect(mockUsersService.findCredentialsById).toHaveBeenCalledWith(userId);
+      // The old two-query dance (findById then findByEmail) is gone
+      expect(mockUsersService.findById).not.toHaveBeenCalled();
+      expect(mockUsersService.findByEmail).not.toHaveBeenCalled();
       expect(argon2.verify).toHaveBeenCalledWith(mockUser.passwordHash, currentPassword);
       expect(argon2.hash).toHaveBeenCalledWith(newPassword, {
         type: argon2.argon2id,
@@ -360,10 +325,10 @@ describe('AuthService', () => {
         parallelism: 4,
       });
       expect(mockUsersService.updatePassword).toHaveBeenCalledWith(userId, newPasswordHash);
-      expect(mockDb.delete).toHaveBeenCalled(); // All sessions invalidated
+      expect(mockSessionService.revokeAll).toHaveBeenCalledWith(userId);
       expect(result).toEqual({
         accessToken: 'mock-access-token',
-        refreshToken: MOCK_REFRESH_TOKEN_HEX,
+        refreshToken: MOCK_REFRESH_TOKEN,
         expiresIn: 900,
       });
     });
@@ -371,38 +336,34 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException if current password is incorrect', async () => {
       // Arrange
       const userId = 'user-123';
-      const currentPassword = 'wrong-password';
-      const newPassword = 'new-password';
 
-      mockUsersService.findById.mockResolvedValue(mockUser);
-      mockUsersService.findByEmail.mockResolvedValue(mockUser);
+      mockUsersService.findCredentialsById.mockResolvedValue(mockUser);
       vi.mocked(argon2.verify).mockResolvedValue(false);
 
       // Act & Assert
-      await expect(service.changePassword(userId, currentPassword, newPassword)).rejects.toThrow(
-        UnauthorizedException,
-      );
-      await expect(service.changePassword(userId, currentPassword, newPassword)).rejects.toThrow(
-        'Current password is incorrect',
-      );
+      await expect(
+        service.changePassword(userId, 'wrong-password', 'new-password'),
+      ).rejects.toThrow(UnauthorizedException);
+      await expect(
+        service.changePassword(userId, 'wrong-password', 'new-password'),
+      ).rejects.toThrow('Current password is incorrect');
 
       expect(argon2.hash).not.toHaveBeenCalled();
       expect(mockUsersService.updatePassword).not.toHaveBeenCalled();
-      expect(mockDb.delete).not.toHaveBeenCalled();
+      expect(mockSessionService.revokeAll).not.toHaveBeenCalled();
     });
 
-    it('should throw UnauthorizedException if user does not exist', async () => {
+    it('should throw UnauthorizedException if the user row is gone', async () => {
       // Arrange
-      const userId = 'non-existent-user';
-      mockUsersService.findById.mockResolvedValue(null);
+      mockUsersService.findCredentialsById.mockResolvedValue(null);
 
-      // Act & Assert
-      await expect(service.changePassword(userId, 'old-password', 'new-password')).rejects.toThrow(
-        UnauthorizedException,
-      );
-      await expect(service.changePassword(userId, 'old-password', 'new-password')).rejects.toThrow(
-        'User not found',
-      );
+      // Act & Assert — a 401, never a TypeError from dereferencing null
+      await expect(
+        service.changePassword('non-existent-user', 'old-password', 'new-password'),
+      ).rejects.toThrow(UnauthorizedException);
+      await expect(
+        service.changePassword('non-existent-user', 'old-password', 'new-password'),
+      ).rejects.toThrow('User not found');
 
       expect(argon2.verify).not.toHaveBeenCalled();
       expect(mockUsersService.updatePassword).not.toHaveBeenCalled();
@@ -410,37 +371,28 @@ describe('AuthService', () => {
   });
 
   describe('logout', () => {
-    it('should delete the session with the given refresh token', async () => {
-      // Arrange
-      const refreshToken = 'refresh-token-123';
-
+    it('should revoke the session for the given refresh token', async () => {
       // Act
-      await service.logout(refreshToken);
+      await service.logout('refresh-token-123');
 
       // Assert
-      expect(mockDb.delete).toHaveBeenCalled();
-      expect(mockDb.where).toHaveBeenCalled();
+      expect(mockSessionService.revoke).toHaveBeenCalledWith('refresh-token-123');
     });
   });
 
   describe('logoutAll', () => {
-    it('should delete all sessions for the given user', async () => {
-      // Arrange
-      const userId = 'user-123';
-
+    it('should revoke every session for the given user', async () => {
       // Act
-      await service.logoutAll(userId);
+      await service.logoutAll('user-123');
 
       // Assert
-      expect(mockDb.delete).toHaveBeenCalled();
-      expect(mockDb.where).toHaveBeenCalled();
+      expect(mockSessionService.revokeAll).toHaveBeenCalledWith('user-123');
     });
   });
 
   describe('getActiveSessions', () => {
     it('should return all active sessions for a user', async () => {
       // Arrange
-      const userId = 'user-123';
       const mockSessions = [
         {
           id: 'session-1',
@@ -449,26 +401,14 @@ describe('AuthService', () => {
           createdAt: '2024-01-01T00:00:00.000Z',
           expiresAt: '2024-01-08T00:00:00.000Z',
         },
-        {
-          id: 'session-2',
-          userAgent: 'Firefox',
-          ipAddress: '192.168.1.1',
-          createdAt: '2024-01-02T00:00:00.000Z',
-          expiresAt: '2024-01-09T00:00:00.000Z',
-        },
       ];
-
-      mockDb.select.mockReturnValue(mockDb);
-      mockDb.from.mockReturnValue(mockDb);
-      mockDb.where.mockResolvedValue(mockSessions);
+      mockSessionService.list.mockResolvedValue(mockSessions);
 
       // Act
-      const result = await service.getActiveSessions(userId);
+      const result = await service.getActiveSessions('user-123');
 
       // Assert
-      expect(mockDb.select).toHaveBeenCalled();
-      expect(mockDb.from).toHaveBeenCalled();
-      expect(mockDb.where).toHaveBeenCalled();
+      expect(mockSessionService.list).toHaveBeenCalledWith('user-123');
       expect(result).toEqual(mockSessions);
     });
   });
@@ -484,24 +424,27 @@ describe('AuthService', () => {
 
       // Assert
       expect(mockUsersService.findById).toHaveBeenCalledWith(userId);
-      expect(mockDb.insert).toHaveBeenCalled();
+      expect(mockSessionService.issue).toHaveBeenCalledWith(userId, SEVEN_DAYS_MS);
       expect(result).toEqual({
         accessToken: 'mock-access-token',
-        refreshToken: MOCK_REFRESH_TOKEN_HEX,
+        refreshToken: MOCK_REFRESH_TOKEN,
         expiresIn: 900,
       });
     });
 
     it('should throw UnauthorizedException if user does not exist', async () => {
       // Arrange
-      const userId = 'non-existent-user';
       mockUsersService.findById.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(service.createTokensForUser(userId)).rejects.toThrow(UnauthorizedException);
-      await expect(service.createTokensForUser(userId)).rejects.toThrow('User not found');
+      await expect(service.createTokensForUser('non-existent-user')).rejects.toThrow(
+        UnauthorizedException,
+      );
+      await expect(service.createTokensForUser('non-existent-user')).rejects.toThrow(
+        'User not found',
+      );
 
-      expect(mockDb.insert).not.toHaveBeenCalled();
+      expect(mockSessionService.issue).not.toHaveBeenCalled();
     });
   });
 
@@ -531,66 +474,75 @@ describe('AuthService', () => {
     });
   });
 
-  describe('private createTokens method (via public methods)', () => {
-    it('should create JWT with correct payload and expiry', async () => {
+  describe('token expiries', () => {
+    it('should sign the JWT with the configured access expiry verbatim', async () => {
       // Arrange
-      const userId = 'user-123';
       mockUsersService.findById.mockResolvedValue(mockUser);
 
       // Act
-      await service.createTokensForUser(userId);
+      await service.createTokensForUser('user-123');
 
       // Assert
       expect(mockJwtService.sign).toHaveBeenCalledWith(
-        { sub: userId, email: mockUser.email },
+        { sub: 'user-123', email: mockUser.email },
         { expiresIn: '15m' },
       );
       expect(mockConfigService.get).toHaveBeenCalledWith('JWT_ACCESS_EXPIRY', '15m');
       expect(mockConfigService.get).toHaveBeenCalledWith('JWT_REFRESH_EXPIRY', '7d');
     });
 
-    it('should insert session with correct expiry date', async () => {
-      // Arrange
-      const userId = 'user-123';
-      mockUsersService.findById.mockResolvedValue(mockUser);
-
-      const now = Date.now();
-      vi.spyOn(Date, 'now').mockReturnValue(now);
-
-      // Act
-      await service.createTokensForUser(userId);
-
-      // Assert
-      expect(mockDb.insert).toHaveBeenCalled();
-      expect(mockDb.values).toHaveBeenCalledWith(
-        expect.objectContaining({
-          userId,
-          refreshToken: MOCK_REFRESH_TOKEN_HASH,
-          expiresAt: expect.any(String),
-        }),
-      );
-    });
-  });
-
-  describe('parseDuration (indirectly tested)', () => {
-    it('should parse duration strings correctly', async () => {
+    it('should parse expiries with ms, in agreement with @nestjs/jwt', async () => {
       // Arrange
       mockConfigService.get.mockImplementation((key: string) => {
         if (key === 'JWT_ACCESS_EXPIRY') return '30m';
         if (key === 'JWT_REFRESH_EXPIRY') return '14d';
         return undefined;
       });
-
       mockUsersService.findById.mockResolvedValue(mockUser);
 
       // Act
       const result = await service.createTokensForUser('user-123');
 
-      // Assert - 30m = 30 * 60 = 1800 seconds
+      // Assert — 30m = 1800 seconds
       expect(result.expiresIn).toBe(1800);
+      expect(mockSessionService.issue).toHaveBeenCalledWith('user-123', 14 * 24 * 60 * 60 * 1000);
       expect(mockJwtService.sign).toHaveBeenCalledWith(expect.any(Object), {
         expiresIn: '30m',
       });
+    });
+
+    it('should honour units the old hand-rolled parser silently dropped', async () => {
+      // Regression: `1w` used to fall back to 15 minutes for the session row
+      // while @nestjs/jwt happily signed a week-long token.
+      mockConfigService.get.mockImplementation((key: string) => {
+        if (key === 'JWT_ACCESS_EXPIRY') return '1h';
+        if (key === 'JWT_REFRESH_EXPIRY') return '1w';
+        return undefined;
+      });
+      mockUsersService.findById.mockResolvedValue(mockUser);
+
+      // Act
+      const result = await service.createTokensForUser('user-123');
+
+      // Assert
+      expect(result.expiresIn).toBe(3600);
+      expect(mockSessionService.issue).toHaveBeenCalledWith('user-123', SEVEN_DAYS_MS);
+    });
+
+    it('should throw rather than silently default when an expiry is unparseable', async () => {
+      // Arrange
+      mockConfigService.get.mockImplementation((key: string) => {
+        if (key === 'JWT_ACCESS_EXPIRY') return '15m';
+        if (key === 'JWT_REFRESH_EXPIRY') return 'not-a-duration';
+        return undefined;
+      });
+      mockUsersService.findById.mockResolvedValue(mockUser);
+
+      // Act & Assert
+      await expect(service.createTokensForUser('user-123')).rejects.toThrow(
+        /JWT_REFRESH_EXPIRY must be a positive duration/,
+      );
+      expect(mockSessionService.issue).not.toHaveBeenCalled();
     });
   });
 });
