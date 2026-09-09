@@ -218,6 +218,10 @@ jobs:
       JWT_SECRET: ci-test-jwt-secret-not-for-production-use-000
       JWT_REFRESH_SECRET: ci-test-jwt-refresh-secret-not-for-prod
       ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      # EncryptionService.onModuleInit rejects anything under 32 chars, so the
+      # integration suite cannot boot the Nest app without this.
+      ENCRYPTION_MASTER_SECRET: ci-test-encryption-master-secret-not-for-production-use
+      FRONTEND_URL: http://127.0.0.1:3000
       NODE_ENV: test
 
     steps:
@@ -323,6 +327,8 @@ jobs:
       JWT_SECRET: ci-test-jwt-secret-not-for-production-use-000
       JWT_REFRESH_SECRET: ci-test-jwt-refresh-secret-not-for-prod
       ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      ENCRYPTION_MASTER_SECRET: ci-test-encryption-master-secret-not-for-production-use
+      FRONTEND_URL: http://127.0.0.1:3000
       NODE_ENV: test
       # 127.0.0.1, not localhost: node resolves localhost to ::1 first and the
       # backend listens on IPv4 only, which is the ECONNREFUSED ::1:4000 seen
@@ -359,20 +365,26 @@ jobs:
       - name: Run database migrations
         run: pnpm --filter @finance-owl/backend db:migrate
 
+      # The fixtures sign in as demo@financeowl.com, which only the seed
+      # creates — without this every authenticated spec fails on a 401.
+      - name: Seed the test database
+        run: pnpm --filter @finance-owl/backend db:seed
+
       # Playwright's own webServer only boots the SvelteKit dev server on
       # :3000; the e2e fixtures seed users and data through the REST API.
       - name: Start backend API
         run: |
-          pnpm --filter @finance-owl/backend exec node dist/main.js &
+          pnpm --filter @finance-owl/backend exec node dist/main.js > /tmp/backend.log 2>&1 &
           echo "$!" > /tmp/backend.pid
           for i in $(seq 1 60); do
-            if curl -fsS http://127.0.0.1:4000/health >/dev/null 2>&1; then
+            if curl -fsS http://127.0.0.1:4000/api/health >/dev/null 2>&1; then
               echo "Backend is up."
               exit 0
             fi
             sleep 1
           done
-          echo "Backend did not become healthy within 60s."
+          echo "Backend did not become healthy within 60s. Its output was:"
+          cat /tmp/backend.log
           exit 1
 
       - name: Run Playwright E2E tests
