@@ -1,51 +1,51 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { eq, and, desc } from 'drizzle-orm';
-import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
-import * as schema from '../../database/schema';
-import { cancellationRequests } from './cancellation.schema';
-
 /**
- * Detailed provider information including cancellation method, difficulty,
- * step-by-step instructions, tips, and contact details.
+ * The cancellation knowledge base: one record type, one table, one lookup.
+ *
+ * This used to be two incompatible tables. A 66-entry provider database held
+ * the rich, maintained content (method, URL, phone, difficulty, tips) but was
+ * only ever read by browse endpoints, while a 12-entry table -- ten of whose
+ * entries duplicated the first with already-drifted URLs -- was the one the
+ * write path actually persisted. So a user cancelling Peloton was handed
+ * generic boilerplate while the real Peloton entry sat unused.
+ *
+ * The module is deliberately pure: no DI, no database, no NestJS. Everything
+ * here is a function over a module constant, which is what makes it testable.
  */
-export interface ProviderEntry {
+
+export type CancellationMethod = 'online' | 'phone' | 'email' | 'in_person' | 'chat';
+
+export type CancellationDifficulty = 'easy' | 'medium' | 'hard';
+
+/** One provider's cancellation playbook. */
+export interface CancellationCatalogEntry {
   name: string;
-  cancellationMethod: 'online' | 'phone' | 'email' | 'in_person' | 'chat';
+  /** The channel that actually works for this provider. */
+  cancellationMethod: CancellationMethod;
   url: string | null;
   phoneNumber: string | null;
+  /** Live-chat entry point, where the provider offers one. */
+  chatUrl?: string | null;
+  email?: string | null;
   emailTemplate: string | null;
   steps: string[];
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: CancellationDifficulty;
   tips: string[];
 }
 
-export interface SavingsBreakdown {
-  totalCancelled: number;
-  totalPending: number;
-  estimatedMonthlySavings: number;
-  estimatedAnnualSavings: number;
-  cancelledSubscriptions: {
-    name: string;
-    amount: number;
-    frequency: string;
-    cancelledAt: string | null;
-  }[];
+/**
+ * The projection the cancellation API speaks: which channels a user can try,
+ * where to reach the provider on each, and the steps to follow.
+ */
+export interface CancellationInstructions {
+  methods: string[];
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  chatUrl: string | null;
+  steps: string[];
 }
 
-const FREQUENCY_MONTHLY_MULTIPLIER: Record<string, number> = {
-  weekly: 4.33,
-  biweekly: 2.17,
-  monthly: 1,
-  quarterly: 1 / 3,
-  annual: 1 / 12,
-};
-
-/**
- * Comprehensive provider knowledge base with cancellation details for 50+ services.
- * Each entry includes the preferred cancellation method, direct URLs, phone numbers,
- * email templates, step-by-step instructions, difficulty rating, and user tips.
- */
-const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
+const CATALOG: Record<string, CancellationCatalogEntry> = {
   // --- Streaming Video ---
   netflix: {
     name: 'Netflix',
@@ -95,6 +95,7 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
     cancellationMethod: 'online',
     url: 'https://www.disneyplus.com/account',
     phoneNumber: null,
+    chatUrl: 'https://help.disneyplus.com/csp',
     emailTemplate: null,
     steps: [
       'Go to disneyplus.com/account and log in',
@@ -394,6 +395,7 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
     cancellationMethod: 'online',
     url: 'https://www.amazon.com/mc?ref_=nav_AccountFlyout_prime',
     phoneNumber: '1-888-280-4331',
+    chatUrl: 'https://www.amazon.com/gp/help/customer/contact-us',
     emailTemplate: null,
     steps: [
       'Go to amazon.com and sign in',
@@ -669,6 +671,7 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
     cancellationMethod: 'online',
     url: 'https://account.adobe.com/plans',
     phoneNumber: '1-800-833-6687',
+    chatUrl: 'https://helpx.adobe.com/contact.html',
     emailTemplate: null,
     steps: [
       'Go to account.adobe.com and sign in',
@@ -693,6 +696,7 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
     cancellationMethod: 'online',
     url: 'https://account.adobe.com/plans',
     phoneNumber: '1-800-833-6687',
+    chatUrl: 'https://helpx.adobe.com/contact.html',
     emailTemplate: null,
     steps: [
       'Go to account.adobe.com and sign in',
@@ -715,6 +719,7 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
     cancellationMethod: 'online',
     url: 'https://account.microsoft.com/services/',
     phoneNumber: '1-800-642-7676',
+    chatUrl: 'https://support.microsoft.com/contactus',
     emailTemplate: null,
     steps: [
       'Go to account.microsoft.com/services and sign in',
@@ -1386,102 +1391,199 @@ const PROVIDER_DATABASE: Record<string, ProviderEntry> = {
       'Keep the confirmation number',
     ],
   },
+  // --- Generic fallbacks ---------------------------------------------------
+  // Declared last so a specific provider always wins the substring and
+  // word-level passes in findCancellationEntry.
+
+  gym: {
+    name: 'Gym Membership',
+    cancellationMethod: 'in_person',
+    url: null,
+    phoneNumber: null,
+    emailTemplate: null,
+    steps: [
+      'Review your gym membership contract for cancellation terms and notice period',
+      'Many gyms require written notice 30 days before the next billing date',
+      'Visit the gym in person or send a certified letter requesting cancellation',
+      'Some gyms allow cancellation via email -- send a written request with your member ID',
+      'Keep a copy of all cancellation correspondence for your records',
+      'Follow up to confirm the cancellation was processed and check for final charges',
+    ],
+    difficulty: 'hard',
+    tips: [
+      'Gyms are the most common source of surprise charges after cancellation',
+      'A certified letter gives you proof of the notice date if they dispute it',
+      'Watch for an annual maintenance fee billed shortly after you cancel',
+    ],
+  },
+
+  'cable/internet': {
+    name: 'Cable / Internet Provider',
+    cancellationMethod: 'phone',
+    url: null,
+    phoneNumber: null,
+    emailTemplate: null,
+    steps: [
+      "Call your provider's cancellation/retention department directly",
+      'Have your account number and last bill ready before calling',
+      'Be prepared for retention offers -- decide in advance if you want to negotiate',
+      'Ask for a confirmation number and final bill details',
+      'Return any rented equipment (modem, router, cable boxes) promptly to avoid fees',
+      'Check your final bill to ensure no unexpected charges were added',
+      'Consider sending a written cancellation request as backup documentation',
+    ],
+    difficulty: 'hard',
+    tips: [
+      'Unreturned equipment is the most common unexpected charge -- get a return receipt',
+      'Retention offers are often better than anything advertised to new customers',
+      'Cancelling mid-cycle rarely earns a refund; time it near the end of a billing period',
+    ],
+  },
 };
 
-@Injectable()
-export class CancellationProvidersService {
-  constructor(@Inject(DATABASE_TOKEN) private db: DrizzleDB) {}
+/**
+ * Resolve a merchant name to a catalog entry.
+ *
+ * Three passes, widening as they go: exact key, then either string containing
+ * the other, then a word-level match on key words longer than three characters
+ * (the length floor keeps "max" and "gym" from swallowing unrelated merchants).
+ * This used to be written out twice, statement for statement, in two files.
+ */
+export function findCancellationEntry(merchantName: string): CancellationCatalogEntry | null {
+  const normalized = merchantName.toLowerCase().trim();
 
-  /**
-   * Look up provider cancellation info by name.
-   * Performs exact match, then partial/fuzzy matching.
-   */
-  getProviderInfo(providerName: string): ProviderEntry | null {
-    const normalized = providerName.toLowerCase().trim();
-
-    // Direct match
-    if (PROVIDER_DATABASE[normalized]) {
-      return PROVIDER_DATABASE[normalized];
-    }
-
-    // Partial match: check if provider name contains or is contained by a known key
-    for (const [key, info] of Object.entries(PROVIDER_DATABASE)) {
-      if (normalized.includes(key) || key.includes(normalized)) {
-        return info;
-      }
-    }
-
-    // Word-level match
-    for (const [key, info] of Object.entries(PROVIDER_DATABASE)) {
-      const keyWords = key.split(/\s+/);
-      const nameWords = normalized.split(/\s+/);
-      const hasMatch = keyWords.some(
-        (kw) => kw.length > 3 && nameWords.some((nw) => nw.includes(kw)),
-      );
-      if (hasMatch) {
-        return info;
-      }
-    }
-
-    return null;
+  if (Object.prototype.hasOwnProperty.call(CATALOG, normalized)) {
+    return CATALOG[normalized];
   }
 
-  /**
-   * Return all known providers, de-duplicated by display name.
-   */
-  getAllProviders(): ProviderEntry[] {
-    const seen = new Set<string>();
-    const providers: ProviderEntry[] = [];
-
-    for (const info of Object.values(PROVIDER_DATABASE)) {
-      if (!seen.has(info.name)) {
-        seen.add(info.name);
-        providers.push(info);
-      }
+  for (const [key, entry] of Object.entries(CATALOG)) {
+    if (normalized.includes(key) || key.includes(normalized)) {
+      return entry;
     }
-
-    return providers.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  /**
-   * Search providers by partial name match.
-   */
-  searchProviders(query: string): ProviderEntry[] {
-    const normalized = query.toLowerCase().trim();
-    if (!normalized) {
-      return this.getAllProviders();
+  for (const [key, entry] of Object.entries(CATALOG)) {
+    const keyWords = key.split(/\s+/);
+    const merchantWords = normalized.split(/\s+/);
+    const hasMatch = keyWords.some(
+      (kw) => kw.length > 3 && merchantWords.some((mw) => mw.includes(kw)),
+    );
+    if (hasMatch) {
+      return entry;
     }
-
-    const seen = new Set<string>();
-    const results: ProviderEntry[] = [];
-
-    for (const info of Object.values(PROVIDER_DATABASE)) {
-      if (!seen.has(info.name) && info.name.toLowerCase().includes(normalized)) {
-        seen.add(info.name);
-        results.push(info);
-      }
-    }
-
-    return results.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  /**
-   * Generate a pre-written cancellation email for a given subscription.
-   */
-  generateCancellationEmail(subscriptionName: string, providerEmail: string | null): string {
-    // Check if provider has a specific email template
-    const provider = this.getProviderInfo(subscriptionName);
-    if (provider?.emailTemplate) {
-      return provider.emailTemplate;
+  return null;
+}
+
+/** Every entry, de-duplicated by display name and sorted for browsing. */
+export function listCancellationEntries(): CancellationCatalogEntry[] {
+  const seen = new Set<string>();
+  const entries: CancellationCatalogEntry[] = [];
+
+  for (const entry of Object.values(CATALOG)) {
+    if (!seen.has(entry.name)) {
+      seen.add(entry.name);
+      entries.push(entry);
     }
+  }
 
-    const today = new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+  return entries.sort((a, b) => a.name.localeCompare(b.name));
+}
 
-    return `Subject: Subscription Cancellation Request - ${subscriptionName}
+/** Browse-time search over display names. An empty query lists everything. */
+export function searchCancellationEntries(query: string): CancellationCatalogEntry[] {
+  const normalized = query.toLowerCase().trim();
+  if (!normalized) {
+    return listCancellationEntries();
+  }
+
+  return listCancellationEntries().filter((entry) => entry.name.toLowerCase().includes(normalized));
+}
+
+/**
+ * The channels a user can act on: the provider's primary one first, then every
+ * other channel the entry actually has contact details for.
+ */
+function methodsFor(entry: CancellationCatalogEntry): string[] {
+  const methods = new Set<string>();
+
+  methods.add(entry.cancellationMethod === 'online' ? 'self_service' : entry.cancellationMethod);
+  if (entry.url) {
+    methods.add('self_service');
+  }
+  if (entry.phoneNumber) {
+    methods.add('phone');
+  }
+  if (entry.chatUrl) {
+    methods.add('chat');
+  }
+  if (entry.email || entry.emailTemplate) {
+    methods.add('email');
+  }
+
+  return [...methods];
+}
+
+/** Project a catalog entry onto the instructions the cancellation API returns. */
+export function toCancellationInstructions(
+  entry: CancellationCatalogEntry,
+): CancellationInstructions {
+  return {
+    methods: methodsFor(entry),
+    phone: entry.phoneNumber ?? null,
+    email: entry.email ?? null,
+    website: entry.url ?? null,
+    chatUrl: entry.chatUrl ?? null,
+    steps: entry.steps,
+  };
+}
+
+/** Fallback advice for a merchant the catalog has never heard of. */
+export function genericCancellationInstructions(merchantName: string): CancellationInstructions {
+  return {
+    methods: ['self_service', 'email', 'phone'],
+    phone: null,
+    email: null,
+    website: null,
+    chatUrl: null,
+    steps: [
+      `Log in to your ${merchantName} account on their website or app`,
+      'Look for Account Settings, Subscription, or Billing in the menu',
+      'Find the cancellation or "Cancel subscription" option',
+      'If no online option is available, look for a customer support phone number or email',
+      'Request cancellation and ask for a confirmation number or email',
+      'Keep a record of the cancellation date and any confirmation you receive',
+      'Monitor your bank statements to confirm no further charges after cancellation',
+    ],
+  };
+}
+
+/**
+ * The single entry point the cancellation write path uses: real instructions
+ * when the catalog knows the merchant, generic advice when it does not.
+ */
+export function cancellationInstructionsFor(merchantName: string): CancellationInstructions {
+  const entry = findCancellationEntry(merchantName);
+  return entry ? toCancellationInstructions(entry) : genericCancellationInstructions(merchantName);
+}
+
+/** A pre-written cancellation email, or the provider's own template if it has one. */
+export function generateCancellationEmail(
+  subscriptionName: string,
+  entry: CancellationCatalogEntry | null,
+): string {
+  if (entry?.emailTemplate) {
+    return entry.emailTemplate;
+  }
+
+  const today = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  return `Subject: Subscription Cancellation Request - ${subscriptionName}
 
 Dear ${subscriptionName} Customer Support,
 
@@ -1504,18 +1606,18 @@ Thank you for your attention to this matter.
 Sincerely,
 [YOUR NAME]
 [YOUR PHONE NUMBER]`;
-  }
+}
 
-  /**
-   * Generate a phone cancellation script for a given subscription.
-   */
-  generateCancellationScript(subscriptionName: string, provider: string): string {
-    const providerInfo = this.getProviderInfo(provider);
-    const difficulty = providerInfo?.difficulty ?? 'medium';
+/** A phone script, hardened with retention-offer rebuttals for tougher providers. */
+export function generateCancellationScript(
+  subscriptionName: string,
+  entry: CancellationCatalogEntry | null,
+): string {
+  const difficulty = entry?.difficulty ?? 'medium';
 
-    let retentionSection = '';
-    if (difficulty === 'hard' || difficulty === 'medium') {
-      retentionSection = `
+  let retentionSection = '';
+  if (difficulty === 'hard' || difficulty === 'medium') {
+    retentionSection = `
 HANDLING RETENTION OFFERS:
 ----------------------------------------
 The representative may try to keep you as a customer. Here is how to respond:
@@ -1532,12 +1634,12 @@ If offered a downgrade:
 If pressed for a reason:
 "I have personal reasons for cancelling. Please process my cancellation request."
 `;
-    }
+  }
 
-    return `PHONE CANCELLATION SCRIPT
+  return `PHONE CANCELLATION SCRIPT
 ==================================================
 Service: ${subscriptionName}
-${providerInfo?.phoneNumber ? `Phone: ${providerInfo.phoneNumber}` : 'Phone: Check the provider website for their support number'}
+${entry?.phoneNumber ? `Phone: ${entry.phoneNumber}` : 'Phone: Check the provider website for their support number'}
 ${difficulty === 'hard' ? '\nWARNING: This provider is known for aggressive retention tactics.\nBe firm and polite. Budget 20-30 minutes for this call.\n' : ''}
 --------------------------------------------------
 
@@ -1573,60 +1675,4 @@ RECORD THESE DETAILS:
 - Date and time of call: ________________
 - Access end date: ________________
 --------------------------------------------------`;
-  }
-
-  /**
-   * Calculate total savings from completed cancellations.
-   * Returns a detailed breakdown including per-subscription savings.
-   */
-  async trackSavings(userId: string): Promise<SavingsBreakdown> {
-    const cancellations = await this.db
-      .select({
-        status: cancellationRequests.status,
-        subscriptionName: schema.recurringTransactions.name,
-        merchantName: schema.recurringTransactions.merchantName,
-        estimatedAmount: schema.recurringTransactions.estimatedAmount,
-        frequency: schema.recurringTransactions.frequency,
-        cancelledAt: cancellationRequests.cancellationConfirmedAt,
-      })
-      .from(cancellationRequests)
-      .leftJoin(
-        schema.recurringTransactions,
-        eq(cancellationRequests.subscriptionId, schema.recurringTransactions.id),
-      )
-      .where(eq(cancellationRequests.userId, userId))
-      .orderBy(desc(cancellationRequests.createdAt));
-
-    let totalCancelled = 0;
-    let totalPending = 0;
-    let estimatedMonthlySavings = 0;
-    const cancelledSubscriptions: SavingsBreakdown['cancelledSubscriptions'] = [];
-
-    for (const c of cancellations) {
-      if (c.status === 'completed') {
-        totalCancelled++;
-        if (c.estimatedAmount && c.frequency) {
-          const multiplier = FREQUENCY_MONTHLY_MULTIPLIER[c.frequency] ?? 1;
-          const monthlySaving = c.estimatedAmount * multiplier;
-          estimatedMonthlySavings += monthlySaving;
-          cancelledSubscriptions.push({
-            name: c.merchantName ?? c.subscriptionName ?? 'Unknown',
-            amount: c.estimatedAmount,
-            frequency: c.frequency,
-            cancelledAt: c.cancelledAt,
-          });
-        }
-      } else if (c.status === 'pending' || c.status === 'in_progress') {
-        totalPending++;
-      }
-    }
-
-    return {
-      totalCancelled,
-      totalPending,
-      estimatedMonthlySavings: Math.round(estimatedMonthlySavings * 100) / 100,
-      estimatedAnnualSavings: Math.round(estimatedMonthlySavings * 12 * 100) / 100,
-      cancelledSubscriptions,
-    };
-  }
 }

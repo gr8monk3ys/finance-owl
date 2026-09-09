@@ -2,6 +2,7 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { eq, and, desc } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
+import { addOneCycle, annualMultiplier, frequencyDays, frequencyForInterval } from './frequency';
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -84,7 +85,7 @@ export interface DetectionResult {
 
 // ─── Internal types ───────────────────────────────────────────────────────────
 
-interface TransactionRecord {
+export interface TransactionRecord {
   name: string;
   merchantName: string | null;
   amount: number;
@@ -111,36 +112,6 @@ interface AmountCluster {
 const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-
-const FREQUENCY_RANGES: { min: number; max: number; label: string; nominalDays: number }[] = [
-  { min: 5, max: 10, label: 'weekly', nominalDays: 7 },
-  { min: 11, max: 18, label: 'biweekly', nominalDays: 14 },
-  { min: 25, max: 36, label: 'monthly', nominalDays: 30 },
-  { min: 55, max: 70, label: 'bimonthly', nominalDays: 60 },
-  { min: 80, max: 100, label: 'quarterly', nominalDays: 90 },
-  { min: 170, max: 200, label: 'semiannual', nominalDays: 182 },
-  { min: 340, max: 400, label: 'annual', nominalDays: 365 },
-];
-
-const FREQUENCY_DAYS: Record<string, number> = {
-  weekly: 7,
-  biweekly: 14,
-  monthly: 30,
-  bimonthly: 60,
-  quarterly: 90,
-  semiannual: 182,
-  annual: 365,
-};
-
-const FREQUENCY_ANNUAL_MULTIPLIER: Record<string, number> = {
-  weekly: 52,
-  biweekly: 26,
-  monthly: 12,
-  bimonthly: 6,
-  quarterly: 4,
-  semiannual: 2,
-  annual: 1,
-};
 
 /** Amount tolerance for clustering similar charges (5%) */
 const AMOUNT_CLUSTER_TOLERANCE = 0.05;
@@ -925,7 +896,7 @@ export class DetectionService {
     }
 
     // ── Interval regularity: 0-35 points ────────────────────────────────
-    const expectedInterval = FREQUENCY_DAYS[frequency] ?? 30;
+    const expectedInterval = frequencyDays(frequency);
     if (intervals.length > 0) {
       const intervalDeviations = intervals.map((i) => Math.abs(i - expectedInterval));
       const medianDeviation = this.median(intervalDeviations);
@@ -1126,13 +1097,13 @@ export class DetectionService {
     }
 
     const medianInterval = this.median(cleanedIntervals);
-    const frequency = this.mapToFrequency(medianInterval);
+    const frequency = frequencyForInterval(medianInterval);
 
     if (!frequency) {
       return null;
     }
 
-    const frequencyDays = FREQUENCY_DAYS[frequency];
+    const cycleDays = frequencyDays(frequency);
 
     // Check amount consistency
     const amounts = sorted.map((t) => Math.abs(t.amount));
@@ -1146,7 +1117,7 @@ export class DetectionService {
 
     // Check for cancellation
     const lastChargeDate = this.parseTransactionDate(sorted[sorted.length - 1].date);
-    const isCancelled = this.detectCancellation(lastChargeDate, frequencyDays, referenceDate);
+    const isCancelled = this.detectCancellation(lastChargeDate, cycleDays, referenceDate);
 
     if (isCancelled) {
       const daysSinceLastCharge = Math.round(
@@ -1163,7 +1134,7 @@ export class DetectionService {
           lastChargeDate: sorted[sorted.length - 1].date,
           frequency,
           daysSinceLastCharge,
-          missedCycles: Math.floor(daysSinceLastCharge / frequencyDays),
+          missedCycles: Math.floor(daysSinceLastCharge / cycleDays),
           totalSpent: Math.round(totalSpent * 100) / 100,
         },
       };
@@ -1195,11 +1166,11 @@ export class DetectionService {
       : Math.round(meanAmount * 100) / 100;
 
     // Calculate next expected date
-    const nextDate = this.calculateNextDate(lastChargeDate, frequency);
+    const nextDate = addOneCycle(lastChargeDate, frequency);
 
     // Annual cost projection
-    const annualMultiplier = FREQUENCY_ANNUAL_MULTIPLIER[frequency] ?? 12;
-    const annualCostProjection = Math.round(currentAmount * annualMultiplier * 100) / 100;
+    const annualCostProjection =
+      Math.round(currentAmount * annualMultiplier(frequency) * 100) / 100;
 
     return {
       type: 'active',
@@ -1246,51 +1217,6 @@ export class DetectionService {
 
     // If we removed everything, fall back to original
     return cleaned.length > 0 ? cleaned : intervals;
-  }
-
-  private mapToFrequency(medianDays: number): string | null {
-    for (const range of FREQUENCY_RANGES) {
-      if (medianDays >= range.min && medianDays <= range.max) {
-        return range.label;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Calculate the next expected charge date based on the last charge and frequency.
-   * Uses calendar-aware logic for monthly+ frequencies.
-   */
-  private calculateNextDate(lastChargeDate: Date, frequency: string): Date {
-    const next = new Date(lastChargeDate);
-
-    switch (frequency) {
-      case 'weekly':
-        next.setUTCDate(next.getUTCDate() + 7);
-        break;
-      case 'biweekly':
-        next.setUTCDate(next.getUTCDate() + 14);
-        break;
-      case 'monthly':
-        next.setUTCMonth(next.getUTCMonth() + 1);
-        break;
-      case 'bimonthly':
-        next.setUTCMonth(next.getUTCMonth() + 2);
-        break;
-      case 'quarterly':
-        next.setUTCMonth(next.getUTCMonth() + 3);
-        break;
-      case 'semiannual':
-        next.setUTCMonth(next.getUTCMonth() + 6);
-        break;
-      case 'annual':
-        next.setUTCFullYear(next.getUTCFullYear() + 1);
-        break;
-      default:
-        next.setUTCDate(next.getUTCDate() + (FREQUENCY_DAYS[frequency] ?? 30));
-    }
-
-    return next;
   }
 
   private parseTransactionDate(value: string): Date {

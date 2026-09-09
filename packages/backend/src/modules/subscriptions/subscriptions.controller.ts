@@ -15,6 +15,7 @@ import { SubscriptionsService } from './subscriptions.service';
 import { DetectionService } from './detection.service';
 import { IsString, IsNumber, IsOptional, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
+import { SUBSCRIPTION_FREQUENCIES } from './frequency';
 
 class CreateSubscriptionDto {
   @IsString()
@@ -29,7 +30,7 @@ class CreateSubscriptionDto {
   estimatedAmount!: number;
 
   @IsString()
-  @IsIn(['weekly', 'biweekly', 'monthly', 'quarterly', 'annual'])
+  @IsIn(SUBSCRIPTION_FREQUENCIES)
   frequency!: string;
 
   @IsOptional()
@@ -57,7 +58,7 @@ class UpdateSubscriptionDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['weekly', 'biweekly', 'monthly', 'quarterly', 'annual'])
+  @IsIn(SUBSCRIPTION_FREQUENCIES)
   frequency?: string;
 
   @IsOptional()

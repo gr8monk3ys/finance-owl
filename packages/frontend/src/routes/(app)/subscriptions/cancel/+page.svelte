@@ -206,7 +206,7 @@
   {/if}
 
   <!-- Savings Summary -->
-  {#if data.savings.totalCancelled > 0}
+  {#if data.savings.totalCompleted > 0}
     <Card>
       <div class="flex items-center gap-4">
         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-900/30">
@@ -239,7 +239,7 @@
           </div>
         </div>
         <div class="text-right">
-          <p class="text-2xl font-bold text-white">{data.savings.totalCancelled}</p>
+          <p class="text-2xl font-bold text-white">{data.savings.totalCompleted}</p>
           <p class="text-xs text-surface-500">cancelled</p>
         </div>
       </div>

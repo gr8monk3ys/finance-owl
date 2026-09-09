@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { DetectionService } from './detection.service';
+import { DetectionService, type TransactionRecord } from './detection.service';
 import type { DrizzleDB } from '../../database/database.module';
 
 describe('DetectionService', () => {
@@ -16,62 +16,47 @@ describe('DetectionService', () => {
     service = new DetectionService(mockDb);
   });
 
-  // ─── Helper to set up mock DB chains ────────────────────────────────
-  function setupDetectMocks(transactions: any[], existingRecords: any[] = []) {
-    const selectChain = {
-      select: vi.fn().mockReturnThis(),
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockResolvedValue(transactions),
+  // ─── Fixtures for the pure recurrence pipeline ──────────────────────
+
+  /**
+   * A fixed "now". The recurrence tests drive `analyzeTransactions`, the
+   * documented pure entry point, so they need neither a Drizzle builder mock
+   * nor the wall clock -- dates anchored to `Date.now()` quietly change which
+   * side of the cancellation window a charge falls on as the suite ages.
+   */
+  const NOW = new Date('2026-03-15T12:00:00Z');
+
+  /** The date-only string for `days` days before NOW. */
+  const daysBefore = (days: number): string =>
+    new Date(NOW.getTime() - days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+  /** One charge from `merchantName`, `days` before NOW. */
+  function charge(
+    merchantName: string | null,
+    amount: number,
+    days: number,
+    overrides: Partial<TransactionRecord> = {},
+  ): TransactionRecord {
+    return {
+      name: merchantName ?? 'Recurring Service',
+      merchantName,
+      amount,
+      date: daysBefore(days),
+      accountId: 'acc_1',
+      categoryId: 'cat_1',
+      ...overrides,
     };
-
-    const existingCheckChain = {
-      select: vi.fn().mockReturnThis(),
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue(existingRecords),
-    };
-
-    const insertChain = {
-      insert: vi.fn().mockReturnThis(),
-      values: vi.fn().mockResolvedValue(undefined),
-    };
-
-    const updateChain = {
-      update: vi.fn().mockReturnThis(),
-      set: vi.fn().mockReturnThis(),
-      where: vi.fn().mockResolvedValue(undefined),
-    };
-
-    mockDb.select = vi
-      .fn()
-      .mockReturnValueOnce(selectChain) // First call: get transactions
-      .mockReturnValue(existingCheckChain); // Subsequent calls: check existing
-
-    mockDb.insert = vi.fn().mockReturnValue(insertChain);
-    mockDb.update = vi.fn().mockReturnValue(updateChain);
   }
+
+  /** The active subscriptions the pure pipeline finds in `transactions`. */
+  const detect = (transactions: TransactionRecord[]) =>
+    service.analyzeTransactions(transactions, NOW).active;
 
   // ─── Recurring Pattern Matching ─────────────────────────────────────
 
-  describe('detectForUser - recurring pattern matching', () => {
-    it('should detect monthly subscription (e.g., Netflix)', async () => {
-      // Dates are relative to today so the subscription stays "active"
-      // (a last charge more than 1.5 cycles ago is classified cancelled).
-      const iso = (daysAgo: number) =>
-        new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-      const transactions = [5, 35, 65].map((daysAgo) => ({
-        name: 'Netflix',
-        merchantName: 'Netflix',
-        amount: 15.99,
-        date: iso(daysAgo),
-        accountId: 'acc_1',
-        categoryId: 'cat_1',
-        pending: false,
-      }));
-
-      setupDetectMocks(transactions);
-      const result = await service.detectForUser('user_1');
+  describe('analyzeTransactions - recurring pattern matching', () => {
+    it('should detect monthly subscription (e.g., Netflix)', () => {
+      const result = detect([5, 35, 65].map((days) => charge('Netflix', 15.99, days)));
 
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
@@ -81,50 +66,10 @@ describe('DetectionService', () => {
       });
     });
 
-    it('should detect weekly subscription', async () => {
-      // Use dates close to today so the subscription is not detected as cancelled.
-      // Weekly frequency * 1.5 = 10.5 days; last charge must be within that window.
-      const today = new Date();
-      const d1 = new Date(today);
-      d1.setDate(d1.getDate() - 3);
-      const d2 = new Date(today);
-      d2.setDate(d2.getDate() - 10);
-      const d3 = new Date(today);
-      d3.setDate(d3.getDate() - 17);
-      const fmt = (d: Date) => d.toISOString().split('T')[0];
-
-      const transactions = [
-        {
-          name: 'Meal Kit',
-          merchantName: 'HelloFresh',
-          amount: 69.99,
-          date: fmt(d1),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-        {
-          name: 'Meal Kit',
-          merchantName: 'HelloFresh',
-          amount: 69.99,
-          date: fmt(d2),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-        {
-          name: 'Meal Kit',
-          merchantName: 'HelloFresh',
-          amount: 69.99,
-          date: fmt(d3),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-      ];
-
-      setupDetectMocks(transactions);
-      const result = await service.detectForUser('user_1');
+    it('should detect weekly subscription', () => {
+      const result = detect(
+        [3, 10, 17].map((days) => charge('HelloFresh', 69.99, days, { name: 'Meal Kit' })),
+      );
 
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
@@ -132,78 +77,33 @@ describe('DetectionService', () => {
         estimatedAmount: 69.99,
         frequency: 'weekly',
       });
-      // Next expected date = last charge + 7 days
-      const expectedNext = new Date(d1);
-      expectedNext.setDate(expectedNext.getDate() + 7);
-      expect(result[0].nextExpectedDate).toBe(fmt(expectedNext));
+      // Next expected date = last charge + one weekly cycle.
+      expect(result[0].nextExpectedDate).toBe(daysBefore(-4));
     });
 
-    it('should reject inconsistent amounts (high standard deviation)', async () => {
-      const transactions = [
-        {
-          name: 'Restaurant',
-          merchantName: 'Local Diner',
-          amount: 50.0,
-          date: '2026-01-30',
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-        {
-          name: 'Restaurant',
-          merchantName: 'Local Diner',
-          amount: 15.0,
-          date: '2025-12-30',
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-        {
-          name: 'Restaurant',
-          merchantName: 'Local Diner',
-          amount: 85.0,
-          date: '2025-11-30',
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-      ];
-
-      setupDetectMocks(transactions);
-      const result = await service.detectForUser('user_1');
+    it('should reject inconsistent amounts (high standard deviation)', () => {
+      const result = detect([
+        charge('Local Diner', 50.0, 5, { name: 'Restaurant' }),
+        charge('Local Diner', 15.0, 35, { name: 'Restaurant' }),
+        charge('Local Diner', 85.0, 65, { name: 'Restaurant' }),
+      ]);
 
       expect(result).toHaveLength(0);
     });
 
-    it('should handle empty transaction list', async () => {
-      const selectChain = {
-        select: vi.fn().mockReturnThis(),
-        from: vi.fn().mockReturnThis(),
-        where: vi.fn().mockReturnThis(),
-        orderBy: vi.fn().mockResolvedValue([]),
-      };
-      mockDb.select = vi.fn().mockReturnValue(selectChain);
-
-      const result = await service.detectForUser('user_1');
-      expect(result).toEqual([]);
+    it('should handle empty transaction list', () => {
+      expect(service.analyzeTransactions([], NOW)).toEqual({
+        active: [],
+        cancelled: [],
+        totalMonthlyEstimate: 0,
+        totalAnnualEstimate: 0,
+      });
     });
 
-    it('should detect quarterly subscription', async () => {
-      // Relative dates: last charge recent enough to remain active.
-      const iso = (daysAgo: number) =>
-        new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-      const transactions = [10, 100, 190].map((daysAgo) => ({
-        name: 'Insurance',
-        merchantName: 'State Farm',
-        amount: 450.0,
-        date: iso(daysAgo),
-        accountId: 'acc_1',
-        categoryId: 'cat_1',
-        pending: false,
-      }));
-
-      setupDetectMocks(transactions);
-      const result = await service.detectForUser('user_1');
+    it('should detect quarterly subscription', () => {
+      const result = detect(
+        [10, 100, 190].map((days) => charge('State Farm', 450.0, days, { name: 'Insurance' })),
+      );
 
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
@@ -212,64 +112,13 @@ describe('DetectionService', () => {
       });
     });
 
-    it('should group transactions by merchant name correctly', async () => {
-      // Use dates relative to today so subscriptions are not detected as cancelled.
-      // Spotify: monthly (last charge within 45 days)
-      // Planet Fitness: biweekly (last charge within 21 days)
-      const today = new Date();
-      const fmt = (d: Date) => d.toISOString().split('T')[0];
-
-      const spotifyD1 = new Date(today);
-      spotifyD1.setDate(spotifyD1.getDate() - 5);
-      const spotifyD2 = new Date(today);
-      spotifyD2.setDate(spotifyD2.getDate() - 36);
-
-      const gymD1 = new Date(today);
-      gymD1.setDate(gymD1.getDate() - 3);
-      const gymD2 = new Date(today);
-      gymD2.setDate(gymD2.getDate() - 17);
-
-      const transactions = [
-        {
-          name: 'Spotify Premium',
-          merchantName: 'Spotify',
-          amount: 9.99,
-          date: fmt(spotifyD1),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-        {
-          name: 'Spotify Premium',
-          merchantName: 'Spotify',
-          amount: 9.99,
-          date: fmt(spotifyD2),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-        {
-          name: 'Gym',
-          merchantName: 'Planet Fitness',
-          amount: 10.0,
-          date: fmt(gymD1),
-          accountId: 'acc_1',
-          categoryId: 'cat_2',
-          pending: false,
-        },
-        {
-          name: 'Gym',
-          merchantName: 'Planet Fitness',
-          amount: 10.0,
-          date: fmt(gymD2),
-          accountId: 'acc_1',
-          categoryId: 'cat_2',
-          pending: false,
-        },
-      ];
-
-      setupDetectMocks(transactions);
-      const result = await service.detectForUser('user_1');
+    it('should group transactions by merchant name correctly', () => {
+      const result = detect([
+        ...[5, 36].map((days) => charge('Spotify', 9.99, days, { name: 'Spotify Premium' })),
+        ...[3, 17].map((days) =>
+          charge('Planet Fitness', 10.0, days, { name: 'Gym', categoryId: 'cat_2' }),
+        ),
+      ]);
 
       expect(result).toHaveLength(2);
       const spotify = result.find((r) => r.merchantName === 'Spotify');
@@ -281,162 +130,50 @@ describe('DetectionService', () => {
       expect(gym?.frequency).toBe('biweekly');
     });
 
-    it('should skip merchants with only 1 transaction', async () => {
-      const transactions = [
-        {
-          name: 'One-time Purchase',
-          merchantName: 'Amazon',
-          amount: 29.99,
-          date: '2026-01-15',
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-      ];
-
-      setupDetectMocks(transactions);
-      const result = await service.detectForUser('user_1');
-      expect(result).toEqual([]);
+    it('should skip merchants with only 1 transaction', () => {
+      expect(detect([charge('Amazon', 29.99, 30, { name: 'One-time Purchase' })])).toEqual([]);
     });
 
-    it('should handle transactions with null merchantName', async () => {
-      const today = new Date();
-      const fmt = (d: Date) => d.toISOString().split('T')[0];
-      const d1 = new Date(today);
-      d1.setDate(d1.getDate() - 5);
-      const d2 = new Date(today);
-      d2.setDate(d2.getDate() - 35);
-      const d3 = new Date(today);
-      d3.setDate(d3.getDate() - 65);
-      const transactions = [
-        {
-          name: 'Recurring Service',
-          merchantName: null,
-          amount: 25.0,
-          date: fmt(d1),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-        {
-          name: 'Recurring Service',
-          merchantName: null,
-          amount: 25.0,
-          date: fmt(d2),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-        {
-          name: 'Recurring Service',
-          merchantName: null,
-          amount: 25.0,
-          date: fmt(d3),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-      ];
-
-      setupDetectMocks(transactions);
-      const result = await service.detectForUser('user_1');
+    it('should handle transactions with null merchantName', () => {
+      const result = detect([5, 35, 65].map((days) => charge(null, 25.0, days)));
 
       expect(result).toHaveLength(1);
       expect(result[0].merchantName).toBe('Recurring Service');
     });
 
-    it('should tolerate small amount variations within 10%', async () => {
-      const today = new Date();
-      const fmt = (d: Date) => d.toISOString().split('T')[0];
-      const d1 = new Date(today);
-      d1.setDate(d1.getDate() - 10);
-      const d2 = new Date(today);
-      d2.setDate(d2.getDate() - 40);
-      const d3 = new Date(today);
-      d3.setDate(d3.getDate() - 70);
-
-      const transactions = [
-        {
-          name: 'Streaming',
-          merchantName: 'Netflix',
-          amount: 15.99,
-          date: fmt(d1),
-          accountId: 'acc_1',
-          categoryId: null,
-          pending: false,
-        },
-        {
-          name: 'Streaming',
-          merchantName: 'Netflix',
-          amount: 16.49,
-          date: fmt(d2),
-          accountId: 'acc_1',
-          categoryId: null,
-          pending: false,
-        },
-        {
-          name: 'Streaming',
-          merchantName: 'Netflix',
-          amount: 15.99,
-          date: fmt(d3),
-          accountId: 'acc_1',
-          categoryId: null,
-          pending: false,
-        },
-      ];
-
-      setupDetectMocks(transactions);
-      const result = await service.detectForUser('user_1');
+    it('should tolerate small amount variations within 10%', () => {
+      const result = detect([
+        charge('Netflix', 15.99, 10, { name: 'Streaming', categoryId: null }),
+        charge('Netflix', 16.49, 40, { name: 'Streaming', categoryId: null }),
+        charge('Netflix', 15.99, 70, { name: 'Streaming', categoryId: null }),
+      ]);
 
       expect(result).toHaveLength(1);
       expect(result[0].frequency).toBe('monthly');
     });
 
-    it('should detect biweekly subscription', async () => {
-      const today = new Date();
-      const fmt = (d: Date) => d.toISOString().split('T')[0];
-      const d1 = new Date(today);
-      d1.setDate(d1.getDate() - 3);
-      const d2 = new Date(today);
-      d2.setDate(d2.getDate() - 17);
-      const d3 = new Date(today);
-      d3.setDate(d3.getDate() - 31);
-
-      const transactions = [
-        {
-          name: 'Cleaning',
-          merchantName: 'Maid Service',
-          amount: 120.0,
-          date: fmt(d1),
-          accountId: 'acc_1',
-          categoryId: null,
-          pending: false,
-        },
-        {
-          name: 'Cleaning',
-          merchantName: 'Maid Service',
-          amount: 120.0,
-          date: fmt(d2),
-          accountId: 'acc_1',
-          categoryId: null,
-          pending: false,
-        },
-        {
-          name: 'Cleaning',
-          merchantName: 'Maid Service',
-          amount: 120.0,
-          date: fmt(d3),
-          accountId: 'acc_1',
-          categoryId: null,
-          pending: false,
-        },
-      ];
-
-      setupDetectMocks(transactions);
-      const result = await service.detectForUser('user_1');
+    it('should detect biweekly subscription', () => {
+      const result = detect(
+        [3, 17, 31].map((days) =>
+          charge('Maid Service', 120.0, days, { name: 'Cleaning', categoryId: null }),
+        ),
+      );
 
       expect(result).toHaveLength(1);
       expect(result[0].frequency).toBe('biweekly');
+    });
+
+    it('should report bimonthly and semiannual cadences the DTOs now accept', () => {
+      const bimonthly = detect([5, 65, 125].map((days) => charge('Pest Control Co', 89.0, days)));
+      const semiannual = detect(
+        [20, 202, 384].map((days) => charge('Auto Insurance Co', 640.0, days)),
+      );
+
+      expect(bimonthly[0]?.frequency).toBe('bimonthly');
+      expect(semiannual[0]?.frequency).toBe('semiannual');
+      // 6 charges a year, not the 12 the old `?? 12` fallback assumed.
+      expect(bimonthly[0]?.annualCostProjection).toBeCloseTo(89.0 * 6, 2);
+      expect(semiannual[0]?.annualCostProjection).toBeCloseTo(640.0 * 2, 2);
     });
   });
 
@@ -900,51 +637,11 @@ describe('DetectionService', () => {
     });
   });
 
-  // ─── Integration: Enhanced fields on detectForUser output ───────────
+  // ─── Integration: Enhanced fields on analyzeTransactions output ──────
 
-  describe('detectForUser - enhanced fields', () => {
-    it('should include confidence, category, and trial fields in results', async () => {
-      const today = new Date();
-      const fmt = (d: Date) => d.toISOString().split('T')[0];
-      const d1 = new Date(today);
-      d1.setDate(d1.getDate() - 10);
-      const d2 = new Date(today);
-      d2.setDate(d2.getDate() - 40);
-      const d3 = new Date(today);
-      d3.setDate(d3.getDate() - 70);
-
-      const transactions = [
-        {
-          name: 'Netflix',
-          merchantName: 'Netflix',
-          amount: 15.99,
-          date: fmt(d1),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-        {
-          name: 'Netflix',
-          merchantName: 'Netflix',
-          amount: 15.99,
-          date: fmt(d2),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-        {
-          name: 'Netflix',
-          merchantName: 'Netflix',
-          amount: 15.99,
-          date: fmt(d3),
-          accountId: 'acc_1',
-          categoryId: 'cat_1',
-          pending: false,
-        },
-      ];
-
-      setupDetectMocks(transactions);
-      const result = await service.detectForUser('user_1');
+  describe('analyzeTransactions - enhanced fields', () => {
+    it('should include confidence, category, and trial fields in results', () => {
+      const result = detect([10, 40, 70].map((days) => charge('Netflix', 15.99, days)));
 
       expect(result).toHaveLength(1);
       expect(result[0]).toHaveProperty('confidence');
