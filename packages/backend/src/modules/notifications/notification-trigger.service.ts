@@ -31,64 +31,10 @@ export class NotificationTriggerService {
     @Optional() private readonly emailService?: EmailService,
   ) {}
 
-  // ── Bill Reminder ───────────────────────────────────────────────
-  async triggerBillReminder(
-    userId: string,
-    billName: string,
-    amount: number,
-    dueDate: string,
-    daysBefore: number,
-  ) {
-    const prefs = await this.getPreferences(userId);
-
-    if (prefs && !prefs.emailBillReminders) {
-      this.logger.debug(`Bill reminder suppressed for user=${userId} (preference off)`);
-      return null;
-    }
-
-    const severity =
-      daysBefore <= 1
-        ? NotificationSeverity.CRITICAL
-        : daysBefore <= 3
-          ? NotificationSeverity.WARNING
-          : NotificationSeverity.INFO;
-
-    const formattedAmount = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-
-    const title =
-      daysBefore === 0
-        ? `${billName} is due today`
-        : daysBefore === 1
-          ? `${billName} is due tomorrow`
-          : `${billName} is due in ${daysBefore} days`;
-
-    const message = `Your ${billName} payment of ${formattedAmount} is due on ${dueDate}.`;
-
-    const notification = await this.notificationsService.createNotification(
-      userId,
-      NotificationType.BILL_REMINDER,
-      title,
-      message,
-      severity,
-      '/bills',
-    );
-
-    // Send email if preference is enabled (default: enabled)
-    if (!prefs || prefs.emailBillReminders) {
-      await this.sendEmailForUser(userId, (email) =>
-        this.emailService!.sendBillReminder(email, {
-          billName,
-          amount,
-          dueDate,
-        }),
-      );
-    }
-
-    return notification;
-  }
+  // Bill reminders deliberately do not live here. modules/jobs/bill-reminder.service.ts
+  // is the single implementation: it dedupes per subscription per day and reads the
+  // user's preferences once, where this method re-read them on top of a caller that
+  // had already read them.
 
   // ── Budget Alert ────────────────────────────────────────────────
   async triggerBudgetAlert(

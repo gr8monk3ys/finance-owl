@@ -1,28 +1,21 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { Inject, Logger } from '@nestjs/common';
-import { Job } from 'bullmq';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { eq, and, gte, lte } from 'drizzle-orm';
-import { QUEUES } from './jobs.module';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 import { notificationPreferences } from '../notifications/notification-preferences.schema';
 import { EmailService } from '../email/email.service';
 import type { WeeklyDigestData } from '../email/templates';
 
-@Processor(QUEUES.ALERTS, { name: 'weekly-digest-worker' })
-export class WeeklyDigestProcessor extends WorkerHost {
-  private readonly logger = new Logger(WeeklyDigestProcessor.name);
+@Injectable()
+export class WeeklyDigestService {
+  private readonly logger = new Logger(WeeklyDigestService.name);
 
   constructor(
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
     private emailService: EmailService,
-  ) {
-    super();
-  }
+  ) {}
 
-  async process(job: Job): Promise<void> {
-    if (job.name !== 'weekly-digest') return;
-
+  async run(): Promise<number> {
     this.logger.log('Running weekly digest generation');
 
     const users = await this.db
@@ -41,6 +34,8 @@ export class WeeklyDigestProcessor extends WorkerHost {
     }
 
     this.logger.log(`Weekly digest complete: ${sentCount} emails sent for ${users.length} users`);
+
+    return sentCount;
   }
 
   private async processUserDigest(userId: string, userEmail: string): Promise<boolean> {

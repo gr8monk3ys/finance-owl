@@ -1,7 +1,9 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Inject, Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
-import { QUEUES } from './jobs.module';
+import { QUEUES } from './queues';
+import { JOBS } from './schedules';
+import type { ScheduledJobHandler } from './scheduled-job-handler';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 import { DetectionService } from '../subscriptions/detection.service';
@@ -11,8 +13,13 @@ export interface SubscriptionDetectJobData {
 }
 
 @Processor(QUEUES.SUBSCRIPTION_DETECT)
-export class SubscriptionDetectProcessor extends WorkerHost {
+export class SubscriptionDetectProcessor extends WorkerHost implements ScheduledJobHandler {
   private readonly logger = new Logger(SubscriptionDetectProcessor.name);
+
+  readonly handles = {
+    queue: QUEUES.SUBSCRIPTION_DETECT,
+    jobNames: [JOBS.SUBSCRIPTION_DETECT],
+  } as const;
 
   constructor(
     private detectionService: DetectionService,
