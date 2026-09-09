@@ -1,0 +1,17 @@
+{
+  // The backend compiles to CommonJS and `require()`s this package, so it
+  // needs a CJS build alongside the ESM one the frontend and mobile use.
+  // Types are emitted by the ESM build only; both conditions point at them.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/cjs",
+    "rootDir": "./src",
+    "declaration": false,
+    "declarationMap": false,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.spec.ts"]
+}
