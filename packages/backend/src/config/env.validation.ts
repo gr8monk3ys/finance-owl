@@ -8,6 +8,7 @@ import {
   IsUrl,
   Matches,
 } from 'class-validator';
+import { STRIPE_PRICE_SLOTS } from '../modules/billing/stripe-prices';
 
 /**
  * Durations accepted by `ms`, the parser both `@nestjs/jwt` and `AuthService`
@@ -105,6 +106,67 @@ class EnvironmentVariables {
   @IsOptional()
   @IsString()
   SENTRY_RELEASE?: string;
+
+  @IsOptional()
+  @IsString()
+  STRIPE_SECRET_KEY?: string;
+
+  @IsOptional()
+  @IsString()
+  STRIPE_WEBHOOK_SECRET?: string;
+}
+
+function readString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+}
+
+/**
+ * Billing is opt-in: with no STRIPE_SECRET_KEY the app boots without it.
+ * Once it is set, every Stripe price must be configured too — an unset
+ * STRIPE_PRICE_* used to make the webhook fail to map a price back to a plan,
+ * which silently downgraded a paying customer to `free`. Fail at boot instead.
+ */
+function validateStripeConfig(config: Record<string, unknown>): string[] {
+  if (!readString(config.STRIPE_SECRET_KEY)) {
+    return [];
+  }
+
+  const errors: string[] = [];
+
+  if (!readString(config.STRIPE_WEBHOOK_SECRET)) {
+    errors.push(
+      'STRIPE_WEBHOOK_SECRET is required when STRIPE_SECRET_KEY is set — webhook signatures cannot be verified without it',
+    );
+  }
+
+  const seen = new Map<string, string>();
+
+  for (const slot of STRIPE_PRICE_SLOTS) {
+    const priceId = readString(config[slot.envVar]);
+
+    if (!priceId) {
+      errors.push(
+        `${slot.envVar} is required when STRIPE_SECRET_KEY is set: without it the ${slot.plan} ${slot.interval}ly price cannot be mapped back to a plan, and paying customers on that price are treated as unknown`,
+      );
+      continue;
+    }
+
+    if (!priceId.startsWith('price_')) {
+      errors.push(`${slot.envVar} must be a Stripe price ID starting with "price_"`);
+      continue;
+    }
+
+    const clash = seen.get(priceId);
+    if (clash) {
+      errors.push(
+        `${slot.envVar} and ${clash} are set to the same Stripe price ID; a price must map to exactly one plan and interval`,
+      );
+    } else {
+      seen.set(priceId, slot.envVar);
+    }
+  }
+
+  return errors;
 }
 
 export function validate(config: Record<string, unknown>) {
@@ -116,9 +178,13 @@ export function validate(config: Record<string, unknown>) {
     skipMissingProperties: false,
   });
 
-  if (errors.length > 0) {
-    const messages = errors.flatMap((err) => Object.values(err.constraints || {})).join('\n  - ');
-    throw new Error(`Environment validation failed:\n  - ${messages}`);
+  const messages = [
+    ...errors.flatMap((err) => Object.values(err.constraints || {})),
+    ...validateStripeConfig(config),
+  ];
+
+  if (messages.length > 0) {
+    throw new Error(`Environment validation failed:\n  - ${messages.join('\n  - ')}`);
   }
 
   return validatedConfig;

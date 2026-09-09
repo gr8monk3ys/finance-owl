@@ -22,6 +22,13 @@
       "when": 1787077068956,
       "tag": "0002_quiet_daimon_hellstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788989201066,
+      "tag": "0003_overconfident_celestials",
+      "breakpoints": true
     }
   ]
 }
