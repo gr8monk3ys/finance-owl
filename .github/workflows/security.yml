@@ -160,7 +160,14 @@ jobs:
     name: Docker Image Scan (${{ matrix.image.name }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Also on pull_request: this job had never once completed, because the
+    # backend image failed to build and, being main-only, nothing caught it
+    # before merge. Scanning the images on the PR that changes them is the
+    # point of the job. Drop `pull_request` here if the extra two image
+    # builds per PR prove too slow.
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
     permissions:
       contents: read
       security-events: write
@@ -180,12 +187,19 @@ jobs:
           DOCKERFILE: ${{ matrix.image.dockerfile }}
         run: docker build -f "$DOCKERFILE" -t scan-target:latest .
 
+      # ignore-unfixed: both images currently carry ~62 CRITICAL/HIGH CVEs
+      # from the Debian base (perl-base, util-linux, curl, ncurses...), every
+      # one of them with no patched version available. Failing on those means
+      # failing forever on something no change to this repo can address.
+      # With them excluded, both images report zero — so anything this job
+      # now reports is real and actionable.
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@e368e328979b113139d6f9068e03accaed98a518
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
         with:
           image-ref: scan-target:latest
           format: sarif
           output: trivy-results.sarif
+          ignore-unfixed: true
           severity: CRITICAL,HIGH
 
       - name: Upload Trivy SARIF results
