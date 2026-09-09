@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Spinner } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatDate as fmtDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -39,15 +40,6 @@
       .replace(/&amp;/g, '&')
       .replace(/\s+/g, ' ')
       .trim();
-  }
-
-  function fmtDate(date: string | null): string {
-    if (!date) return '--';
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
   }
 
   function timeAgo(date: string | null): string {

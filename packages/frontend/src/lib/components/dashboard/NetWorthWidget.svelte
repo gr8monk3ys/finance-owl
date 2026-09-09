@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt, formatDateShort } from '@finance-owl/shared';
 
   interface Props {
     netWorth: {
@@ -12,13 +13,6 @@
   }
 
   let { netWorth, netWorthHistory }: Props = $props();
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   const trend = $derived.by(() => {
     if (netWorthHistory.length < 2) return null;
@@ -81,12 +75,7 @@
       <div class="mt-3">
         {#await import('$lib/components/charts/LineChart.svelte') then { default: LineChart }}
           <LineChart
-            labels={netWorthHistory.slice(-7).map((h) =>
-              new Date(h.date + 'T00:00:00').toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              }),
-            )}
+            labels={netWorthHistory.slice(-7).map((h) => formatDateShort(h.date))}
             datasets={[
               {
                 label: 'Net Worth',

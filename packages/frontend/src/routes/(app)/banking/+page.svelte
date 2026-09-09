@@ -2,6 +2,7 @@
   import { enhance } from '$app/forms';
   import { Card, Button, Modal, Input } from '$components/ui';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency, formatDate as fmtDate } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -35,31 +36,14 @@
     return Math.max(...rates.map((r: any) => (r.checking?.apy ?? 0) * 100));
   });
 
+  // The banking endpoints report minor units; everything else in the app
+  // reports major units, so the conversion stays local to this page.
   function fmt(cents: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(cents / 100);
-  }
-
-  function fmtDollars(dollars: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(dollars);
+    return formatCurrency(cents / 100);
   }
 
   function fmtPct(decimal: number): string {
     return `${(decimal * 100).toFixed(2)}%`;
-  }
-
-  function fmtDate(dateStr: string): string {
-    if (!dateStr) return '--';
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
   }
 
   function statusBadge(status: string): string {

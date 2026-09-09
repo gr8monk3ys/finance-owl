@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
   import type { PageData } from './$types';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   let { data } = $props<{ data: PageData }>();
 
@@ -40,13 +41,6 @@
   );
 
   const pendingTotal = $derived(pending.reduce((sum: number, p: any) => sum + p.roundUpAmount, 0));
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   // Example calculation for preview
   const exampleOriginal = $derived.by(() => {

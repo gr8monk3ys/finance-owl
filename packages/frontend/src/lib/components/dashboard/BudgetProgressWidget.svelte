@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   interface Budget {
     categoryName: string | null;
@@ -15,13 +16,6 @@
   }
 
   let { budgets }: Props = $props();
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   const topBudgets = $derived(budgets ? budgets.slice(0, 5) : []);
 </script>

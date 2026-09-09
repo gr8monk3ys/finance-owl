@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatDate } from '@finance-owl/shared';
 
   interface CreditScore {
     score: number;
@@ -78,11 +79,7 @@
 
       <p class="mt-2 text-xs text-surface-500">
         {creditScore.source} &middot;
-        {new Date(creditScore.reportDate + 'T00:00:00').toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-        })}
+        {formatDate(creditScore.reportDate)}
       </p>
     </div>
   {:else}

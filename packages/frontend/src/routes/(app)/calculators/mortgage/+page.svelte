@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card, Button } from '$components/ui';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   // Inputs
   let homePrice = $state(350000);
@@ -82,10 +83,6 @@
 
   function round(v: number): number {
     return Math.round(v * 100) / 100;
-  }
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
   }
 
   // SVG donut chart helpers

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt, formatMonthYear } from '@finance-owl/shared';
 
   // Inputs
   let principal = $state(250000);
@@ -127,17 +128,6 @@
     return Math.round(v * 100) / 100;
   }
 
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
-  }
-
-  function fmtDate(dateStr: string): string {
-    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
-      month: 'long',
-      year: 'numeric',
-    });
-  }
-
   const termOptions = [
     { label: '10yr (120mo)', value: 120 },
     { label: '15yr (180mo)', value: 180 },
@@ -248,7 +238,7 @@
             <div class="flex items-center justify-between">
               <span class="text-sm text-surface-300">New Payoff Date</span>
               <span class="text-sm font-semibold text-white"
-                >{fmtDate(scheduleResult.payoffDate)}</span
+                >{formatMonthYear(scheduleResult.payoffDate)}</span
               >
             </div>
           </div>
@@ -281,7 +271,9 @@
         </Card>
         <Card>
           <p class="text-sm text-surface-400">Payoff Date</p>
-          <p class="mt-1 text-2xl font-bold text-white">{fmtDate(scheduleResult.payoffDate)}</p>
+          <p class="mt-1 text-2xl font-bold text-white">
+            {formatMonthYear(scheduleResult.payoffDate)}
+          </p>
           <p class="mt-1 text-xs text-surface-500">{scheduleResult.payoffMonths} payments</p>
         </Card>
       </div>

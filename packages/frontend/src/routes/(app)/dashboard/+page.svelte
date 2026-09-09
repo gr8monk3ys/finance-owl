@@ -13,6 +13,7 @@
   import QuickActionsWidget from '$lib/components/dashboard/QuickActionsWidget.svelte';
   import SafeToSpendWidget from '$lib/components/dashboard/SafeToSpendWidget.svelte';
   import type { PageData } from './$types';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   let { data } = $props<{ data: PageData }>();
 
@@ -230,13 +231,6 @@
     } finally {
       saving = false;
     }
-  }
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
   }
 
   function fmtPct(pct: number): string {

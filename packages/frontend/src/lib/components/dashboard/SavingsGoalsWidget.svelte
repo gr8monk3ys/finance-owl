@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   interface SavingsGoal {
     name: string;
@@ -16,13 +17,6 @@
   }
 
   let { goals }: Props = $props();
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   const activeGoals = $derived(goals.filter((g) => !g.isCompleted).slice(0, 4));
 

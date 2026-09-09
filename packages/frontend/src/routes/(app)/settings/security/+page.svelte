@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Input, Modal } from '$components/ui';
+  import { formatDateWith } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -44,8 +45,7 @@
   );
 
   function formatDate(dateStr: string | null | undefined): string {
-    if (!dateStr) return '--';
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    return formatDateWith(dateStr, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

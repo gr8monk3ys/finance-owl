@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Button } from '$components/ui';
+  import { formatCurrency as fmt, formatDateWith, formatMonthYear } from '@finance-owl/shared';
 
   interface Bill {
     id?: string;
@@ -24,9 +25,7 @@
   const currentYear = $derived(currentDate.getFullYear());
   const currentMonth = $derived(currentDate.getMonth());
 
-  const monthLabel = $derived(
-    currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-  );
+  const monthLabel = $derived(formatMonthYear(currentDate));
 
   function prevMonth(): void {
     const d = new Date(currentDate);
@@ -108,13 +107,6 @@
   const todayStr = $derived(new Date().toISOString().split('T')[0]);
 
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   function handleDayClick(dateStr: string) {
     if (selectedDate === dateStr) {
@@ -242,7 +234,7 @@
   {#if selectedDate && selectedDayBills.length > 0}
     <div class="rounded-xl bg-surface-800 p-4">
       <h4 class="text-sm font-semibold text-white">
-        Bills for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
+        Bills for {formatDateWith(selectedDate, {
           weekday: 'long',
           month: 'long',
           day: 'numeric',

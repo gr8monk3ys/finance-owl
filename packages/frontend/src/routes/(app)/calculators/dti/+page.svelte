@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   // Inputs
   let monthlyIncome = $state(6500);
@@ -96,10 +97,6 @@
       { label: 'Other Debts', value: otherDebts, color: '#6b7280' },
     ].filter((d) => d.value > 0),
   );
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
-  }
 </script>
 
 <svelte:head>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   interface SafeToSpendData {
     totalAvailable: number;
@@ -33,13 +34,6 @@
   let checking = $state(false);
   let affordResult = $state<AffordabilityResult | null>(null);
   let showCalculator = $state(false);
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
 
   async function checkAffordability() {
     const amount = parseFloat(checkAmount);

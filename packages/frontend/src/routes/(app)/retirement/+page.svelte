@@ -4,6 +4,7 @@
   import { Card, Button } from '$components/ui';
   import { LineChart, BarChart } from '$components/charts';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrencyWhole as fmt } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -37,14 +38,6 @@
       loading = false;
     }
   });
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0,
-    }).format(amount);
-  }
 
   function fmtPct(value: number): string {
     return `${value.toFixed(1)}%`;

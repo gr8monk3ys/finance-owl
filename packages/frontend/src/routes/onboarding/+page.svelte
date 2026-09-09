@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
+  import { formatCurrencyWhole } from '@finance-owl/shared';
 
   // Step management
   let currentStep = $state(0);
@@ -137,15 +138,6 @@
 
   function goToDashboard() {
     goto('/dashboard');
-  }
-
-  function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
   }
 
   onMount(() => {
@@ -644,7 +636,7 @@
                 <div class="flex items-center justify-between">
                   <span class="text-sm font-medium text-white">{category.name}</span>
                   <span class="text-sm font-semibold text-primary-400"
-                    >{formatCurrency(category.amount)}</span
+                    >{formatCurrencyWhole(category.amount)}</span
                   >
                 </div>
                 <input
@@ -657,7 +649,7 @@
                 />
                 <div class="mt-1 flex justify-between text-xs text-surface-500">
                   <span>$0</span>
-                  <span>{formatCurrency(category.max)}</span>
+                  <span>{formatCurrencyWhole(category.max)}</span>
                 </div>
               </div>
             {/each}
@@ -669,7 +661,7 @@
           >
             <p class="text-sm text-surface-400">Monthly budget total</p>
             <p class="mt-1 text-2xl font-bold text-white">
-              {formatCurrency(budgetCategories.reduce((sum, c) => sum + c.amount, 0))}
+              {formatCurrencyWhole(budgetCategories.reduce((sum, c) => sum + c.amount, 0))}
             </p>
           </div>
 

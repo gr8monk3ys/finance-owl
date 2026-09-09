@@ -4,6 +4,12 @@
   import { Card, Button } from '$components/ui';
   import BillCalendar from '$lib/components/bills/BillCalendar.svelte';
   import type { PageData, ActionData } from './$types';
+  import {
+    formatCurrency as fmt,
+    formatDateShort as formatShortDate,
+    formatDateWith,
+    formatMonthYear,
+  } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -16,25 +22,8 @@
     }
   });
 
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
-
   function formatDate(dateStr: string): string {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-    });
-  }
-
-  function formatShortDate(dateStr: string): string {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return formatDateWith(dateStr, { weekday: 'short', month: 'short', day: 'numeric' });
   }
 
   const todayStr = $derived(new Date().toISOString().split('T')[0]);
@@ -105,7 +94,7 @@
     }),
   );
 
-  const monthLabel = $derived(now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
+  const monthLabel = $derived(formatMonthYear(now));
 
   // Timeline: group by week
   const timelineWeeks = $derived.by(() => {

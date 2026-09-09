@@ -4,6 +4,7 @@
   import { Card, Button, Spinner } from '$components/ui';
   import { BarChart } from '$components/charts';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrencyWhole as fmt } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -28,15 +29,6 @@
       isAutoAdjusting = false;
     }
   });
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  }
 
   function fmtPercent(value: number): string {
     return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;

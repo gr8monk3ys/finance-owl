@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
+  import { formatCurrency as fmt } from '@finance-owl/shared';
 
   // Current loan inputs
   let currentBalance = $state(280000);
@@ -31,10 +32,6 @@
   let totalCostCurrent = $derived(currentMonthlyPayment * currentRemainingMonths);
   let totalCostNew = $derived(newMonthlyPayment * newTotalPayments + closingCosts);
   let totalSavingsOverLife = $derived(totalCostCurrent - totalCostNew);
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
-  }
 
   function fmtMonths(months: number | null): string {
     if (months === null) return 'N/A';

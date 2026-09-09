@@ -10,6 +10,7 @@
     getBudgetStatusBadge,
   } from '$lib/utils/budgets';
   import type { PageData, ActionData } from './$types';
+  import { formatCurrency as fmt, formatCurrencyWhole } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -29,21 +30,6 @@
       createPeriod = 'monthly';
     }
   });
-
-  function fmt(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  }
-
-  function fmtCompact(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0,
-    }).format(amount);
-  }
 
   const existingPeriodsForSelectedCategory = $derived.by(() =>
     createCategoryId
@@ -154,7 +140,7 @@
         <span class="text-sm font-medium text-surface-400">Total Budget</span>
       </div>
       <p class="count-up mt-2 text-2xl font-bold text-white">
-        {fmtCompact(data.summary.totalBudgeted)}
+        {formatCurrencyWhole(data.summary.totalBudgeted)}
       </p>
     </div>
 
@@ -181,7 +167,7 @@
         <span class="text-sm font-medium text-surface-400">Total Spent</span>
       </div>
       <p class="count-up mt-2 text-2xl font-bold text-white">
-        {fmtCompact(data.summary.totalSpent)}
+        {formatCurrencyWhole(data.summary.totalSpent)}
       </p>
     </div>
 
@@ -226,7 +212,7 @@
             ? 'text-primary-400'
             : 'text-red-400'}"
         >
-          {fmtCompact(data.summary.totalRemaining)}
+          {formatCurrencyWhole(data.summary.totalRemaining)}
         </p>
       </div>
     </div>
@@ -378,7 +364,7 @@
                   <span class="text-sm text-surface-500">of {fmt(budget.amount)}</span>
                   {#if budget.rolloverAmount > 0}
                     <span class="ml-1 text-xs text-surface-600"
-                      >(+{fmtCompact(budget.rolloverAmount)} rollover)</span
+                      >(+{formatCurrencyWhole(budget.rolloverAmount)} rollover)</span
                     >
                   {/if}
                 </div>
