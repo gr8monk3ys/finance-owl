@@ -196,6 +196,12 @@ updates:
       - dependency-name: "@react-navigation/*"
       - dependency-name: "@sentry/react-native"
       - dependency-name: "typescript"
+      # Expo SDK 52 expects @babel/core ^7.25.2 and babel-preset-expo is
+      # built against 7.x. Babel 8 makes expo-doctor fail and is capped at
+      # <8 by the root override, so a major bump here cannot be merged.
+      - dependency-name: "@babel/core"
+        update-types:
+          - version-update:semver-major
 
   # ──────────────────────────────────────────────
   # GitHub Actions
