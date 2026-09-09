@@ -1,14 +1,19 @@
-import { Injectable, Inject, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { eq } from 'drizzle-orm';
-import { QUEUES } from './jobs.module';
+import { QUEUES } from './queues';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 import type { TransactionSyncJobData } from './transaction-sync.processor';
 
+/**
+ * Enqueues transaction syncs. It no longer registers its own cron — the
+ * `periodic-transaction-sync` entry in schedules.ts does that, and the
+ * processor calls queueSyncForAllActiveItems() when it fires.
+ */
 @Injectable()
-export class TransactionSyncScheduler implements OnModuleInit {
+export class TransactionSyncScheduler {
   private readonly logger = new Logger(TransactionSyncScheduler.name);
 
   constructor(
@@ -16,20 +21,6 @@ export class TransactionSyncScheduler implements OnModuleInit {
     private syncQueue: Queue<TransactionSyncJobData>,
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
   ) {}
-
-  async onModuleInit() {
-    // Add repeatable job for periodic sync (every 4 hours)
-    await this.syncQueue.upsertJobScheduler(
-      'periodic-transaction-sync',
-      { pattern: '0 */4 * * *' },
-      {
-        name: 'periodic-sync',
-        data: { plaidItemId: '', userId: '', trigger: 'cron' as const },
-      },
-    );
-
-    this.logger.log('Transaction sync scheduler initialized (every 4 hours)');
-  }
 
   async queueSyncForItem(
     plaidItemId: string,

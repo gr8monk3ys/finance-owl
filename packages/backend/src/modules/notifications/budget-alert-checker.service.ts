@@ -1,134 +1,30 @@
-import { Injectable, Inject, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 import { NotificationTriggerService } from './notification-trigger.service';
 
 /**
- * Runs periodic checks to generate notifications:
+ * Budget utilization alerts at the 75%, 90% and 100% thresholds.
  *
- *  - Daily: bills coming due within the user's reminder window
- *  - Daily: budget utilization alerts at 75%, 90%, and 100%
+ * This used to be NotificationSchedulerService, which drove itself with
+ * `setInterval(24h)`. That has no distributed lock, so every replica ran the
+ * sweep and users got one copy per instance; the comment justified it as
+ * avoiding "an extra dependency" while BullMQ sat one module away. Scheduling
+ * now lives in modules/jobs/schedules.ts, where Redis guarantees a single
+ * runner, and this class is left holding only the check itself.
  *
- * Uses setInterval with NestJS lifecycle hooks instead of
- * @nestjs/schedule to avoid adding an extra dependency.
- * The interval fires every 24 hours; on startup it runs once immediately.
+ * Its bill-reminder half is gone: modules/jobs/bill-reminder.service.ts is
+ * the one implementation, and it dedupes.
  */
 @Injectable()
-export class NotificationSchedulerService implements OnModuleInit, OnModuleDestroy {
-  private readonly logger = new Logger(NotificationSchedulerService.name);
-
-  private dailyTimer: ReturnType<typeof setInterval> | null = null;
-
-  /** 24 hours in milliseconds */
-  private static readonly DAY_MS = 24 * 60 * 60 * 1000;
+export class BudgetAlertCheckerService {
+  private readonly logger = new Logger(BudgetAlertCheckerService.name);
 
   constructor(
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
     private readonly triggerService: NotificationTriggerService,
   ) {}
-
-  onModuleInit() {
-    // Fire once on startup (non-blocking), then every 24 h
-    this.runDailyChecks().catch((err) => this.logger.error('Initial daily check failed', err));
-
-    this.dailyTimer = setInterval(() => {
-      this.runDailyChecks().catch((err) => this.logger.error('Scheduled daily check failed', err));
-    }, NotificationSchedulerService.DAY_MS);
-
-    this.logger.log('Notification scheduler started (24 h interval)');
-  }
-
-  onModuleDestroy() {
-    if (this.dailyTimer) {
-      clearInterval(this.dailyTimer);
-      this.dailyTimer = null;
-    }
-    this.logger.log('Notification scheduler stopped');
-  }
-
-  // ── Top-level runner ────────────────────────────────────────────
-  async runDailyChecks() {
-    this.logger.log('Running daily notification checks');
-
-    await this.checkBillReminders();
-    await this.checkBudgetUtilization();
-
-    this.logger.log('Daily notification checks complete');
-  }
-
-  // ── Bill Reminders ──────────────────────────────────────────────
-  /**
-   * For every user with active recurring transactions that have a
-   * nextExpectedDate within their configured reminder window (default
-   * 3 days), trigger a bill reminder notification.
-   */
-  async checkBillReminders() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayStr = today.toISOString().split('T')[0];
-
-    // Look ahead up to 7 days (the max reasonable reminder window)
-    const maxLookahead = new Date(today);
-    maxLookahead.setDate(maxLookahead.getDate() + 7);
-    const maxLookaheadStr = maxLookahead.toISOString().split('T')[0];
-
-    // Get all upcoming bills with their user's preference
-    const upcomingBills = await this.db
-      .select({
-        billId: schema.recurringTransactions.id,
-        userId: schema.recurringTransactions.userId,
-        name: schema.recurringTransactions.name,
-        merchantName: schema.recurringTransactions.merchantName,
-        estimatedAmount: schema.recurringTransactions.estimatedAmount,
-        nextExpectedDate: schema.recurringTransactions.nextExpectedDate,
-        reminderDays: schema.notificationPreferences.billReminderDaysBefore,
-      })
-      .from(schema.recurringTransactions)
-      .leftJoin(
-        schema.notificationPreferences,
-        eq(schema.recurringTransactions.userId, schema.notificationPreferences.userId),
-      )
-      .where(
-        and(
-          eq(schema.recurringTransactions.isActive, true),
-          gte(schema.recurringTransactions.nextExpectedDate, todayStr),
-          lte(schema.recurringTransactions.nextExpectedDate, maxLookaheadStr),
-        ),
-      );
-
-    let sent = 0;
-
-    for (const bill of upcomingBills) {
-      if (!bill.nextExpectedDate) continue;
-
-      const dueDate = new Date(bill.nextExpectedDate + 'T00:00:00');
-      const daysBefore = Math.round((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-
-      // Use user's preference or default of 3
-      const reminderWindow = bill.reminderDays ?? 3;
-
-      if (daysBefore > reminderWindow) continue;
-
-      try {
-        await this.triggerService.triggerBillReminder(
-          bill.userId,
-          bill.merchantName ?? bill.name,
-          bill.estimatedAmount,
-          bill.nextExpectedDate,
-          daysBefore,
-        );
-        sent++;
-      } catch (err) {
-        this.logger.error(
-          `Failed to send bill reminder for user=${bill.userId} bill=${bill.billId}`,
-          err,
-        );
-      }
-    }
-
-    this.logger.log(`Bill reminders sent: ${sent}`);
-  }
 
   // ── Budget Utilization ──────────────────────────────────────────
   /**
@@ -136,7 +32,7 @@ export class NotificationSchedulerService implements OnModuleInit, OnModuleDestr
    * Trigger alerts at 75%, 90%, and 100% thresholds. Only sends once
    * per threshold by checking existing notifications.
    */
-  async checkBudgetUtilization() {
+  async checkBudgetUtilization(): Promise<number> {
     const activeBudgets = await this.db
       .select()
       .from(schema.budgets)
@@ -180,6 +76,8 @@ export class NotificationSchedulerService implements OnModuleInit, OnModuleDestr
     }
 
     this.logger.log(`Budget alerts sent: ${sent}`);
+
+    return sent;
   }
 
   // ── Helpers ─────────────────────────────────────────────────────
