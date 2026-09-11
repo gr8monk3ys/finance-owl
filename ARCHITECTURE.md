@@ -178,8 +178,7 @@ GitHub Actions workflows handle:
 
 - Linting, type-checking, and testing on every PR (`ci.yml`)
 - Security scanning: CodeQL, Semgrep, Trivy, Gitleaks, TruffleHog, OSV
-- Preview deployments (`deploy-preview.yml`)
-- Production deployments (`deploy-production.yml`)
+- Deployments are not run from Actions: the frontend deploys through the Vercel Git integration (production branch `main`, root `packages/frontend`)
 - Automated releases via Release Please (`org-release-please.yml`)
 
 ## Key Design Decisions

@@ -124,7 +124,7 @@ Migrations run automatically on startup via the DatabaseModule. For manual migra
 railway run --service backend -- pnpm db:migrate
 ```
 
-Or configure them in the GitHub Actions workflow (already set up in `.github/workflows/deploy-production.yml`).
+Or add a migration step to your Railway deploy (Railway's GitHub integration, see section 5).
 
 ---
 
@@ -231,37 +231,17 @@ No manual certificate management is required.
 
 ## 5. GitHub Actions CI/CD
 
-The repository includes GitHub Actions workflows for automated deployment:
+GitHub Actions runs checks only; it does not deploy.
 
-### Required GitHub Secrets
+| Workflow       | Trigger        | What it does          |
+| -------------- | -------------- | --------------------- |
+| `ci.yml`       | Push / PR      | Lint, typecheck, test |
+| `security.yml` | Scheduled / PR | Security audits       |
 
-| Secret              | Description                               | Where to find                              |
-| ------------------- | ----------------------------------------- | ------------------------------------------ |
-| `RAILWAY_TOKEN`     | Railway API token for CLI deployments     | Railway dashboard > Account > Tokens       |
-| `VERCEL_TOKEN`      | Vercel API token                          | Vercel dashboard > Settings > Tokens       |
-| `VERCEL_ORG_ID`     | Vercel organization/team ID               | `.vercel/project.json` after `vercel link` |
-| `VERCEL_PROJECT_ID` | Vercel project ID                         | `.vercel/project.json` after `vercel link` |
-| `DATABASE_URL`      | Production PostgreSQL connection string   | Railway dashboard > PostgreSQL > Variables |
-| `BACKEND_URL`       | Production backend URL (for smoke tests)  | Your Railway custom domain                 |
-| `FRONTEND_URL`      | Production frontend URL (for smoke tests) | Your Vercel custom domain                  |
+Deploys come from the platforms' own Git integrations:
 
-### Workflows
-
-| Workflow                | Trigger        | What it does                                             |
-| ----------------------- | -------------- | -------------------------------------------------------- |
-| `ci.yml`                | Push / PR      | Lint, typecheck, test                                    |
-| `deploy-preview.yml`    | Pull request   | Deploy frontend preview to Vercel                        |
-| `deploy-production.yml` | Push to `main` | Build images, run migrations, deploy to Railway + Vercel |
-| `security.yml`          | Scheduled / PR | Security audits                                          |
-
-### Alternative: Railway GitHub Integration
-
-Instead of using the Railway CLI in GitHub Actions, you can use Railway's native GitHub integration:
-
-1. In Railway dashboard, go to **Settings** > **Integrations** > **GitHub**
-2. Connect your repository
-3. Railway will auto-deploy when you push to `main`
-4. This eliminates the need for `RAILWAY_TOKEN` and the `deploy-backend` GitHub Actions job
+- **Vercel (frontend):** connect the repo in the Vercel dashboard (project `finance-owl`, repo `gr8monk3ys/finance-owl`, production branch `main`, root directory `packages/frontend`). Vercel builds every push to `main` as production and every pull request as a preview. No `VERCEL_*` secrets are needed in GitHub.
+- **Railway (backend):** in the Railway dashboard, go to **Settings** > **Integrations** > **GitHub**, connect the repository, and Railway auto-deploys on push to `main`. No `RAILWAY_TOKEN` is needed in GitHub.
 
 ## Launch Checklist
 
