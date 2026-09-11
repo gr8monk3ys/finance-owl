@@ -1,270 +1,199 @@
+# Dependabot retune 2026-09-10: this repo is deployed, so version updates stay on,
+# but monthly with a small PR cap. Security updates are a repo setting and unaffected.
 version: 2
-
 updates:
-  # ──────────────────────────────────────────────
-  # Root workspace dependencies
-  # ──────────────────────────────────────────────
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: weekly
-      day: tuesday
-      time: "09:00"
-      timezone: America/New_York
-    open-pull-requests-limit: 2
-    # Wait out the window in which a freshly published (possibly
-    # compromised) version would otherwise be proposed automatically.
-    cooldown:
-      default-days: 7
-    reviewers:
-      - natalyscaturchio
-    labels:
-      - dependencies
-      - automated
-    groups:
-      # Group minor/patch updates to reduce PR noise
-      typescript-ecosystem:
-        patterns:
-          - "typescript"
-          - "typescript-eslint"
-          - "@typescript-eslint/*"
-        update-types:
-          - minor
-          - patch
-      eslint:
-        patterns:
-          - "eslint"
-          - "@eslint/*"
-          - "eslint-*"
-        update-types:
-          - minor
-          - patch
-      turbo:
-        patterns:
-          - "turbo"
-        update-types:
-          - minor
-          - patch
-    ignore:
-      # zod 4 is a breaking API migration across every schema in
-      # @finance-owl/shared and its backend/frontend consumers — take it as
-      # a deliberate migration, not a routine bump. Minors/patches allowed.
-      - dependency-name: "zod"
-        update-types: ["version-update:semver-major"]
-      # The root entry scans the whole Bun workspace lockfile, so the
-      # Expo-SDK-pinned mobile packages must be ignored here as well as in
-      # the /packages/mobile entry (they are upgraded together via
-      # `npx expo install --fix` during SDK upgrades).
-      - dependency-name: "expo"
-      - dependency-name: "expo-*"
-      - dependency-name: "react"
-      - dependency-name: "@types/react"
-      - dependency-name: "react-native"
-      - dependency-name: "react-native-*"
-      - dependency-name: "@react-navigation/*"
-      - dependency-name: "@sentry/react-native"
-
-  # ──────────────────────────────────────────────
-  # Backend dependencies
-  # ──────────────────────────────────────────────
-  - package-ecosystem: npm
-    directory: /packages/backend
-    schedule:
-      interval: weekly
-      day: tuesday
-      time: "09:00"
-      timezone: America/New_York
-    open-pull-requests-limit: 2
-    cooldown:
-      default-days: 7
-    reviewers:
-      - natalyscaturchio
-    labels:
-      - dependencies
-      - backend
-      - automated
-    groups:
-      # Majors included deliberately. NestJS releases its packages in lockstep
-      # and they must move together: @nestjs/core 12 against @nestjs/common 11
-      # does not work, and @nestjs/swagger 12 already failed for exactly that
-      # reason (#160 — it imports loadPackageSync, which @nestjs/common 11 does
-      # not export). Dependabot opened #184, #185 and #186 as three separate
-      # major bumps of the same upgrade; grouping makes it one reviewable PR.
-      nestjs:
-        patterns:
-          - "@nestjs/*"
-        update-types:
-          - major
-          - minor
-          - patch
-      drizzle:
-        patterns:
-          - "drizzle-orm"
-          - "drizzle-kit"
-        update-types:
-          - minor
-          - patch
-      sentry:
-        patterns:
-          - "@sentry/*"
-        update-types:
-          - minor
-          - patch
-      testing:
-        patterns:
-          - "vitest"
-          - "supertest"
-          - "@types/*"
-        update-types:
-          - minor
-          - patch
-
-  # ──────────────────────────────────────────────
-  # Frontend dependencies
-  # ──────────────────────────────────────────────
-  - package-ecosystem: npm
-    directory: /packages/frontend
-    schedule:
-      interval: weekly
-      day: tuesday
-      time: "09:00"
-      timezone: America/New_York
-    open-pull-requests-limit: 2
-    cooldown:
-      default-days: 7
-    reviewers:
-      - natalyscaturchio
-    labels:
-      - dependencies
-      - frontend
-      - automated
-    groups:
-      svelte:
-        patterns:
-          - "svelte"
-          - "svelte-*"
-          - "@sveltejs/*"
-        update-types:
-          - minor
-          - patch
-      tailwind:
-        patterns:
-          - "tailwindcss"
-          - "@tailwindcss/*"
-        update-types:
-          - minor
-          - patch
-      vite:
-        patterns:
-          - "vite"
-          - "vitest"
-          - "@sveltejs/vite-*"
-        update-types:
-          - minor
-          - patch
-
-  # ──────────────────────────────────────────────
-  # Mobile dependencies
-  # ──────────────────────────────────────────────
-  - package-ecosystem: npm
-    directory: /packages/mobile
-    schedule:
-      interval: weekly
-      day: tuesday
-      time: "09:00"
-      timezone: America/New_York
-    open-pull-requests-limit: 2
-    cooldown:
-      default-days: 7
-    reviewers:
-      - natalyscaturchio
-    labels:
-      - dependencies
-      - mobile
-      - automated
-    groups:
-      capacitor:
-        patterns:
-          - "@capacitor/*"
-        update-types:
-          - minor
-          - patch
-    ignore:
-      # These are pinned to the installed Expo SDK (see `expo` in
-      # packages/mobile/package.json). Bumping them independently breaks
-      # `expo-doctor` and the React Native runtime; they are upgraded
-      # together via `npx expo install --fix` during SDK upgrades.
-      - dependency-name: "expo"
-      - dependency-name: "expo-*"
-      - dependency-name: "react"
-      - dependency-name: "@types/react"
-      - dependency-name: "react-native"
-      - dependency-name: "react-native-*"
-      - dependency-name: "@react-navigation/*"
-      - dependency-name: "@sentry/react-native"
-      - dependency-name: "typescript"
-      # Expo SDK 52 is a Babel 7 toolchain: it expects @babel/core ^7.25.2,
-      # babel-preset-expo 12.x is built against 7.x, and every transformed
-      # module pulls @babel/runtime helpers. Dependabot has already proposed
-      # Babel 8 for two of these separately (#159, #179), and the root
-      # override caps @babel/core at <8, so none of them can merge. Ignore
-      # the whole scope's majors until the SDK itself moves.
-      - dependency-name: "@babel/*"
-        update-types:
-          - version-update:semver-major
-      # babel-preset-expo tracks the SDK, not semver in isolation: 12.x is
-      # SDK 52's preset, and Dependabot has already proposed 57.x. The
-      # `expo-*` pattern above does not match this name.
-      - dependency-name: "babel-preset-expo"
-
-  # ──────────────────────────────────────────────
-  # GitHub Actions
-  # ──────────────────────────────────────────────
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: weekly
-      day: tuesday
-      time: "09:00"
-      timezone: America/New_York
-    open-pull-requests-limit: 2
-    cooldown:
-      default-days: 7
-    reviewers:
-      - natalyscaturchio
-    labels:
-      - dependencies
-      - ci
-      - automated
-    groups:
-      github-actions:
-        patterns:
-          - "*"
-        update-types:
-          - minor
-          - patch
-    ignore:
-      # Same-owner reusable workflows live in the PRIVATE gr8monk3ys/github
-      # repo; Dependabot cannot reach it (git_dependencies_not_reachable)
-      # and fails every weekly run. They are pinned manually, not versioned.
-      - dependency-name: "gr8monk3ys/*"
-
-  # ──────────────────────────────────────────────
-  # Docker base images
-  # ──────────────────────────────────────────────
-  - package-ecosystem: docker
-    directory: /docker
-    schedule:
-      interval: weekly
-      day: tuesday
-      time: "09:00"
-      timezone: America/New_York
-    open-pull-requests-limit: 1
-    cooldown:
-      default-days: 7
-    reviewers:
-      - natalyscaturchio
-    labels:
-      - dependencies
-      - docker
-      - automated
+- package-ecosystem: npm
+  directory: /
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 3
+  cooldown:
+    default-days: 7
+  reviewers:
+  - natalyscaturchio
+  labels:
+  - dependencies
+  - automated
+  groups:
+    typescript-ecosystem:
+      patterns:
+      - typescript
+      - typescript-eslint
+      - '@typescript-eslint/*'
+      update-types:
+      - minor
+      - patch
+    eslint:
+      patterns:
+      - eslint
+      - '@eslint/*'
+      - eslint-*
+      update-types:
+      - minor
+      - patch
+    turbo:
+      patterns:
+      - turbo
+      update-types:
+      - minor
+      - patch
+  ignore:
+  - dependency-name: zod
+    update-types:
+    - version-update:semver-major
+  - dependency-name: expo
+  - dependency-name: expo-*
+  - dependency-name: react
+  - dependency-name: '@types/react'
+  - dependency-name: react-native
+  - dependency-name: react-native-*
+  - dependency-name: '@react-navigation/*'
+  - dependency-name: '@sentry/react-native'
+- package-ecosystem: npm
+  directory: /packages/backend
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 3
+  cooldown:
+    default-days: 7
+  reviewers:
+  - natalyscaturchio
+  labels:
+  - dependencies
+  - backend
+  - automated
+  groups:
+    nestjs:
+      patterns:
+      - '@nestjs/*'
+      update-types:
+      - major
+      - minor
+      - patch
+    drizzle:
+      patterns:
+      - drizzle-orm
+      - drizzle-kit
+      update-types:
+      - minor
+      - patch
+    sentry:
+      patterns:
+      - '@sentry/*'
+      update-types:
+      - minor
+      - patch
+    testing:
+      patterns:
+      - vitest
+      - supertest
+      - '@types/*'
+      update-types:
+      - minor
+      - patch
+- package-ecosystem: npm
+  directory: /packages/frontend
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 3
+  cooldown:
+    default-days: 7
+  reviewers:
+  - natalyscaturchio
+  labels:
+  - dependencies
+  - frontend
+  - automated
+  groups:
+    svelte:
+      patterns:
+      - svelte
+      - svelte-*
+      - '@sveltejs/*'
+      update-types:
+      - minor
+      - patch
+    tailwind:
+      patterns:
+      - tailwindcss
+      - '@tailwindcss/*'
+      update-types:
+      - minor
+      - patch
+    vite:
+      patterns:
+      - vite
+      - vitest
+      - '@sveltejs/vite-*'
+      update-types:
+      - minor
+      - patch
+- package-ecosystem: npm
+  directory: /packages/mobile
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 3
+  cooldown:
+    default-days: 7
+  reviewers:
+  - natalyscaturchio
+  labels:
+  - dependencies
+  - mobile
+  - automated
+  groups:
+    capacitor:
+      patterns:
+      - '@capacitor/*'
+      update-types:
+      - minor
+      - patch
+  ignore:
+  - dependency-name: expo
+  - dependency-name: expo-*
+  - dependency-name: react
+  - dependency-name: '@types/react'
+  - dependency-name: react-native
+  - dependency-name: react-native-*
+  - dependency-name: '@react-navigation/*'
+  - dependency-name: '@sentry/react-native'
+  - dependency-name: typescript
+  - dependency-name: '@babel/*'
+    update-types:
+    - version-update:semver-major
+  - dependency-name: babel-preset-expo
+- package-ecosystem: github-actions
+  directory: /
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 3
+  cooldown:
+    default-days: 7
+  reviewers:
+  - natalyscaturchio
+  labels:
+  - dependencies
+  - ci
+  - automated
+  groups:
+    github-actions:
+      patterns:
+      - '*'
+      update-types:
+      - minor
+      - patch
+  ignore:
+  - dependency-name: gr8monk3ys/*
+- package-ecosystem: docker
+  directory: /docker
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 3
+  cooldown:
+    default-days: 7
+  reviewers:
+  - natalyscaturchio
+  labels:
+  - dependencies
+  - docker
+  - automated
