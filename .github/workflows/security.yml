@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
@@ -64,7 +64,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: Dependency review
         uses: actions/dependency-review-action@05fe4576374b728f0c523d6a13d64c25081e0803
@@ -89,7 +89,7 @@ jobs:
       matrix:
         language: [javascript-typescript]
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@cdf488f595d80d6e07e03d4674febd5ab45fa938
@@ -118,7 +118,7 @@ jobs:
     container:
       image: semgrep/semgrep
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: Run Semgrep
         run: semgrep ci --sarif --output=semgrep-results.sarif
@@ -144,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
 
@@ -180,7 +180,7 @@ jobs:
           - name: frontend
             dockerfile: docker/Dockerfile.frontend
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: Build image for scanning
         env:
