@@ -38,7 +38,7 @@ This guide covers deploying Finance Owl to **Railway** (backend + database + Red
 1. Go to [railway.app/new](https://railway.app/new)
 2. Click **"Deploy from GitHub Repo"**
 3. Select the `finance-owl` repository
-4. Railway will detect the `railway.json` or `railway.toml` config in the project root
+4. Railway will detect the `railway.toml` config in the project root
 
 ### Step 2: Add PostgreSQL
 
@@ -99,9 +99,9 @@ WEBAUTHN_ORIGIN=https://yourapp.com
 
 ### Step 5: Configure the Build
 
-Railway reads `railway.json` from the project root. The config points to `docker/Dockerfile.backend` which uses a multi-stage build:
+Railway reads `railway.toml` from the project root. The config points to `docker/Dockerfile.backend` which uses a multi-stage build:
 
-1. Installs dependencies with pnpm
+1. Installs dependencies with Bun
 2. Builds the `@finance-owl/shared` package
 3. Builds the `@finance-owl/backend` package
 4. Creates a slim production image with only `dist/` and `node_modules/`
