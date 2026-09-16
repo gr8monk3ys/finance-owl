@@ -38,6 +38,11 @@ updates:
       - minor
       - patch
   ignore:
+  # TypeScript 7 is the native port; typescript-eslint and Next cannot load it
+  # yet (#208 failed lint, build and typecheck). Re-enable when they can.
+  - dependency-name: typescript
+    update-types:
+    - version-update:semver-major
   - dependency-name: zod
     update-types:
     - version-update:semver-major
@@ -91,6 +96,10 @@ updates:
       update-types:
       - minor
       - patch
+  ignore:
+  - dependency-name: typescript
+    update-types:
+    - version-update:semver-major
 - package-ecosystem: npm
   directory: /packages/frontend
   schedule:
