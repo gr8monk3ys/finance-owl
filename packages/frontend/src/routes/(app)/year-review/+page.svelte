@@ -277,7 +277,7 @@
               </div>
               <div class="mt-1 h-2 overflow-hidden rounded-full bg-surface-700">
                 <div
-                  class="h-full rounded-full bg-primary-500 transition-all"
+                  class="h-full rounded-full bg-primary-500 transition-[width]"
                   style="width: {catPercent}%"
                 ></div>
               </div>

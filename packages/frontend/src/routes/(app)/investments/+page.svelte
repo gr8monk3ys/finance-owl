@@ -528,7 +528,7 @@
                 </div>
                 <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
                   <div
-                    class="h-full rounded-full transition-all"
+                    class="h-full rounded-full transition-[width]"
                     style="width: {Math.min(
                       slice.percentage,
                       100,

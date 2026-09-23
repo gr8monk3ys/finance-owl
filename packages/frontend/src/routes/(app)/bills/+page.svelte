@@ -337,7 +337,7 @@
       <div class="space-y-4">
         {#each timelineWeeks as week, wi}
           <div
-            class="transform transition-all duration-300"
+            class="transform transition duration-300"
             style="animation: slideInUp 0.3s ease-out {wi * 0.1}s both"
           >
             <Card>

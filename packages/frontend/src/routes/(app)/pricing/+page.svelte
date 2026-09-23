@@ -140,7 +140,7 @@
   <!-- Billing Toggle -->
   <div class="flex items-center justify-center gap-3">
     <button
-      class="rounded-lg px-4 py-2 text-sm font-medium transition-all {billingInterval === 'month'
+      class="rounded-lg px-4 py-2 text-sm font-medium transition-colors {billingInterval === 'month'
         ? 'bg-surface-700 text-white shadow-lg shadow-black/20'
         : 'text-surface-400 hover:text-surface-200'}"
       onclick={() => (billingInterval = 'month')}
@@ -148,7 +148,7 @@
       Monthly
     </button>
     <button
-      class="relative rounded-lg px-4 py-2 text-sm font-medium transition-all {billingInterval ===
+      class="relative rounded-lg px-4 py-2 text-sm font-medium transition-colors {billingInterval ===
       'year'
         ? 'bg-surface-700 text-white shadow-lg shadow-black/20'
         : 'text-surface-400 hover:text-surface-200'}"
@@ -167,7 +167,7 @@
   <div class="grid gap-6 sm:grid-cols-3">
     {#each planDisplays as plan}
       <div
-        class="relative flex flex-col overflow-hidden rounded-2xl border bg-gradient-to-b transition-all duration-300 {plan.highlighted
+        class="relative flex flex-col overflow-hidden rounded-2xl border bg-gradient-to-b transition-colors duration-300 {plan.highlighted
           ? 'border-emerald-500/50 shadow-xl shadow-emerald-900/20 scale-[1.02]'
           : 'border-surface-700/50 hover:border-surface-600'} {plan.gradient}"
       >

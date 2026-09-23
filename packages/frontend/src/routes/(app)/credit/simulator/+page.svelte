@@ -195,7 +195,7 @@
             <div
               class="{getScoreBgColor(
                 data.profile.currentScore,
-              )} h-full rounded-full transition-all"
+              )} h-full rounded-full transition-[width]"
               style="width: {scorePercent}%"
             ></div>
           </div>

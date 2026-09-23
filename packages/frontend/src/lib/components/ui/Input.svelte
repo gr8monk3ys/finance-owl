@@ -66,7 +66,7 @@
       aria-invalid={error ? 'true' : undefined}
       aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
       class="block w-full rounded-lg border bg-surface-700/50 px-3 py-2.5 text-white
-				placeholder:text-surface-500 transition-all duration-200
+				placeholder:text-surface-500 transition duration-200
 				focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0
 				{hasPrefix ? 'pl-10' : ''}
 				{hasSuffix ? 'pr-10' : ''}

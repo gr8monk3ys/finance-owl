@@ -116,7 +116,7 @@
           <img src={currentLogo} alt={currentAppName} class="h-8 w-8 rounded-lg object-contain" />
         {:else}
           <div
-            class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/20 border border-primary-500/30 transition-all duration-200 group-hover:bg-primary-600/30 group-hover:border-primary-500/50"
+            class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/20 border border-primary-500/30 transition-colors duration-200 group-hover:bg-primary-600/30 group-hover:border-primary-500/50"
           >
             <svg
               aria-hidden="true"
@@ -137,7 +137,7 @@
         <span class="text-lg font-bold text-white tracking-tight">{currentAppName}</span>
       </a>
       <button
-        class="rounded-lg p-1.5 text-surface-400 hover:bg-surface-700/60 hover:text-white transition-all duration-150 lg:hidden"
+        class="rounded-lg p-1.5 text-surface-400 hover:bg-surface-700/60 hover:text-white transition-colors duration-150 lg:hidden"
         onclick={closeMobileMenu}
         aria-label="Close menu"
       >
@@ -168,7 +168,7 @@
             href={item.href}
             aria-current={active ? 'page' : undefined}
             class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium
-							transition-all duration-150
+							transition-colors duration-150
 							{active
               ? 'text-white bg-primary-600/15'
               : 'text-surface-400 hover:bg-surface-700/50 hover:text-surface-200'}"
@@ -508,7 +508,7 @@
         <button
           type="submit"
           class="w-full flex items-center gap-2 rounded-lg px-4 py-1.5 text-left text-sm text-surface-400
-						transition-all duration-150
+						transition-colors duration-150
 						hover:bg-surface-700/50 hover:text-surface-200"
         >
           <svg
@@ -540,7 +540,7 @@
     >
       <!-- Mobile menu button -->
       <button
-        class="rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition-all duration-150 lg:hidden"
+        class="rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition-colors duration-150 lg:hidden"
         onclick={openMobileMenu}
         aria-label="Open menu"
       >
@@ -568,7 +568,7 @@
         <!-- Notifications placeholder -->
         <a
           href="/settings/notifications"
-          class="relative rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70"
+          class="relative rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70"
           aria-label="Notification settings"
         >
           <svg
@@ -598,7 +598,7 @@
 						bg-gradient-to-br from-primary-500 to-primary-700
 						text-xs font-semibold text-white
 						ring-2 ring-surface-700/50
-						hover:ring-primary-500/30 transition-all duration-150 focus-visible:outline-none focus-visible:ring-primary-400"
+						hover:ring-primary-500/30 transition duration-150 focus-visible:outline-none focus-visible:ring-primary-400"
           title={data.user?.name ?? 'User'}
           aria-label="Open settings"
         >

@@ -428,7 +428,7 @@
           <div class="mt-2">
             <div class="h-1.5 overflow-hidden rounded-full bg-surface-700">
               <div
-                class="progress-fill h-full rounded-full transition-all"
+                class="progress-fill h-full rounded-full transition-[width]"
                 style="width: {Math.min(data.budgetSummary.percentUsed, 100)}%;
 									background: {data.budgetSummary.percentUsed >= 100
                   ? 'var(--fo-danger-500)'
@@ -489,7 +489,7 @@
         </p>
         <a
           href="/accounts"
-          class="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:shadow-xl hover:shadow-primary-900/40"
+          class="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:shadow-xl hover:shadow-primary-900/40"
         >
           <svg
             aria-hidden="true"

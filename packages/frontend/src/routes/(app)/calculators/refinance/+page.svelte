@@ -259,7 +259,7 @@
         </div>
         <div class="h-4 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="h-full rounded-full bg-red-500/70 transition-all"
+            class="h-full rounded-full bg-red-500/70 transition-[width]"
             style="width: {maxCost > 0 ? (totalCostCurrent / maxCost) * 100 : 0}%"
           ></div>
         </div>
@@ -271,7 +271,7 @@
         </div>
         <div class="h-4 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="h-full rounded-full bg-green-500/70 transition-all"
+            class="h-full rounded-full bg-green-500/70 transition-[width]"
             style="width: {maxCost > 0 ? (totalCostNew / maxCost) * 100 : 0}%"
           ></div>
         </div>

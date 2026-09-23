@@ -473,7 +473,7 @@
         <div class="space-y-1.5">
           {#each group.transactions as tx, txIdx}
             <button
-              class="group w-full rounded-xl border border-surface-700/30 bg-surface-800 px-4 py-3 text-left transition-all duration-200
+              class="group w-full rounded-xl border border-surface-700/30 bg-surface-800 px-4 py-3 text-left transition duration-200
 								hover:border-surface-600/50 hover:bg-surface-750 hover:shadow-md hover:shadow-black/10
 								{txIdx % 2 === 1 ? 'bg-surface-800/70' : ''}"
               onclick={() => openDetail(tx)}

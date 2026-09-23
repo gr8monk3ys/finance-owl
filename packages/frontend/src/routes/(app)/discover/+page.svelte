@@ -521,7 +521,7 @@
                 <div class="mt-3">
                   <div class="h-1.5 w-full rounded-full bg-surface-700">
                     <div
-                      class="h-1.5 rounded-full transition-all {matchScoreBg(rec.matchScore)}"
+                      class="h-1.5 rounded-full transition-[width] {matchScoreBg(rec.matchScore)}"
                       style="width: {rec.matchScore}%"
                     ></div>
                   </div>

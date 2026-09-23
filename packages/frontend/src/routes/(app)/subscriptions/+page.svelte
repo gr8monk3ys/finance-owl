@@ -465,7 +465,7 @@
         <div class="space-y-2">
           {#each unconfirmedSubscriptions as sub, i}
             <div
-              class="transform transition-all duration-300"
+              class="transform transition duration-300"
               style="animation: slideInUp 0.3s ease-out {i * 0.05}s both"
             >
               <Card>
@@ -587,7 +587,7 @@
       <div class="space-y-2">
         {#each filteredSubscriptions as sub, i}
           <div
-            class="transform transition-all duration-300"
+            class="transform transition duration-300"
             style="animation: slideInUp 0.3s ease-out {i * 0.03}s both"
           >
             <Card>
@@ -773,7 +773,7 @@
       <div class="space-y-2">
         {#each calendarDays as day, i}
           <div
-            class="transform transition-all duration-300"
+            class="transform transition duration-300"
             style="animation: slideInUp 0.3s ease-out {i * 0.05}s both"
           >
             <Card>
@@ -874,7 +874,7 @@
                 <div class="mt-2 flex items-center gap-2">
                   <div class="h-1.5 flex-1 rounded-full bg-surface-700">
                     <div
-                      class="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all"
+                      class="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-[width]"
                       style="width: {totalCategoryAmount > 0
                         ? (cat.amount / totalCategoryAmount) * 100
                         : 0}%"

@@ -124,7 +124,7 @@
       <div class="mt-4">
         <div class="h-2 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="h-full rounded-full bg-emerald-500/80 transition-all"
+            class="h-full rounded-full bg-emerald-500/80 transition-[width]"
             style="width: {Math.min(
               (data.summary.totalAllocated / data.summary.totalIncome) * 100,
               100,
@@ -217,7 +217,7 @@
                   <div
                     class="{getProgressColor(
                       envelope.percentUsed,
-                    )} h-full rounded-full transition-all"
+                    )} h-full rounded-full transition-[width]"
                     style="width: {Math.min(envelope.percentUsed, 100)}%"
                   ></div>
                 </div>
@@ -309,7 +309,7 @@
                 {#if envelope.targetAmount}
                   <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
                     <div
-                      class="h-full rounded-full bg-emerald-500 transition-all"
+                      class="h-full rounded-full bg-emerald-500 transition-[width]"
                       style="width: {Math.min(envelope.goalProgress ?? 0, 100)}%"
                     ></div>
                   </div>

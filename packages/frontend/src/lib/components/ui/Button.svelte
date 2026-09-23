@@ -54,7 +54,7 @@
 
 <button
   class="btn-ripple inline-flex items-center justify-center rounded-lg font-medium
-		transition-all duration-200 ease-out
+		transition duration-200 ease-out
 		focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-surface-900
 		disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none
 		disabled:shadow-none

@@ -73,7 +73,7 @@
           <h2 class="text-lg font-semibold text-white">{title}</h2>
           <button
             onclick={onclose}
-            class="rounded-lg p-1.5 text-surface-400 transition-all duration-150
+            class="rounded-lg p-1.5 text-surface-400 transition duration-150
 							hover:bg-surface-700 hover:text-white
 							focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40"
             aria-label="Close dialog"

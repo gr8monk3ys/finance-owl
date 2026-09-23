@@ -268,7 +268,7 @@
         <div class="mt-3">
           <div class="h-2 w-full rounded-full bg-surface-700">
             <div
-              class="h-2 rounded-full transition-all {analysis.currentSavingsRate >=
+              class="h-2 rounded-full transition-[width] {analysis.currentSavingsRate >=
               analysis.recommendedSavingsRate
                 ? 'bg-green-500'
                 : 'bg-primary-500'}"
@@ -586,7 +586,7 @@
           </div>
           <div class="mt-2 h-1.5 w-full rounded-full bg-surface-700">
             <div
-              class="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all"
+              class="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-[width]"
               style="width: {Math.min((analysis.currentSavingsRate / 20) * 100, 100)}%"
             ></div>
           </div>

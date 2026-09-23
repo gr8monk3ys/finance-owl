@@ -112,7 +112,7 @@
       </div>
       <div class="mt-1 h-2 rounded-full bg-surface-700">
         <div
-          class="h-2 rounded-full bg-primary-500 transition-all duration-500"
+          class="h-2 rounded-full bg-primary-500 transition-[width] duration-500"
           style="width: {progressPercent}%"
         ></div>
       </div>
@@ -260,7 +260,7 @@
             <div class="mt-3">
               <div class="h-1 rounded-full bg-surface-700">
                 <div
-                  class="h-1 rounded-full bg-primary-500 transition-all"
+                  class="h-1 rounded-full bg-primary-500 transition-[width]"
                   style="width: {Math.round((topicArticlesRead / topic.articleCount) * 100)}%"
                 ></div>
               </div>

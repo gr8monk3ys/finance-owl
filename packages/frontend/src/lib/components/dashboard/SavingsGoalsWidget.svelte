@@ -46,7 +46,7 @@
           </div>
           <div class="mt-1 h-2 w-full overflow-hidden rounded-full bg-surface-700">
             <div
-              class="h-full rounded-full transition-all duration-300"
+              class="h-full rounded-full transition-[width] duration-300"
               style="width: {pct(goal)}%; background-color: {goal.color || '#8b5cf6'}"
             ></div>
           </div>

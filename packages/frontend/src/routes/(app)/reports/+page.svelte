@@ -686,7 +686,7 @@
             </div>
             <div class="h-4 overflow-hidden rounded-full bg-surface-700">
               <div
-                class="h-full rounded-full bg-green-500 transition-all"
+                class="h-full rounded-full bg-green-500 transition-[width]"
                 style="width: {(totalAssets / maxBar) * 100}%"
               ></div>
             </div>
@@ -698,7 +698,7 @@
             </div>
             <div class="h-4 overflow-hidden rounded-full bg-surface-700">
               <div
-                class="h-full rounded-full bg-red-500 transition-all"
+                class="h-full rounded-full bg-red-500 transition-[width]"
                 style="width: {(totalLiabilities / maxBar) * 100}%"
               ></div>
             </div>
@@ -850,7 +850,7 @@
                       class="h-2 w-full max-w-[120px] overflow-hidden rounded-full bg-surface-700"
                     >
                       <div
-                        class="h-full rounded-full transition-all {trend.total > trendAvg
+                        class="h-full rounded-full transition-[width] {trend.total > trendAvg
                           ? 'bg-red-500'
                           : 'bg-green-500'}"
                         style="width: {Math.min((trend.total / (trendAvg * 2)) * 100, 100)}%"

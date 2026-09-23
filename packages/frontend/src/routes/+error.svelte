@@ -145,7 +145,7 @@
     <div class="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
       <a
         href="/"
-        class="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:shadow-xl hover:-translate-y-0.5"
+        class="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:shadow-xl hover:-translate-y-0.5"
       >
         <svg
           aria-hidden="true"
@@ -165,7 +165,7 @@
       </a>
       <button
         onclick={goBack}
-        class="inline-flex items-center gap-2 rounded-xl border border-surface-600 bg-surface-800 px-6 py-3 text-sm font-semibold text-surface-200 transition-all hover:border-surface-500 hover:bg-surface-700 hover:text-white"
+        class="inline-flex items-center gap-2 rounded-xl border border-surface-600 bg-surface-800 px-6 py-3 text-sm font-semibold text-surface-200 transition-colors hover:border-surface-500 hover:bg-surface-700 hover:text-white"
       >
         <svg
           aria-hidden="true"

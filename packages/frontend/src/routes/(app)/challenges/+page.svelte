@@ -158,7 +158,7 @@
             </div>
             <div class="mt-1.5 h-3 overflow-hidden rounded-full bg-surface-700">
               <div
-                class="h-full rounded-full bg-primary-500 transition-all"
+                class="h-full rounded-full bg-primary-500 transition-[width]"
                 style="width: {progress}%"
               ></div>
             </div>

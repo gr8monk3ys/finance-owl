@@ -138,7 +138,7 @@
               stroke-linecap="round"
               stroke-dasharray={gaugeCircumference}
               stroke-dashoffset={gaugeDashOffset}
-              class="transition-all duration-1000"
+              class="transition-[stroke-dashoffset] duration-1000"
             />
           </svg>
           <div class="absolute inset-0 flex flex-col items-center justify-center">
@@ -165,7 +165,7 @@
             </p>
             <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-700">
               <div
-                class="h-full rounded-full transition-all"
+                class="h-full rounded-full transition-[width]"
                 style="width: {sub.value}%; background-color: {getScoreColor(sub.value)}"
               ></div>
             </div>
@@ -184,7 +184,7 @@
             <div class="flex flex-1 flex-col items-center gap-1">
               <span class="text-xs text-surface-500">{entry.overallScore}</span>
               <div
-                class="w-full rounded-t transition-all"
+                class="w-full rounded-t transition-[width]"
                 style="height: {barHeight}%; background-color: {getScoreColor(entry.overallScore)}"
               ></div>
             </div>
@@ -259,7 +259,7 @@
             <div class="mt-3">
               <div class="h-2 overflow-hidden rounded-full bg-surface-700">
                 <div
-                  class="h-full rounded-full transition-all {goal.isAchieved
+                  class="h-full rounded-full transition-[width] {goal.isAchieved
                     ? 'bg-green-500'
                     : 'bg-primary-500'}"
                   style="width: {progress}%"

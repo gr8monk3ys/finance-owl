@@ -126,7 +126,7 @@
         </div>
         <div class="h-5 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="h-full rounded-full bg-green-500/60 transition-all"
+            class="h-full rounded-full bg-green-500/60 transition-[width]"
             style="width: {(totalAssets / maxVal) * 100}%"
           ></div>
         </div>
@@ -138,7 +138,7 @@
         </div>
         <div class="h-5 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="h-full rounded-full bg-red-500/60 transition-all"
+            class="h-full rounded-full bg-red-500/60 transition-[width]"
             style="width: {(totalLiabilities / maxVal) * 100}%"
           ></div>
         </div>

@@ -180,7 +180,7 @@
       <!-- Progress track -->
       <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-800">
         <div
-          class="h-full rounded-full bg-gradient-to-r from-primary-600 to-primary-400 transition-all duration-500 ease-out"
+          class="h-full rounded-full bg-gradient-to-r from-primary-600 to-primary-400 transition-[width] duration-500 ease-out"
           style="width: {progress}%"
         ></div>
       </div>
@@ -297,7 +297,7 @@
 
           <button
             onclick={nextStep}
-            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:-translate-y-0.5"
+            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:-translate-y-0.5"
           >
             Let's Go
             <svg
@@ -759,14 +759,14 @@
             {#each goals as goal}
               <button
                 onclick={() => toggleGoal(goal.id)}
-                class="flex w-full items-center gap-4 rounded-xl border p-4 text-left transition-all
+                class="flex w-full items-center gap-4 rounded-xl border p-4 text-left transition-colors
 									{goal.checked
                   ? 'border-primary-500/30 bg-primary-950/20'
                   : 'border-surface-700/50 bg-surface-800/50 hover:border-surface-600'}"
               >
                 <!-- Checkbox -->
                 <div
-                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition-all
+                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition-colors
 										{goal.checked ? 'border-primary-500 bg-primary-500' : 'border-surface-600'}"
                 >
                   {#if goal.checked}
@@ -892,7 +892,7 @@
 
           <button
             onclick={goToDashboard}
-            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:-translate-y-0.5"
+            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:-translate-y-0.5"
           >
             Go to Dashboard
             <svg

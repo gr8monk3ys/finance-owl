@@ -134,7 +134,9 @@
       <div class="mt-2">
         <div class="h-2 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="{getProgressColor(data.summary.savingsRate)} h-full rounded-full transition-all"
+            class="{getProgressColor(
+              data.summary.savingsRate,
+            )} h-full rounded-full transition-[width]"
             style="width: {Math.min(data.summary.savingsRate, 100)}%"
           ></div>
         </div>
@@ -300,7 +302,7 @@
               </div>
               <div class="mt-1.5 h-2.5 overflow-hidden rounded-full bg-surface-700">
                 <div
-                  class="{getProgressColor(goal.progress)} h-full rounded-full transition-all"
+                  class="{getProgressColor(goal.progress)} h-full rounded-full transition-[width]"
                   style="width: {Math.min(goal.progress, 100)}%"
                 ></div>
               </div>
@@ -624,7 +626,7 @@
         </div>
         <div class="mt-3 h-3 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="{getProgressColor(viewingGoal.progress)} h-full rounded-full transition-all"
+            class="{getProgressColor(viewingGoal.progress)} h-full rounded-full transition-[width]"
             style="width: {Math.min(viewingGoal.progress, 100)}%"
           ></div>
         </div>

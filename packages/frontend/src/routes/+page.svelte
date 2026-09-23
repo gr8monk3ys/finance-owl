@@ -270,7 +270,7 @@
       <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
         <a
           href="/auth/register"
-          class="group relative inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition-all duration-200 hover:bg-emerald-500 hover:shadow-2xl hover:shadow-emerald-900/50 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+          class="group relative inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition duration-200 hover:bg-emerald-500 hover:shadow-2xl hover:shadow-emerald-900/50 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
         >
           Get Started Free
           <svg
@@ -287,7 +287,7 @@
         <button
           type="button"
           onclick={() => scrollTo('how-it-works')}
-          class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-base font-medium text-gray-300 transition-all duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+          class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-base font-medium text-gray-300 transition duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
         >
           <svg
             aria-hidden="true"
@@ -415,7 +415,7 @@
               <div class="flex items-end justify-between gap-1" style="height: 80px;">
                 {#each [40, 55, 35, 65, 45, 70, 50, 80, 60, 75, 55, 85] as h}
                   <div
-                    class="flex-1 rounded-t bg-gradient-to-t from-emerald-600/40 to-emerald-400/60 transition-all"
+                    class="flex-1 rounded-t bg-gradient-to-t from-emerald-600/40 to-emerald-400/60 transition-[width]"
                     style="height: {h}%"
                   ></div>
                 {/each}
@@ -462,7 +462,7 @@
       <div class="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <!-- Subscription Tracker -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 transition-colors group-hover:bg-emerald-500/15"
@@ -491,7 +491,7 @@
 
         <!-- Bill Negotiation -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 transition-colors group-hover:bg-amber-500/15"
@@ -520,7 +520,7 @@
 
         <!-- Smart Savings -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 transition-colors group-hover:bg-blue-500/15"
@@ -549,7 +549,7 @@
 
         <!-- Investment Tracking -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400 transition-colors group-hover:bg-violet-500/15"
@@ -578,7 +578,7 @@
 
         <!-- Budget Envelopes -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-500/10 text-rose-400 transition-colors group-hover:bg-rose-500/15"
@@ -607,7 +607,7 @@
 
         <!-- Spending Insights -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 transition-colors group-hover:bg-cyan-500/15"
@@ -928,7 +928,7 @@
         <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href="/auth/register"
-            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition-all hover:bg-emerald-500 hover:shadow-2xl hover:-translate-y-0.5"
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition hover:bg-emerald-500 hover:shadow-2xl hover:-translate-y-0.5"
           >
             Get Started Free
             <svg

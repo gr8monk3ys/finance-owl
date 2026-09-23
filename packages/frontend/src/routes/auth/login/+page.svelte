@@ -230,7 +230,7 @@
         <button
           type="submit"
           disabled={loading}
-          class="relative flex w-full items-center justify-center rounded-xl bg-primary-600 px-4 py-3 font-semibold text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:shadow-primary-900/50 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="relative flex w-full items-center justify-center rounded-xl bg-primary-600 px-4 py-3 font-semibold text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:shadow-primary-900/50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {#if loading}
             <div

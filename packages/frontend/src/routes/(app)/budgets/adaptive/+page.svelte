@@ -456,7 +456,7 @@
                 <div
                   class="{getConfidenceBg(
                     prediction.confidence,
-                  )} h-full rounded-full transition-all"
+                  )} h-full rounded-full transition-[width]"
                   style="width: {prediction.confidence * 100}%"
                 ></div>
               </div>

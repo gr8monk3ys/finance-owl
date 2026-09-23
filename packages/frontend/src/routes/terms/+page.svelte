@@ -93,7 +93,7 @@
           {#each sections as section}
             <button
               onclick={() => scrollToSection(section.id)}
-              class="block w-full rounded-lg px-3 py-1.5 text-left text-sm transition-all duration-150
+              class="block w-full rounded-lg px-3 py-1.5 text-left text-sm transition-colors duration-150
 								{activeSection === section.id
                 ? 'bg-primary-600/15 text-primary-400 font-medium'
                 : 'text-surface-400 hover:bg-surface-800 hover:text-surface-200'}"

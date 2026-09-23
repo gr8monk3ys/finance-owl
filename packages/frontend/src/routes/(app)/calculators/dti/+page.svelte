@@ -351,7 +351,7 @@
                 </div>
                 <div class="h-2 overflow-hidden rounded-full bg-surface-700">
                   <div
-                    class="h-full rounded-full transition-all"
+                    class="h-full rounded-full transition-[width]"
                     style="width: {Math.min(pct, 100)}%; background-color: {item.color}"
                   ></div>
                 </div>

@@ -382,7 +382,7 @@
                 </div>
                 <div class="mt-1 h-2 overflow-hidden rounded-full bg-surface-700">
                   <div
-                    class="{getProgressColor(debt.progress)} h-full rounded-full transition-all"
+                    class="{getProgressColor(debt.progress)} h-full rounded-full transition-[width]"
                     style="width: {Math.min(debt.progress, 100)}%"
                   ></div>
                 </div>
@@ -588,7 +588,7 @@
                     </div>
                     <div class="mt-1 h-4 overflow-hidden rounded-full bg-surface-700">
                       <div
-                        class="h-full rounded-full transition-all"
+                        class="h-full rounded-full transition-[width]"
                         style="width: {widthPct}%; background-color: {chartColors[
                           i % chartColors.length
                         ]}"
@@ -612,7 +612,7 @@
                     {#if idx % Math.max(1, Math.floor(timeline.length / 60)) === 0}
                       {@const heightPct = maxBalance > 0 ? (point.total / maxBalance) * 100 : 0}
                       <div
-                        class="flex-1 rounded-t bg-gradient-to-t from-red-500/60 to-primary-500/60 transition-all hover:opacity-80"
+                        class="flex-1 rounded-t bg-gradient-to-t from-red-500/60 to-primary-500/60 transition-[width] hover:opacity-80"
                         style="height: {heightPct}%"
                         title="Month {point.month}: {fmt(point.total)} remaining"
                       ></div>

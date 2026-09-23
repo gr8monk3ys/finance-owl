@@ -305,7 +305,7 @@
           Create budgets to track your spending by category and stay on top of your finances.
         </p>
         <button
-          class="mt-5 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:shadow-xl hover:shadow-primary-900/40"
+          class="mt-5 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:shadow-xl hover:shadow-primary-900/40"
           onclick={() => (showCreateModal = true)}
         >
           <svg
@@ -327,7 +327,7 @@
       {#each data.budgets as budget}
         {@const status = getBudgetStatusBadge(budget.percentUsed)}
         <div
-          class="group relative overflow-hidden rounded-xl border border-surface-700/30 bg-surface-800 transition-all duration-200 hover:border-surface-600/50 hover:shadow-md hover:shadow-black/10"
+          class="group relative overflow-hidden rounded-xl border border-surface-700/30 bg-surface-800 transition duration-200 hover:border-surface-600/50 hover:shadow-md hover:shadow-black/10"
         >
           <div class="p-5">
             <div class="flex items-start justify-between gap-4">
@@ -356,7 +356,7 @@
                 </div>
               </div>
               <button
-                class="rounded-lg border border-surface-700/50 px-2.5 py-1 text-xs text-surface-400 opacity-0 transition-all hover:border-surface-600 hover:bg-surface-750 hover:text-white group-hover:opacity-100"
+                class="rounded-lg border border-surface-700/50 px-2.5 py-1 text-xs text-surface-400 opacity-0 transition hover:border-surface-600 hover:bg-surface-750 hover:text-white group-hover:opacity-100"
                 onclick={() => (editingBudget = budget)}
               >
                 Edit
@@ -394,7 +394,7 @@
               <!-- Progress bar with gradient -->
               <div class="mt-2.5 h-3 overflow-hidden rounded-full bg-surface-700/60">
                 <div
-                  class="progress-fill h-full rounded-full transition-all duration-500"
+                  class="progress-fill h-full rounded-full transition-[width] duration-500"
                   style="width: {Math.min(budget.percentUsed, 100)}%;
 										background: {getBudgetProgressGradient(budget.percentUsed)}"
                 ></div>
