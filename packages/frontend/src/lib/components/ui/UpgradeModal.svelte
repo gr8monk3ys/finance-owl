@@ -86,9 +86,7 @@
 
     <!-- CTA -->
     <div class="flex gap-3">
-      <a href="/pricing" class="flex-1">
-        <Button variant="primary" class="w-full">View Plans & Upgrade</Button>
-      </a>
+      <Button href="/pricing" variant="primary" class="flex-1">View Plans & Upgrade</Button>
       <Button variant="secondary" onclick={onclose}>Maybe Later</Button>
     </div>
 

@@ -593,9 +593,7 @@
           </div>
 
           <div class="flex justify-end gap-3 pt-2">
-            <a href="/subscriptions">
-              <Button variant="ghost" type="button">Keep Subscription</Button>
-            </a>
+            <Button href="/subscriptions" variant="ghost">Keep Subscription</Button>
             <Button type="submit" variant="danger">Request Cancellation</Button>
           </div>
         </form>

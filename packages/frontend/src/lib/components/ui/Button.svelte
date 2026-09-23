@@ -9,6 +9,8 @@
     icon?: boolean;
     iconLeft?: Snippet;
     children: Snippet;
+    /** Render as a link (navigation) instead of a button (action). */
+    href?: string;
   }
 
   let {
@@ -18,6 +20,7 @@
     icon = false,
     iconLeft,
     children,
+    href,
     class: className = '',
     ...rest
   }: Props = $props();
@@ -50,21 +53,22 @@
     md: 'h-4 w-4',
     lg: 'h-5 w-5',
   };
+
+  const classes = $derived(
+    [
+      'btn-ripple inline-flex items-center justify-center rounded-lg font-medium',
+      'transition duration-200 ease-out',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-surface-900',
+      'disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none',
+      'active:scale-[0.97]',
+      variants[variant],
+      icon ? iconSizes[size] : sizes[size],
+      className,
+    ].join(' '),
+  );
 </script>
 
-<button
-  class="btn-ripple inline-flex items-center justify-center rounded-lg font-medium
-		transition duration-200 ease-out
-		focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-surface-900
-		disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none
-		disabled:shadow-none
-		active:scale-[0.97]
-		{variants[variant]}
-		{icon ? iconSizes[size] : sizes[size]}
-		{className}"
-  disabled={loading || rest.disabled}
-  {...rest}
->
+{#snippet content()}
   {#if loading}
     <svg
       aria-hidden="true"
@@ -85,4 +89,14 @@
     </span>
   {/if}
   <span class={loading ? 'opacity-70' : ''}>{@render children()}</span>
-</button>
+{/snippet}
+
+{#if href}
+  <a {href} class={classes}>
+    {@render content()}
+  </a>
+{:else}
+  <button class={classes} disabled={loading || rest.disabled} {...rest}>
+    {@render content()}
+  </button>
+{/if}

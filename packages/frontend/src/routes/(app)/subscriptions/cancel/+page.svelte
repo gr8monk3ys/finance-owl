@@ -263,7 +263,9 @@
           onclick={() => {
             if (i < currentStep) goToStep(i);
           }}
-          class="flex items-center gap-2 {i <= currentStep ? 'text-white' : 'text-surface-500'}"
+          class="flex items-center gap-2 {i <= currentStep
+            ? 'text-white'
+            : 'text-surface-500'}"
           disabled={i > currentStep}
         >
           <div
@@ -826,9 +828,7 @@
           <div class="flex justify-between pt-2">
             <Button variant="ghost" type="button" onclick={() => goToStep(1)}>Back</Button>
             <div class="flex gap-3">
-              <a href="/subscriptions">
-                <Button variant="secondary" type="button">Keep Subscription</Button>
-              </a>
+              <Button href="/subscriptions" variant="secondary">Keep Subscription</Button>
               <Button type="submit" variant="danger">Start Cancellation</Button>
             </div>
           </div>
@@ -864,9 +864,9 @@
         </p>
         {#if selectedSubscription}
           <div class="mt-4">
-            <a href="/subscriptions/cancel/{selectedSubscription.id}">
-              <Button>Track This Cancellation</Button>
-            </a>
+            <Button href="/subscriptions/cancel/{selectedSubscription.id}"
+              >Track This Cancellation</Button
+            >
           </div>
         {/if}
         <div class="mt-3">

@@ -212,11 +212,9 @@
           {/if}
         {/if}
         {#if currentPlanName === 'free' || currentPlanName === 'pro'}
-          <a href="/pricing">
-            <Button variant="primary" size="sm">
-              {currentPlanName === 'free' ? 'Upgrade' : 'Upgrade to Premium'}
-            </Button>
-          </a>
+          <Button href="/pricing" variant="primary" size="sm">
+            {currentPlanName === 'free' ? 'Upgrade' : 'Upgrade to Premium'}
+          </Button>
         {/if}
       </div>
     </div>
