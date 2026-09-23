@@ -677,7 +677,7 @@
           <div class="divide-y divide-surface-700">
             {#each previewRows as row, idx}
               <div
-                class="grid grid-cols-12 items-center gap-4 px-6 py-2.5 transition
+                class="[content-visibility:auto] [contain-intrinsic-size:auto_2.75rem] grid grid-cols-12 items-center gap-4 px-6 py-2.5 transition
 								{row.isDuplicate ? 'bg-yellow-900/10' : ''}
 								{!row.selected ? 'opacity-50' : ''}"
               >
@@ -836,7 +836,9 @@
       <Card padding="none">
         <div class="divide-y divide-surface-700">
           {#each data.history as entry}
-            <div class="flex items-center justify-between px-6 py-3">
+            <div
+              class="[content-visibility:auto] [contain-intrinsic-size:auto_4rem] flex items-center justify-between px-6 py-3"
+            >
               <div class="flex items-center gap-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-700">
                   <svg

@@ -770,7 +770,9 @@
         <div class="divide-y divide-surface-700">
           {#each data.transactions as tx}
             {@const holding = (data.holdings || []).find((h: any) => h.id === tx.holdingId)}
-            <div class="flex items-center justify-between px-6 py-4">
+            <div
+              class="[content-visibility:auto] [contain-intrinsic-size:auto_4.5rem] flex items-center justify-between px-6 py-4"
+            >
               <div class="flex items-center gap-4">
                 <span class="rounded-full px-2.5 py-1 text-xs font-medium {txTypeColor(tx.type)}">
                   {txTypeLabel(tx.type)}
@@ -976,7 +978,7 @@
           {#each filteredCoins as coin}
             <button
               type="button"
-              class="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-surface-700"
+              class="[content-visibility:auto] [contain-intrinsic-size:auto_2.75rem] flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-surface-700"
               onclick={() => {
                 selectedCoin = coin;
                 addCoinSearch = '';
@@ -1361,7 +1363,7 @@
         {#each filteredCoins as coin}
           <button
             type="submit"
-            class="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-surface-700"
+            class="[content-visibility:auto] [contain-intrinsic-size:auto_2.75rem] flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-surface-700"
             onclick={() => {
               watchlistSymbol = coin.symbol;
               watchlistName = coin.name;
