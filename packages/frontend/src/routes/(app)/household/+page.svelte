@@ -547,7 +547,7 @@
                 </svg>
                 <div>
                   <p class="text-sm font-medium text-red-400">Leave Household</p>
-                  <p class="text-xs text-surface-500">Remove yourself from this household</p>
+                  <p class="text-xs text-surface-500">Remove Yourself from This Household</p>
                 </div>
               </button>
             {:else}

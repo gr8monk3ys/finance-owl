@@ -97,7 +97,7 @@
 
     <section class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
       <div class="rounded-2xl border border-surface-700/60 bg-surface-800/70 p-6">
-        <h2 class="text-lg font-semibold text-white">Before you email us</h2>
+        <h2 class="text-lg font-semibold text-white">Before You Email Us</h2>
         <p class="mt-2 text-sm leading-relaxed text-surface-400">
           Include enough detail for us to reproduce the issue without a long back-and-forth.
         </p>
@@ -127,7 +127,7 @@
       </div>
 
       <div class="rounded-2xl border border-surface-700/60 bg-surface-800/70 p-6">
-        <h2 class="text-lg font-semibold text-white">Self-serve resources</h2>
+        <h2 class="text-lg font-semibold text-white">Self-Serve Resources</h2>
         <p class="mt-2 text-sm leading-relaxed text-surface-400">
           These pages answer most launch, policy, and account questions.
         </p>

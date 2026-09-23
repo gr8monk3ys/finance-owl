@@ -99,7 +99,7 @@
         disabled={loading}
         class="w-full rounded-lg bg-primary-600 px-4 py-2.5 font-medium text-white transition hover:bg-primary-700 disabled:opacity-50"
       >
-        {loading ? 'Setting up…' : 'Complete Setup'}
+        {loading ? 'Setting Up…' : 'Complete Setup'}
       </button>
     </form>
   </div>

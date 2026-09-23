@@ -88,7 +88,7 @@
   href="#main-content"
   class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-primary-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
 >
-  Skip to main content
+  Skip to Main Content
 </a>
 
 <div class="flex min-h-screen bg-surface-900">
@@ -531,7 +531,7 @@
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
             />
           </svg>
-          Sign out
+          Sign Out
         </button>
       </form>
     </div>

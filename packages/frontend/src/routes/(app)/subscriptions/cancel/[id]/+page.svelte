@@ -359,7 +359,7 @@
                   rel="noopener noreferrer"
                   class="mt-2 inline-flex items-center gap-1 text-xs text-primary-400 hover:text-primary-300"
                 >
-                  Go to cancellation page
+                  Go to Cancellation Page
                   <svg
                     aria-hidden="true"
                     class="h-3 w-3"
@@ -486,7 +486,7 @@
                   rel="noopener noreferrer"
                   class="mt-2 inline-flex items-center gap-1 text-xs text-primary-400 hover:text-primary-300"
                 >
-                  Open chat support
+                  Open Chat Support
                   <svg
                     aria-hidden="true"
                     class="h-3 w-3"

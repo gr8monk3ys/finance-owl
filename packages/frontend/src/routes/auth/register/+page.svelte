@@ -71,7 +71,7 @@
           </svg>
         </div>
       </a>
-      <h1 class="mt-5 text-2xl font-bold text-white">Create your account</h1>
+      <h1 class="mt-5 text-2xl font-bold text-white">Create Your Account</h1>
       <p class="mt-2 text-surface-400">Start managing your finances in minutes</p>
     </div>
 
@@ -272,7 +272,7 @@
               class="absolute left-4 h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"
             ></div>
           {/if}
-          {loading ? 'Creating account…' : 'Create account'}
+          {loading ? 'Creating Account…' : 'Create Account'}
         </button>
 
         <!-- Terms -->

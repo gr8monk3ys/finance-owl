@@ -208,7 +208,7 @@
             goto('/learn');
           }}
         >
-          Clear filters
+          Clear Filters
         </button>
       {/if}
     </div>
@@ -419,7 +419,7 @@
               goto('/learn');
             }}
           >
-            Clear filters
+            Clear Filters
           </Button>
         </div>
       </Card>

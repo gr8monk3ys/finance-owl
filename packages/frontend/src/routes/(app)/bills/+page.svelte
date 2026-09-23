@@ -453,7 +453,7 @@
           </svg>
           <p class="mt-3 text-surface-300">No upcoming bills</p>
           <a href="/subscriptions" class="mt-1 text-sm text-emerald-400 hover:text-emerald-300">
-            Manage subscriptions
+            Manage Subscriptions
           </a>
         </div>
       </Card>
@@ -602,7 +602,7 @@
           </svg>
           <p class="mt-3 text-surface-300">No upcoming bills</p>
           <a href="/subscriptions" class="mt-1 text-sm text-emerald-400 hover:text-emerald-300">
-            Manage subscriptions
+            Manage Subscriptions
           </a>
         </div>
       </Card>

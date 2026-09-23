@@ -341,7 +341,7 @@
         {#if selectedFile}
           <div class="mt-4 flex justify-end">
             <Button type="submit" loading={isLoading}>
-              {isLoading ? 'Parsing file…' : 'Upload & Parse'}
+              {isLoading ? 'Parsing File…' : 'Upload & Parse'}
             </Button>
           </div>
         {/if}
@@ -606,7 +606,7 @@
             Back
           </Button>
           <Button type="submit" loading={isLoading} disabled={!selectedAccountId}>
-            {isLoading ? 'Generating preview…' : 'Preview Import'}
+            {isLoading ? 'Generating Preview…' : 'Preview Import'}
           </Button>
         </div>
       </div>

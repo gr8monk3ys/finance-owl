@@ -60,7 +60,7 @@
           </svg>
         </div>
       </a>
-      <h1 class="mt-5 text-2xl font-bold text-white">Welcome back</h1>
+      <h1 class="mt-5 text-2xl font-bold text-white">Welcome Back</h1>
       <p class="mt-2 text-surface-300">Sign in to your Finance Owl account</p>
     </div>
 
@@ -238,7 +238,7 @@
               class="absolute left-4 h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"
             ></div>
           {/if}
-          {loading ? 'Signing in…' : 'Sign in'}
+          {loading ? 'Signing In…' : 'Sign In'}
         </button>
       </form>
     </div>

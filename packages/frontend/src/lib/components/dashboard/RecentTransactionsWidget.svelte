@@ -23,7 +23,7 @@
 <Card class="h-full">
   <div class="flex items-center justify-between">
     <h3 class="text-sm font-medium text-surface-400">Recent Transactions</h3>
-    <a href="/transactions" class="text-xs text-primary-400 hover:text-primary-300">View all</a>
+    <a href="/transactions" class="text-xs text-primary-400 hover:text-primary-300">View All</a>
   </div>
 
   {#if recentTx.length > 0}

@@ -30,7 +30,7 @@
 <Card class="h-full">
   <div class="flex items-center justify-between">
     <h3 class="text-sm font-medium text-surface-400">Savings Goals</h3>
-    <a href="/savings" class="text-xs text-primary-400 hover:text-primary-300">View all</a>
+    <a href="/savings" class="text-xs text-primary-400 hover:text-primary-300">View All</a>
   </div>
 
   {#if activeGoals.length > 0}
@@ -74,7 +74,7 @@
         />
       </svg>
       <p class="mt-2 text-xs text-surface-400">
-        <a href="/savings" class="text-primary-400 hover:text-primary-300">Create a savings goal</a>
+        <a href="/savings" class="text-primary-400 hover:text-primary-300">Create a Savings Goal</a>
       </p>
     </div>
   {/if}

@@ -95,7 +95,7 @@
         />
       </svg>
       <p class="mt-2 text-xs text-surface-400">
-        <a href="/accounts" class="text-primary-400 hover:text-primary-300">Link your accounts</a>
+        <a href="/accounts" class="text-primary-400 hover:text-primary-300">Link Your Accounts</a>
       </p>
     </div>
   {/if}

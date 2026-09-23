@@ -126,7 +126,7 @@
       <strong>FDIC Insured</strong> up to {fdic.maxCoverageFormatted} per depositor
     </div>
     <a href={fdic.learnMoreUrl} target="_blank" rel="noopener noreferrer" class="fdic-link">
-      Learn more
+      Learn More
     </a>
   </div>
 

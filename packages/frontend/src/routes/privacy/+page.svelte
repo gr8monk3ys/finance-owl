@@ -354,7 +354,7 @@
                     </svg>
                   </div>
                   <div>
-                    <h3 class="text-base font-medium text-white">Connected account providers</h3>
+                    <h3 class="text-base font-medium text-white">Connected Account Providers</h3>
                     <p class="text-xs text-surface-400">Bank and card connectivity</p>
                   </div>
                 </div>
@@ -392,7 +392,7 @@
                     </svg>
                   </div>
                   <div>
-                    <h3 class="text-base font-medium text-white">Billing provider</h3>
+                    <h3 class="text-base font-medium text-white">Billing Provider</h3>
                     <p class="text-xs text-surface-400">Payment processing</p>
                   </div>
                 </div>

@@ -207,7 +207,7 @@
           </svg>
           <div>
             <p class="text-sm font-medium text-white">Account</p>
-            <p class="text-xs text-surface-400">Profile information and email</p>
+            <p class="text-xs text-surface-400">Profile Information and Email</p>
           </div>
         </div>
         <svg
@@ -243,7 +243,7 @@
           </svg>
           <div>
             <p class="text-sm font-medium text-white">Data Export & Deletion</p>
-            <p class="text-xs text-surface-400">Download or delete your financial data</p>
+            <p class="text-xs text-surface-400">Download or Delete Your Financial Data</p>
           </div>
         </div>
         <svg

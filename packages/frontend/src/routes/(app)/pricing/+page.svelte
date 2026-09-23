@@ -126,7 +126,7 @@
     <h2
       class="bg-gradient-to-r from-emerald-400 via-primary-400 to-emerald-300 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl"
     >
-      Simple, transparent pricing
+      Simple, Transparent Pricing
     </h2>
     <p class="mx-auto mt-4 max-w-2xl text-lg text-surface-400">
       Start free, upgrade when you need more, and choose monthly or yearly billing on paid plans.
@@ -353,7 +353,7 @@
 
   <!-- Feature Comparison Table -->
   <Card>
-    <h2 class="text-2xl font-bold text-white">Compare all features</h2>
+    <h2 class="text-2xl font-bold text-white">Compare All Features</h2>
     <p class="mt-1 text-sm text-surface-400">See exactly what you get with each plan.</p>
 
     <div class="mt-6 overflow-x-auto">

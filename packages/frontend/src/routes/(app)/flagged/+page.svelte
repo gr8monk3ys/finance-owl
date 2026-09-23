@@ -379,7 +379,7 @@
               : 'No flags have been resolved yet.'}
           </p>
           <Button variant="ghost" size="sm" class="mt-3" onclick={() => (statusFilter = 'all')}>
-            Show all flags
+            Show All Flags
           </Button>
         {:else}
           <p class="mt-4 text-lg text-surface-300">No flagged transactions</p>

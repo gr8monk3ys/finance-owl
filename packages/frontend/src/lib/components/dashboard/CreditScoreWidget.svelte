@@ -99,7 +99,7 @@
         />
       </svg>
       <p class="mt-2 text-xs text-surface-500">
-        <a href="/credit" class="text-primary-400 hover:text-primary-300">Add your credit score</a>
+        <a href="/credit" class="text-primary-400 hover:text-primary-300">Add Your Credit Score</a>
       </p>
     </div>
   {/if}

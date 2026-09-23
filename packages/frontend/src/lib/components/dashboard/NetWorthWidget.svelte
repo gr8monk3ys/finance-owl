@@ -107,7 +107,7 @@
         />
       </svg>
       <p class="mt-2 text-xs text-surface-500">
-        <a href="/accounts" class="text-primary-400 hover:text-primary-300">Link accounts</a>
+        <a href="/accounts" class="text-primary-400 hover:text-primary-300">Link Accounts</a>
         to see your net worth
       </p>
     </div>

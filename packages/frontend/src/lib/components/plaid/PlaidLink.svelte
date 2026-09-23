@@ -120,7 +120,7 @@
       }}
       class="ml-2 text-red-200 underline hover:text-white"
     >
-      Try again
+      Try Again
     </button>
   </div>
 {/if}

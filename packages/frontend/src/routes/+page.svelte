@@ -60,7 +60,7 @@
   href="#main-content"
   class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-emerald-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
 >
-  Skip to content
+  Skip to Content
 </a>
 <nav class="fixed top-0 z-50 w-full border-b border-white/5 bg-gray-950/80 backdrop-blur-xl">
   <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -727,7 +727,7 @@
           Why Finance Owl
         </p>
         <h2 class="mt-3 text-3xl font-bold text-white sm:text-4xl">
-          Built for clarity, control, and follow-through
+          Built for Clarity, Control, and Follow-Through
         </h2>
         <p class="mt-4 text-lg text-gray-400">
           Finance Owl focuses on the workflows people return to every week: reviewing spending,

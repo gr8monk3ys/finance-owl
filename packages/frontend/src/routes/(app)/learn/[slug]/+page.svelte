@@ -358,7 +358,7 @@
       >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
-      Back to all articles
+      Back to All Articles
     </a>
   </div>
 </div>

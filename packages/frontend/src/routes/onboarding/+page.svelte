@@ -472,7 +472,7 @@
                 onclick={skipStep}
                 class="rounded-lg border border-surface-700 px-5 py-2.5 text-sm font-medium text-surface-400 transition hover:border-surface-600 hover:text-white"
               >
-                Skip for now
+                Skip for Now
               </button>
               {#if bankLinked}
                 <button
@@ -594,7 +594,7 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Add another account
+            Add Another Account
           </button>
 
           <!-- Navigation -->

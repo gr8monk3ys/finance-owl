@@ -125,7 +125,7 @@
                 </svg>
               </div>
               <div>
-                <h2 class="text-xl font-bold text-white">Your security is our top priority</h2>
+                <h2 class="text-xl font-bold text-white">Your Security Is Our Top Priority</h2>
                 <p class="mt-2 text-sm leading-relaxed text-surface-300">
                   Finance Owl is built around least-privilege access, encrypted connections in
                   production, and straightforward controls for account security. When you connect
@@ -260,7 +260,7 @@
                 </div>
                 <div class="flex-1">
                   <h3 class="text-base font-semibold text-white">
-                    How linked account access works
+                    How Linked Account Access Works
                   </h3>
                   <ul class="mt-3 space-y-3">
                     <li class="flex items-start gap-2 text-sm text-surface-300">

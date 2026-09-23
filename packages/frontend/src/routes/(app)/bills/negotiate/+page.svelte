@@ -1009,7 +1009,7 @@
       <!-- Competitor Pricing -->
       {#if currentScript.competitorPricing?.length > 0}
         <div>
-          <h4 class="mb-2 font-semibold text-white">Competitor Pricing (for leverage)</h4>
+          <h4 class="mb-2 font-semibold text-white">Competitor Pricing (for Leverage)</h4>
           <div class="space-y-2">
             {#each currentScript.competitorPricing as comp}
               <div class="flex items-center justify-between rounded-lg bg-surface-900/50 px-3 py-2">
