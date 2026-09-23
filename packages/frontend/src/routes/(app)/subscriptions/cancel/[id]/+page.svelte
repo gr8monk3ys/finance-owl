@@ -544,6 +544,7 @@
               Reason for cancelling (optional)
             </label>
             <select
+              autocomplete="off"
               id="reason"
               name="reason"
               bind:value={reason}
@@ -648,6 +649,7 @@
                     Add a note (optional)
                   </label>
                   <textarea
+                    autocomplete="off"
                     id="progressNotes"
                     name="notes"
                     rows="2"

@@ -240,12 +240,13 @@
         Advisor Name
       </label>
       <input
+        autocomplete="off"
         id="advisorName"
         name="advisorName"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Jane Smith"
+        placeholder="Jane Smith…"
       />
     </div>
 
@@ -254,12 +255,14 @@
         Advisor Email
       </label>
       <input
+        autocomplete="off"
+        spellcheck={false}
         id="advisorEmail"
         name="advisorEmail"
         type="email"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="advisor@example.com"
+        placeholder="advisor@example.com…"
       />
     </div>
 
@@ -290,6 +293,7 @@
         Expiration Date (optional)
       </label>
       <input
+        autocomplete="off"
         id="expiresAt"
         name="expiresAt"
         type="date"

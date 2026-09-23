@@ -175,10 +175,13 @@
               >$</span
             >
             <input
+              autocomplete="off"
+              name="check-amount"
+              aria-label="Purchase amount"
               type="number"
               min="0"
               step="0.01"
-              placeholder="0.00"
+              placeholder="0.00…"
               bind:value={checkAmount}
               onkeydown={(e) => {
                 if (e.key === 'Enter') checkAffordability();

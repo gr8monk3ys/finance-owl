@@ -144,6 +144,8 @@
 
   <!-- Hidden file input -->
   <input
+    name="receipt-image"
+    aria-label="Receipt image"
     type="file"
     accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
     class="hidden"
@@ -404,22 +406,31 @@
         <input type="hidden" name="receiptId" value={selectedReceipt.id} />
         <div class="space-y-3">
           <Input
+            autocomplete="off"
             id="merchantName"
             name="merchantName"
             label="Merchant Name"
             bind:value={editMerchant}
-            placeholder="e.g., Walmart, Target"
+            placeholder="e.g., Walmart, Target…"
           />
           <Input
+            autocomplete="off"
             id="totalAmount"
             name="totalAmount"
             label="Total Amount"
             type="number"
             step="0.01"
             bind:value={editAmount}
-            placeholder="0.00"
+            placeholder="0.00…"
           />
-          <Input id="receiptDate" name="date" label="Date" type="date" bind:value={editDate} />
+          <Input
+            autocomplete="off"
+            id="receiptDate"
+            name="date"
+            label="Date"
+            type="date"
+            bind:value={editDate}
+          />
 
           <!-- Line items -->
           {#if selectedReceipt.items}
@@ -503,6 +514,7 @@
             Account
           </label>
           <select
+            autocomplete="off"
             id="txAccountId"
             name="accountId"
             bind:value={txAccountId}
@@ -517,23 +529,26 @@
         </div>
 
         <Input
+          autocomplete="off"
           id="txName"
           name="name"
           label="Transaction Name"
           bind:value={txName}
           required
-          placeholder="e.g., Grocery shopping"
+          placeholder="e.g., Grocery shopping…"
         />
 
         <Input
+          autocomplete="off"
           id="txMerchant"
           name="merchantName"
           label="Merchant (optional)"
           bind:value={txMerchant}
-          placeholder="e.g., Walmart"
+          placeholder="e.g., Walmart…"
         />
 
         <Input
+          autocomplete="off"
           id="txAmount"
           name="amount"
           label="Amount"
@@ -541,10 +556,18 @@
           step="0.01"
           bind:value={txAmount}
           required
-          placeholder="0.00"
+          placeholder="0.00…"
         />
 
-        <Input id="txDate" name="date" label="Date" type="date" bind:value={txDate} required />
+        <Input
+          autocomplete="off"
+          id="txDate"
+          name="date"
+          label="Date"
+          type="date"
+          bind:value={txDate}
+          required
+        />
 
         {#if form && 'error' in form && form.error}
           <p class="text-sm text-red-400">{form.error}</p>
@@ -568,12 +591,14 @@
       <input type="hidden" name="receiptId" value={selectedReceipt.id} />
       <div class="space-y-4">
         <Input
+          autocomplete="off"
+          spellcheck={false}
           id="linkTxId"
           name="transactionId"
           label="Transaction ID"
           bind:value={linkTxId}
           required
-          placeholder="Paste the transaction ID"
+          placeholder="Paste the transaction ID…"
         />
         <p class="text-xs text-surface-500">
           You can find the transaction ID on the Transactions page. Copy it from the transaction

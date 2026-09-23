@@ -369,12 +369,13 @@
     <div>
       <label for="envelopeName" class="block text-sm font-medium text-surface-300"> Name </label>
       <input
+        autocomplete="off"
         id="envelopeName"
         name="name"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder:text-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="e.g. Groceries, Rent, Emergency Fund"
+        placeholder="e.g. Groceries, Rent, Emergency Fund…"
       />
     </div>
 
@@ -384,13 +385,14 @@
           Budget Amount
         </label>
         <input
+          autocomplete="off"
           id="envelopeAmount"
           name="budgetedAmount"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="0.00"
+          placeholder="0.00…"
         />
       </div>
       <div>
@@ -398,6 +400,7 @@
           Period
         </label>
         <select
+          autocomplete="off"
           id="envelopePeriod"
           name="period"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -414,6 +417,7 @@
         Link to Category (optional)
       </label>
       <select
+        autocomplete="off"
         id="envelopeCategory"
         name="categoryId"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -465,13 +469,14 @@
         Target Amount (for goals)
       </label>
       <input
+        autocomplete="off"
         id="targetAmount"
         name="targetAmount"
         type="number"
         step="0.01"
         min="0"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Optional"
+        placeholder="Optional…"
       />
     </div>
 
@@ -531,6 +536,7 @@
           Amount to Assign
         </label>
         <input
+          autocomplete="off"
           id="allocateAmount"
           name="amount"
           type="number"
@@ -538,7 +544,7 @@
           min="0.01"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="0.00"
+          placeholder="0.00…"
         />
       </div>
 
@@ -580,6 +586,7 @@
         From Envelope
       </label>
       <select
+        autocomplete="off"
         id="transferFrom"
         name="fromEnvelopeId"
         required
@@ -599,6 +606,7 @@
         To Envelope
       </label>
       <select
+        autocomplete="off"
         id="transferTo"
         name="toEnvelopeId"
         required
@@ -616,6 +624,7 @@
         Amount
       </label>
       <input
+        autocomplete="off"
         id="transferAmount"
         name="amount"
         type="number"
@@ -623,7 +632,7 @@
         min="0.01"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="0.00"
+        placeholder="0.00…"
       />
     </div>
 
@@ -658,6 +667,7 @@
       <div>
         <label for="editName" class="block text-sm font-medium text-surface-300"> Name </label>
         <input
+          autocomplete="off"
           id="editName"
           name="name"
           type="text"
@@ -672,6 +682,7 @@
           Budget Amount
         </label>
         <input
+          autocomplete="off"
           id="editBudgetedAmount"
           name="budgetedAmount"
           type="number"
@@ -730,6 +741,7 @@
           Target Amount (for goals)
         </label>
         <input
+          autocomplete="off"
           id="editTargetAmount"
           name="targetAmount"
           type="number"
@@ -737,7 +749,7 @@
           min="0"
           value={editingEnvelope.targetAmount ?? ''}
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Optional"
+          placeholder="Optional…"
         />
       </div>
 

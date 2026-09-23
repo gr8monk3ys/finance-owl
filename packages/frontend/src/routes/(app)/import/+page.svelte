@@ -250,6 +250,7 @@
           onkeydown={(e) => e.key === 'Enter' && document.getElementById('fileInput')?.click()}
         >
           <input
+            aria-label="Statement file"
             id="fileInput"
             name="file"
             type="file"
@@ -364,6 +365,8 @@
         <Card>
           <h3 class="mb-3 text-lg font-semibold text-white">Select Target Account</h3>
           <select
+            autocomplete="off"
+            aria-label="Target account"
             name="accountId"
             bind:value={selectedAccountId}
             required
@@ -434,6 +437,7 @@
                     >Date Column</label
                   >
                   <select
+                    autocomplete="off"
                     id="col-date"
                     class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.date}
@@ -450,6 +454,7 @@
                     >Description Column</label
                   >
                   <select
+                    autocomplete="off"
                     id="col-description"
                     class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.description}
@@ -466,6 +471,7 @@
                     >Amount Column</label
                   >
                   <select
+                    autocomplete="off"
                     id="col-amount"
                     class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.amount}
@@ -483,6 +489,7 @@
                     >Category Column</label
                   >
                   <select
+                    autocomplete="off"
                     id="col-category"
                     class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.category ?? -1}
@@ -634,6 +641,7 @@
             <h3 class="text-lg font-semibold text-white">Transactions to Import</h3>
             <label class="flex items-center gap-2 text-sm text-surface-300">
               <input
+                name="select-all-rows"
                 type="checkbox"
                 checked={selectAll}
                 onchange={toggleAll}
@@ -669,6 +677,8 @@
               >
                 <div class="col-span-1">
                   <input
+                    name="include-row"
+                    aria-label={`Include row ${idx + 1}`}
                     type="checkbox"
                     checked={row.selected}
                     onchange={() => toggleRow(idx)}

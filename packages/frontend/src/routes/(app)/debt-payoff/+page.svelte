@@ -747,18 +747,20 @@
     <div>
       <label for="debtName" class="block text-sm font-medium text-surface-300">Debt Name</label>
       <input
+        autocomplete="off"
         id="debtName"
         name="name"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Chase Sapphire Card"
+        placeholder="Chase Sapphire Card…"
       />
     </div>
 
     <div>
       <label for="debtType" class="block text-sm font-medium text-surface-300">Type</label>
       <select
+        autocomplete="off"
         id="debtType"
         name="type"
         required
@@ -776,6 +778,7 @@
           >Current Balance</label
         >
         <input
+          autocomplete="off"
           id="debtBalance"
           name="currentBalance"
           type="number"
@@ -783,7 +786,7 @@
           min="0"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="5000.00"
+          placeholder="5000.00…"
         />
       </div>
       <div>
@@ -791,6 +794,7 @@
           >Interest Rate (APR %)</label
         >
         <input
+          autocomplete="off"
           id="debtRate"
           name="interestRate"
           type="number"
@@ -799,7 +803,7 @@
           max="100"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="19.99"
+          placeholder="19.99…"
         />
       </div>
     </div>
@@ -810,6 +814,7 @@
           >Minimum Payment</label
         >
         <input
+          autocomplete="off"
           id="debtMinPayment"
           name="minimumPayment"
           type="number"
@@ -817,7 +822,7 @@
           min="0"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="150.00"
+          placeholder="150.00…"
         />
       </div>
       <div>
@@ -825,13 +830,14 @@
           >Original Balance (optional)</label
         >
         <input
+          autocomplete="off"
           id="debtOrigBalance"
           name="originalBalance"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="10000.00"
+          placeholder="10000.00…"
         />
       </div>
     </div>
@@ -842,11 +848,12 @@
           >Lender (optional)</label
         >
         <input
+          autocomplete="off"
           id="debtLender"
           name="lender"
           type="text"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Chase"
+          placeholder="Chase…"
         />
       </div>
       <div>
@@ -854,13 +861,14 @@
           >Due Day (optional)</label
         >
         <input
+          autocomplete="off"
           id="debtDueDay"
           name="dueDay"
           type="number"
           min="1"
           max="31"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="15"
+          placeholder="15…"
         />
       </div>
     </div>
@@ -892,6 +900,7 @@
           >Debt Name</label
         >
         <input
+          autocomplete="off"
           id="editDebtName"
           name="name"
           type="text"
@@ -904,6 +913,7 @@
       <div>
         <label for="editDebtType" class="block text-sm font-medium text-surface-300">Type</label>
         <select
+          autocomplete="off"
           id="editDebtType"
           name="type"
           required
@@ -921,6 +931,7 @@
             >Current Balance</label
           >
           <input
+            autocomplete="off"
             id="editDebtBalance"
             name="currentBalance"
             type="number"
@@ -936,6 +947,7 @@
             >Interest Rate (APR %)</label
           >
           <input
+            autocomplete="off"
             id="editDebtRate"
             name="interestRate"
             type="number"
@@ -955,6 +967,7 @@
             >Minimum Payment</label
           >
           <input
+            autocomplete="off"
             id="editDebtMinPayment"
             name="minimumPayment"
             type="number"
@@ -970,6 +983,7 @@
             >Lender</label
           >
           <input
+            autocomplete="off"
             id="editDebtLender"
             name="lender"
             type="text"
@@ -1025,6 +1039,7 @@
       <div>
         <label for="paymentAmount" class="block text-sm font-medium text-surface-300">Amount</label>
         <input
+          autocomplete="off"
           id="paymentAmount"
           name="amount"
           type="number"
@@ -1041,6 +1056,7 @@
           >Date (optional)</label
         >
         <input
+          autocomplete="off"
           id="paymentDate"
           name="date"
           type="date"
@@ -1065,11 +1081,12 @@
           >Notes (optional)</label
         >
         <input
+          autocomplete="off"
           id="paymentNotes"
           name="notes"
           type="text"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Monthly payment"
+          placeholder="Monthly payment…"
         />
       </div>
 

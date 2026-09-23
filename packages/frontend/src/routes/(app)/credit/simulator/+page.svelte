@@ -336,6 +336,7 @@
                 Payment Amount ($)
               </label>
               <input
+                autocomplete="off"
                 id="payAmount"
                 type="number"
                 min="100"
@@ -350,6 +351,7 @@
                 New Card Credit Limit ($)
               </label>
               <input
+                autocomplete="off"
                 id="newCardLimit"
                 type="number"
                 min="500"
@@ -365,6 +367,7 @@
                   Card Limit ($)
                 </label>
                 <input
+                  autocomplete="off"
                   id="closeCardLimit"
                   type="number"
                   min="500"
@@ -378,6 +381,7 @@
                   Card Age (months)
                 </label>
                 <input
+                  autocomplete="off"
                   id="closeCardAge"
                   type="number"
                   min="1"
@@ -396,6 +400,7 @@
                 Number of Months
               </label>
               <input
+                autocomplete="off"
                 id="paymentMonths"
                 type="number"
                 min="6"
@@ -411,6 +416,7 @@
                 Credit Limit Increase ($)
               </label>
               <input
+                autocomplete="off"
                 id="increaseAmount"
                 type="number"
                 min="500"
@@ -517,6 +523,7 @@
         Current Credit Score
       </label>
       <input
+        autocomplete="off"
         id="currentScore"
         name="currentScore"
         type="number"
@@ -534,6 +541,7 @@
           Payment History (0-1)
         </label>
         <input
+          autocomplete="off"
           id="paymentHistory"
           name="paymentHistory"
           type="number"
@@ -550,6 +558,7 @@
           Credit Utilization (0-1)
         </label>
         <input
+          autocomplete="off"
           id="creditUtilization"
           name="creditUtilization"
           type="number"
@@ -569,6 +578,7 @@
           Account Age (months)
         </label>
         <input
+          autocomplete="off"
           id="accountAge"
           name="accountAge"
           type="number"
@@ -583,6 +593,7 @@
           Total Accounts
         </label>
         <input
+          autocomplete="off"
           id="totalAccounts"
           name="totalAccounts"
           type="number"
@@ -600,6 +611,7 @@
           Hard Inquiries
         </label>
         <input
+          autocomplete="off"
           id="hardInquiries"
           name="hardInquiries"
           type="number"
@@ -614,6 +626,7 @@
           Derogatory Marks
         </label>
         <input
+          autocomplete="off"
           id="derogatoryMarks"
           name="derogatoryMarks"
           type="number"
@@ -631,6 +644,7 @@
           Total Debt ($)
         </label>
         <input
+          autocomplete="off"
           id="totalDebt"
           name="totalDebt"
           type="number"
@@ -646,6 +660,7 @@
           Available Credit ($)
         </label>
         <input
+          autocomplete="off"
           id="availableCredit"
           name="availableCredit"
           type="number"

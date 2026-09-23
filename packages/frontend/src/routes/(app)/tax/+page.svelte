@@ -66,6 +66,9 @@
       <p class="mt-1 text-sm text-surface-400">Track documents and estimate your tax liability.</p>
     </div>
     <select
+      autocomplete="off"
+      name="tax-year"
+      aria-label="Tax year"
       value={data.year}
       onchange={handleYearChange}
       class="rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -311,6 +314,7 @@
     <div>
       <label for="docType" class="block text-sm font-medium text-surface-300">Type</label>
       <select
+        autocomplete="off"
         id="docType"
         name="type"
         required
@@ -328,6 +332,7 @@
     <div>
       <label for="docAmount" class="block text-sm font-medium text-surface-300">Amount</label>
       <input
+        autocomplete="off"
         id="docAmount"
         name="amount"
         type="number"
@@ -335,7 +340,7 @@
         min="0"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="5000.00"
+        placeholder="5000.00…"
       />
     </div>
 
@@ -344,22 +349,24 @@
         >Description</label
       >
       <input
+        autocomplete="off"
         id="docDescription"
         name="description"
         type="text"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Employer W-2, charity name, etc."
+        placeholder="Employer W-2, charity name, etc.…"
       />
     </div>
 
     <div>
       <label for="docCategory" class="block text-sm font-medium text-surface-300">Category</label>
       <input
+        autocomplete="off"
         id="docCategory"
         name="category"
         type="text"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Income, Medical, Charitable, etc."
+        placeholder="Income, Medical, Charitable, etc.…"
       />
     </div>
 
@@ -404,6 +411,7 @@
       <div>
         <label for="editDocType" class="block text-sm font-medium text-surface-300">Type</label>
         <select
+          autocomplete="off"
           id="editDocType"
           name="type"
           required
@@ -422,6 +430,7 @@
       <div>
         <label for="editDocAmount" class="block text-sm font-medium text-surface-300">Amount</label>
         <input
+          autocomplete="off"
           id="editDocAmount"
           name="amount"
           type="number"
@@ -438,6 +447,7 @@
           >Description</label
         >
         <input
+          autocomplete="off"
           id="editDocDescription"
           name="description"
           type="text"
@@ -451,6 +461,7 @@
           >Category</label
         >
         <input
+          autocomplete="off"
           id="editDocCategory"
           name="category"
           type="text"

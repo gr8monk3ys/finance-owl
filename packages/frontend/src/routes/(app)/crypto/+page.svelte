@@ -955,6 +955,7 @@
             Search Coin
           </label>
           <input
+            autocomplete="off"
             id="coinSearch"
             type="text"
             bind:value={addCoinSearch}
@@ -1016,24 +1017,26 @@
         <input type="hidden" name="name" value={selectedCoin.name} />
 
         <Input
+          autocomplete="off"
           id="quantity"
           name="quantity"
           label="Quantity"
           type="number"
           step="any"
           min="0"
-          placeholder="0.00"
+          placeholder="0.00…"
           required
         />
 
         <Input
+          autocomplete="off"
           id="averageCostBasis"
           name="averageCostBasis"
           label="Average Cost Basis (USD per unit)"
           type="number"
           step="any"
           min="0"
-          placeholder="0.00"
+          placeholder="0.00…"
           required
         />
 
@@ -1042,6 +1045,7 @@
             Exchange
           </label>
           <select
+            autocomplete="off"
             id="exchange"
             name="exchange"
             class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -1054,13 +1058,21 @@
         </div>
 
         <Input
+          autocomplete="off"
+          spellcheck={false}
           id="walletAddress"
           name="walletAddress"
           label="Wallet Address (optional)"
           placeholder="0x…"
         />
 
-        <Input id="notes" name="notes" label="Notes (optional)" placeholder="Any notes…" />
+        <Input
+          autocomplete="off"
+          id="notes"
+          name="notes"
+          label="Notes (optional)"
+          placeholder="Any notes…"
+        />
       {/if}
 
       {#if form && 'error' in form && form.error}
@@ -1108,6 +1120,7 @@
         </div>
 
         <Input
+          autocomplete="off"
           id="editQuantity"
           name="quantity"
           label="Quantity"
@@ -1118,6 +1131,7 @@
         />
 
         <Input
+          autocomplete="off"
           id="editCostBasis"
           name="averageCostBasis"
           label="Average Cost Basis (USD)"
@@ -1132,6 +1146,7 @@
             Exchange
           </label>
           <select
+            autocomplete="off"
             id="editExchange"
             name="exchange"
             class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -1145,6 +1160,7 @@
         </div>
 
         <Input
+          autocomplete="off"
           id="editNotes"
           name="notes"
           label="Notes (optional)"
@@ -1191,6 +1207,7 @@
       <div>
         <label for="txHolding" class="block text-sm font-medium text-surface-300"> Holding </label>
         <select
+          autocomplete="off"
           id="txHolding"
           name="holdingId"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -1209,6 +1226,7 @@
       <div>
         <label for="txType" class="block text-sm font-medium text-surface-300">Type</label>
         <select
+          autocomplete="off"
           id="txType"
           name="type"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -1223,44 +1241,48 @@
       </div>
 
       <Input
+        autocomplete="off"
         id="txQuantity"
         name="quantity"
         label="Quantity"
         type="number"
         step="any"
         min="0"
-        placeholder="0.00"
+        placeholder="0.00…"
         required
       />
 
       <Input
+        autocomplete="off"
         id="txPrice"
         name="pricePerUnit"
         label="Price Per Unit (USD)"
         type="number"
         step="any"
         min="0"
-        placeholder="0.00"
+        placeholder="0.00…"
         required
       />
 
       <Input
+        autocomplete="off"
         id="txFee"
         name="fee"
         label="Fee (USD, optional)"
         type="number"
         step="any"
         min="0"
-        placeholder="0.00"
+        placeholder="0.00…"
       />
 
-      <Input id="txDate" name="date" label="Date" type="date" />
+      <Input autocomplete="off" id="txDate" name="date" label="Date" type="date" />
 
       <div>
         <label for="txExchange" class="block text-sm font-medium text-surface-300">
           Exchange (optional)
         </label>
         <select
+          autocomplete="off"
           id="txExchange"
           name="exchange"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -1273,9 +1295,16 @@
         </select>
       </div>
 
-      <Input id="txHash" name="txHash" label="Transaction Hash (optional)" placeholder="0x…" />
+      <Input
+        autocomplete="off"
+        spellcheck={false}
+        id="txHash"
+        name="txHash"
+        label="Transaction Hash (optional)"
+        placeholder="0x…"
+      />
 
-      <Input id="txNotes" name="notes" label="Notes (optional)" />
+      <Input autocomplete="off" id="txNotes" name="notes" label="Notes (optional)" />
 
       {#if form && 'error' in form && form.error}
         <p class="text-sm text-red-400">{form.error}</p>
@@ -1307,6 +1336,7 @@
           Search Coin
         </label>
         <input
+          autocomplete="off"
           id="watchlistSearch"
           type="text"
           bind:value={addCoinSearch}

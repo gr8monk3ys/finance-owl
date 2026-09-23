@@ -99,6 +99,7 @@
               >Age Range</label
             >
             <select
+              autocomplete="off"
               id="ageRange"
               name="ageRange"
               required
@@ -117,6 +118,7 @@
               >Income Range</label
             >
             <select
+              autocomplete="off"
               id="incomeRange"
               name="incomeRange"
               required
@@ -136,11 +138,12 @@
           <div>
             <label for="region" class="block text-sm font-medium text-surface-300">Region</label>
             <input
+              autocomplete="off"
               id="region"
               name="region"
               type="text"
               class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-              placeholder="e.g. Northeast, Midwest"
+              placeholder="e.g. Northeast, Midwest…"
             />
           </div>
           <div>
@@ -148,6 +151,7 @@
               >Household Size</label
             >
             <input
+              autocomplete="off"
               id="householdSize"
               name="householdSize"
               type="number"

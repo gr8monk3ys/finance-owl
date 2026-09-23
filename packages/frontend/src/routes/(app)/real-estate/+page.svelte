@@ -200,12 +200,13 @@
     <div>
       <label for="address" class="block text-sm font-medium text-surface-300">Address</label>
       <input
+        autocomplete="off"
         id="address"
         name="address"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="123 Main St"
+        placeholder="123 Main St…"
       />
     </div>
 
@@ -213,6 +214,7 @@
       <div>
         <label for="city" class="block text-sm font-medium text-surface-300">City</label>
         <input
+          autocomplete="off"
           id="city"
           name="city"
           type="text"
@@ -223,18 +225,21 @@
       <div>
         <label for="state" class="block text-sm font-medium text-surface-300">State</label>
         <input
+          autocomplete="off"
           id="state"
           name="state"
           type="text"
           required
           maxlength="2"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="CA"
+          placeholder="CA…"
         />
       </div>
       <div>
         <label for="zipCode" class="block text-sm font-medium text-surface-300">Zip</label>
         <input
+          autocomplete="off"
+          spellcheck={false}
           id="zipCode"
           name="zipCode"
           type="text"
@@ -249,6 +254,7 @@
         >Property Type</label
       >
       <select
+        autocomplete="off"
         id="propertyType"
         name="propertyType"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -265,6 +271,7 @@
       <div>
         <label for="bedrooms" class="block text-sm font-medium text-surface-300">Beds</label>
         <input
+          autocomplete="off"
           id="bedrooms"
           name="bedrooms"
           type="number"
@@ -275,6 +282,7 @@
       <div>
         <label for="bathrooms" class="block text-sm font-medium text-surface-300">Baths</label>
         <input
+          autocomplete="off"
           id="bathrooms"
           name="bathrooms"
           type="number"
@@ -286,6 +294,7 @@
       <div>
         <label for="squareFeet" class="block text-sm font-medium text-surface-300">Sq Ft</label>
         <input
+          autocomplete="off"
           id="squareFeet"
           name="squareFeet"
           type="number"
@@ -299,6 +308,7 @@
       <div>
         <label for="yearBuilt" class="block text-sm font-medium text-surface-300">Year Built</label>
         <input
+          autocomplete="off"
           id="yearBuilt"
           name="yearBuilt"
           type="number"
@@ -311,6 +321,7 @@
           >Purchase Date</label
         >
         <input
+          autocomplete="off"
           id="purchaseDate"
           name="purchaseDate"
           type="date"
@@ -325,13 +336,14 @@
           >Purchase Price</label
         >
         <input
+          autocomplete="off"
           id="purchasePrice"
           name="purchasePrice"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="350000"
+          placeholder="350000…"
         />
       </div>
       <div>
@@ -339,13 +351,14 @@
           >Current Estimate</label
         >
         <input
+          autocomplete="off"
           id="currentEstimate"
           name="currentEstimate"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="400000"
+          placeholder="400000…"
         />
       </div>
     </div>
@@ -353,6 +366,7 @@
     <div>
       <label for="notes" class="block text-sm font-medium text-surface-300">Notes (optional)</label>
       <textarea
+        autocomplete="off"
         id="notes"
         name="notes"
         rows="2"

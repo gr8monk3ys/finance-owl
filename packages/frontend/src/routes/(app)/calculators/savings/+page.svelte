@@ -162,6 +162,8 @@
               >Initial Deposit</label
             >
             <input
+              autocomplete="off"
+              name="initial"
               id="initial"
               type="number"
               bind:value={initialDeposit}
@@ -176,6 +178,8 @@
               >Monthly Contribution</label
             >
             <input
+              autocomplete="off"
+              name="monthly"
               id="monthly"
               type="number"
               bind:value={monthlyContribution}
@@ -190,6 +194,8 @@
               >Annual Return Rate (%)</label
             >
             <input
+              autocomplete="off"
+              name="rate"
               id="rate"
               type="number"
               bind:value={annualRate}
@@ -205,6 +211,7 @@
               >Time Period (Years)</label
             >
             <input
+              name="years"
               id="years"
               type="range"
               bind:value={years}
@@ -224,6 +231,8 @@
               >Compounding Frequency</label
             >
             <select
+              autocomplete="off"
+              name="frequency"
               id="frequency"
               bind:value={compoundingFrequency}
               class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"

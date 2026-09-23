@@ -854,6 +854,7 @@
   <form method="POST" action="?/addScore" use:enhance>
     <div class="space-y-4">
       <Input
+        autocomplete="off"
         id="score"
         name="score"
         label="Credit Score"
@@ -867,6 +868,7 @@
       <div>
         <label for="source" class="block text-sm font-medium text-surface-300">Source</label>
         <select
+          autocomplete="off"
           id="source"
           name="source"
           bind:value={newSource}
@@ -882,6 +884,7 @@
       <div>
         <label for="scoreType" class="block text-sm font-medium text-surface-300">Score Type</label>
         <select
+          autocomplete="off"
           id="scoreType"
           name="scoreType"
           bind:value={newScoreType}
@@ -902,10 +905,11 @@
           {#each [{ name: 'payment_history', label: 'Payment History', placeholder: 'e.g. 100%' }, { name: 'credit_utilization', label: 'Credit Utilization', placeholder: 'e.g. 25%' }, { name: 'credit_age', label: 'Credit Age', placeholder: 'e.g. 5 years' }, { name: 'total_accounts', label: 'Total Accounts', placeholder: 'e.g. 8' }, { name: 'hard_inquiries', label: 'Hard Inquiries', placeholder: 'e.g. 2' }, { name: 'derogatory_marks', label: 'Derogatory Marks', placeholder: 'e.g. 0' }] as factorField}
             <div class="grid grid-cols-2 gap-2">
               <Input
+                autocomplete="off"
                 id={`factor_${factorField.name}_value`}
                 name={`factor_${factorField.name}_value`}
                 label={factorField.label}
-                placeholder={factorField.placeholder}
+                placeholder={factorField.placeholder ? `${factorField.placeholder}…` : undefined}
               />
               <div>
                 <label
@@ -913,6 +917,7 @@
                   class="block text-sm font-medium text-surface-300">Status</label
                 >
                 <select
+                  autocomplete="off"
                   id={`factor_${factorField.name}_status`}
                   name={`factor_${factorField.name}_status`}
                   class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -961,16 +966,18 @@
   >
     <div class="space-y-4">
       <Input
+        autocomplete="off"
         id="accountId"
         name="accountId"
         label="Account / Tradeline ID"
-        placeholder="Enter the account or tradeline ID to dispute"
+        placeholder="Enter the account or tradeline ID to dispute…"
         required
       />
 
       <div>
         <label for="reason" class="block text-sm font-medium text-surface-300">Reason</label>
         <select
+          autocomplete="off"
           id="reason"
           name="reason"
           required
@@ -990,6 +997,7 @@
           >Explanation</label
         >
         <textarea
+          autocomplete="off"
           id="explanation"
           name="explanation"
           required

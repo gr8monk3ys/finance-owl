@@ -450,6 +450,7 @@
       <label for="budgetCategory" class="block text-sm font-medium text-surface-300">Category</label
       >
       <select
+        autocomplete="off"
         id="budgetCategory"
         name="categoryId"
         required
@@ -481,6 +482,7 @@
         <div class="relative mt-1">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="budgetAmount"
             name="amount"
             type="number"
@@ -489,13 +491,14 @@
             required
             bind:value={createAmount}
             class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
-            placeholder="500.00"
+            placeholder="500.00…"
           />
         </div>
       </div>
       <div>
         <label for="budgetPeriod" class="block text-sm font-medium text-surface-300">Period</label>
         <select
+          autocomplete="off"
           id="budgetPeriod"
           name="period"
           required
@@ -580,6 +583,7 @@
         <div class="relative mt-1">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="editAmount"
             name="amount"
             type="number"

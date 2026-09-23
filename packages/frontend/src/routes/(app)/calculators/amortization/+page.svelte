@@ -172,6 +172,8 @@
               >Loan Amount</label
             >
             <input
+              autocomplete="off"
+              name="principal"
               id="principal"
               type="number"
               bind:value={principal}
@@ -186,6 +188,8 @@
               >Interest Rate (%)</label
             >
             <input
+              autocomplete="off"
+              name="rate"
               id="rate"
               type="number"
               bind:value={interestRate}
@@ -198,6 +202,8 @@
           <div>
             <label for="term" class="block text-sm font-medium text-surface-300">Loan Term</label>
             <select
+              autocomplete="off"
+              name="term"
               id="term"
               bind:value={termMonths}
               class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -214,6 +220,8 @@
               <span class="text-xs text-surface-500">(optional)</span>
             </label>
             <input
+              autocomplete="off"
+              name="extra"
               id="extra"
               type="number"
               bind:value={extraPayment}

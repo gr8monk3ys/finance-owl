@@ -502,6 +502,9 @@
           {:else}
             <div class="rounded-lg border border-surface-700 bg-surface-800 p-4">
               <input
+                autocomplete="off"
+                name="selected-provider"
+                aria-label="Provider name"
                 type="text"
                 placeholder="Enter provider name…"
                 bind:value={selectedProvider}
@@ -540,13 +543,15 @@
           <div class="relative">
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
             <input
+              autocomplete="off"
+              name="wizCurrentAmount"
               id="wizCurrentAmount"
               type="number"
               step="0.01"
               min="0"
               bind:value={currentAmount}
               class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-              placeholder="e.g. 120.00"
+              placeholder="e.g. 120.00…"
             />
           </div>
         </div>
@@ -558,13 +563,15 @@
           <div class="relative">
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
             <input
+              autocomplete="off"
+              name="wizTargetAmount"
               id="wizTargetAmount"
               type="number"
               step="0.01"
               min="0"
               bind:value={targetAmount}
               class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-              placeholder="e.g. 85.00"
+              placeholder="e.g. 85.00…"
             />
           </div>
           {#if currentAmount > 0}
@@ -1255,6 +1262,7 @@
           Outcome
         </label>
         <select
+          autocomplete="off"
           id="outcomeStatus"
           name="status"
           required
@@ -1274,12 +1282,13 @@
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="outcomeAmount"
             name="negotiatedAmount"
             type="number"
             step="0.01"
             class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-            placeholder="Leave blank if not successful"
+            placeholder="Leave blank if not successful…"
           />
         </div>
       </div>
@@ -1289,6 +1298,7 @@
           Notes
         </label>
         <textarea
+          autocomplete="off"
           id="outcomeNotes"
           name="notes"
           rows="3"

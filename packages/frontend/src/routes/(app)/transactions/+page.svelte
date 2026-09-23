@@ -267,6 +267,7 @@
             />
           </svg>
           <input
+            aria-label="Search transactions"
             type="search"
             name="search"
             bind:value={searchInput}
@@ -339,6 +340,8 @@
               >Account</label
             >
             <select
+              autocomplete="off"
+              name="filterAccount"
               id="filterAccount"
               bind:value={filterAccountId}
               class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
@@ -354,6 +357,8 @@
               >Category</label
             >
             <select
+              autocomplete="off"
+              name="filterCategory"
               id="filterCategory"
               bind:value={filterCategoryId}
               class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
@@ -372,6 +377,8 @@
               >From</label
             >
             <input
+              autocomplete="off"
+              name="filterStartDate"
               id="filterStartDate"
               type="date"
               bind:value={filterStartDate}
@@ -383,6 +390,8 @@
               >To</label
             >
             <input
+              autocomplete="off"
+              name="filterEndDate"
               id="filterEndDate"
               type="date"
               bind:value={filterEndDate}
@@ -639,6 +648,7 @@
     <div>
       <label for="txAccount" class="block text-sm font-medium text-surface-300">Account</label>
       <select
+        autocomplete="off"
         id="txAccount"
         name="accountId"
         required
@@ -656,19 +666,21 @@
         <div class="relative mt-1">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="txAmount"
             name="amount"
             type="number"
             step="0.01"
             required
             class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
-            placeholder="0.00"
+            placeholder="0.00…"
           />
         </div>
       </div>
       <div>
         <label for="txDate" class="block text-sm font-medium text-surface-300">Date</label>
         <input
+          autocomplete="off"
           id="txDate"
           name="date"
           type="date"
@@ -682,12 +694,13 @@
     <div>
       <label for="txName" class="block text-sm font-medium text-surface-300">Description</label>
       <input
+        autocomplete="off"
         id="txName"
         name="name"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
-        placeholder="e.g., Grocery Store"
+        placeholder="e.g., Grocery Store…"
       />
     </div>
 
@@ -696,11 +709,12 @@
         >Merchant (optional)</label
       >
       <input
+        autocomplete="off"
         id="txMerchant"
         name="merchantName"
         type="text"
         class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
-        placeholder="e.g., Whole Foods"
+        placeholder="e.g., Whole Foods…"
       />
     </div>
 
@@ -709,6 +723,7 @@
         >Category (optional)</label
       >
       <select
+        autocomplete="off"
         id="txCategory"
         name="categoryId"
         class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
@@ -728,6 +743,7 @@
         >Notes (optional)</label
       >
       <textarea
+        autocomplete="off"
         id="txNotes"
         name="notes"
         rows="2"
@@ -819,6 +835,7 @@
         >
         <div class="mt-1 flex gap-2">
           <select
+            autocomplete="off"
             id="detailCategory"
             name="categoryId"
             class="flex-1 rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
@@ -842,6 +859,7 @@
         <label for="detailNotes" class="block text-sm font-medium text-surface-300">Notes</label>
         <div class="mt-1 flex gap-2">
           <textarea
+            autocomplete="off"
             id="detailNotes"
             name="notes"
             rows="2"

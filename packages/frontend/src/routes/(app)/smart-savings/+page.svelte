@@ -792,14 +792,13 @@
   >
     <!-- Rule Type Selection -->
     <div>
-      <label class="mb-2 block text-sm font-medium text-surface-300" for="ruleType">
-        Rule Type
-      </label>
-      <div class="grid grid-cols-2 gap-2">
+      <p id="ruleType-label" class="mb-2 block text-sm font-medium text-surface-300">Rule Type</p>
+      <div class="grid grid-cols-2 gap-2" role="group" aria-labelledby="ruleType-label">
         {#each [{ value: 'round_up', label: 'Round Up', desc: 'Round purchases up' }, { value: 'percentage', label: 'Percentage', desc: '% of income' }, { value: 'fixed', label: 'Fixed Amount', desc: 'Set monthly amount' }, { value: 'surplus', label: 'Surplus', desc: '% of monthly surplus' }] as option}
           <button
             type="button"
             onclick={() => (selectedRuleType = option.value)}
+            aria-pressed={selectedRuleType === option.value}
             class="rounded-lg border p-3 text-left transition {selectedRuleType === option.value
               ? 'border-primary-500 bg-primary-600/10'
               : 'border-surface-700 bg-surface-800 hover:border-surface-600'}"
@@ -822,12 +821,13 @@
     <div>
       <label class="mb-1 block text-sm font-medium text-surface-300" for="ruleName"> Name </label>
       <input
+        autocomplete="off"
         id="ruleName"
         name="name"
         type="text"
         required
         class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="e.g., Coffee fund round-up"
+        placeholder="e.g., Coffee fund round-up…"
       />
     </div>
 
@@ -838,6 +838,7 @@
           Round up to nearest
         </label>
         <select
+          autocomplete="off"
           id="roundUpTo"
           name="roundUpTo"
           class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -857,6 +858,7 @@
         </label>
         <div class="relative">
           <input
+            autocomplete="off"
             id="amount"
             name="amount"
             type="number"
@@ -879,6 +881,7 @@
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="amount"
             name="amount"
             type="number"
@@ -898,6 +901,7 @@
         </label>
         <div class="relative">
           <input
+            autocomplete="off"
             id="amount"
             name="amount"
             type="number"

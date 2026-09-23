@@ -556,6 +556,9 @@
             />
           </svg>
           <input
+            autocomplete="off"
+            name="search-query"
+            aria-label="Search subscriptions"
             type="text"
             placeholder="Search subscriptions…"
             bind:value={searchQuery}
@@ -565,6 +568,9 @@
 
         <!-- Sort -->
         <select
+          autocomplete="off"
+          name="sort-by"
+          aria-label="Sort subscriptions"
           bind:value={sortBy}
           class="rounded-lg border border-surface-600 bg-surface-800 px-3 py-2 text-sm text-white focus-visible:border-emerald-500 focus-visible:outline-none"
         >
@@ -576,6 +582,9 @@
 
         <!-- Category filter -->
         <select
+          autocomplete="off"
+          name="filter-category"
+          aria-label="Filter by category"
           bind:value={filterCategory}
           class="rounded-lg border border-surface-600 bg-surface-800 px-3 py-2 text-sm text-white focus-visible:border-emerald-500 focus-visible:outline-none"
         >
@@ -922,12 +931,13 @@
     <div>
       <label for="subName" class="block text-sm font-medium text-surface-300">Name</label>
       <input
+        autocomplete="off"
         id="subName"
         name="name"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
-        placeholder="Netflix"
+        placeholder="Netflix…"
       />
     </div>
 
@@ -936,11 +946,12 @@
         Merchant Name (optional)
       </label>
       <input
+        autocomplete="off"
         id="subMerchant"
         name="merchantName"
         type="text"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
-        placeholder="Netflix Inc"
+        placeholder="Netflix Inc…"
       />
     </div>
 
@@ -948,6 +959,7 @@
       <div>
         <label for="subAmount" class="block text-sm font-medium text-surface-300"> Amount </label>
         <input
+          autocomplete="off"
           id="subAmount"
           name="estimatedAmount"
           type="number"
@@ -955,7 +967,7 @@
           min="0"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
-          placeholder="15.99"
+          placeholder="15.99…"
         />
       </div>
       <div>
@@ -963,6 +975,7 @@
           Frequency
         </label>
         <select
+          autocomplete="off"
           id="subFrequency"
           name="frequency"
           required
@@ -982,6 +995,7 @@
         Category (optional)
       </label>
       <select
+        autocomplete="off"
         id="subCategory"
         name="categoryId"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
@@ -998,6 +1012,7 @@
         Next Expected Date (optional)
       </label>
       <input
+        autocomplete="off"
         id="subNextDate"
         name="nextExpectedDate"
         type="date"
@@ -1036,6 +1051,7 @@
       <div>
         <label for="editSubName" class="block text-sm font-medium text-surface-300"> Name </label>
         <input
+          autocomplete="off"
           id="editSubName"
           name="name"
           type="text"
@@ -1051,6 +1067,7 @@
             Amount
           </label>
           <input
+            autocomplete="off"
             id="editSubAmount"
             name="estimatedAmount"
             type="number"
@@ -1066,6 +1083,7 @@
             Frequency
           </label>
           <select
+            autocomplete="off"
             id="editSubFreq"
             name="frequency"
             required
@@ -1085,6 +1103,7 @@
           Category
         </label>
         <select
+          autocomplete="off"
           id="editSubCategory"
           name="categoryId"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
@@ -1103,6 +1122,7 @@
           Next Expected Date
         </label>
         <input
+          autocomplete="off"
           id="editSubDate"
           name="nextExpectedDate"
           type="date"

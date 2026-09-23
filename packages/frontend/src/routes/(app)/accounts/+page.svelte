@@ -451,18 +451,20 @@
     <div>
       <label for="name" class="block text-sm font-medium text-surface-300">Account Name</label>
       <input
+        autocomplete="off"
         id="name"
         name="name"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="e.g., Chase Checking"
+        placeholder="e.g., Chase Checking…"
       />
     </div>
 
     <div>
       <label for="type" class="block text-sm font-medium text-surface-300">Account Type</label>
       <select
+        autocomplete="off"
         id="type"
         name="type"
         required
@@ -483,11 +485,12 @@
         >Institution (optional)</label
       >
       <input
+        autocomplete="off"
         id="institutionName"
         name="institutionName"
         type="text"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="e.g., Chase"
+        placeholder="e.g., Chase…"
       />
     </div>
 
@@ -495,6 +498,7 @@
       <label for="balance" class="block text-sm font-medium text-surface-300">Current Balance</label
       >
       <input
+        autocomplete="off"
         id="balance"
         name="balance"
         type="number"

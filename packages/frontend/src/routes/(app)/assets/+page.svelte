@@ -490,18 +490,20 @@
     <div>
       <label for="propName" class="block text-sm font-medium text-surface-300">Property Name</label>
       <input
+        autocomplete="off"
         id="propName"
         name="name"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="My Home"
+        placeholder="My Home…"
       />
     </div>
 
     <div>
       <label for="propType" class="block text-sm font-medium text-surface-300">Property Type</label>
       <select
+        autocomplete="off"
         id="propType"
         name="propertyType"
         required
@@ -518,11 +520,12 @@
     <div>
       <label for="propAddress" class="block text-sm font-medium text-surface-300">Address</label>
       <input
+        autocomplete="off"
         id="propAddress"
         name="address"
         type="text"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="123 Main St"
+        placeholder="123 Main St…"
       />
     </div>
 
@@ -530,33 +533,38 @@
       <div>
         <label for="propCity" class="block text-sm font-medium text-surface-300">City</label>
         <input
+          autocomplete="off"
           id="propCity"
           name="city"
           type="text"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Denver"
+          placeholder="Denver…"
         />
       </div>
       <div>
         <label for="propState" class="block text-sm font-medium text-surface-300">State</label>
         <input
+          autocomplete="off"
           id="propState"
           name="state"
           type="text"
           maxlength="2"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="CO"
+          placeholder="CO…"
         />
       </div>
       <div>
         <label for="propZip" class="block text-sm font-medium text-surface-300">Zip</label>
         <input
+          autocomplete="off"
+          inputmode="numeric"
+          spellcheck={false}
           id="propZip"
           name="zipCode"
           type="text"
           maxlength="10"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="80202"
+          placeholder="80202…"
         />
       </div>
     </div>
@@ -567,13 +575,14 @@
           >Purchase Price</label
         >
         <input
+          autocomplete="off"
           id="propPurchasePrice"
           name="purchasePrice"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="350000"
+          placeholder="350000…"
         />
       </div>
       <div>
@@ -581,6 +590,7 @@
           >Purchase Date</label
         >
         <input
+          autocomplete="off"
           id="propPurchaseDate"
           name="purchaseDate"
           type="date"
@@ -594,6 +604,7 @@
         >Current Value</label
       >
       <input
+        autocomplete="off"
         id="propCurrentValue"
         name="currentValue"
         type="number"
@@ -601,7 +612,7 @@
         min="0"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="400000"
+        placeholder="400000…"
       />
     </div>
 
@@ -610,6 +621,7 @@
         >Linked Mortgage Account</label
       >
       <select
+        autocomplete="off"
         id="propMortgage"
         name="mortgageAccountId"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -626,25 +638,27 @@
         <label for="propRent" class="block text-sm font-medium text-surface-300">Monthly Rent</label
         >
         <input
+          autocomplete="off"
           id="propRent"
           name="monthlyRent"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="2000"
+          placeholder="2000…"
         />
       </div>
       <div>
         <label for="propTax" class="block text-sm font-medium text-surface-300">Annual Tax</label>
         <input
+          autocomplete="off"
           id="propTax"
           name="annualPropertyTax"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="5000"
+          placeholder="5000…"
         />
       </div>
       <div>
@@ -652,13 +666,14 @@
           >Annual Ins.</label
         >
         <input
+          autocomplete="off"
           id="propInsurance"
           name="annualInsurance"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="1500"
+          placeholder="1500…"
         />
       </div>
     </div>
@@ -666,6 +681,7 @@
     <div>
       <label for="propNotes" class="block text-sm font-medium text-surface-300">Notes</label>
       <textarea
+        autocomplete="off"
         id="propNotes"
         name="notes"
         rows="2"
@@ -706,6 +722,7 @@
           >Property Name</label
         >
         <input
+          autocomplete="off"
           id="editPropName"
           name="name"
           type="text"
@@ -720,6 +737,7 @@
           >Property Type</label
         >
         <select
+          autocomplete="off"
           id="editPropType"
           name="propertyType"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -747,6 +765,7 @@
           >Address</label
         >
         <input
+          autocomplete="off"
           id="editPropAddress"
           name="address"
           type="text"
@@ -759,6 +778,7 @@
         <div>
           <label for="editPropCity" class="block text-sm font-medium text-surface-300">City</label>
           <input
+            autocomplete="off"
             id="editPropCity"
             name="city"
             type="text"
@@ -770,6 +790,7 @@
           <label for="editPropState" class="block text-sm font-medium text-surface-300">State</label
           >
           <input
+            autocomplete="off"
             id="editPropState"
             name="state"
             type="text"
@@ -781,6 +802,8 @@
         <div>
           <label for="editPropZip" class="block text-sm font-medium text-surface-300">Zip</label>
           <input
+            autocomplete="off"
+            spellcheck={false}
             id="editPropZip"
             name="zipCode"
             type="text"
@@ -797,6 +820,7 @@
             >Purchase Price</label
           >
           <input
+            autocomplete="off"
             id="editPropPurchasePrice"
             name="purchasePrice"
             type="number"
@@ -811,6 +835,7 @@
             >Purchase Date</label
           >
           <input
+            autocomplete="off"
             id="editPropPurchaseDate"
             name="purchaseDate"
             type="date"
@@ -825,6 +850,7 @@
           >Current Value</label
         >
         <input
+          autocomplete="off"
           id="editPropValue"
           name="currentValue"
           type="number"
@@ -841,6 +867,7 @@
           >Linked Mortgage Account</label
         >
         <select
+          autocomplete="off"
           id="editPropMortgage"
           name="mortgageAccountId"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -860,6 +887,7 @@
             >Monthly Rent</label
           >
           <input
+            autocomplete="off"
             id="editPropRent"
             name="monthlyRent"
             type="number"
@@ -874,6 +902,7 @@
             >Annual Tax</label
           >
           <input
+            autocomplete="off"
             id="editPropTax"
             name="annualPropertyTax"
             type="number"
@@ -888,6 +917,7 @@
             >Annual Ins.</label
           >
           <input
+            autocomplete="off"
             id="editPropIns"
             name="annualInsurance"
             type="number"
@@ -902,6 +932,7 @@
       <div>
         <label for="editPropNotes" class="block text-sm font-medium text-surface-300">Notes</label>
         <textarea
+          autocomplete="off"
           id="editPropNotes"
           name="notes"
           rows="2"
@@ -946,23 +977,25 @@
       <div>
         <label for="vehMake" class="block text-sm font-medium text-surface-300">Make</label>
         <input
+          autocomplete="off"
           id="vehMake"
           name="make"
           type="text"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Toyota"
+          placeholder="Toyota…"
         />
       </div>
       <div>
         <label for="vehModel" class="block text-sm font-medium text-surface-300">Model</label>
         <input
+          autocomplete="off"
           id="vehModel"
           name="model"
           type="text"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Camry"
+          placeholder="Camry…"
         />
       </div>
     </div>
@@ -971,6 +1004,7 @@
       <div>
         <label for="vehYear" class="block text-sm font-medium text-surface-300">Year</label>
         <input
+          autocomplete="off"
           id="vehYear"
           name="year"
           type="number"
@@ -978,28 +1012,30 @@
           max={currentYear + 1}
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder={String(currentYear)}
+          placeholder={`${currentYear}…`}
         />
       </div>
       <div>
         <label for="vehTrim" class="block text-sm font-medium text-surface-300">Trim</label>
         <input
+          autocomplete="off"
           id="vehTrim"
           name="trim"
           type="text"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="SE"
+          placeholder="SE…"
         />
       </div>
       <div>
         <label for="vehVin" class="block text-sm font-medium text-surface-300">VIN</label>
         <input
+          autocomplete="off"
           id="vehVin"
           name="vin"
           type="text"
           maxlength="17"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Optional"
+          placeholder="Optional…"
         />
       </div>
     </div>
@@ -1008,12 +1044,13 @@
       <div>
         <label for="vehMileage" class="block text-sm font-medium text-surface-300">Mileage</label>
         <input
+          autocomplete="off"
           id="vehMileage"
           name="mileage"
           type="number"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="45000"
+          placeholder="45000…"
         />
       </div>
       <div>
@@ -1021,6 +1058,7 @@
           >Condition</label
         >
         <select
+          autocomplete="off"
           id="vehCondition"
           name="condition"
           required
@@ -1040,13 +1078,14 @@
           >Purchase Price</label
         >
         <input
+          autocomplete="off"
           id="vehPurchasePrice"
           name="purchasePrice"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="28000"
+          placeholder="28000…"
         />
       </div>
       <div>
@@ -1054,6 +1093,7 @@
           >Purchase Date</label
         >
         <input
+          autocomplete="off"
           id="vehPurchaseDate"
           name="purchaseDate"
           type="date"
@@ -1067,6 +1107,7 @@
         >Current Value</label
       >
       <input
+        autocomplete="off"
         id="vehCurrentValue"
         name="currentValue"
         type="number"
@@ -1074,7 +1115,7 @@
         min="0"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="22000"
+        placeholder="22000…"
       />
     </div>
 
@@ -1083,6 +1124,7 @@
         >Linked Auto Loan Account</label
       >
       <select
+        autocomplete="off"
         id="vehLoan"
         name="loanAccountId"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -1100,13 +1142,14 @@
           >Monthly Payment</label
         >
         <input
+          autocomplete="off"
           id="vehPayment"
           name="monthlyPayment"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="450"
+          placeholder="450…"
         />
       </div>
       <div>
@@ -1114,13 +1157,14 @@
           >Annual Insurance</label
         >
         <input
+          autocomplete="off"
           id="vehInsurance"
           name="annualInsurance"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="1200"
+          placeholder="1200…"
         />
       </div>
     </div>
@@ -1128,6 +1172,7 @@
     <div>
       <label for="vehNotes" class="block text-sm font-medium text-surface-300">Notes</label>
       <textarea
+        autocomplete="off"
         id="vehNotes"
         name="notes"
         rows="2"
@@ -1163,6 +1208,7 @@
         <div>
           <label for="editVehMake" class="block text-sm font-medium text-surface-300">Make</label>
           <input
+            autocomplete="off"
             id="editVehMake"
             name="make"
             type="text"
@@ -1174,6 +1220,7 @@
         <div>
           <label for="editVehModel" class="block text-sm font-medium text-surface-300">Model</label>
           <input
+            autocomplete="off"
             id="editVehModel"
             name="model"
             type="text"
@@ -1188,6 +1235,7 @@
         <div>
           <label for="editVehYear" class="block text-sm font-medium text-surface-300">Year</label>
           <input
+            autocomplete="off"
             id="editVehYear"
             name="year"
             type="number"
@@ -1201,6 +1249,7 @@
         <div>
           <label for="editVehTrim" class="block text-sm font-medium text-surface-300">Trim</label>
           <input
+            autocomplete="off"
             id="editVehTrim"
             name="trim"
             type="text"
@@ -1211,6 +1260,7 @@
         <div>
           <label for="editVehVin" class="block text-sm font-medium text-surface-300">VIN</label>
           <input
+            autocomplete="off"
             id="editVehVin"
             name="vin"
             type="text"
@@ -1227,6 +1277,7 @@
             >Mileage</label
           >
           <input
+            autocomplete="off"
             id="editVehMileage"
             name="mileage"
             type="number"
@@ -1240,6 +1291,7 @@
             >Condition</label
           >
           <select
+            autocomplete="off"
             id="editVehCondition"
             name="condition"
             class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -1260,6 +1312,7 @@
             >Purchase Price</label
           >
           <input
+            autocomplete="off"
             id="editVehPurchasePrice"
             name="purchasePrice"
             type="number"
@@ -1274,6 +1327,7 @@
             >Purchase Date</label
           >
           <input
+            autocomplete="off"
             id="editVehPurchaseDate"
             name="purchaseDate"
             type="date"
@@ -1288,6 +1342,7 @@
           >Current Value</label
         >
         <input
+          autocomplete="off"
           id="editVehValue"
           name="currentValue"
           type="number"
@@ -1304,6 +1359,7 @@
           >Linked Auto Loan Account</label
         >
         <select
+          autocomplete="off"
           id="editVehLoan"
           name="loanAccountId"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -1323,6 +1379,7 @@
             >Monthly Payment</label
           >
           <input
+            autocomplete="off"
             id="editVehPayment"
             name="monthlyPayment"
             type="number"
@@ -1337,6 +1394,7 @@
             >Annual Insurance</label
           >
           <input
+            autocomplete="off"
             id="editVehInsurance"
             name="annualInsurance"
             type="number"
@@ -1351,6 +1409,7 @@
       <div>
         <label for="editVehNotes" class="block text-sm font-medium text-surface-300">Notes</label>
         <textarea
+          autocomplete="off"
           id="editVehNotes"
           name="notes"
           rows="2"

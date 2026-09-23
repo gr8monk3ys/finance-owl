@@ -440,12 +440,14 @@
         class="mt-3 flex gap-3"
       >
         <input
+          autocomplete="off"
+          aria-label="Your question"
           type="text"
           name="question"
           bind:value={question}
           placeholder={isAvailable
             ? 'Ask about your spending, budgets, or transactions…'
-            : 'AI is offline -- Ollama must be running'}
+            : 'AI is offline. Start Ollama to ask questions…'}
           disabled={!isAvailable || isAsking}
           class="flex-1 rounded-xl border border-surface-600 bg-surface-700 px-4 py-3 text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500 disabled:opacity-50"
         />

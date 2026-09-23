@@ -157,6 +157,8 @@
             >Tenant Name</label
           >
           <input
+            autocomplete="off"
+            name="tenant-name"
             id="tenant-name"
             type="text"
             bind:value={tenantName}
@@ -170,6 +172,9 @@
             >Slug (read-only)</label
           >
           <input
+            autocomplete="off"
+            spellcheck={false}
+            name="slug"
             id="slug"
             type="text"
             value={data.tenant.slug}
@@ -184,10 +189,13 @@
             >Custom Domain</label
           >
           <input
+            autocomplete="off"
+            spellcheck={false}
+            name="custom-domain"
             id="custom-domain"
             type="text"
             bind:value={customDomain}
-            placeholder="app.acme.com"
+            placeholder="app.acme.com…"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
 							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
@@ -197,6 +205,8 @@
           <div>
             <label for="plan" class="block text-sm font-medium text-surface-300 mb-1.5">Plan</label>
             <select
+              autocomplete="off"
+              name="plan"
               id="plan"
               bind:value={plan}
               class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
@@ -212,6 +222,8 @@
               >Max Users</label
             >
             <input
+              autocomplete="off"
+              name="max-users"
               id="max-users"
               type="number"
               bind:value={maxUsers}
@@ -242,10 +254,12 @@
             >App Name</label
           >
           <input
+            autocomplete="off"
+            name="app-name"
             id="app-name"
             type="text"
             bind:value={appName}
-            placeholder="Finance Owl"
+            placeholder="Finance Owl…"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
 							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
@@ -258,12 +272,16 @@
             >
             <div class="flex items-center gap-2">
               <input
+                name="primary-color"
                 id="primary-color"
                 type="color"
                 bind:value={primaryColor}
                 class="h-9 w-12 cursor-pointer rounded border border-surface-600/50 bg-transparent"
               />
               <input
+                autocomplete="off"
+                name="primary-color"
+                aria-label="Primary color hex value"
                 type="text"
                 bind:value={primaryColor}
                 class="flex-1 rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white font-mono
@@ -277,12 +295,16 @@
             >
             <div class="flex items-center gap-2">
               <input
+                name="accent-color"
                 id="accent-color"
                 type="color"
                 bind:value={accentColor}
                 class="h-9 w-12 cursor-pointer rounded border border-surface-600/50 bg-transparent"
               />
               <input
+                autocomplete="off"
+                name="accent-color"
+                aria-label="Accent color hex value"
                 type="text"
                 bind:value={accentColor}
                 class="flex-1 rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white font-mono
@@ -297,10 +319,13 @@
             >Logo URL</label
           >
           <input
+            autocomplete="off"
+            spellcheck={false}
+            name="logo-url"
             id="logo-url"
             type="url"
             bind:value={logoUrl}
-            placeholder="https://example.com/logo.svg"
+            placeholder="https://example.com/logo.svg…"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
 							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
@@ -311,10 +336,13 @@
             >Favicon URL</label
           >
           <input
+            autocomplete="off"
+            spellcheck={false}
+            name="favicon-url"
             id="favicon-url"
             type="url"
             bind:value={faviconUrl}
-            placeholder="https://example.com/favicon.ico"
+            placeholder="https://example.com/favicon.ico…"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
 							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />

@@ -254,6 +254,8 @@
               >Start Date</label
             >
             <input
+              autocomplete="off"
+              name="startDate"
               id="startDate"
               type="date"
               bind:value={startDate}
@@ -263,6 +265,8 @@
           <div>
             <label for="endDate" class="block text-sm font-medium text-surface-300">End Date</label>
             <input
+              autocomplete="off"
+              name="endDate"
               id="endDate"
               type="date"
               bind:value={endDate}
@@ -272,6 +276,8 @@
           <div>
             <label for="groupBy" class="block text-sm font-medium text-surface-300">Group By</label>
             <select
+              autocomplete="off"
+              name="groupBy"
               id="groupBy"
               bind:value={groupBy}
               class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -393,6 +399,7 @@
                 >Export</label
               >
               <select
+                autocomplete="off"
                 id="exportType"
                 name="type"
                 bind:value={exportType}

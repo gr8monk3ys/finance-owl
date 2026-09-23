@@ -188,7 +188,7 @@
             value={form?.name ?? ''}
             autocomplete="name"
             class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-            placeholder="Jane Doe"
+            placeholder="Jane Doe…"
           />
         </div>
 
@@ -204,7 +204,7 @@
             autocapitalize="off"
             spellcheck="false"
             class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-            placeholder="you@example.com"
+            placeholder="you@example.com…"
           />
         </div>
 
@@ -219,7 +219,7 @@
             bind:value={password}
             autocomplete="new-password"
             class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-            placeholder="Min. 8 characters"
+            placeholder="Min. 8 characters…"
           />
           <!-- Password strength indicator -->
           {#if password}
@@ -258,7 +258,7 @@
             minlength={8}
             autocomplete="new-password"
             class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-            placeholder="Repeat your password"
+            placeholder="Repeat your password…"
           />
         </div>
 

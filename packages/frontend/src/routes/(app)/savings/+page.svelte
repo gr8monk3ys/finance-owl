@@ -337,12 +337,13 @@
     <div>
       <label for="goalName" class="block text-sm font-medium text-surface-300">Goal Name</label>
       <input
+        autocomplete="off"
         id="goalName"
         name="name"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Emergency Fund"
+        placeholder="Emergency Fund…"
       />
     </div>
 
@@ -352,6 +353,7 @@
           >Target Amount</label
         >
         <input
+          autocomplete="off"
           id="goalTarget"
           name="targetAmount"
           type="number"
@@ -359,7 +361,7 @@
           min="0.01"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="10000.00"
+          placeholder="10000.00…"
         />
       </div>
       <div>
@@ -367,6 +369,7 @@
           >Deadline (optional)</label
         >
         <input
+          autocomplete="off"
           id="goalDeadline"
           name="deadline"
           type="date"
@@ -393,6 +396,7 @@
     <div>
       <label for="new-goal-icon" class="block text-sm font-medium text-surface-300">Icon</label>
       <select
+        autocomplete="off"
         id="new-goal-icon"
         name="icon"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -437,6 +441,7 @@
       <div>
         <label for="editName" class="block text-sm font-medium text-surface-300">Goal Name</label>
         <input
+          autocomplete="off"
           id="editName"
           name="name"
           type="text"
@@ -452,6 +457,7 @@
             >Target Amount</label
           >
           <input
+            autocomplete="off"
             id="editTarget"
             name="targetAmount"
             type="number"
@@ -467,6 +473,7 @@
             >Deadline</label
           >
           <input
+            autocomplete="off"
             id="editDeadline"
             name="deadline"
             type="date"
@@ -500,6 +507,7 @@
       <div>
         <label for="edit-goal-icon" class="block text-sm font-medium text-surface-300">Icon</label>
         <select
+          autocomplete="off"
           id="edit-goal-icon"
           name="icon"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -554,6 +562,7 @@
       <div>
         <label for="contribAmount" class="block text-sm font-medium text-surface-300">Amount</label>
         <input
+          autocomplete="off"
           id="contribAmount"
           name="amount"
           type="number"
@@ -561,7 +570,7 @@
           min="0.01"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="100.00"
+          placeholder="100.00…"
         />
       </div>
 
@@ -570,6 +579,7 @@
           >Date (optional)</label
         >
         <input
+          autocomplete="off"
           id="contribDate"
           name="date"
           type="date"
@@ -582,11 +592,12 @@
           >Note (optional)</label
         >
         <input
+          autocomplete="off"
           id="contribNote"
           name="note"
           type="text"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Monthly deposit"
+          placeholder="Monthly deposit…"
         />
       </div>
 

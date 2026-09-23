@@ -196,6 +196,7 @@
       <div>
         <label for="year" class="block text-sm font-medium text-surface-300">Year</label>
         <input
+          autocomplete="off"
           id="year"
           name="year"
           type="number"
@@ -203,29 +204,31 @@
           min="1900"
           max="2030"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="2023"
+          placeholder="2023…"
         />
       </div>
       <div>
         <label for="make" class="block text-sm font-medium text-surface-300">Make</label>
         <input
+          autocomplete="off"
           id="make"
           name="make"
           type="text"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Toyota"
+          placeholder="Toyota…"
         />
       </div>
       <div>
         <label for="model" class="block text-sm font-medium text-surface-300">Model</label>
         <input
+          autocomplete="off"
           id="model"
           name="model"
           type="text"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Camry"
+          placeholder="Camry…"
         />
       </div>
     </div>
@@ -234,16 +237,18 @@
       <div>
         <label for="trim" class="block text-sm font-medium text-surface-300">Trim (optional)</label>
         <input
+          autocomplete="off"
           id="trim"
           name="trim"
           type="text"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="SE"
+          placeholder="SE…"
         />
       </div>
       <div>
         <label for="vin" class="block text-sm font-medium text-surface-300">VIN (optional)</label>
         <input
+          autocomplete="off"
           id="vin"
           name="vin"
           type="text"
@@ -257,17 +262,19 @@
       <div>
         <label for="mileage" class="block text-sm font-medium text-surface-300">Mileage</label>
         <input
+          autocomplete="off"
           id="mileage"
           name="mileage"
           type="number"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="45000"
+          placeholder="45000…"
         />
       </div>
       <div>
         <label for="condition" class="block text-sm font-medium text-surface-300">Condition</label>
         <select
+          autocomplete="off"
           id="condition"
           name="condition"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -286,13 +293,14 @@
           >Purchase Price</label
         >
         <input
+          autocomplete="off"
           id="purchasePrice"
           name="purchasePrice"
           type="number"
           step="0.01"
           min="0"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="28000"
+          placeholder="28000…"
         />
       </div>
       <div>
@@ -300,6 +308,7 @@
           >Purchase Date</label
         >
         <input
+          autocomplete="off"
           id="purchaseDate"
           name="purchaseDate"
           type="date"
@@ -313,19 +322,21 @@
         >Current Estimate</label
       >
       <input
+        autocomplete="off"
         id="currentEstimate"
         name="currentEstimate"
         type="number"
         step="0.01"
         min="0"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="22000"
+        placeholder="22000…"
       />
     </div>
 
     <div>
       <label for="notes" class="block text-sm font-medium text-surface-300">Notes (optional)</label>
       <textarea
+        autocomplete="off"
         id="notes"
         name="notes"
         rows="2"

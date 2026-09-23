@@ -140,6 +140,8 @@
               >Home Price</label
             >
             <input
+              autocomplete="off"
+              name="homePrice"
               id="homePrice"
               type="number"
               bind:value={homePrice}
@@ -156,6 +158,8 @@
             >
             <div class="mt-1 flex gap-2">
               <input
+                autocomplete="off"
+                name="downPayment"
                 id="downPayment"
                 type="number"
                 bind:value={downPayment}
@@ -165,6 +169,8 @@
               />
               <div class="flex items-center gap-1">
                 <input
+                  autocomplete="off"
+                  name="down-payment-pct"
                   type="number"
                   bind:value={downPaymentPct}
                   oninput={onDownPaymentPctChange}
@@ -183,6 +189,8 @@
               >Interest Rate (%)</label
             >
             <input
+              autocomplete="off"
+              name="interestRate"
               id="interestRate"
               type="number"
               bind:value={interestRate}
@@ -217,6 +225,8 @@
               >Annual Property Tax</label
             >
             <input
+              autocomplete="off"
+              name="propertyTax"
               id="propertyTax"
               type="number"
               bind:value={propertyTax}
@@ -231,6 +241,8 @@
               >Annual Home Insurance</label
             >
             <input
+              autocomplete="off"
+              name="homeInsurance"
               id="homeInsurance"
               type="number"
               bind:value={homeInsurance}
@@ -247,6 +259,8 @@
                 <span class="text-xs text-surface-500">(down payment &lt; 20%)</span>
               </label>
               <input
+                autocomplete="off"
+                name="pmi"
                 id="pmi"
                 type="number"
                 bind:value={pmi}

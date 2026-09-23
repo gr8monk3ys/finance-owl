@@ -335,6 +335,9 @@
       </svg>
     </div>
     <input
+      autocomplete="off"
+      name="search-query"
+      aria-label="Search help topics"
       type="text"
       bind:value={searchQuery}
       placeholder="Search for help topics…"

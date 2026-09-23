@@ -290,6 +290,7 @@
                 Reason for leaving (optional)
               </label>
               <textarea
+                autocomplete="off"
                 id="deletion-reason"
                 name="reason"
                 bind:value={deletionReason}

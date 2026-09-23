@@ -158,6 +158,8 @@
               >Cash & Savings</label
             >
             <input
+              autocomplete="off"
+              name="cash"
               id="cash"
               type="number"
               bind:value={cashAndSavings}
@@ -171,6 +173,8 @@
               >Investments (stocks, bonds, retirement)</label
             >
             <input
+              autocomplete="off"
+              name="invest"
               id="invest"
               type="number"
               bind:value={investments}
@@ -184,6 +188,8 @@
               >Property Value</label
             >
             <input
+              autocomplete="off"
+              name="property"
               id="property"
               type="number"
               bind:value={propertyValue}
@@ -197,6 +203,8 @@
               >Vehicle Value</label
             >
             <input
+              autocomplete="off"
+              name="vehicles"
               id="vehicles"
               type="number"
               bind:value={vehicleValue}
@@ -210,6 +218,8 @@
               >Other Assets</label
             >
             <input
+              autocomplete="off"
+              name="otherA"
               id="otherA"
               type="number"
               bind:value={otherAssets}
@@ -276,6 +286,8 @@
               >Mortgage Balance</label
             >
             <input
+              autocomplete="off"
+              name="mortBal"
               id="mortBal"
               type="number"
               bind:value={mortgageBalance}
@@ -289,6 +301,8 @@
               >Auto Loans</label
             >
             <input
+              autocomplete="off"
+              name="autoLoan"
               id="autoLoan"
               type="number"
               bind:value={autoLoans}
@@ -302,6 +316,8 @@
               >Student Loans</label
             >
             <input
+              autocomplete="off"
+              name="stuLoan"
               id="stuLoan"
               type="number"
               bind:value={studentLoans}
@@ -315,6 +331,8 @@
               >Credit Card Debt</label
             >
             <input
+              autocomplete="off"
+              name="ccDebt"
               id="ccDebt"
               type="number"
               bind:value={creditCardDebt}
@@ -328,6 +346,8 @@
               >Other Liabilities</label
             >
             <input
+              autocomplete="off"
+              name="otherL"
               id="otherL"
               type="number"
               bind:value={otherLiabilities}

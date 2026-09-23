@@ -109,6 +109,7 @@
             Currency
           </label>
           <select
+            autocomplete="off"
             id="defaultCurrency"
             name="defaultCurrency"
             bind:value={selectedCurrency}
@@ -128,6 +129,7 @@
             Display Format
           </label>
           <select
+            autocomplete="off"
             id="displayFormat"
             name="displayFormat"
             bind:value={selectedFormat}

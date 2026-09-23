@@ -537,23 +537,54 @@
         <div class="form-grid">
           <div class="form-field full-width">
             <label for="fullName">Full Legal Name</label>
-            <input type="text" id="fullName" name="fullName" required placeholder="John Doe" />
+            <input
+              autocomplete="name"
+              type="text"
+              id="fullName"
+              name="fullName"
+              required
+              placeholder="John Doe…"
+            />
           </div>
           <div class="form-field">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" required placeholder="john@example.com" />
+            <input
+              autocomplete="email"
+              spellcheck={false}
+              type="email"
+              id="email"
+              name="email"
+              required
+              placeholder="john@example.com…"
+            />
           </div>
           <div class="form-field">
             <label for="phone">Phone (optional)</label>
-            <input type="tel" id="phone" name="phone" placeholder="+1 555-123-4567" />
+            <input
+              autocomplete="tel"
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="+1 555-123-4567…"
+            />
           </div>
           <div class="form-field">
             <label for="dateOfBirth">Date of Birth</label>
-            <input type="date" id="dateOfBirth" name="dateOfBirth" required />
+            <input autocomplete="bday" type="date" id="dateOfBirth" name="dateOfBirth" required />
           </div>
           <div class="form-field">
             <label for="ssn">SSN (Last 4)</label>
-            <input type="password" id="ssn" name="ssn" required maxlength="4" placeholder="1234" />
+            <input
+              autocomplete="off"
+              inputmode="numeric"
+              spellcheck={false}
+              type="password"
+              id="ssn"
+              name="ssn"
+              required
+              maxlength="4"
+              placeholder="1234…"
+            />
           </div>
         </div>
 
@@ -573,25 +604,50 @@
         <div class="form-grid">
           <div class="form-field full-width">
             <label for="street">Street Address</label>
-            <input type="text" id="street" name="street" required placeholder="123 Main St" />
+            <input
+              autocomplete="street-address"
+              type="text"
+              id="street"
+              name="street"
+              required
+              placeholder="123 Main St…"
+            />
           </div>
           <div class="form-field">
             <label for="city">City</label>
-            <input type="text" id="city" name="city" required placeholder="New York" />
+            <input
+              autocomplete="address-level2"
+              type="text"
+              id="city"
+              name="city"
+              required
+              placeholder="New York…"
+            />
           </div>
           <div class="form-field">
             <label for="state">State</label>
-            <input type="text" id="state" name="state" required maxlength="2" placeholder="NY" />
+            <input
+              autocomplete="address-level1"
+              type="text"
+              id="state"
+              name="state"
+              required
+              maxlength="2"
+              placeholder="NY…"
+            />
           </div>
           <div class="form-field">
             <label for="postalCode">Zip Code</label>
             <input
+              autocomplete="postal-code"
+              inputmode="numeric"
+              spellcheck={false}
               type="text"
               id="postalCode"
               name="postalCode"
               required
               maxlength="10"
-              placeholder="10001"
+              placeholder="10001…"
             />
           </div>
         </div>
@@ -641,7 +697,7 @@
     <div class="form-grid">
       <div class="form-field full-width">
         <label for="transferFrom">From Account</label>
-        <select id="transferFrom" name="fromAccountId" required>
+        <select autocomplete="off" id="transferFrom" name="fromAccountId" required>
           <option value="">Select source account</option>
           {#each accounts.filter((a: any) => a.status === 'active') as acct}
             <option value={acct.id}>
@@ -670,7 +726,7 @@
       {#if transferType === 'internal'}
         <div class="form-field full-width">
           <label for="transferTo">To Account</label>
-          <select id="transferTo" name="toAccountId" required>
+          <select autocomplete="off" id="transferTo" name="toAccountId" required>
             <option value="">Select destination account</option>
             {#each accounts.filter((a: any) => a.status === 'active') as acct}
               <option value={acct.id}>
@@ -684,22 +740,28 @@
         <div class="form-field">
           <label for="routingNumber">Routing Number</label>
           <input
+            autocomplete="off"
+            inputmode="numeric"
+            spellcheck={false}
             type="text"
             id="routingNumber"
             name="routingNumber"
             required
             maxlength="9"
-            placeholder="021000021"
+            placeholder="021000021…"
           />
         </div>
         <div class="form-field">
           <label for="accountNumber">Account Number</label>
           <input
+            autocomplete="off"
+            inputmode="numeric"
+            spellcheck={false}
             type="text"
             id="accountNumber"
             name="accountNumber"
             required
-            placeholder="123456789"
+            placeholder="123456789…"
           />
         </div>
       {/if}
@@ -707,18 +769,25 @@
       <div class="form-field">
         <label for="transferAmount">Amount ($)</label>
         <input
+          autocomplete="off"
           type="number"
           id="transferAmount"
           name="amount"
           required
           min="0.01"
           step="0.01"
-          placeholder="100.00"
+          placeholder="100.00…"
         />
       </div>
       <div class="form-field">
         <label for="transferMemo">Memo (optional)</label>
-        <input type="text" id="transferMemo" name="memo" placeholder="Rent payment" />
+        <input
+          autocomplete="off"
+          type="text"
+          id="transferMemo"
+          name="memo"
+          placeholder="Rent payment…"
+        />
       </div>
     </div>
 

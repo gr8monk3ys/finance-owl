@@ -84,6 +84,8 @@
             >Remaining Balance</label
           >
           <input
+            autocomplete="off"
+            name="currentBalance"
             id="currentBalance"
             type="number"
             bind:value={currentBalance}
@@ -96,6 +98,8 @@
             >Current Rate (%)</label
           >
           <input
+            autocomplete="off"
+            name="currentRate"
             id="currentRate"
             type="number"
             bind:value={currentRate}
@@ -109,6 +113,8 @@
             >Monthly Payment</label
           >
           <input
+            autocomplete="off"
+            name="currentMonthly"
             id="currentMonthly"
             type="number"
             bind:value={currentMonthlyPayment}
@@ -121,6 +127,8 @@
             >Remaining Months</label
           >
           <input
+            autocomplete="off"
+            name="currentRemaining"
             id="currentRemaining"
             type="number"
             bind:value={currentRemainingMonths}
@@ -147,6 +155,8 @@
             >New Rate (%)</label
           >
           <input
+            autocomplete="off"
+            name="newRate"
             id="newRate"
             type="number"
             bind:value={newRate}
@@ -178,6 +188,8 @@
             >Closing Costs</label
           >
           <input
+            autocomplete="off"
+            name="closingCosts"
             id="closingCosts"
             type="number"
             bind:value={closingCosts}

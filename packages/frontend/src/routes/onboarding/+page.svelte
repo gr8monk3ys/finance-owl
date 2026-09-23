@@ -526,13 +526,19 @@
                 <div class="flex items-start gap-3">
                   <div class="flex-1 space-y-3">
                     <input
+                      autocomplete="off"
+                      name="account-name"
+                      aria-label={`Account ${i + 1} name`}
                       type="text"
                       bind:value={account.name}
-                      placeholder="Account name (e.g., Chase Checking)"
+                      placeholder="Account name (e.g., Chase Checking)…"
                       class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                     />
                     <div class="flex gap-3">
                       <select
+                        autocomplete="off"
+                        name="account-type"
+                        aria-label={`Account ${i + 1} type`}
                         bind:value={account.type}
                         class="flex-1 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                       >
@@ -541,9 +547,13 @@
                         <option value="credit">Credit Card</option>
                       </select>
                       <input
+                        autocomplete="off"
+                        inputmode="decimal"
+                        name="account-balance"
+                        aria-label={`Account ${i + 1} balance`}
                         type="text"
                         bind:value={account.balance}
-                        placeholder="$0.00"
+                        placeholder="$0.00…"
                         class="w-32 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                       />
                     </div>
@@ -666,6 +676,8 @@
                   >
                 </div>
                 <input
+                  name="budget-amount"
+                  aria-label={`${category.name} budget`}
                   type="range"
                   min="0"
                   max={category.max}

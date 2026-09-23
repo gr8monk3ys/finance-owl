@@ -240,19 +240,20 @@
 
         <!-- Round To Amount -->
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-surface-300" for="roundTo">
+          <p id="roundTo-label" class="mb-1.5 block text-sm font-medium text-surface-300">
             Round up to nearest
-          </label>
-          <div class="grid grid-cols-3 gap-2">
+          </p>
+          <div class="grid grid-cols-3 gap-2" role="group" aria-labelledby="roundTo-label">
             {#each [1, 5, 10] as value}
               <button
                 type="button"
                 onclick={() => (roundTo = value)}
+                aria-pressed={roundTo === value}
                 class="rounded-lg border px-3 py-2 text-center text-sm transition {roundTo === value
                   ? 'border-primary-500 bg-primary-600/10 text-primary-400'
                   : 'border-surface-700 bg-surface-800 text-surface-300 hover:border-surface-600'}"
               >
-                ${value}.00
+                {fmt(value)}
               </button>
             {/each}
           </div>
@@ -261,20 +262,21 @@
 
         <!-- Multiplier -->
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-surface-300" for="multiplier">
+          <p id="multiplier-label" class="mb-1.5 block text-sm font-medium text-surface-300">
             Multiplier
-          </label>
-          <div class="grid grid-cols-3 gap-2">
+          </p>
+          <div class="grid grid-cols-3 gap-2" role="group" aria-labelledby="multiplier-label">
             {#each [1, 2, 3] as value}
               <button
                 type="button"
                 onclick={() => (multiplier = value)}
+                aria-pressed={multiplier === value}
                 class="rounded-lg border px-3 py-2 text-center text-sm transition {multiplier ===
                 value
                   ? 'border-primary-500 bg-primary-600/10 text-primary-400'
                   : 'border-surface-700 bg-surface-800 text-surface-300 hover:border-surface-600'}"
               >
-                {value}x
+                {value}×
               </button>
             {/each}
           </div>
@@ -290,6 +292,7 @@
             Save to Goal
           </label>
           <select
+            autocomplete="off"
             id="savingsGoalId"
             name="savingsGoalId"
             bind:value={savingsGoalId}
@@ -308,6 +311,7 @@
             Watch Account
           </label>
           <select
+            autocomplete="off"
             id="accountId"
             name="accountId"
             bind:value={accountId}
@@ -331,6 +335,7 @@
           <div class="relative">
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-surface-500">$</span>
             <input
+              autocomplete="off"
               id="maxDailyRoundUp"
               name="maxDailyRoundUp"
               type="number"

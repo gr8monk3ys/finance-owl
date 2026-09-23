@@ -367,6 +367,7 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="currentSavings"
                   name="currentSavings"
                   type="number"
@@ -384,6 +385,7 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="monthlyContribution"
                   name="monthlyContribution"
                   type="number"
@@ -404,6 +406,7 @@
               </label>
               <div class="relative mt-1">
                 <input
+                  autocomplete="off"
                   id="employerMatch"
                   name="employerMatch"
                   type="number"
@@ -421,6 +424,7 @@
                 Risk Tolerance
               </label>
               <select
+                autocomplete="off"
                 id="riskTolerance"
                 name="riskTolerance"
                 class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
@@ -450,6 +454,7 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="desiredMonthlyIncome"
                   name="desiredMonthlyIncome"
                   type="number"
@@ -470,6 +475,7 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="socialSecurityEstimate"
                   name="socialSecurityEstimate"
                   type="number"
@@ -487,6 +493,7 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="pensionAmount"
                   name="pensionAmount"
                   type="number"
@@ -507,6 +514,7 @@
               </label>
               <div class="relative mt-1">
                 <input
+                  autocomplete="off"
                   id="inflationRate"
                   name="inflationRate"
                   type="number"
@@ -525,6 +533,7 @@
               </label>
               <div class="relative mt-1">
                 <input
+                  autocomplete="off"
                   id="expectedReturn"
                   name="expectedReturn"
                   type="number"
@@ -579,10 +588,13 @@
             <div class="rounded-lg border border-surface-700 p-4">
               <div class="flex items-center justify-between">
                 <input
+                  autocomplete="off"
+                  name="scenario-name"
+                  aria-label="Scenario name"
                   type="text"
                   bind:value={scenario.label}
                   class="rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-                  placeholder="Scenario name"
+                  placeholder="Scenario name…"
                 />
                 <button
                   aria-label="Remove scenario"
@@ -607,6 +619,8 @@
                     >Retirement Age</label
                   >
                   <input
+                    autocomplete="off"
+                    name="retirement-age-{i}"
                     id="retirement-age-{i}"
                     type="number"
                     min="50"
@@ -620,6 +634,8 @@
                     >Monthly Contribution</label
                   >
                   <input
+                    autocomplete="off"
+                    name="monthly-contribution-{i}"
                     id="monthly-contribution-{i}"
                     type="number"
                     min="0"
@@ -768,6 +784,7 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="feeBalance"
                   name="currentBalance"
                   type="number"
@@ -784,6 +801,7 @@
               </label>
               <div class="relative mt-1">
                 <input
+                  autocomplete="off"
                   id="feePercent"
                   name="annualFeePercent"
                   type="number"
@@ -801,6 +819,7 @@
                 Years to Retirement
               </label>
               <input
+                autocomplete="off"
                 id="feeYears"
                 name="yearsToRetirement"
                 type="number"

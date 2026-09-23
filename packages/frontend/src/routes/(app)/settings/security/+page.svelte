@@ -509,11 +509,12 @@
               </p>
 
               <Input
+                spellcheck={false}
                 id="disableCode"
                 name="code"
                 type="text"
                 label="Verification Code"
-                placeholder="000000"
+                placeholder="000000…"
                 required
                 autocomplete="one-time-code"
                 inputmode="numeric"
@@ -586,11 +587,12 @@
                 </div>
 
                 <Input
+                  spellcheck={false}
                   id="totpCode"
                   name="code"
                   type="text"
                   label="Verification Code"
-                  placeholder="000000"
+                  placeholder="000000…"
                   required
                   autocomplete="one-time-code"
                   inputmode="numeric"

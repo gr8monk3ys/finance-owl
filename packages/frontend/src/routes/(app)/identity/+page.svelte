@@ -612,6 +612,9 @@
         <Card>
           <form method="POST" action="?/addEmail" use:enhance class="flex gap-2">
             <input
+              autocomplete="off"
+              spellcheck={false}
+              aria-label="Email address to monitor"
               name="email"
               type="email"
               required
@@ -753,6 +756,8 @@
             <input type="hidden" name="sha1Hash" value={sha1Hidden} />
             <div class="flex gap-2">
               <input
+                autocomplete="off"
+                aria-label="Password to check"
                 type="password"
                 bind:value={passwordInput}
                 placeholder="Enter password to check…"

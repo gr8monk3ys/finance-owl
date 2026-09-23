@@ -598,12 +598,13 @@
         Household Name
       </label>
       <input
+        autocomplete="off"
         id="householdName"
         name="name"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="e.g., My Family"
+        placeholder="e.g., My Family…"
       />
       <p class="mt-1.5 text-xs text-surface-500">
         Choose a name that your household members will recognize.
@@ -636,12 +637,14 @@
         Invite Code
       </label>
       <input
+        autocomplete="off"
+        spellcheck={false}
         id="inviteCode"
         name="inviteCode"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 font-mono tracking-wider text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Enter invite code"
+        placeholder="Enter invite code…"
       />
       <p class="mt-1.5 text-xs text-surface-500">Ask the household owner for the invite code.</p>
     </div>
@@ -676,6 +679,7 @@
           Name
         </label>
         <input
+          autocomplete="off"
           id="editHouseholdName"
           name="name"
           type="text"
@@ -740,6 +744,7 @@
             Select Account
           </label>
           <select
+            autocomplete="off"
             id="shareAccountId"
             name="accountId"
             required
@@ -802,6 +807,7 @@
         <div>
           <label for="memberRole" class="block text-sm font-medium text-surface-300"> Role </label>
           <select
+            autocomplete="off"
             id="memberRole"
             name="role"
             required

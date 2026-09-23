@@ -252,6 +252,9 @@
           </p>
         </div>
         <select
+          autocomplete="off"
+          name="reminder-days"
+          aria-label="Reminder lead time"
           bind:value={reminderDays}
           class="rounded-lg border border-surface-600 bg-surface-800 px-2 py-1 text-xs text-white"
         >

@@ -435,10 +435,11 @@
     >
       <div class="space-y-4">
         <Input
+          autocomplete="off"
           id="categoryName"
           name="name"
           label="Name"
-          placeholder="e.g., Subscriptions"
+          placeholder="e.g., Subscriptions…"
           required
           bind:value={newCategoryName}
         />
@@ -487,6 +488,7 @@
             Parent Category (optional)
           </label>
           <select
+            autocomplete="off"
             id="parentId"
             name="parentId"
             bind:value={newCategoryParent}
@@ -524,7 +526,14 @@
         <input type="hidden" name="id" value={editingCategory.id} />
 
         <div class="space-y-4">
-          <Input id="editCategoryName" name="name" label="Name" required bind:value={editName} />
+          <Input
+            autocomplete="off"
+            id="editCategoryName"
+            name="name"
+            label="Name"
+            required
+            bind:value={editName}
+          />
 
           <!-- Color Picker -->
           <div>
@@ -747,6 +756,7 @@
             Assign to Category
           </label>
           <select
+            autocomplete="off"
             id="ruleCategoryId"
             name="categoryId"
             bind:value={newRuleCategoryId}
@@ -768,6 +778,7 @@
             Match Type
           </label>
           <select
+            autocomplete="off"
             id="ruleMatchType"
             name="matchType"
             bind:value={newRuleMatchType}
@@ -783,14 +794,15 @@
 
         <!-- Match Value -->
         <Input
+          autocomplete="off"
           id="ruleMatchValue"
           name="matchValue"
           label="Match Value"
           placeholder={newRuleMatchType === 'regex'
-            ? '^AMZN.*'
+            ? '^AMZN.*…'
             : newRuleMatchType === 'amount_range'
-              ? '50-200'
-              : 'Starbucks'}
+              ? '50-200…'
+              : 'Starbucks…'}
           required
           bind:value={newRuleMatchValue}
         />

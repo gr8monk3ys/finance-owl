@@ -135,6 +135,8 @@
             >Gross Monthly Income</label
           >
           <input
+            autocomplete="off"
+            name="income"
             id="income"
             type="number"
             bind:value={monthlyIncome}
@@ -153,6 +155,8 @@
               >Mortgage / Rent</label
             >
             <input
+              autocomplete="off"
+              name="mortgage"
               id="mortgage"
               type="number"
               bind:value={mortgage}
@@ -164,6 +168,8 @@
           <div>
             <label for="car" class="block text-sm font-medium text-surface-300">Car Payment</label>
             <input
+              autocomplete="off"
+              name="car"
               id="car"
               type="number"
               bind:value={carPayment}
@@ -177,6 +183,8 @@
               >Student Loans</label
             >
             <input
+              autocomplete="off"
+              name="student"
               id="student"
               type="number"
               bind:value={studentLoans}
@@ -190,6 +198,8 @@
               >Credit Card Payments</label
             >
             <input
+              autocomplete="off"
+              name="credit"
               id="credit"
               type="number"
               bind:value={creditCards}
@@ -202,6 +212,8 @@
             <label for="other" class="block text-sm font-medium text-surface-300">Other Debts</label
             >
             <input
+              autocomplete="off"
+              name="other"
               id="other"
               type="number"
               bind:value={otherDebts}

@@ -174,6 +174,8 @@
           />
         </svg>
         <input
+          autocomplete="off"
+          aria-label="Search articles"
           type="text"
           placeholder="Search articles…"
           bind:value={searchQuery}

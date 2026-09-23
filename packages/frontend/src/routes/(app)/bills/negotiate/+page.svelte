@@ -697,6 +697,7 @@
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="currentAmount"
             name="currentAmount"
             type="number"
@@ -715,6 +716,7 @@
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="targetAmount"
             name="targetAmount"
             type="number"
@@ -738,6 +740,7 @@
           Notes (optional)
         </label>
         <textarea
+          autocomplete="off"
           id="notes"
           name="notes"
           rows="2"
@@ -790,6 +793,7 @@
           Result
         </label>
         <select
+          autocomplete="off"
           id="resultStatus"
           name="status"
           required
@@ -809,12 +813,13 @@
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="negotiatedAmount"
             name="negotiatedAmount"
             type="number"
             step="0.01"
             class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-            placeholder="Leave blank if not successful"
+            placeholder="Leave blank if not successful…"
           />
         </div>
       </div>
@@ -824,6 +829,7 @@
           Promotional Rate Expires On (optional)
         </label>
         <input
+          autocomplete="off"
           id="expirationDate"
           name="expirationDate"
           type="date"
@@ -839,6 +845,7 @@
           Notes
         </label>
         <textarea
+          autocomplete="off"
           id="resultNotes"
           name="notes"
           rows="2"

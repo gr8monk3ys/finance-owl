@@ -195,12 +195,13 @@
               First Name
             </label>
             <input
+              autocomplete="given-name"
               id="firstName"
               name="firstName"
               type="text"
               required
               class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-              placeholder="John"
+              placeholder="John…"
             />
           </div>
           <div>
@@ -208,17 +209,19 @@
               Last Name
             </label>
             <input
+              autocomplete="family-name"
               id="lastName"
               name="lastName"
               type="text"
               required
               class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-              placeholder="Doe"
+              placeholder="Doe…"
             />
           </div>
           <div>
             <label for="state" class="block text-sm font-medium text-surface-300"> State </label>
             <select
+              autocomplete="address-level1"
               id="state"
               name="state"
               required

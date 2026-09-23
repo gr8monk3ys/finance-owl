@@ -251,12 +251,14 @@
         Referral Code
       </label>
       <input
+        autocomplete="off"
+        spellcheck={false}
         id="referralCode"
         name="code"
         type="text"
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 font-mono tracking-wider text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Enter referral code"
+        placeholder="Enter referral code…"
       />
       <p class="mt-1.5 text-xs text-surface-500">
         Enter a referral code from a friend to get started.

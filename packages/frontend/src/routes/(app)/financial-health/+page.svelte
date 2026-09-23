@@ -280,10 +280,12 @@
               >
                 <input type="hidden" name="id" value={goal.id} />
                 <input
+                  autocomplete="off"
+                  aria-label="Current progress value"
                   name="currentValue"
                   type="number"
                   step="0.01"
-                  placeholder="Update progress"
+                  placeholder="Update progress…"
                   required
                   class="flex-1 rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
@@ -314,6 +316,7 @@
         Category
       </label>
       <select
+        autocomplete="off"
         id="goalCategory"
         name="category"
         required
@@ -333,6 +336,7 @@
           Target Value
         </label>
         <input
+          autocomplete="off"
           id="goalTarget"
           name="targetValue"
           type="number"
@@ -340,7 +344,7 @@
           min="0"
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="10000.00"
+          placeholder="10000.00…"
         />
       </div>
       <div>
@@ -348,6 +352,7 @@
           Current Value
         </label>
         <input
+          autocomplete="off"
           id="goalCurrent"
           name="currentValue"
           type="number"
@@ -364,11 +369,12 @@
         Description (optional)
       </label>
       <input
+        autocomplete="off"
         id="goalDescription"
         name="description"
         type="text"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Build 6 months emergency fund"
+        placeholder="Build 6 months emergency fund…"
       />
     </div>
 
