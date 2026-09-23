@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { guardUnsavedForms } from '$lib/utils/unsaved-changes';
   import { page } from '$app/stores';
   import { enhance } from '$app/forms';
   import { onMount } from 'svelte';
@@ -13,6 +14,8 @@
   let mobileMenuOpen = $state(false);
 
   // Initialize tenant branding from server data (graceful - works without tenant)
+  guardUnsavedForms();
+
   onMount(() => {
     initTenantBranding(data.tenant ?? null);
   });
