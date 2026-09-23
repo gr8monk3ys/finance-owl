@@ -83,7 +83,7 @@
   <header class="page-header">
     <div class="header-content">
       <div>
-        <h1>Banking</h1>
+        <h2 class="page-title">Banking</h2>
         <p class="subtitle">High-yield savings & checking accounts</p>
       </div>
       <div class="header-actions">
@@ -826,7 +826,7 @@
     flex-wrap: wrap;
   }
 
-  h1 {
+  .page-title {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--text-1);

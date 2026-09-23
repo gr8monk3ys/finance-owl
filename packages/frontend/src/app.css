@@ -83,6 +83,32 @@ html {
     background-color: var(--fo-surface-800);
     color: var(--fo-surface-100);
   }
+
+  /* Balanced lines instead of a one-word widow on wrapped headings. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-wrap: balance;
+  }
+
+  /* In-page anchors (legal-page contents, the skip link) land below the
+     sticky headers instead of under them. */
+  h1[id],
+  h2[id],
+  h3[id],
+  section[id],
+  main[id] {
+    scroll-margin-top: 5rem;
+  }
+
+  /* Figures in tables line up column by column. */
+  td,
+  th {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 /* Honor reduced motion everywhere: entrance keyframes, skeletons, spinners

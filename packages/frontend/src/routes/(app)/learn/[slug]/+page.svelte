@@ -224,7 +224,7 @@
         </span>
       </div>
 
-      <h1 class="text-2xl font-bold text-white lg:text-3xl">{data.article.title}</h1>
+      <h2 class="text-2xl font-bold text-white lg:text-3xl">{data.article.title}</h2>
       <p class="text-surface-300">{data.article.summary}</p>
 
       <div class="flex items-center gap-3">

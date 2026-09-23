@@ -314,7 +314,7 @@
 <div class="mx-auto max-w-4xl space-y-8">
   <!-- Page Header -->
   <div class="text-center">
-    <h1 class="text-2xl font-bold text-white sm:text-3xl">Help Center</h1>
+    <h2 class="text-2xl font-bold text-white sm:text-3xl">Help Center</h2>
     <p class="mt-2 text-surface-400">
       Find answers to common questions or reach out to our support team.
     </p>

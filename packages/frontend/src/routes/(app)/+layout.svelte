@@ -608,7 +608,11 @@
     </header>
 
     <!-- Page content -->
-    <main id="main-content" tabindex="-1" class="flex-1 overflow-auto p-4 pb-20 lg:p-6 lg:pb-6">
+    <main
+      id="main-content"
+      tabindex="-1"
+      class="flex-1 overflow-auto p-4 pb-20 tabular-nums lg:p-6 lg:pb-6"
+    >
       <PullToRefresh />
       {@render children()}
     </main>
