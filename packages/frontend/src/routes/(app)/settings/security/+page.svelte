@@ -566,7 +566,9 @@
             <div>
               <h3 class="text-sm font-medium text-white">Or Enter the Key Manually</h3>
               <div class="mt-2 rounded-lg bg-surface-900 px-3 py-2">
-                <code class="break-all text-xs text-primary-400">{totpSetupData.secret}</code>
+                <code translate="no" class="break-all text-xs text-primary-400"
+                  >{totpSetupData.secret}</code
+                >
               </div>
             </div>
 

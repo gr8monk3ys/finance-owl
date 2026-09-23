@@ -13,7 +13,9 @@
 <div class="flex min-h-screen items-center justify-center bg-surface-900 px-4">
   <div class="w-full max-w-md space-y-8">
     <div class="text-center">
-      <h1 class="text-3xl font-bold text-white">Welcome to Finance Owl</h1>
+      <h1 class="text-3xl font-bold text-white">
+        Welcome to <span translate="no">Finance Owl</span>
+      </h1>
       <p class="mt-2 text-surface-400">Create your admin account to get started</p>
     </div>
 
@@ -35,7 +37,8 @@
       {/if}
 
       <div class="rounded-lg bg-primary-900/30 p-3 text-sm text-primary-300">
-        This is the first time Finance Owl is running. Create your admin account below.
+        This is the first time <span translate="no">Finance Owl</span> is running. Create your admin account
+        below.
       </div>
 
       <div>

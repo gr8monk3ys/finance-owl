@@ -369,7 +369,7 @@
                 {appName.charAt(0)}
               </div>
             {/if}
-            <span class="text-lg font-bold text-white">{appName}</span>
+            <span translate="no" class="text-lg font-bold text-white">{appName}</span>
           </div>
           <div class="mt-3 flex gap-2">
             <div class="h-6 w-20 rounded" style="background-color: {primaryColor}"></div>

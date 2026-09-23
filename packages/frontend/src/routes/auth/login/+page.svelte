@@ -61,7 +61,9 @@
         </div>
       </a>
       <h1 class="mt-5 text-2xl font-bold text-white">Welcome Back</h1>
-      <p class="mt-2 text-surface-300">Sign in to your Finance Owl account</p>
+      <p class="mt-2 text-surface-300">
+        Sign in to your <span translate="no">Finance Owl</span> account
+      </p>
     </div>
 
     <div

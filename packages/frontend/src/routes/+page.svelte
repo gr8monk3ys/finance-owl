@@ -84,7 +84,7 @@
           />
         </svg>
       </div>
-      <span class="text-xl font-bold text-white tracking-tight"
+      <span translate="no" class="text-xl font-bold text-white tracking-tight"
         >Finance <span class="text-emerald-400">Owl</span></span
       >
     </a>
@@ -453,8 +453,8 @@
           Your Complete Financial Toolkit
         </h2>
         <p class="mt-4 text-lg text-gray-400">
-          Stop juggling multiple apps. Finance Owl brings all your money management into one
-          powerful dashboard.
+          Stop juggling multiple apps. <span translate="no">Finance Owl</span> brings all your money management
+          into one powerful dashboard.
         </p>
       </div>
 
@@ -724,14 +724,14 @@
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="animate-on-scroll mx-auto max-w-3xl text-center">
         <p class="text-sm font-semibold uppercase tracking-wider text-emerald-400">
-          Why Finance Owl
+          Why <span translate="no">Finance Owl</span>
         </p>
         <h2 class="mt-3 text-3xl font-bold text-white sm:text-4xl">
           Built for Clarity, Control, and Follow-Through
         </h2>
         <p class="mt-4 text-lg text-gray-400">
-          Finance Owl focuses on the workflows people return to every week: reviewing spending,
-          adjusting budgets, and keeping financial decisions organized in one place.
+          <span translate="no">Finance Owl</span> focuses on the workflows people return to every week:
+          reviewing spending, adjusting budgets, and keeping financial decisions organized in one place.
         </p>
       </div>
 
@@ -975,7 +975,7 @@
                 <circle cx="14.5" cy="10" r="1.5" fill="#064e3b" />
               </svg>
             </div>
-            <span class="text-lg font-bold text-white"
+            <span translate="no" class="text-lg font-bold text-white"
               >Finance <span class="text-emerald-400">Owl</span></span
             >
           </a>
@@ -1059,7 +1059,9 @@
       <div
         class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 sm:flex-row"
       >
-        <p class="text-sm text-gray-400">{currentYear} Finance Owl. All rights reserved.</p>
+        <p class="text-sm text-gray-400">
+          {currentYear} <span translate="no">Finance Owl</span>. All rights reserved.
+        </p>
         <div class="flex gap-4">
           <!-- Support -->
           <a

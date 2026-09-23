@@ -274,7 +274,9 @@
                   </div>
                   <div class="detail">
                     <span class="detail-label">Account</span>
-                    <span class="detail-value">****{account.accountNumberMask || '----'}</span>
+                    <span translate="no" class="detail-value"
+                      >****{account.accountNumberMask || '----'}</span
+                    >
                   </div>
                   {#if account.bankName}
                     <div class="detail">

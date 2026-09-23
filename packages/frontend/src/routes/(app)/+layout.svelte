@@ -143,7 +143,9 @@
             </svg>
           </div>
         {/if}
-        <span class="text-lg font-bold text-white tracking-tight">{currentAppName}</span>
+        <span translate="no" class="text-lg font-bold text-white tracking-tight"
+          >{currentAppName}</span
+        >
       </a>
       <button
         class="rounded-lg p-1.5 text-surface-400 hover:bg-surface-700/60 hover:text-white transition-colors duration-150 lg:hidden"

@@ -110,10 +110,10 @@
           <section id="overview">
             <h2 class="text-xl font-semibold text-white">Overview</h2>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
-              Finance Owl (“we,” “us,” or “our”) is committed to protecting your privacy. This
-              Privacy Policy describes how we collect, use, disclose, and safeguard your information
-              when you use our personal finance management platform, including our website, mobile
-              applications, and related services (collectively, the “Service”).
+              <span translate="no">Finance Owl</span> (“we,” “us,” or “our”) is committed to protecting
+              your privacy. This Privacy Policy describes how we collect, use, disclose, and safeguard
+              your information when you use our personal finance management platform, including our website,
+              mobile applications, and related services (collectively, the “Service”).
             </p>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
               By accessing or using the Service, you agree to this Privacy Policy. If you do not
@@ -359,9 +359,11 @@
                   </div>
                 </div>
                 <p class="mt-3 text-sm leading-relaxed text-surface-300">
-                  When account linking is enabled, Finance Owl may rely on a provider such as Plaid
-                  to connect external accounts. Provider-specific authentication, security, and
-                  retention details are governed by that vendor's terms and policies. See <a
+                  When account linking is enabled, <span translate="no">Finance Owl</span> may rely
+                  on a provider such as Plaid to connect external accounts. Provider-specific
+                  authentication, security, and retention details are governed by that vendor's
+                  terms and policies. See
+                  <a
                     href="https://plaid.com/legal"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -398,7 +400,10 @@
                 </div>
                 <p class="mt-3 text-sm leading-relaxed text-surface-300">
                   If you subscribe to a paid plan, billing is handled by the configured payment
-                  processor rather than storing full card details directly in Finance Owl. See <a
+                  processor rather than storing full card details directly in <span translate="no"
+                    >Finance Owl</span
+                  >. See
+                  <a
                     href="https://stripe.com/privacy"
                     target="_blank"
                     rel="noopener noreferrer"

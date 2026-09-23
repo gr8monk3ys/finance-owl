@@ -695,7 +695,8 @@
                       <p class="text-sm font-medium text-green-300">Confirm Cancellation</p>
                       <p class="mt-1 text-xs text-green-400/80">
                         Click below once you have successfully cancelled the subscription. This will
-                        mark the subscription as inactive in Finance Owl.
+                        mark the subscription as inactive in <span translate="no">Finance Owl</span
+                        >.
                       </p>
                     </div>
                   </div>

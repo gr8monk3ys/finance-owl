@@ -56,7 +56,7 @@
     <div>
       <h2 class="text-2xl font-bold text-white">Referral Program</h2>
       <p class="mt-1 text-sm text-surface-400">
-        Invite friends and earn rewards when they join Finance Owl.
+        Invite friends and earn rewards when they join <span translate="no">Finance Owl</span>.
       </p>
     </div>
     <Button variant="secondary" onclick={() => (showApplyModal = true)}>Apply a Code</Button>
@@ -77,7 +77,7 @@
           Your Referral Code
         </p>
         {#if data.code?.code}
-          <p class="mt-2 font-mono text-3xl font-bold tracking-widest text-white">
+          <p translate="no" class="mt-2 font-mono text-3xl font-bold tracking-widest text-white">
             {data.code.code}
           </p>
         {:else}
@@ -221,7 +221,7 @@
               >
                 {i + 1}
               </span>
-              <span class="font-mono text-sm text-surface-300">{entry.code}</span>
+              <span translate="no" class="font-mono text-sm text-surface-300">{entry.code}</span>
             </div>
             <div class="text-right">
               <p class="text-sm font-medium text-white">{entry.totalReferrals} referrals</p>

@@ -214,7 +214,7 @@
           </div>
 
           <h1 class="mt-8 text-3xl font-bold text-white sm:text-4xl">
-            Welcome to Finance Owl, {userName}!
+            Welcome to <span translate="no">Finance Owl</span>, {userName}!
           </h1>
           <p class="mt-4 text-lg text-surface-400">
             Your personal finance command center is almost ready. Let us get you set up in about 2

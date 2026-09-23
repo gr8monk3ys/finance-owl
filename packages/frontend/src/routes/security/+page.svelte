@@ -127,10 +127,11 @@
               <div>
                 <h2 class="text-xl font-bold text-white">Your Security Is Our Top Priority</h2>
                 <p class="mt-2 text-sm leading-relaxed text-surface-300">
-                  Finance Owl is built around least-privilege access, encrypted connections in
-                  production, and straightforward controls for account security. When you connect
-                  external accounts through a supported provider, those credentials are handled in
-                  that provider flow rather than stored directly by Finance Owl.
+                  <span translate="no">Finance Owl</span> is built around least-privilege access,
+                  encrypted connections in production, and straightforward controls for account
+                  security. When you connect external accounts through a supported provider, those
+                  credentials are handled in that provider flow rather than stored directly by
+                  <span translate="no">Finance Owl</span>.
                 </p>
               </div>
             </div>
@@ -227,9 +228,10 @@
               <div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
                 <h3 class="text-base font-medium text-white">Password Security</h3>
                 <p class="mt-2 text-sm leading-relaxed text-surface-300">
-                  Passwords are hashed with bcrypt and never stored in plain text. Finance Owl also
-                  supports two-factor authentication (TOTP) and passkeys (WebAuthn/FIDO2) for
-                  accounts that want stronger protection.
+                  Passwords are hashed with bcrypt and never stored in plain text. <span
+                    translate="no">Finance Owl</span
+                  > also supports two-factor authentication (TOTP) and passkeys (WebAuthn/FIDO2) for accounts
+                  that want stronger protection.
                 </p>
               </div>
             </div>
@@ -278,8 +280,10 @@
                         /></svg
                       >
                       <strong class="font-medium text-white">Provider-hosted authentication:</strong
-                      > When bank linking is enabled, sign-in happens through the connected provider flow
-                      rather than storing your banking credentials directly in Finance Owl.
+                      >
+                      When bank linking is enabled, sign-in happens through the connected provider
+                      flow rather than storing your banking credentials directly in
+                      <span translate="no">Finance Owl</span>.
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
@@ -446,9 +450,9 @@
                         d="M5 13l4 4L19 7"
                       /></svg
                     >
-                    <strong class="font-medium text-white">Payments:</strong> If paid plans are enabled,
-                    card collection should be handled by the configured payment processor rather than
-                    stored directly by Finance Owl.
+                    <strong class="font-medium text-white">Payments:</strong> If paid plans are
+                    enabled, card collection should be handled by the configured payment processor
+                    rather than stored directly by <span translate="no">Finance Owl</span>.
                   </li>
                 </ul>
               </div>

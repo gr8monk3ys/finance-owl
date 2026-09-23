@@ -111,9 +111,9 @@
           <section id="acceptance">
             <h2 class="text-xl font-semibold text-white">1. Acceptance of Terms</h2>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
-              By creating an account or using Finance Owl (the “Service”), you agree to be bound by
-              these Terms of Service (“Terms”). If you do not agree to these Terms, you must not use
-              the Service.
+              By creating an account or using <span translate="no">Finance Owl</span> (the “Service”),
+              you agree to be bound by these Terms of Service (“Terms”). If you do not agree to these
+              Terms, you must not use the Service.
             </p>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
               These Terms constitute a legally binding agreement between you and {publicSite.legalEntityName}
@@ -126,7 +126,8 @@
           <section id="description">
             <h2 class="text-xl font-semibold text-white">2. Description of Service</h2>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
-              Finance Owl is a personal finance management platform that may provide tools to:
+              <span translate="no">Finance Owl</span> is a personal finance management platform that may
+              provide tools to:
             </p>
             <ul class="mt-3 space-y-2">
               {#each ['Aggregate and view financial accounts from multiple institutions', 'Track and categorize transactions automatically', 'Detect and manage recurring subscriptions', 'Create and monitor budgets using envelope-based budgeting', 'Set and track savings goals with smart automation', 'Receive AI-powered financial insights and recommendations', 'Track investments and net worth across accounts', 'Negotiate bills and find savings opportunities'] as item}

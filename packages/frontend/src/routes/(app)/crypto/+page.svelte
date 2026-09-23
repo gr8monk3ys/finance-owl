@@ -430,7 +430,7 @@
             <div class="flex items-center gap-1.5">
               <span class="h-3 w-3 rounded-full" style="background-color: {allocationColors[i]}"
               ></span>
-              <span class="text-xs text-surface-300">
+              <span translate="no" class="text-xs text-surface-300">
                 {item.symbol} - {formatCurrency(item.value)}
               </span>
             </div>
@@ -451,7 +451,7 @@
                   {item.symbol.slice(0, 3)}
                 </div>
                 <div>
-                  <p class="text-sm font-medium text-white">{item.symbol}</p>
+                  <p translate="no" class="text-sm font-medium text-white">{item.symbol}</p>
                   <p class="text-xs text-surface-400">
                     {fmtPercent(item.percentage, 1)} of portfolio
                   </p>
@@ -550,7 +550,7 @@
                         {holding.symbol.slice(0, 3)}
                       </div>
                       <div>
-                        <p class="font-medium text-white">{holding.symbol}</p>
+                        <p translate="no" class="font-medium text-white">{holding.symbol}</p>
                         <p class="text-xs text-surface-400">{holding.name}</p>
                       </div>
                     </div>
@@ -676,7 +676,7 @@
                   {holding.symbol.slice(0, 3)}
                 </div>
                 <div>
-                  <p class="font-medium text-white">{holding.symbol}</p>
+                  <p translate="no" class="font-medium text-white">{holding.symbol}</p>
                   <p class="text-xs text-surface-400">{holding.name}</p>
                 </div>
               </div>
@@ -778,7 +778,7 @@
                   {txTypeLabel(tx.type)}
                 </span>
                 <div>
-                  <p class="text-sm font-medium text-white">
+                  <p translate="no" class="text-sm font-medium text-white">
                     {holding ? `${holding.symbol} - ${holding.name}` : 'Unknown'}
                   </p>
                   <p class="text-xs text-surface-400">
@@ -799,7 +799,7 @@
                 </p>
                 <p class="text-xs text-surface-400">{formatDate(tx.date)}</p>
                 {#if tx.txHash}
-                  <p class="mt-0.5 text-xs text-surface-500" title={tx.txHash}>
+                  <p translate="no" class="mt-0.5 text-xs text-surface-500" title={tx.txHash}>
                     TX: {tx.txHash.slice(0, 8)}…
                   </p>
                 {/if}
@@ -865,7 +865,7 @@
                   {item.symbol.slice(0, 3)}
                 </div>
                 <div>
-                  <p class="font-medium text-white">{item.symbol}</p>
+                  <p translate="no" class="font-medium text-white">{item.symbol}</p>
                   <p class="text-xs text-surface-400">{item.name}</p>
                 </div>
               </div>
@@ -991,7 +991,7 @@
               </div>
               <div>
                 <p class="text-sm font-medium text-white">{coin.name}</p>
-                <p class="text-xs text-surface-400">{coin.symbol}</p>
+                <p translate="no" class="text-xs text-surface-400">{coin.symbol}</p>
               </div>
             </button>
           {/each}
@@ -1012,7 +1012,7 @@
             </div>
             <div>
               <p class="text-sm font-medium text-white">{selectedCoin.name}</p>
-              <p class="text-xs text-surface-400">{selectedCoin.symbol}</p>
+              <p translate="no" class="text-xs text-surface-400">{selectedCoin.symbol}</p>
             </div>
           </div>
           <button
@@ -1125,7 +1125,7 @@
             {selectedHolding.symbol.slice(0, 3)}
           </div>
           <div>
-            <p class="text-sm font-medium text-white">{selectedHolding.symbol}</p>
+            <p translate="no" class="text-sm font-medium text-white">{selectedHolding.symbol}</p>
             <p class="text-xs text-surface-400">{selectedHolding.name}</p>
           </div>
         </div>
@@ -1227,7 +1227,7 @@
         >
           <option value="">Select a holding…</option>
           {#each data.holdings || [] as holding}
-            <option value={holding.id}>
+            <option translate="no" value={holding.id}>
               {holding.symbol} - {holding.name}
             </option>
           {/each}
@@ -1376,7 +1376,7 @@
             </div>
             <div>
               <p class="text-sm font-medium text-white">{coin.name}</p>
-              <p class="text-xs text-surface-400">{coin.symbol}</p>
+              <p translate="no" class="text-xs text-surface-400">{coin.symbol}</p>
             </div>
           </button>
         {/each}

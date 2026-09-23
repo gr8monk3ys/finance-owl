@@ -482,7 +482,9 @@
             />
           </svg>
         </div>
-        <p class="mt-6 text-xl font-semibold text-white">Welcome to Finance Owl</p>
+        <p class="mt-6 text-xl font-semibold text-white">
+          Welcome to <span translate="no">Finance Owl</span>
+        </p>
         <p class="mt-2 max-w-sm text-sm leading-relaxed text-surface-400">
           Get started by linking your bank accounts. We will automatically track your spending, net
           worth, and budget progress.
