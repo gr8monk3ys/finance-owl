@@ -63,6 +63,7 @@
         <Spinner size="sm" />
       {:else}
         <svg
+          aria-hidden="true"
           class="h-5 w-5 text-surface-400 transition-transform"
           style="transform: rotate({(pullDistance / THRESHOLD) * 180}deg); opacity: {pullDistance /
             THRESHOLD}"

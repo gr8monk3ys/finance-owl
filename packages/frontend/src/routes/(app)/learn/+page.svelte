@@ -160,6 +160,7 @@
     >
       <div class="relative flex-1">
         <svg
+          aria-hidden="true"
           class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"
@@ -238,6 +239,7 @@
                 : 'bg-surface-700'}"
             >
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 {activeTopic === topic.id ? 'text-primary-400' : 'text-surface-400'}"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -290,7 +292,12 @@
                 </span>
                 <span class="text-xs text-surface-500">{article.readTimeMinutes} min</span>
               </div>
-              <svg class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+              <svg
+                aria-hidden="true"
+                class="h-4 w-4 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
             </div>
@@ -338,12 +345,18 @@
               </div>
               <div class="flex items-center gap-1">
                 {#if isArticleBookmarked(article.slug)}
-                  <svg class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    aria-hidden="true"
+                    class="h-4 w-4 text-yellow-400"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                   </svg>
                 {/if}
                 {#if isArticleRead(article.slug)}
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-green-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -379,6 +392,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-12 w-12 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"

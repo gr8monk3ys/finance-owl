@@ -96,6 +96,7 @@
         {#if isOwner}
           <Button variant="ghost" size="sm" onclick={() => (showEditNameModal = true)}>
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -119,6 +120,7 @@
   {#if form?.error}
     <div class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300">
       <svg
+        aria-hidden="true"
         class="h-5 w-5 flex-shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -142,6 +144,7 @@
         <div class="flex flex-col items-center justify-center py-8 text-center">
           <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600/20">
             <svg
+              aria-hidden="true"
               class="h-8 w-8 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -170,6 +173,7 @@
         <div class="flex flex-col items-center justify-center py-8 text-center">
           <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-600/20">
             <svg
+              aria-hidden="true"
               class="h-8 w-8 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -202,6 +206,7 @@
         class="flex items-center gap-3 rounded-lg border border-surface-700 bg-surface-800/50 px-4 py-3"
       >
         <svg
+          aria-hidden="true"
           class="h-5 w-5 text-surface-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -231,6 +236,7 @@
             <div class="flex items-center gap-4">
               <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600/20">
                 <svg
+                  aria-hidden="true"
                   class="h-6 w-6 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -285,6 +291,7 @@
                   <Button variant="ghost" size="sm" onclick={copyInviteCode}>
                     {#if copiedCode}
                       <svg
+                        aria-hidden="true"
                         class="mr-1.5 h-4 w-4 text-green-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -296,6 +303,7 @@
                       Copied!
                     {:else}
                       <svg
+                        aria-hidden="true"
                         class="mr-1.5 h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -363,11 +371,13 @@
                   {#if isOwner && member.role !== 'owner'}
                     <div class="flex items-center gap-1">
                       <button
+                        aria-label="Change role"
                         class="rounded-lg p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-white"
                         onclick={() => (editingMember = member)}
                         title="Change role"
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -382,11 +392,13 @@
                         </svg>
                       </button>
                       <button
+                        aria-label="Remove member"
                         class="rounded-lg p-1.5 text-surface-400 transition hover:bg-red-900/30 hover:text-red-400"
                         onclick={() => (confirmRemoveMember = member)}
                         title="Remove member"
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -418,6 +430,7 @@
             {#if unsavedAccounts.length > 0}
               <Button variant="ghost" size="sm" onclick={() => (showShareAccountModal = true)}>
                 <svg
+                  aria-hidden="true"
                   class="mr-1 h-4 w-4"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -434,6 +447,7 @@
           {#if data.sharedAccounts.length === 0}
             <div class="mt-4 flex flex-col items-center py-4 text-center">
               <svg
+                aria-hidden="true"
                 class="h-10 w-10 text-surface-600"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -478,11 +492,13 @@
                     <input type="hidden" name="householdId" value={data.household.id} />
                     <input type="hidden" name="accountId" value={sa.accountId} />
                     <button
+                      aria-label="Unshare account"
                       type="submit"
                       class="ml-2 rounded-lg p-1.5 text-surface-400 transition hover:bg-red-900/30 hover:text-red-400"
                       title="Unshare account"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -513,6 +529,7 @@
                 onclick={() => (confirmLeave = true)}
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-red-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -536,6 +553,7 @@
                 onclick={() => (confirmDelete = true)}
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-red-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -687,6 +705,7 @@
     {#if unsavedAccounts.length === 0}
       <div class="flex flex-col items-center py-4 text-center">
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -819,6 +838,7 @@
     <div class="space-y-4">
       <div class="flex items-center gap-3 rounded-lg border border-red-700/30 bg-red-900/20 p-4">
         <svg
+          aria-hidden="true"
           class="h-6 w-6 flex-shrink-0 text-red-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -859,6 +879,7 @@
     <div class="space-y-4">
       <div class="flex items-center gap-3 rounded-lg border border-red-700/30 bg-red-900/20 p-4">
         <svg
+          aria-hidden="true"
           class="h-6 w-6 flex-shrink-0 text-red-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -899,6 +920,7 @@
     <div class="space-y-4">
       <div class="flex items-center gap-3 rounded-lg border border-red-700/30 bg-red-900/20 p-4">
         <svg
+          aria-hidden="true"
           class="h-6 w-6 flex-shrink-0 text-red-400"
           fill="none"
           viewBox="0 0 24 24"

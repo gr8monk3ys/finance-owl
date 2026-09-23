@@ -183,6 +183,7 @@
     >
       <Button type="submit" loading={isRunningCheck} disabled={isRunningCheck}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -204,6 +205,7 @@
   {#if form?.error}
     <div class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300">
       <svg
+        aria-hidden="true"
         class="h-5 w-5 flex-shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -231,6 +233,7 @@
             : 'bg-green-500/15'}"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5 {data.summary.totalBreaches > 0 ? 'text-red-400' : 'text-green-400'}"
             fill="none"
             viewBox="0 0 24 24"
@@ -261,6 +264,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-700">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-surface-300"
             fill="none"
             viewBox="0 0 24 24"
@@ -289,6 +293,7 @@
             : 'bg-green-500/15'}"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5 {passwordExposureCount > 0 ? 'text-orange-400' : 'text-green-400'}"
             fill="none"
             viewBox="0 0 24 24"
@@ -323,6 +328,7 @@
           )}"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5 {severityColor(data.summary.severity)}"
             fill="none"
             viewBox="0 0 24 24"
@@ -362,6 +368,7 @@
           >
             {#if isCriticalDataClass(dataType)}
               <svg
+                aria-hidden="true"
                 class="mr-1 inline h-3 w-3"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -473,6 +480,7 @@
               >
             </h3>
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-surface-500 transition {showAcknowledged ? 'rotate-180' : ''}"
               fill="none"
               viewBox="0 0 24 24"
@@ -622,6 +630,7 @@
                   <div class="min-w-0 flex-1">
                     <div class="flex items-center gap-2">
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4 flex-shrink-0 text-surface-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -658,6 +667,7 @@
                         aria-label="Remove monitored email"
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -681,6 +691,7 @@
           <Card class="mt-3">
             <div class="py-4 text-center">
               <svg
+                aria-hidden="true"
                 class="mx-auto h-10 w-10 text-surface-600"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -760,6 +771,7 @@
               <div class="mt-4 rounded-lg border border-red-700/30 bg-red-900/20 p-4">
                 <div class="flex items-center gap-2">
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-red-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -786,6 +798,7 @@
               <div class="mt-4 rounded-lg border border-green-700/30 bg-green-900/20 p-4">
                 <div class="flex items-center gap-2">
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-green-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -815,6 +828,7 @@
         <Card padding="sm">
           <div class="flex items-center gap-3">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-surface-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -850,6 +864,7 @@
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-600/15">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-green-400"
             fill="none"
             viewBox="0 0 24 24"

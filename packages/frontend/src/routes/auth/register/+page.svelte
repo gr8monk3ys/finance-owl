@@ -50,7 +50,12 @@
         <div
           class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 shadow-lg shadow-primary-900/40 transition-transform duration-200 group-hover:scale-105"
         >
-          <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor">
+          <svg
+            aria-hidden="true"
+            class="h-7 w-7 text-white"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
             <path
               d="M12 2C9.5 2 7.5 3.5 7 5.5C5.5 5 3.5 5.5 2.5 7C1.5 8.5 2 10.5 3 11.5C2 12.5 1.5 14.5 2.5 16C3.5 17.5 5.5 18 7 17.5C7.5 19.5 9.5 21 12 21C14.5 21 16.5 19.5 17 17.5C18.5 18 20.5 17.5 21.5 16C22.5 14.5 22 12.5 21 11.5C22 10.5 22.5 8.5 21.5 7C20.5 5.5 18.5 5 17 5.5C16.5 3.5 14.5 2 12 2Z"
             />
@@ -82,7 +87,7 @@
           aria-disabled="true"
           title="Google sign-up is coming soon"
         >
-          <svg class="h-5 w-5" viewBox="0 0 24 24">
+          <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
               fill="#4285F4"
@@ -113,7 +118,7 @@
           aria-disabled="true"
           title="Apple sign-up is coming soon"
         >
-          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+          <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <path
               d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.53-3.23 0-1.44.62-2.2.44-3.06-.4C3.79 16.18 4.36 9.22 8.87 9c1.27.07 2.15.72 2.91.76.98-.2 1.92-.81 3-.86 1.46.07 2.56.63 3.27 1.63-2.98 1.81-2.27 5.78.5 6.88-.6 1.57-1.37 3.13-2.5 4.87zM12.03 8.94c-.17-2.27 1.65-4.18 3.87-4.44.29 2.55-2.33 4.55-3.87 4.44z"
             />
@@ -156,6 +161,7 @@
             class="flex items-center gap-2 rounded-lg bg-red-900/30 border border-red-800/30 p-3 text-sm text-red-300"
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4 shrink-0"
               fill="none"
               viewBox="0 0 24 24"

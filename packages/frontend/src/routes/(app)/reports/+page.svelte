@@ -168,6 +168,7 @@
     <div class="flex gap-2">
       <Button variant="secondary" onclick={handlePrint}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -403,6 +404,7 @@
             <input type="hidden" name="endDate" value={endDate} />
             <Button type="submit">
               <svg
+                aria-hidden="true"
                 class="mr-1.5 h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -430,6 +432,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -449,6 +452,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-red-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -472,6 +476,7 @@
               : 'bg-red-600/20'}"
           >
             <svg
+              aria-hidden="true"
               class="h-5 w-5 {ieNet >= 0 ? 'text-green-400' : 'text-red-400'}"
               fill="none"
               viewBox="0 0 24 24"
@@ -579,6 +584,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -604,6 +610,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-red-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -634,6 +641,7 @@
               : 'bg-red-600/20'}"
           >
             <svg
+              aria-hidden="true"
               class="h-5 w-5 {(data.netWorth?.netWorth ?? 0) >= 0
                 ? 'text-green-400'
                 : 'text-red-400'}"

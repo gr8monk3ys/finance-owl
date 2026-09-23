@@ -33,7 +33,7 @@
           ? 'bg-green-400/10 text-green-400'
           : 'bg-red-400/10 text-red-400'}"
       >
-        <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+        <svg aria-hidden="true" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
           {#if trend.isPositive}
             <path
               fill-rule="evenodd"
@@ -92,6 +92,7 @@
   {:else}
     <div class="flex flex-col items-center justify-center py-6 text-center">
       <svg
+        aria-hidden="true"
         class="h-8 w-8 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"

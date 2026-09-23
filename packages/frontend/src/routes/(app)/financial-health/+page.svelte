@@ -116,7 +116,7 @@
     <Card>
       <div class="flex flex-col items-center py-6">
         <div class="relative h-48 w-48">
-          <svg class="h-full w-full -rotate-90" viewBox="0 0 200 200">
+          <svg aria-hidden="true" class="h-full w-full -rotate-90" viewBox="0 0 200 200">
             <!-- Background circle -->
             <circle
               cx="100"
@@ -198,6 +198,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"

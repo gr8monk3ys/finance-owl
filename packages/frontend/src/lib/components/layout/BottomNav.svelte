@@ -41,6 +41,7 @@
 
         {#if item.icon === 'home'}
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             viewBox="0 0 24 24"
             fill="none"
@@ -55,6 +56,7 @@
           </svg>
         {:else if item.icon === 'wallet'}
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             viewBox="0 0 24 24"
             fill="none"
@@ -69,6 +71,7 @@
           </svg>
         {:else if item.icon === 'list'}
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             viewBox="0 0 24 24"
             fill="none"
@@ -83,6 +86,7 @@
           </svg>
         {:else if item.icon === 'target'}
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             viewBox="0 0 24 24"
             fill="none"
@@ -104,7 +108,7 @@
       class="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium text-surface-400 transition-all duration-150 hover:text-surface-200"
       aria-label="More navigation options"
     >
-      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+      <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
         <circle cx="5" cy="12" r="2" />
         <circle cx="12" cy="12" r="2" />
         <circle cx="19" cy="12" r="2" />

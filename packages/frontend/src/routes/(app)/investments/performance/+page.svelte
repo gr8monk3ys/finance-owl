@@ -109,7 +109,7 @@
       class="text-surface-400 transition hover:text-white"
       aria-label="Back to investments"
     >
-      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path
           fill-rule="evenodd"
           d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
@@ -180,6 +180,7 @@
     {:else}
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"

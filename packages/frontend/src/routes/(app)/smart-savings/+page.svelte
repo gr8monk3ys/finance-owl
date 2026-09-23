@@ -149,6 +149,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -173,6 +174,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -197,6 +199,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-purple-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -287,6 +290,7 @@
             class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary-600/20"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -316,6 +320,7 @@
     <Card>
       <div class="py-8 text-center">
         <svg
+          aria-hidden="true"
           class="mx-auto h-12 w-12 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"
@@ -374,6 +379,7 @@
                     : 'bg-surface-700'}"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 {rule.isActive === 1 ? 'text-primary-400' : 'text-surface-500'}"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -447,7 +453,7 @@
                     class="rounded p-1 text-surface-500 hover:bg-surface-700 hover:text-red-400"
                     aria-label="Delete rule"
                   >
-                    <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                       <path
                         fill-rule="evenodd"
                         d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
@@ -518,6 +524,7 @@
           class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600/20 to-teal-600/20"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-emerald-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -598,6 +605,7 @@
         <div class="flex items-center gap-3 mb-4">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-amber-400"
               fill="none"
               viewBox="0 0 24 24"

@@ -106,7 +106,14 @@
       onclick={() => (showCalculator = !showCalculator)}
       aria-label="Toggle calculator"
     >
-      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-4 w-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -194,6 +201,7 @@
             <div class="flex items-center gap-2">
               {#if affordResult.canAfford}
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 flex-shrink-0 text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -208,6 +216,7 @@
                 </svg>
               {:else}
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 flex-shrink-0 text-red-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -243,6 +252,7 @@
     <!-- Empty state -->
     <div class="flex flex-col items-center justify-center py-6 text-center">
       <svg
+        aria-hidden="true"
         class="h-8 w-8 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"

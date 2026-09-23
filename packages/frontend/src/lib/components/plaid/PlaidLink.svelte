@@ -127,7 +127,7 @@
     class="inline-flex items-center rounded-lg bg-primary-600 px-4 py-2.5 font-medium text-white transition hover:bg-primary-700 disabled:opacity-50 {buttonClass}"
   >
     {#if loading}
-      <svg class="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+      <svg aria-hidden="true" class="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
         <path
           class="opacity-75"

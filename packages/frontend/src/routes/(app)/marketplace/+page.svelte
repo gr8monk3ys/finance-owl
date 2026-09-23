@@ -144,6 +144,7 @@
                   >
                     Learn More
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -202,6 +203,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -309,6 +311,7 @@
                   >
                     Learn More
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"

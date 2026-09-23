@@ -336,6 +336,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -460,11 +461,13 @@
                   <form method="POST" action="?/dismissRecommendation" use:enhance>
                     <input type="hidden" name="id" value={rec.id} />
                     <button
+                      aria-label="Dismiss recommendation"
                       type="submit"
                       class="rounded-lg p-1 text-surface-500 transition hover:bg-surface-700 hover:text-surface-300"
                       title="Dismiss recommendation"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-5 w-5"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -535,6 +538,7 @@
                     >
                       Learn More
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -559,6 +563,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"

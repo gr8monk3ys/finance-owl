@@ -150,6 +150,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -186,6 +187,7 @@
                   style="background-color: {goal.color || '#6366f1'}20"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5"
                     style="color: {goal.color || '#6366f1'}"
                     fill="none"
@@ -216,11 +218,13 @@
               </div>
               <div class="flex items-center gap-1">
                 <button
+                  aria-label="Add contribution"
                   class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                   onclick={() => (contributingGoal = goal)}
                   title="Add contribution"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -235,11 +239,13 @@
                   </svg>
                 </button>
                 <button
+                  aria-label="View details"
                   class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                   onclick={() => (viewingGoal = goal)}
                   title="View details"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -259,11 +265,13 @@
                   </svg>
                 </button>
                 <button
+                  aria-label="Edit goal"
                   class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                   onclick={() => (editingGoal = goal)}
                   title="Edit goal"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -675,11 +683,13 @@
                   <input type="hidden" name="goalId" value={viewingGoal.id} />
                   <input type="hidden" name="contributionId" value={contribution.id} />
                   <button
+                    aria-label="Remove contribution"
                     type="submit"
                     class="rounded p-1 text-surface-500 hover:bg-surface-700 hover:text-red-400"
                     title="Remove contribution"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"

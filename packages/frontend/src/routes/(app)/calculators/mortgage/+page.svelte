@@ -115,7 +115,14 @@
       href="/calculators"
       class="text-surface-400 hover:text-white transition"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -268,7 +275,7 @@
         <div class="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
           <!-- Donut -->
           <div class="flex-shrink-0">
-            <svg width="160" height="160" viewBox="0 0 160 160">
+            <svg aria-hidden="true" width="160" height="160" viewBox="0 0 160 160">
               {#each donutSegments as seg}
                 <circle
                   cx="80"
@@ -331,6 +338,7 @@
         >
           <h3 class="text-lg font-semibold text-white">Amortization Schedule</h3>
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-surface-400 transition-transform {showSchedule ? 'rotate-180' : ''}"
             fill="none"
             viewBox="0 0 24 24"

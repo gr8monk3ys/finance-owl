@@ -60,6 +60,7 @@
       <div class="flex items-center gap-3">
         <a href="/" class="text-surface-400 transition hover:text-white" aria-label="Back to home">
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -131,6 +132,7 @@
               {#each ['Aggregate and view financial accounts from multiple institutions', 'Track and categorize transactions automatically', 'Detect and manage recurring subscriptions', 'Create and monitor budgets using envelope-based budgeting', 'Set and track savings goals with smart automation', 'Receive AI-powered financial insights and recommendations', 'Track investments and net worth across accounts', 'Negotiate bills and find savings opportunities'] as item}
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -261,6 +263,7 @@
                 {#each ['Use the Service for any unlawful purpose or in violation of any applicable laws', 'Attempt to gain unauthorized access to the Service, other accounts, or computer systems', 'Interfere with or disrupt the Service or servers connected to the Service', 'Use automated means (bots, scrapers) to access the Service without our written permission', 'Reverse engineer, decompile, or disassemble any aspect of the Service', 'Impersonate any person or entity, or falsely represent your affiliation', 'Use the Service to transmit viruses, malware, or other harmful code', 'Resell, sublicense, or redistribute access to the Service'] as item}
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-red-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -319,6 +322,7 @@
                   class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent-600/20 text-accent-400"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -361,6 +365,7 @@
             <ul class="mt-3 space-y-2">
               <li class="flex items-start gap-2 text-sm text-surface-300">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-4 w-4 shrink-0 text-surface-500"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -376,6 +381,7 @@
               </li>
               <li class="flex items-start gap-2 text-sm text-surface-300">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-4 w-4 shrink-0 text-surface-500"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -391,6 +397,7 @@
               </li>
               <li class="flex items-start gap-2 text-sm text-surface-300">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-4 w-4 shrink-0 text-surface-500"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -457,6 +464,7 @@
               <div class="mt-4 space-y-2">
                 <p class="flex items-center gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -474,6 +482,7 @@
                 </p>
                 <p class="flex items-center gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -494,6 +503,7 @@
                 {#if publicSite.companyAddress}
                   <p class="flex items-center gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 text-surface-500"
                       fill="none"
                       viewBox="0 0 24 24"

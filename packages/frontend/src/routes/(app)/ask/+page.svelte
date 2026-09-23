@@ -159,6 +159,7 @@
       onclick={() => (activeTab = 'chat')}
     >
       <svg
+        aria-hidden="true"
         class="mr-1.5 inline h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -180,6 +181,7 @@
       onclick={() => (activeTab = 'insights')}
     >
       <svg
+        aria-hidden="true"
         class="mr-1.5 inline h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -206,6 +208,7 @@
       onclick={() => (activeTab = 'anomalies')}
     >
       <svg
+        aria-hidden="true"
         class="mr-1.5 inline h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -241,6 +244,7 @@
                   class="flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-500/15"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-8 w-8 text-yellow-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -278,6 +282,7 @@
                   class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600/20"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-8 w-8 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -322,6 +327,7 @@
                     class="mr-2 mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-primary-600/20"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -372,6 +378,7 @@
                   class="mr-2 mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-primary-600/20"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -401,6 +408,7 @@
           class="mt-2 flex items-center gap-2 rounded-lg bg-red-900/30 px-3 py-2 text-sm text-red-400"
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4 flex-shrink-0"
             fill="none"
             viewBox="0 0 24 24"
@@ -446,6 +454,7 @@
           loading={isAsking}
         >
           <svg
+            aria-hidden="true"
             class="mr-1.5 h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -472,6 +481,7 @@
           class="flex items-start gap-3 rounded-lg border border-yellow-500/20 bg-yellow-900/15 px-4 py-3"
         >
           <svg
+            aria-hidden="true"
             class="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -499,6 +509,7 @@
           <div class="flex flex-col items-center justify-center py-12 text-center">
             <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-700/50">
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-surface-500"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -620,6 +631,7 @@
             disabled={isDetectingAnomalies}
           >
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -642,6 +654,7 @@
           <div class="flex flex-col items-center justify-center py-12 text-center">
             <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-600/15">
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-green-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -678,6 +691,7 @@
                 <div class="mt-3 flex flex-wrap gap-3 text-xs text-surface-500">
                   <span class="flex items-center gap-1">
                     <svg
+                      aria-hidden="true"
                       class="h-3.5 w-3.5"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -695,6 +709,7 @@
                   {#if anomaly.categoryName}
                     <span class="flex items-center gap-1">
                       <svg
+                        aria-hidden="true"
                         class="h-3.5 w-3.5"
                         fill="none"
                         viewBox="0 0 24 24"

@@ -82,6 +82,7 @@
       <div class="header-actions">
         <Button variant="primary" onclick={() => (showOpenAccount = true)}>
           <svg
+            aria-hidden="true"
             width="16"
             height="16"
             viewBox="0 0 24 24"
@@ -101,6 +102,7 @@
   <div class="fdic-banner">
     <div class="fdic-icon">
       <svg
+        aria-hidden="true"
         width="20"
         height="20"
         viewBox="0 0 24 24"
@@ -187,6 +189,7 @@
         <Card>
           <div class="empty-state">
             <svg
+              aria-hidden="true"
               width="48"
               height="48"
               viewBox="0 0 24 24"
@@ -219,6 +222,7 @@
                   >
                     {#if account.type === 'savings'}
                       <svg
+                        aria-hidden="true"
                         width="18"
                         height="18"
                         viewBox="0 0 24 24"
@@ -232,6 +236,7 @@
                       </svg>
                     {:else}
                       <svg
+                        aria-hidden="true"
                         width="18"
                         height="18"
                         viewBox="0 0 24 24"
@@ -274,6 +279,7 @@
                 {#if account.fdicInsured}
                   <div class="fdic-badge-small">
                     <svg
+                      aria-hidden="true"
                       width="12"
                       height="12"
                       viewBox="0 0 24 24"
@@ -311,6 +317,7 @@
         <Card>
           <div class="empty-state">
             <svg
+              aria-hidden="true"
               width="48"
               height="48"
               viewBox="0 0 24 24"
@@ -467,6 +474,7 @@
           >
             <div class="type-icon savings">
               <svg
+                aria-hidden="true"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
@@ -491,6 +499,7 @@
           >
             <div class="type-icon checking">
               <svg
+                aria-hidden="true"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
@@ -588,6 +597,7 @@
 
         <div class="disclosure-box">
           <svg
+            aria-hidden="true"
             width="16"
             height="16"
             viewBox="0 0 24 24"

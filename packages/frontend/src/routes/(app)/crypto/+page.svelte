@@ -331,6 +331,7 @@
         <Button type="submit" variant="secondary" size="sm" loading={refreshing}>
           {#if !refreshing}
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -349,6 +350,7 @@
       </form>
       <Button size="sm" onclick={() => (showAddHolding = true)}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -580,11 +582,13 @@
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-1">
                       <button
+                        aria-label="Record transaction"
                         class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                         title="Record transaction"
                         onclick={() => openRecordTx(holding.id)}
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -595,11 +599,13 @@
                         </svg>
                       </button>
                       <button
+                        aria-label="Edit holding"
                         class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                         title="Edit holding"
                         onclick={() => openEditHolding(holding)}
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -614,11 +620,13 @@
                         </svg>
                       </button>
                       <button
+                        aria-label="Delete holding"
                         class="rounded p-1 text-surface-400 hover:bg-red-500/10 hover:text-red-400"
                         title="Delete holding"
                         onclick={() => openDeleteConfirm(holding.id)}
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -714,6 +722,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -790,6 +799,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-12 w-12 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -817,6 +827,7 @@
       <h3 class="text-lg font-semibold text-white">Watchlist</h3>
       <Button size="sm" onclick={() => (showAddWatchlist = true)}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -848,11 +859,13 @@
               <form method="POST" action="?/removeFromWatchlist" use:enhance>
                 <input type="hidden" name="id" value={item.id} />
                 <button
+                  aria-label="Remove from watchlist"
                   type="submit"
                   class="rounded p-1 text-surface-400 hover:bg-red-500/10 hover:text-red-400"
                   title="Remove from watchlist"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -891,6 +904,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-12 w-12 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"

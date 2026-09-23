@@ -191,6 +191,7 @@
         >
           {#if currentStep > step}
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -260,6 +261,7 @@
             <div class="flex items-center gap-3">
               <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-600/20">
                 <svg
+                  aria-hidden="true"
                   class="h-6 w-6 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -291,6 +293,7 @@
                 }}
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -303,6 +306,7 @@
             </div>
           {:else}
             <svg
+              aria-hidden="true"
               class="h-12 w-12 text-surface-500"
               fill="none"
               viewBox="0 0 24 24"
@@ -527,6 +531,7 @@
             <div class="flex items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-900/50">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -550,6 +555,7 @@
         <Card>
           <div class="flex items-center gap-3 text-sm text-surface-400">
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -753,6 +759,7 @@
       <div class="flex flex-col items-center py-8 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-900/50">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -812,6 +819,7 @@
               <div class="flex items-center gap-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-700">
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-surface-400"
                     fill="none"
                     viewBox="0 0 24 24"

@@ -54,6 +54,7 @@
       <div class="flex items-center gap-3">
         <a href="/" class="text-surface-400 transition hover:text-white" aria-label="Back to home">
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -109,6 +110,7 @@
                 class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary-600/20 text-primary-400"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-7 w-7"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -145,6 +147,7 @@
                   >
                     {#if item.icon === 'lock'}
                       <svg
+                        aria-hidden="true"
                         class="h-6 w-6"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -157,6 +160,7 @@
                       </svg>
                     {:else if item.icon === 'eye'}
                       <svg
+                        aria-hidden="true"
                         class="h-6 w-6"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -176,6 +180,7 @@
                       </svg>
                     {:else}
                       <svg
+                        aria-hidden="true"
                         class="h-6 w-6"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -239,6 +244,7 @@
                   class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -259,6 +265,7 @@
                   <ul class="mt-3 space-y-3">
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-blue-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -276,6 +283,7 @@
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-blue-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -294,6 +302,7 @@
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-blue-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -311,6 +320,7 @@
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-blue-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -355,6 +365,7 @@
                     class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20 text-primary-400"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -388,6 +399,7 @@
                 <ul class="mt-3 space-y-2">
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -404,6 +416,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -421,6 +434,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -468,6 +482,7 @@
                   <ul class="mt-2 space-y-1.5">
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -483,6 +498,7 @@
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -498,6 +514,7 @@
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -535,6 +552,7 @@
               <div class="mt-4 space-y-2">
                 <p class="flex items-center gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"

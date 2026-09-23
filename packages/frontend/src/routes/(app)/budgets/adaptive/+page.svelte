@@ -170,7 +170,14 @@
         href="/budgets"
         class="inline-flex items-center gap-2 rounded-lg bg-surface-700 px-4 py-2 text-sm text-surface-200 hover:bg-surface-600 transition"
       >
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
         Back to Budgets
@@ -235,6 +242,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -320,6 +328,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -378,6 +387,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -463,6 +473,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -554,6 +565,7 @@
                 class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-amber-900/30 text-amber-400"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"

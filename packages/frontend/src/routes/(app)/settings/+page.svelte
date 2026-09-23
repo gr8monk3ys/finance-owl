@@ -85,6 +85,7 @@
         >
           {#if link.icon === 'shield'}
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -99,6 +100,7 @@
             </svg>
           {:else if link.icon === 'tag'}
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -114,6 +116,7 @@
             </svg>
           {:else if link.icon === 'bell'}
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -128,6 +131,7 @@
             </svg>
           {:else if link.icon === 'credit-card'}
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -142,6 +146,7 @@
             </svg>
           {:else if link.icon === 'download'}
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -162,6 +167,7 @@
               {link.title}
             </h3>
             <svg
+              aria-hidden="true"
               class="h-4 w-4 text-surface-500 transition group-hover:translate-x-0.5 group-hover:text-surface-300"
               fill="none"
               viewBox="0 0 24 24"
@@ -186,6 +192,7 @@
       >
         <div class="flex items-center gap-3">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-surface-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -204,6 +211,7 @@
           </div>
         </div>
         <svg
+          aria-hidden="true"
           class="h-4 w-4 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"
@@ -220,6 +228,7 @@
       >
         <div class="flex items-center gap-3">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-surface-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -238,6 +247,7 @@
           </div>
         </div>
         <svg
+          aria-hidden="true"
           class="h-4 w-4 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"

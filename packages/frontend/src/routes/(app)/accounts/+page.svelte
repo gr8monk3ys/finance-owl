@@ -196,7 +196,7 @@
 
   {#if linking}
     <div class="flex items-center gap-3 rounded-lg bg-primary-900/30 p-3 text-sm text-primary-300">
-      <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+      <svg aria-hidden="true" class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
         <path
           class="opacity-75"
@@ -210,7 +210,7 @@
 
   {#if syncing}
     <div class="flex items-center gap-3 rounded-lg bg-blue-900/30 p-3 text-sm text-blue-300">
-      <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+      <svg aria-hidden="true" class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
         <path
           class="opacity-75"
@@ -337,6 +337,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"

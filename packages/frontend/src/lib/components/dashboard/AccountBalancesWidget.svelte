@@ -46,6 +46,7 @@
               class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-surface-700"
             >
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5 text-surface-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -80,6 +81,7 @@
   {:else}
     <div class="flex flex-col items-center justify-center py-6 text-center">
       <svg
+        aria-hidden="true"
         class="h-8 w-8 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"

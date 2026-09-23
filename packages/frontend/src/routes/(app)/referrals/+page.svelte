@@ -88,6 +88,7 @@
         <Button variant="secondary" onclick={copyReferralCode}>
           {#if copiedCode}
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -99,6 +100,7 @@
             Copied!
           {:else}
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -116,6 +118,7 @@
         </Button>
         <Button variant="ghost" onclick={shareViaEmail}>
           <svg
+            aria-hidden="true"
             class="mr-1.5 h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -160,6 +163,7 @@
     {#if data.referrals.length === 0}
       <div class="flex flex-col items-center py-8 text-center">
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"

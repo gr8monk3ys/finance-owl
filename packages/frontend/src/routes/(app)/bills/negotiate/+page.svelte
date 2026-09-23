@@ -185,6 +185,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -210,6 +211,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-yellow-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -237,6 +239,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -268,6 +271,7 @@
             : 'bg-surface-700'}"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5 {expiring.length > 0 ? 'text-red-400' : 'text-surface-400'}"
             fill="none"
             viewBox="0 0 24 24"
@@ -297,6 +301,7 @@
     <Card class="border border-red-500/30">
       <div class="mb-3 flex items-center gap-2">
         <svg
+          aria-hidden="true"
           class="h-5 w-5 text-red-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -389,6 +394,7 @@
               <div class="flex items-center gap-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-700">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-300"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -440,6 +446,7 @@
     {:else}
       <div class="py-6 text-center">
         <svg
+          aria-hidden="true"
           class="mx-auto h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -599,6 +606,7 @@
             <div class="flex items-center gap-3">
               <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-600/20">
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -655,6 +663,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-700">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-surface-300"
               fill="none"
               viewBox="0 0 24 24"

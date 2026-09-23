@@ -46,7 +46,7 @@
     <div class="mt-4 flex flex-col items-center">
       <!-- Gauge visualization -->
       <div class="relative h-20 w-36">
-        <svg viewBox="0 0 120 60" class="h-full w-full">
+        <svg aria-hidden="true" viewBox="0 0 120 60" class="h-full w-full">
           <!-- Background arc -->
           <path
             d="M 10 55 A 50 50 0 0 1 110 55"
@@ -85,6 +85,7 @@
   {:else}
     <div class="flex flex-col items-center justify-center py-6 text-center">
       <svg
+        aria-hidden="true"
         class="h-8 w-8 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"

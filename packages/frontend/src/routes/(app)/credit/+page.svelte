@@ -281,6 +281,7 @@
     </div>
     <Button onclick={() => (showAddScore = true)} size="sm">
       <svg
+        aria-hidden="true"
         class="mr-1.5 h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -297,6 +298,7 @@
   {#if form && 'error' in form && form.error}
     <div class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300">
       <svg
+        aria-hidden="true"
         class="h-5 w-5 flex-shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -317,6 +319,7 @@
   <div class="rounded-lg border border-primary-500/20 bg-primary-500/5 px-4 py-3">
     <div class="flex items-start gap-3">
       <svg
+        aria-hidden="true"
         class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary-400"
         fill="none"
         viewBox="0 0 24 24"
@@ -351,7 +354,7 @@
 
           <!-- Gauge visualization -->
           <div class="relative">
-            <svg width="200" height="120" viewBox="0 0 200 120">
+            <svg aria-hidden="true" width="200" height="120" viewBox="0 0 200 120">
               <!-- Background arc -->
               <path
                 d="M 10 100 A 90 90 0 0 1 190 100"
@@ -426,6 +429,7 @@
         {:else}
           <div class="flex flex-col items-center justify-center py-12 text-center">
             <svg
+              aria-hidden="true"
               class="h-12 w-12 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -456,6 +460,7 @@
                   class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-surface-700"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-surface-300"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -511,6 +516,7 @@
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600/15">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -637,6 +643,7 @@
       </div>
       <Button onclick={() => (showDispute = true)} size="sm" variant="secondary">
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -658,6 +665,7 @@
                 class="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-surface-700"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 text-surface-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -685,6 +693,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-8 text-center">
           <svg
+            aria-hidden="true"
             class="h-10 w-10 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -726,6 +735,7 @@
               class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary-600/20"
             >
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 text-primary-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -766,6 +776,7 @@
                         : 'bg-surface-700'}"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4
 									{alert.alertType === 'score_change'
                     ? 'text-blue-400'
@@ -1088,6 +1099,7 @@
             </div>
             <div class="text-center">
               <svg
+                aria-hidden="true"
                 class="h-6 w-6 text-surface-500"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -1158,6 +1170,7 @@
                       {getStatusLabel(affected.currentStatus)}
                     </span>
                     <svg
+                      aria-hidden="true"
                       class="h-3 w-3 text-surface-500"
                       fill="none"
                       viewBox="0 0 24 24"

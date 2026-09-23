@@ -155,7 +155,7 @@
           <p class="text-sm text-surface-400">Readiness Score</p>
           <div class="relative mt-3 h-28 w-28">
             <!-- Score circle background -->
-            <svg class="h-28 w-28 -rotate-90" viewBox="0 0 100 100">
+            <svg aria-hidden="true" class="h-28 w-28 -rotate-90" viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="42" fill="none" stroke="#1e293b" stroke-width="8" />
               <circle
                 cx="50"
@@ -240,6 +240,7 @@
       <div class="rounded-lg border border-orange-700/50 bg-orange-900/20 p-4">
         <div class="flex items-start gap-3">
           <svg
+            aria-hidden="true"
             class="mt-0.5 h-5 w-5 flex-shrink-0 text-orange-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -292,6 +293,7 @@
     >
       <h3 class="text-lg font-semibold text-white">Retirement Profile</h3>
       <svg
+        aria-hidden="true"
         class="h-5 w-5 text-surface-400 transition-transform {profileOpen ? 'rotate-180' : ''}"
         fill="none"
         viewBox="0 0 24 24"
@@ -552,6 +554,7 @@
     >
       <h3 class="text-lg font-semibold text-white">Scenario Comparison</h3>
       <svg
+        aria-hidden="true"
         class="h-5 w-5 text-surface-400 transition-transform {scenariosOpen ? 'rotate-180' : ''}"
         fill="none"
         viewBox="0 0 24 24"
@@ -586,6 +589,7 @@
                   onclick={() => removeScenario(i)}
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -727,6 +731,7 @@
     >
       <h3 class="text-lg font-semibold text-white">401(k) Fee Analyzer</h3>
       <svg
+        aria-hidden="true"
         class="h-5 w-5 text-surface-400 transition-transform {feeAnalyzerOpen ? 'rotate-180' : ''}"
         fill="none"
         viewBox="0 0 24 24"
@@ -835,6 +840,7 @@
             <div class="rounded-lg border border-surface-700 bg-surface-900/50 p-4">
               <div class="flex items-start gap-3">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"

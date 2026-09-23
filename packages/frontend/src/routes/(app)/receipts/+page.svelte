@@ -167,6 +167,7 @@
   >
     <div class="flex flex-col items-center justify-center py-8">
       <svg
+        aria-hidden="true"
         class="h-10 w-10 text-surface-500"
         fill="none"
         viewBox="0 0 24 24"
@@ -201,6 +202,7 @@
               class="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-lg bg-surface-700"
             >
               <svg
+                aria-hidden="true"
                 class="h-7 w-7 text-surface-500"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -236,6 +238,7 @@
               {#if receipt.transactionId}
                 <span class="mt-1 inline-flex items-center gap-1 text-xs text-primary-400">
                   <svg
+                    aria-hidden="true"
                     class="h-3 w-3"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -260,6 +263,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -310,6 +314,7 @@
         <div class="rounded-lg border border-surface-700 bg-surface-700/50 p-4">
           <div class="flex items-center gap-3">
             <svg
+              aria-hidden="true"
               class="h-8 w-8 text-surface-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -451,6 +456,7 @@
           {:else}
             <span class="inline-flex items-center gap-1.5 text-sm text-primary-400">
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"

@@ -99,7 +99,14 @@
     href="/subscriptions"
     class="inline-flex items-center gap-1 text-sm text-surface-400 hover:text-white transition"
   >
-    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <svg
+      aria-hidden="true"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
       <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
     </svg>
     Back to Subscriptions
@@ -110,6 +117,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -151,6 +159,7 @@
           <div class="flex items-center gap-3">
             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-900/30">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 text-red-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -210,6 +219,7 @@
           <div class="flex items-center gap-3">
             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-900/30">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 text-green-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -259,6 +269,7 @@
                 >
                   {#if i < statusIndex}
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -269,6 +280,7 @@
                     </svg>
                   {:else if i === statusIndex && request.status === 'completed'}
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -318,6 +330,7 @@
               <div class="flex items-center gap-3 mb-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-900/30">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-blue-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -345,6 +358,7 @@
                 >
                   Go to cancellation page
                   <svg
+                    aria-hidden="true"
                     class="h-3 w-3"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -369,6 +383,7 @@
               <div class="flex items-center gap-3 mb-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-900/30">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-purple-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -405,6 +420,7 @@
               <div class="flex items-center gap-3 mb-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-900/30">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-amber-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -441,6 +457,7 @@
               <div class="flex items-center gap-3 mb-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-900/30">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-teal-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -468,6 +485,7 @@
                 >
                   Open chat support
                   <svg
+                    aria-hidden="true"
                     class="h-3 w-3"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -547,6 +565,7 @@
           <div class="rounded-lg bg-amber-900/20 border border-amber-800/50 p-4">
             <div class="flex gap-3">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 flex-shrink-0 text-amber-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -656,6 +675,7 @@
                 <div class="rounded-lg bg-green-900/20 border border-green-800/50 p-4 mb-3">
                   <div class="flex gap-3">
                     <svg
+                      aria-hidden="true"
                       class="h-5 w-5 flex-shrink-0 text-green-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -704,6 +724,7 @@
           <div class="rounded-lg bg-green-900/20 border border-green-800/50 p-4">
             <div class="flex gap-3">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 flex-shrink-0 text-green-400"
                 fill="none"
                 viewBox="0 0 24 24"

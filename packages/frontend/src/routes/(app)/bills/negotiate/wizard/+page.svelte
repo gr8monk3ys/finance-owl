@@ -266,6 +266,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -291,6 +292,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -318,6 +320,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-blue-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -343,6 +346,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-purple-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -393,6 +397,7 @@
           >
             {#if wizardStep > item.step}
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -436,6 +441,7 @@
               }}
             >
               <svg
+                aria-hidden="true"
                 class="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -586,6 +592,7 @@
             </div>
             <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-600/20">
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-green-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -619,6 +626,7 @@
               onclick={() => (selectedMethod = method)}
             >
               <svg
+                aria-hidden="true"
                 class="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -745,9 +753,11 @@
                     type="button"
                     class="absolute right-2 top-2 rounded p-1 text-surface-500 transition hover:bg-surface-700 hover:text-white"
                     onclick={() => copyToClipboard(step.script, i)}
+                    aria-label={copiedIndex === i ? 'Script copied' : 'Copy script'}
                   >
                     {#if copiedIndex === i}
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4 text-green-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -762,6 +772,7 @@
                       </svg>
                     {:else}
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -803,6 +814,7 @@
               <span class="flex-1 text-sm text-surface-300">{phrase}</span>
               {#if copiedIndex === 100 + i}
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 flex-shrink-0 text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -813,6 +825,7 @@
                 </svg>
               {:else}
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 flex-shrink-0 text-surface-600 transition group-hover:text-surface-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -949,7 +962,12 @@
     {:else}
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
-          <svg class="h-12 w-12 animate-spin text-primary-400" fill="none" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            class="h-12 w-12 animate-spin text-primary-400"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
             ></circle>
             <path
@@ -1036,6 +1054,7 @@
       {:else}
         <div class="py-8 text-center">
           <svg
+            aria-hidden="true"
             class="mx-auto h-12 w-12 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -1068,6 +1087,7 @@
                   class="flex h-10 w-10 items-center justify-center rounded-full bg-green-600/20"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-green-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -1112,6 +1132,7 @@
         <div class="rounded-lg bg-surface-900/50 p-4">
           <div class="mb-2 flex items-center gap-2">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -1134,6 +1155,7 @@
         <div class="rounded-lg bg-surface-900/50 p-4">
           <div class="mb-2 flex items-center gap-2">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -1156,6 +1178,7 @@
         <div class="rounded-lg bg-surface-900/50 p-4">
           <div class="mb-2 flex items-center gap-2">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-yellow-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -1178,6 +1201,7 @@
         <div class="rounded-lg bg-surface-900/50 p-4">
           <div class="mb-2 flex items-center gap-2">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-blue-400"
               fill="none"
               viewBox="0 0 24 24"

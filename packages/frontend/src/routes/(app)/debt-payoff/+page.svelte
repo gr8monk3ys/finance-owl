@@ -223,6 +223,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -272,11 +273,13 @@
               </div>
               <div class="flex items-center gap-1">
                 <button
+                  aria-label="Record payment"
                   class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                   onclick={() => (payingDebt = debt)}
                   title="Record payment"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -303,11 +306,13 @@
                 >
                   <input type="hidden" name="debtId" value={debt.id} />
                   <button
+                    aria-label="View payments"
                     type="submit"
                     class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                     title="View payments"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -323,11 +328,13 @@
                   </button>
                 </form>
                 <button
+                  aria-label="Edit debt"
                   class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                   onclick={() => (editingDebt = debt)}
                   title="Edit debt"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -649,6 +656,7 @@
                         </div>
                       </div>
                       <svg
+                        aria-hidden="true"
                         class="h-5 w-5 text-surface-400 transition-transform {expandedSchedule ===
                         schedule.debtId
                           ? 'rotate-180'

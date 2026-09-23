@@ -100,6 +100,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-600/20">
             <svg
+              aria-hidden="true"
               class="h-6 w-6 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -123,6 +124,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-600/20">
             <svg
+              aria-hidden="true"
               class="h-6 w-6 text-red-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -151,6 +153,7 @@
               : 'bg-red-600/20'}"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6 {data.review.totalSaved >= 0 ? 'text-primary-400' : 'text-red-400'}"
               fill="none"
               viewBox="0 0 24 24"
@@ -293,6 +296,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"

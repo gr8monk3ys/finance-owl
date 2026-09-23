@@ -39,6 +39,7 @@
           class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-{color}-500/10"
         >
           <svg
+            aria-hidden="true"
             class="h-6 w-6 text-{color}-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -66,6 +67,7 @@
         {#each plan.features as highlight}
           <li class="flex items-center gap-2 text-sm text-surface-300">
             <svg
+              aria-hidden="true"
               class="h-4 w-4 flex-shrink-0 text-emerald-400"
               viewBox="0 0 20 20"
               fill="currentColor"

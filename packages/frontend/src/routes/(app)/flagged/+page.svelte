@@ -64,6 +64,7 @@
     </div>
     <Button onclick={() => (showFlagModal = true)}>
       <svg
+        aria-hidden="true"
         class="mr-1.5 h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -84,6 +85,7 @@
   {#if form?.error}
     <div class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300">
       <svg
+        aria-hidden="true"
         class="h-5 w-5 flex-shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -139,6 +141,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-500/15">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-yellow-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -162,6 +165,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-500/15">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -237,6 +241,7 @@
                 {#if flag.reason}
                   <div class="mt-2.5 flex items-start gap-2 rounded-lg bg-surface-700/50 px-3 py-2">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 flex-shrink-0 text-surface-500"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -312,6 +317,7 @@
                 {#if flag.resolveComment}
                   <div class="mt-2 flex items-start gap-2 rounded-lg bg-green-900/15 px-3 py-2">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500/50"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -341,6 +347,7 @@
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-700/50">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -439,6 +446,7 @@
       <Button variant="ghost" type="button" onclick={() => (showFlagModal = false)}>Cancel</Button>
       <Button type="submit">
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -507,6 +515,7 @@
           </Button>
           <Button type="submit">
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"

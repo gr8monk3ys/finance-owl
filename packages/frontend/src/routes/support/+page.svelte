@@ -57,6 +57,7 @@
       <div class="flex items-center gap-3">
         <a href="/" class="text-surface-400 transition hover:text-white" aria-label="Back to home">
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -104,6 +105,7 @@
           {#each supportChecklist as item}
             <li class="flex items-start gap-3 text-sm text-surface-300">
               <svg
+                aria-hidden="true"
                 class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                 fill="none"
                 viewBox="0 0 24 24"

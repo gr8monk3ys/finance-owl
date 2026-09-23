@@ -82,7 +82,14 @@
       href="/calculators"
       class="text-surface-400 hover:text-white transition"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -217,7 +224,13 @@
       {#if assetSegments.length > 0}
         <Card>
           <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-            <svg width="130" height="130" viewBox="0 0 130 130" class="flex-shrink-0">
+            <svg
+              aria-hidden="true"
+              width="130"
+              height="130"
+              viewBox="0 0 130 130"
+              class="flex-shrink-0"
+            >
               {#each assetSegments as seg}
                 <circle
                   cx="65"
@@ -329,7 +342,13 @@
       {#if liabilitySegments.length > 0}
         <Card>
           <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-            <svg width="130" height="130" viewBox="0 0 130 130" class="flex-shrink-0">
+            <svg
+              aria-hidden="true"
+              width="130"
+              height="130"
+              viewBox="0 0 130 130"
+              class="flex-shrink-0"
+            >
               {#each liabilitySegments as seg}
                 <circle
                   cx="65"

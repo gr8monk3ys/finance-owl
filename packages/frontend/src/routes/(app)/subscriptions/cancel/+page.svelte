@@ -178,7 +178,14 @@
     href="/subscriptions"
     class="inline-flex items-center gap-1 text-sm text-surface-400 hover:text-white transition"
   >
-    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <svg
+      aria-hidden="true"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
       <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
     </svg>
     Back to Subscriptions
@@ -205,6 +212,7 @@
       <div class="flex items-center gap-4">
         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-900/30">
           <svg
+            aria-hidden="true"
             class="h-6 w-6 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -261,6 +269,7 @@
           >
             {#if i < currentStep}
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -319,6 +328,7 @@
                     </p>
                   </div>
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -336,6 +346,7 @@
         <Card>
           <div class="flex flex-col items-center justify-center py-12 text-center">
             <svg
+              aria-hidden="true"
               class="h-16 w-16 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -399,6 +410,7 @@
                   )}"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-2.5 w-2.5"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -438,6 +450,7 @@
             <div class="flex items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-900/30">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-red-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -463,6 +476,7 @@
             <div class="flex items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-900/30">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -512,6 +526,7 @@
                 )}"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -553,6 +568,7 @@
                 >
                   Open Cancellation Page
                   <svg
+                    aria-hidden="true"
                     class="h-3.5 w-3.5"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -573,6 +589,7 @@
                   class="inline-flex items-center gap-1.5 rounded-lg bg-surface-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-surface-600 transition"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-3.5 w-3.5"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -593,6 +610,7 @@
                 class="inline-flex items-center gap-1.5 rounded-lg bg-surface-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-surface-600 transition"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-3.5 w-3.5"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -613,6 +631,7 @@
                   class="inline-flex items-center gap-1.5 rounded-lg bg-surface-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-surface-600 transition"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-3.5 w-3.5"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -653,6 +672,7 @@
             <div class="rounded-lg bg-amber-900/20 border border-amber-800/50 p-4">
               <div class="flex items-start gap-3">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 flex-shrink-0 text-amber-400 mt-0.5"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -690,6 +710,7 @@
         <Card>
           <div class="text-center py-8">
             <svg
+              aria-hidden="true"
               class="mx-auto h-12 w-12 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -730,6 +751,7 @@
         <div class="mb-4 rounded-lg bg-green-900/20 border border-green-800/50 p-4">
           <div class="flex gap-3">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 flex-shrink-0 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -810,6 +832,7 @@
       <div class="flex flex-col items-center justify-center py-8 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-900/30">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -965,6 +988,7 @@ Thank you,
       {#if selectedProvider.phoneNumber}
         <div class="flex items-center gap-2 rounded-lg bg-surface-700 p-3">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"

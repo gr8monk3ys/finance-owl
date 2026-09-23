@@ -339,6 +339,7 @@
       <div class="flex items-center gap-2 mb-3">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-600/20">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-rose-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -392,6 +393,7 @@
       <div class="flex items-center gap-2 mb-3">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-600/20">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-amber-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -473,6 +475,7 @@
                       class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-600/20"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-5 w-5 text-yellow-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -534,6 +537,7 @@
         <!-- Search -->
         <div class="relative flex-1">
           <svg
+            aria-hidden="true"
             class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -595,6 +599,7 @@
                     )}"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-5 w-5 {getCategoryColor(sub.detectedCategory || 'other')}"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -671,11 +676,13 @@
                   </div>
                   <div class="flex items-center gap-1">
                     <a
+                      aria-label="Cancel"
                       href="/subscriptions/cancel/{sub.id}"
                       class="rounded p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-rose-400"
                       title="Cancel"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -690,11 +697,13 @@
                       </svg>
                     </a>
                     <button
+                      aria-label="Edit"
                       class="rounded p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-white"
                       onclick={() => (editingSubscription = sub)}
                       title="Edit"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -729,6 +738,7 @@
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <div class="flex h-16 w-16 items-center justify-center rounded-full bg-surface-800">
             <svg
+              aria-hidden="true"
               class="h-8 w-8 text-surface-500"
               fill="none"
               viewBox="0 0 24 24"

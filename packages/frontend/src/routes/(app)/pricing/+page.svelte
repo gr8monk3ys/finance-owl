@@ -194,6 +194,7 @@
               >
                 {#if plan.name === 'free'}
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 {plan.iconColor}"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -208,6 +209,7 @@
                   </svg>
                 {:else if plan.name === 'pro'}
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 {plan.iconColor}"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -222,6 +224,7 @@
                   </svg>
                 {:else}
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 {plan.iconColor}"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -263,6 +266,7 @@
             {#each plan.features as feature}
               <li class="flex items-start gap-3 text-sm text-surface-300">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-4 w-4 flex-shrink-0 {plan.highlighted
                     ? 'text-emerald-400'
                     : plan.name === 'premium'
@@ -367,6 +371,7 @@
                   {#if typeof val === 'boolean'}
                     {#if val}
                       <svg
+                        aria-hidden="true"
                         class="mx-auto h-5 w-5 {tier === 'pro'
                           ? 'text-emerald-400'
                           : tier === 'premium'
@@ -383,6 +388,7 @@
                       </svg>
                     {:else}
                       <svg
+                        aria-hidden="true"
                         class="mx-auto h-5 w-5 text-surface-600"
                         viewBox="0 0 20 20"
                         fill="currentColor"

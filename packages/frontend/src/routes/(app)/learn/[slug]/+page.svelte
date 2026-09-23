@@ -178,7 +178,14 @@
     href="/learn"
     class="inline-flex items-center gap-1.5 text-sm text-surface-400 transition hover:text-white"
   >
-    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <svg
+      aria-hidden="true"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
       <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
     </svg>
     Back to Learn
@@ -200,6 +207,7 @@
         </span>
         <span class="flex items-center gap-1 text-xs text-surface-500">
           <svg
+            aria-hidden="true"
             class="h-3.5 w-3.5"
             fill="none"
             viewBox="0 0 24 24"
@@ -240,6 +248,7 @@
             disabled={bookmarkLoading}
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill={isBookmarked ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
@@ -276,6 +285,7 @@
         {:else}
           <span class="inline-flex items-center gap-1.5 text-sm text-green-400">
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -338,7 +348,14 @@
       href="/learn"
       class="inline-flex items-center gap-1.5 text-sm text-primary-400 transition hover:text-primary-300"
     >
-      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-4 w-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
       Back to all articles

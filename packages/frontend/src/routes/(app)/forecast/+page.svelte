@@ -91,6 +91,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -114,6 +115,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -138,6 +140,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-red-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -166,6 +169,7 @@
             : 'bg-red-600/20'}"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5 {projectedChange >= 0 ? 'text-green-400' : 'text-red-400'}"
             fill="none"
             viewBox="0 0 24 24"
@@ -203,6 +207,7 @@
             : 'bg-red-600/20'}"
         >
           <svg
+            aria-hidden="true"
             class="h-6 w-6 {data.cashFlow.netMonthlyCashFlow >= 0
               ? 'text-green-400'
               : 'text-red-400'}"
@@ -390,6 +395,7 @@
       <div class="mb-4 flex items-center gap-3">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600/20">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -432,6 +438,7 @@
       <div class="mb-4 flex items-center gap-3">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600/20">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-red-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -475,6 +482,7 @@
     <div class="mb-4 flex items-center gap-3">
       <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-700">
         <svg
+          aria-hidden="true"
           class="h-5 w-5 text-surface-400"
           fill="none"
           viewBox="0 0 24 24"

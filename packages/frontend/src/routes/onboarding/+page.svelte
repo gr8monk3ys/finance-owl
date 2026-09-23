@@ -158,7 +158,12 @@
         <!-- Step indicator -->
         <div class="flex items-center gap-2">
           <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/20">
-            <svg class="h-4 w-4 text-primary-400" viewBox="0 0 24 24" fill="currentColor">
+            <svg
+              aria-hidden="true"
+              class="h-4 w-4 text-primary-400"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
               <path
                 d="M12 2C9.5 2 7.5 3.5 7 5.5C5.5 5 3.5 5.5 2.5 7C1.5 8.5 2 10.5 3 11.5C2 12.5 1.5 14.5 2.5 16C3.5 17.5 5.5 18 7 17.5C7.5 19.5 9.5 21 12 21C14.5 21 16.5 19.5 17 17.5C18.5 18 20.5 17.5 21.5 16C22.5 14.5 22 12.5 21 11.5C22 10.5 22.5 8.5 21.5 7C20.5 5.5 18.5 5 17 5.5C16.5 3.5 14.5 2 12 2Z"
               />
@@ -192,7 +197,12 @@
           <div
             class="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-500/20 to-primary-600/10 ring-1 ring-primary-500/20"
           >
-            <svg class="h-14 w-14 text-primary-400" viewBox="0 0 24 24" fill="currentColor">
+            <svg
+              aria-hidden="true"
+              class="h-14 w-14 text-primary-400"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
               <path
                 d="M12 2C9.5 2 7.5 3.5 7 5.5C5.5 5 3.5 5.5 2.5 7C1.5 8.5 2 10.5 3 11.5C2 12.5 1.5 14.5 2.5 16C3.5 17.5 5.5 18 7 17.5C7.5 19.5 9.5 21 12 21C14.5 21 16.5 19.5 17 17.5C18.5 18 20.5 17.5 21.5 16C22.5 14.5 22 12.5 21 11.5C22 10.5 22.5 8.5 21.5 7C20.5 5.5 18.5 5 17 5.5C16.5 3.5 14.5 2 12 2Z"
               />
@@ -222,6 +232,7 @@
                 class="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-primary-500/10"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -243,6 +254,7 @@
                 class="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-amber-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -264,6 +276,7 @@
                 class="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-blue-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -288,6 +301,7 @@
           >
             Let's Go
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -308,6 +322,7 @@
               class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-500/10 ring-1 ring-primary-500/20"
             >
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-primary-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -335,6 +350,7 @@
                 class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary-500/20"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-6 w-6 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -360,6 +376,7 @@
                 <span>Connecting...</span>
               {:else}
                 <svg
+                  aria-hidden="true"
                   class="h-6 w-6 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -381,6 +398,7 @@
           <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
             <div class="flex items-center gap-1.5 text-xs text-surface-500">
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5 text-primary-500/70"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -397,6 +415,7 @@
             </div>
             <div class="flex items-center gap-1.5 text-xs text-surface-500">
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5 text-primary-500/70"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -418,6 +437,7 @@
             </div>
             <div class="flex items-center gap-1.5 text-xs text-surface-500">
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5 text-primary-500/70"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -441,6 +461,7 @@
               class="flex items-center gap-1 rounded-lg px-4 py-2 text-sm text-surface-400 transition hover:text-white"
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -479,6 +500,7 @@
               class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 ring-1 ring-amber-500/20"
             >
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-amber-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -533,6 +555,7 @@
                       class="mt-1 rounded-lg p-1.5 text-surface-500 transition hover:bg-surface-700 hover:text-red-400"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -557,6 +580,7 @@
             class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-surface-600 py-3 text-sm text-surface-400 transition hover:border-primary-500/30 hover:text-primary-400"
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -575,6 +599,7 @@
               class="flex items-center gap-1 rounded-lg px-4 py-2 text-sm text-surface-400 transition hover:text-white"
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -611,6 +636,7 @@
               class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 ring-1 ring-blue-500/20"
             >
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-blue-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -672,6 +698,7 @@
               class="flex items-center gap-1 rounded-lg px-4 py-2 text-sm text-surface-400 transition hover:text-white"
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -708,6 +735,7 @@
               class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500/10 ring-1 ring-violet-500/20"
             >
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-violet-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -743,6 +771,7 @@
                 >
                   {#if goal.checked}
                     <svg
+                      aria-hidden="true"
                       class="h-3.5 w-3.5 text-white"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -768,6 +797,7 @@
               class="flex items-center gap-1 rounded-lg px-4 py-2 text-sm text-surface-400 transition hover:text-white"
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -822,6 +852,7 @@
             class="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-500/20 to-primary-600/10 ring-1 ring-primary-500/20"
           >
             <svg
+              aria-hidden="true"
               class="h-14 w-14 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -865,6 +896,7 @@
           >
             Go to Dashboard
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"

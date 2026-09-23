@@ -71,6 +71,7 @@
     >
       {#if info.icon === 'not-found'}
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-surface-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -85,6 +86,7 @@
         </svg>
       {:else if info.icon === 'forbidden'}
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-red-400/70"
           fill="none"
           viewBox="0 0 24 24"
@@ -99,6 +101,7 @@
         </svg>
       {:else if info.icon === 'server-error'}
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-accent-400/70"
           fill="none"
           viewBox="0 0 24 24"
@@ -113,6 +116,7 @@
         </svg>
       {:else}
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-surface-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -143,7 +147,14 @@
         href="/"
         class="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:shadow-xl hover:-translate-y-0.5"
       >
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -156,7 +167,14 @@
         onclick={goBack}
         class="inline-flex items-center gap-2 rounded-xl border border-surface-600 bg-surface-800 px-6 py-3 text-sm font-semibold text-surface-200 transition-all hover:border-surface-500 hover:bg-surface-700 hover:text-white"
       >
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"

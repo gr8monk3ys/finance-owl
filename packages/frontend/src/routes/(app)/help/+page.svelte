@@ -319,7 +319,14 @@
   <!-- Search -->
   <div class="relative">
     <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-surface-400">
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -341,6 +348,7 @@
           aria-label="Clear search"
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -366,6 +374,7 @@
     <Card>
       <div class="py-8 text-center">
         <svg
+          aria-hidden="true"
           class="mx-auto h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -396,6 +405,7 @@
             <div class="flex h-9 w-9 items-center justify-center rounded-lg {section.iconColor}">
               {#if section.icon === 'rocket'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -410,6 +420,7 @@
                 </svg>
               {:else if section.icon === 'link'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -424,6 +435,7 @@
                 </svg>
               {:else if section.icon === 'target'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -438,6 +450,7 @@
                 </svg>
               {:else if section.icon === 'repeat'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -450,6 +463,7 @@
                 </svg>
               {:else if section.icon === 'credit-card'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -464,6 +478,7 @@
                 </svg>
               {:else if section.icon === 'shield'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -478,6 +493,7 @@
                 </svg>
               {:else}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -515,6 +531,7 @@
                       {item.question}
                     </span>
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 shrink-0 text-surface-400 transition-transform duration-200
 												{expanded ? 'rotate-180' : ''}"
                       fill="none"

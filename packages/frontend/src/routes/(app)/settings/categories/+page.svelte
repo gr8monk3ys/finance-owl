@@ -148,7 +148,14 @@
       class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-400 transition hover:bg-surface-700 hover:text-white"
       aria-label="Back to settings"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -186,6 +193,7 @@
       <h2 class="text-lg font-semibold text-white">Your Categories</h2>
       <Button size="sm" onclick={() => (showCreateModal = true)}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -255,8 +263,14 @@
                     Cancel
                   </Button>
                 {:else}
-                  <Button variant="ghost" size="sm" onclick={() => openEditModal(category)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onclick={() => openEditModal(category)}
+                    aria-label="Edit {category.name}"
+                  >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 text-surface-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -270,8 +284,14 @@
                       />
                     </svg>
                   </Button>
-                  <Button variant="ghost" size="sm" onclick={() => (deleteConfirmId = category.id)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onclick={() => (deleteConfirmId = category.id)}
+                    aria-label="Delete {category.name}"
+                  >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 text-surface-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -312,8 +332,14 @@
 
                   {#if child.userId && !child.isSystem}
                     <div class="flex items-center gap-1">
-                      <Button variant="ghost" size="sm" onclick={() => openEditModal(child)}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onclick={() => openEditModal(child)}
+                        aria-label="Edit {child.name}"
+                      >
                         <svg
+                          aria-hidden="true"
                           class="h-3.5 w-3.5 text-surface-500"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -337,8 +363,14 @@
                         }}
                       >
                         <input type="hidden" name="id" value={child.id} />
-                        <Button variant="ghost" size="sm" type="submit">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          type="submit"
+                          aria-label="Delete {child.name}"
+                        >
                           <svg
+                            aria-hidden="true"
                             class="h-3.5 w-3.5 text-surface-500"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -366,6 +398,7 @@
     {#if data.categories.length === 0}
       <div class="px-6 py-8 text-center">
         <svg
+          aria-hidden="true"
           class="mx-auto h-10 w-10 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"
@@ -551,6 +584,7 @@
       </div>
       <Button size="sm" onclick={() => (showRuleModal = true)}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -582,6 +616,7 @@
     {#if data.rules.length === 0}
       <div class="px-6 py-8 text-center">
         <svg
+          aria-hidden="true"
           class="mx-auto h-10 w-10 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"
@@ -614,6 +649,7 @@
                 </span>
               </div>
               <svg
+                aria-hidden="true"
                 class="h-4 w-4 text-surface-500"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -663,8 +699,14 @@
                 </Button>
               </div>
             {:else}
-              <Button variant="ghost" size="sm" onclick={() => (deleteRuleConfirmId = rule.id)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onclick={() => (deleteRuleConfirmId = rule.id)}
+                aria-label="Delete rule for {rule.matchValue}"
+              >
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 text-surface-400"
                   fill="none"
                   viewBox="0 0 24 24"

@@ -70,6 +70,7 @@
   {:else}
     <div class="flex flex-col items-center justify-center py-6 text-center">
       <svg
+        aria-hidden="true"
         class="h-8 w-8 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"

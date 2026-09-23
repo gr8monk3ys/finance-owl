@@ -106,7 +106,7 @@
       class="text-surface-400 transition hover:text-white"
       aria-label="Back to investments"
     >
-      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path
           fill-rule="evenodd"
           d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
@@ -127,6 +127,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -174,6 +175,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-red-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -205,6 +207,7 @@
             )}"
           >
             <svg
+              aria-hidden="true"
               class="h-5 w-5 {erColor(data.summary.weightedExpenseRatio)}"
               fill="none"
               viewBox="0 0 24 24"
@@ -235,6 +238,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-yellow-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -429,6 +433,7 @@
         <div class="mt-4 rounded-lg border border-surface-700 bg-surface-800/50 p-4">
           <div class="flex items-start gap-3">
             <svg
+              aria-hidden="true"
               class="mt-0.5 h-5 w-5 shrink-0 text-yellow-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -492,6 +497,7 @@
 
                   <!-- Arrow -->
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 shrink-0 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"

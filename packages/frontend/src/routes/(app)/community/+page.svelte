@@ -127,6 +127,7 @@
     <Card>
       <div class="flex flex-col items-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -158,6 +159,7 @@
                   )}"
                 >
                   <svg
+                    aria-hidden="true"
                     class="mr-1 inline h-3 w-3"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -191,6 +193,7 @@
                 class="flex items-center gap-1.5 text-sm text-surface-400 transition hover:text-red-400"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -212,6 +215,7 @@
               onclick={() => (replyingToPost = post)}
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -230,11 +234,13 @@
             <form method="POST" action="?/deletePost" use:enhance class="ml-auto inline">
               <input type="hidden" name="postId" value={post.id} />
               <button
+                aria-label="Delete post"
                 type="submit"
                 class="rounded p-1 text-surface-500 transition hover:bg-surface-700 hover:text-red-400"
                 title="Delete post"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4"
                   fill="none"
                   viewBox="0 0 24 24"

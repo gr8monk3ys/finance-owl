@@ -69,6 +69,7 @@
           aria-label="Back to Smart Savings"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -93,6 +94,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -119,6 +121,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -145,6 +148,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-purple-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -169,6 +173,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-yellow-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -346,6 +351,7 @@
           <div class="mt-2 flex items-center gap-2 text-sm">
             <span class="text-surface-300">{fmt(exampleOriginal)} purchase</span>
             <svg
+              aria-hidden="true"
               class="h-4 w-4 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -356,6 +362,7 @@
             </svg>
             <span class="text-surface-300">rounded to {fmt(exampleRounded)}</span>
             <svg
+              aria-hidden="true"
               class="h-4 w-4 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -422,6 +429,7 @@
         {:else}
           <div class="py-8 text-center">
             <svg
+              aria-hidden="true"
               class="mx-auto h-10 w-10 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"

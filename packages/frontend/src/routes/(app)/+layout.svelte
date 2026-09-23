@@ -119,6 +119,7 @@
             class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/20 border border-primary-500/30 transition-all duration-200 group-hover:bg-primary-600/30 group-hover:border-primary-500/50"
           >
             <svg
+              aria-hidden="true"
               class="h-4.5 w-4.5 text-primary-400"
               viewBox="0 0 24 24"
               fill="none"
@@ -140,7 +141,7 @@
         onclick={closeMobileMenu}
         aria-label="Close menu"
       >
-        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path
             d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
           />
@@ -187,6 +188,7 @@
             >
               {#if item.icon === 'home'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -201,6 +203,7 @@
                 </svg>
               {:else if item.icon === 'wallet'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -215,6 +218,7 @@
                 </svg>
               {:else if item.icon === 'list'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -229,6 +233,7 @@
                 </svg>
               {:else if item.icon === 'target'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -243,6 +248,7 @@
                 </svg>
               {:else if item.icon === 'inbox'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -257,6 +263,7 @@
                 </svg>
               {:else if item.icon === 'calendar'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -272,6 +279,7 @@
                 </svg>
               {:else if item.icon === 'repeat'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -284,6 +292,7 @@
                 </svg>
               {:else if item.icon === 'trending-up'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -296,6 +305,7 @@
                 </svg>
               {:else if item.icon === 'bar-chart'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -311,6 +321,7 @@
                 </svg>
               {:else if item.icon === 'users'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -325,6 +336,7 @@
                 </svg>
               {:else if item.icon === 'piggy-bank'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -343,6 +355,7 @@
                 </svg>
               {:else if item.icon === 'shield'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -357,6 +370,7 @@
                 </svg>
               {:else if item.icon === 'lock'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -369,6 +383,7 @@
                 </svg>
               {:else if item.icon === 'zap'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -379,6 +394,7 @@
                 </svg>
               {:else if item.icon === 'flag'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -394,6 +410,7 @@
                 </svg>
               {:else if item.icon === 'sparkles'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -408,6 +425,7 @@
                 </svg>
               {:else if item.icon === 'book'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -420,6 +438,7 @@
                 </svg>
               {:else if item.icon === 'receipt'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -434,6 +453,7 @@
                 </svg>
               {:else}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -492,6 +512,7 @@
 						hover:bg-surface-700/50 hover:text-surface-200"
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4"
             viewBox="0 0 24 24"
             fill="none"
@@ -523,7 +544,14 @@
         onclick={openMobileMenu}
         aria-label="Open menu"
       >
-        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg
+          aria-hidden="true"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
@@ -544,6 +572,7 @@
           aria-label="Notification settings"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             viewBox="0 0 24 24"
             fill="none"

@@ -159,6 +159,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -229,11 +230,13 @@
                   >
                     <input type="hidden" name="id" value={property.id} />
                     <button
+                      aria-label="Re-estimate value"
                       type="submit"
                       class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-primary-400"
                       title="Re-estimate value"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -249,11 +252,13 @@
                     </button>
                   </form>
                   <button
+                    aria-label="Edit property"
                     class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                     onclick={() => (editingProperty = property)}
                     title="Edit property"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -305,6 +310,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -385,11 +391,13 @@
                   >
                     <input type="hidden" name="id" value={vehicle.id} />
                     <button
+                      aria-label="Re-estimate value"
                       type="submit"
                       class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-primary-400"
                       title="Re-estimate value"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -405,11 +413,13 @@
                     </button>
                   </form>
                   <button
+                    aria-label="Edit vehicle"
                     class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                     onclick={() => (editingVehicle = vehicle)}
                     title="Edit vehicle"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"

@@ -268,6 +268,7 @@
           onclick={prevMonth}
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -285,6 +286,7 @@
           onclick={nextMonth}
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -367,7 +369,12 @@
                   title="{bill.name}: {fmt(bill.amount)} - {getBillLabel(bill)}"
                 >
                   {#if bill.isPaid}
-                    <svg class="h-2.5 w-2.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg
+                      aria-hidden="true"
+                      class="h-2.5 w-2.5 shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path
                         fill-rule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -375,7 +382,12 @@
                       />
                     </svg>
                   {:else if bill.isOverdue}
-                    <svg class="h-2.5 w-2.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg
+                      aria-hidden="true"
+                      class="h-2.5 w-2.5 shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path
                         fill-rule="evenodd"
                         d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -480,6 +492,7 @@
   {:else}
     <div class="py-8 text-center">
       <svg
+        aria-hidden="true"
         class="mx-auto h-12 w-12 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"

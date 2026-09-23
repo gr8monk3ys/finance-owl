@@ -92,6 +92,7 @@
     {#if activeShares.length === 0}
       <div class="flex flex-col items-center py-8 text-center">
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -119,11 +120,13 @@
               </div>
               <div class="flex items-center gap-2">
                 <button
+                  aria-label="View access logs"
                   class="rounded-lg p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-white"
                   onclick={() => (viewingLogs = share)}
                   title="View access logs"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -140,11 +143,13 @@
                 <form method="POST" action="?/revoke" use:enhance>
                   <input type="hidden" name="id" value={share.id} />
                   <button
+                    aria-label="Revoke access"
                     type="submit"
                     class="rounded-lg p-1.5 text-surface-400 transition hover:bg-red-900/30 hover:text-red-400"
                     title="Revoke access"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"

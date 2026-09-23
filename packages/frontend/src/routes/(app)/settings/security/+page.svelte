@@ -167,7 +167,14 @@
       class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-400 transition hover:bg-surface-700 hover:text-white"
       aria-label="Back to settings"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -255,6 +262,7 @@
         </div>
         <Button size="sm" onclick={registerPasskey} loading={passkeyRegistering}>
           <svg
+            aria-hidden="true"
             class="mr-1.5 h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -282,6 +290,7 @@
       {#if data.credentials.length === 0}
         <div class="rounded-lg border border-dashed border-surface-600 px-6 py-8 text-center">
           <svg
+            aria-hidden="true"
             class="mx-auto h-10 w-10 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -306,6 +315,7 @@
               <div class="flex items-center gap-3">
                 <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-700">
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -366,8 +376,14 @@
                   </Button>
                 </div>
               {:else}
-                <Button variant="ghost" size="sm" onclick={() => (deleteConfirmId = credential.id)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onclick={() => (deleteConfirmId = credential.id)}
+                  aria-label="Delete passkey"
+                >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -440,6 +456,7 @@
           <div class="flex items-center gap-3">
             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-900/30">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 text-green-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -605,6 +622,7 @@
               <div class="flex items-center gap-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-700">
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-surface-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -682,6 +700,7 @@
             <div class="flex items-center gap-3 px-4 py-3">
               <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-700">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-surface-400"
                   fill="none"
                   viewBox="0 0 24 24"

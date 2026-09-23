@@ -233,6 +233,7 @@
     </div>
     <Button onclick={() => (showCreateModal = true)}>
       <svg
+        aria-hidden="true"
         class="mr-1.5 h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -252,6 +253,7 @@
       <div class="flex flex-col gap-2 sm:flex-row">
         <div class="relative flex-1">
           <svg
+            aria-hidden="true"
             class="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -287,6 +289,7 @@
           onclick={() => (showFilters = !showFilters)}
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -405,6 +408,7 @@
       class="flex items-center gap-2 rounded-lg border border-red-800/50 bg-red-950/50 p-3 text-sm text-red-300"
     >
       <svg
+        aria-hidden="true"
         class="h-4 w-4 shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -432,6 +436,7 @@
       <div class="relative flex flex-col items-center justify-center py-16 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-700/50">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -582,6 +587,7 @@
             onclick={() => goToPage(data.transactions.meta.page - 1)}
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -602,6 +608,7 @@
             onclick={() => goToPage(data.transactions.meta.page + 1)}
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"

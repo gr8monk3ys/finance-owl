@@ -81,6 +81,7 @@
     </div>
     <Button onclick={() => (showCreateModal = true)}>
       <svg
+        aria-hidden="true"
         class="mr-1.5 h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -99,6 +100,7 @@
       class="flex items-center gap-2 rounded-lg border border-red-800/50 bg-red-950/50 p-3 text-sm text-red-300"
     >
       <svg
+        aria-hidden="true"
         class="h-4 w-4 shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -124,6 +126,7 @@
       <div class="flex items-center gap-2">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500/10">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -151,6 +154,7 @@
       <div class="flex items-center gap-2">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-blue-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -190,6 +194,7 @@
               : 'bg-red-500/10'}"
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4 {data.summary.totalRemaining >= 0
                 ? 'text-primary-400'
                 : 'text-red-400'}"
@@ -224,6 +229,7 @@
       <div class="flex items-center gap-2">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-500/10">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-accent-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -280,6 +286,7 @@
       <div class="relative flex flex-col items-center justify-center py-16 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-700/50">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -302,6 +309,7 @@
           onclick={() => (showCreateModal = true)}
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -400,6 +408,7 @@
                 {#if budget.percentUsed >= 100}
                   <span class="flex items-center gap-1 text-red-400">
                     <svg
+                      aria-hidden="true"
                       class="h-3 w-3"
                       fill="none"
                       viewBox="0 0 24 24"

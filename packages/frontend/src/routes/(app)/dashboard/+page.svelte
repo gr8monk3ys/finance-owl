@@ -260,6 +260,7 @@
     </div>
     <Button variant="ghost" size="sm" onclick={openCustomize}>
       <svg
+        aria-hidden="true"
         class="mr-1.5 h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -288,6 +289,7 @@
         <div class="flex items-center gap-2">
           <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500/15">
             <svg
+              aria-hidden="true"
               class="h-4 w-4 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -317,7 +319,7 @@
           </span>
           {#if data.netWorth.assets > 0}
             <span class="flex items-center gap-1 text-primary-400">
-              <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+              <svg aria-hidden="true" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fill-rule="evenodd"
                   d="M12 7a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L12 12.586V7z"
@@ -341,6 +343,7 @@
         <div class="flex items-center gap-2">
           <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/15">
             <svg
+              aria-hidden="true"
               class="h-3.5 w-3.5 text-blue-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -365,7 +368,7 @@
               ? 'text-rose-400'
               : 'text-primary-400'}"
           >
-            <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+            <svg aria-hidden="true" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
               {#if data.dashboard.spendingChange > 0}
                 <path
                   fill-rule="evenodd"
@@ -398,6 +401,7 @@
         <div class="flex items-center gap-2">
           <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-500/15">
             <svg
+              aria-hidden="true"
               class="h-3.5 w-3.5 text-accent-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -464,6 +468,7 @@
       <div class="relative flex flex-col items-center justify-center rounded-xl py-16 text-center">
         <div class="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary-500/10">
           <svg
+            aria-hidden="true"
             class="h-10 w-10 text-primary-400/60"
             fill="none"
             viewBox="0 0 24 24"
@@ -487,6 +492,7 @@
           class="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:shadow-xl hover:shadow-primary-900/40"
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -587,6 +593,7 @@
               aria-label="Move up"
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -604,6 +611,7 @@
               aria-label="Move down"
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
