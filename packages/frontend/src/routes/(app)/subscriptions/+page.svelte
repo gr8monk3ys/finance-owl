@@ -552,7 +552,7 @@
           </svg>
           <input
             type="text"
-            placeholder="Search subscriptions..."
+            placeholder="Search subscriptions…"
             bind:value={searchQuery}
             class="w-full rounded-lg border border-surface-600 bg-surface-800 py-2 pl-10 pr-3 text-sm text-white placeholder-surface-500 focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
           />
@@ -754,7 +754,7 @@
           </div>
           <p class="mt-4 text-lg text-surface-300">No subscriptions yet</p>
           <p class="mt-1 text-sm text-surface-500">
-            Add subscriptions manually or click "Detect Subscriptions" to find recurring charges.
+            Add subscriptions manually or click “Detect Subscriptions” to find recurring charges.
           </p>
           <div class="mt-4 flex gap-3">
             <form method="POST" action="?/detect" use:enhance>

@@ -708,7 +708,7 @@
             Cancel
           </Button>
           <Button type="submit" loading={isAutoAdjusting}>
-            {isAutoAdjusting ? 'Adjusting...' : 'Apply Adjustments'}
+            {isAutoAdjusting ? 'Adjusting…' : 'Apply Adjustments'}
           </Button>
         </div>
       </form>

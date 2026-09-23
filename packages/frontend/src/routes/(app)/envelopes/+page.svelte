@@ -585,7 +585,7 @@
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
-        <option value="">Select...</option>
+        <option value="">Select…</option>
         {#each data.envelopes as env}
           <option value={env.id}>
             {env.name} ({fmt(env.remainingAmount)} available)
@@ -604,7 +604,7 @@
         required
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
-        <option value="">Select...</option>
+        <option value="">Select…</option>
         {#each data.envelopes as env}
           <option value={env.id}>{env.name}</option>
         {/each}

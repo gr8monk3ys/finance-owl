@@ -665,7 +665,7 @@
         name="notes"
         rows="2"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Any notes about this property..."></textarea>
+        placeholder="Any notes about this property…"></textarea>
     </div>
 
     <div class="flex justify-end gap-3 pt-2">
@@ -1127,7 +1127,7 @@
         name="notes"
         rows="2"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Any notes about this vehicle..."></textarea>
+        placeholder="Any notes about this vehicle…"></textarea>
     </div>
 
     <div class="flex justify-end gap-3 pt-2">

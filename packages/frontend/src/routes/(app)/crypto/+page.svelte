@@ -787,7 +787,7 @@
                 <p class="text-xs text-surface-400">{formatDate(tx.date)}</p>
                 {#if tx.txHash}
                   <p class="mt-0.5 text-xs text-surface-500" title={tx.txHash}>
-                    TX: {tx.txHash.slice(0, 8)}...
+                    TX: {tx.txHash.slice(0, 8)}…
                   </p>
                 {/if}
               </div>
@@ -956,7 +956,7 @@
             id="coinSearch"
             type="text"
             bind:value={addCoinSearch}
-            placeholder="Search by name or symbol..."
+            placeholder="Search by name or symbol…"
             class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
@@ -1055,10 +1055,10 @@
           id="walletAddress"
           name="walletAddress"
           label="Wallet Address (optional)"
-          placeholder="0x..."
+          placeholder="0x…"
         />
 
-        <Input id="notes" name="notes" label="Notes (optional)" placeholder="Any notes..." />
+        <Input id="notes" name="notes" label="Notes (optional)" placeholder="Any notes…" />
       {/if}
 
       {#if form && 'error' in form && form.error}
@@ -1195,7 +1195,7 @@
           value={txHoldingId}
           required
         >
-          <option value="">Select a holding...</option>
+          <option value="">Select a holding…</option>
           {#each data.holdings || [] as holding}
             <option value={holding.id}>
               {holding.symbol} - {holding.name}
@@ -1271,7 +1271,7 @@
         </select>
       </div>
 
-      <Input id="txHash" name="txHash" label="Transaction Hash (optional)" placeholder="0x..." />
+      <Input id="txHash" name="txHash" label="Transaction Hash (optional)" placeholder="0x…" />
 
       <Input id="txNotes" name="notes" label="Notes (optional)" />
 
@@ -1308,7 +1308,7 @@
           id="watchlistSearch"
           type="text"
           bind:value={addCoinSearch}
-          placeholder="Search by name or symbol..."
+          placeholder="Search by name or symbol…"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>

@@ -110,10 +110,10 @@
           <section id="overview">
             <h2 class="text-xl font-semibold text-white">Overview</h2>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
-              Finance Owl ("we," "us," or "our") is committed to protecting your privacy. This
+              Finance Owl (“we,” “us,” or “our”) is committed to protecting your privacy. This
               Privacy Policy describes how we collect, use, disclose, and safeguard your information
               when you use our personal finance management platform, including our website, mobile
-              applications, and related services (collectively, the "Service").
+              applications, and related services (collectively, the “Service”).
             </p>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
               By accessing or using the Service, you agree to this Privacy Policy. If you do not

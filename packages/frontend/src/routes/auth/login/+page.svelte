@@ -237,7 +237,7 @@
               class="absolute left-4 h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"
             ></div>
           {/if}
-          {loading ? 'Signing in...' : 'Sign in'}
+          {loading ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
     </div>

@@ -375,7 +375,7 @@
         </p>
         <input
           type="text"
-          placeholder="Search providers (Netflix, Spotify, Planet Fitness...)"
+          placeholder="Search providers (Netflix, Spotify, Planet Fitness…)"
           bind:value={providerSearch}
           class="mb-4 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
@@ -799,7 +799,7 @@
               bind:value={cancellationReason}
               class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             >
-              <option value="">Select a reason...</option>
+              <option value="">Select a reason…</option>
               <option value="Too expensive">Too expensive</option>
               <option value="Not using it enough">Not using it enough</option>
               <option value="Found a better alternative">Found a better alternative</option>
@@ -1027,31 +1027,31 @@ Thank you,
           </div>
           <div>
             <p class="font-semibold text-white">When asked why:</p>
-            <p class="italic">"I have decided to cancel. Please process my cancellation."</p>
+            <p class="italic">“I have decided to cancel. Please process my cancellation.”</p>
           </div>
           {#if selectedProvider.difficulty !== 'easy'}
             <div>
               <p class="font-semibold text-white">If offered a discount:</p>
               <p class="italic">
-                "I appreciate the offer, but I have made my decision and would like to proceed with
-                the cancellation."
+                “I appreciate the offer, but I have made my decision and would like to proceed with
+                the cancellation.”
               </p>
             </div>
             <div>
               <p class="font-semibold text-white">If offered a pause:</p>
-              <p class="italic">"Thank you, but I would prefer a full cancellation."</p>
+              <p class="italic">“Thank you, but I would prefer a full cancellation.”</p>
             </div>
           {/if}
           <div>
             <p class="font-semibold text-white">Confirm:</p>
             <p class="italic">
-              "Please confirm: my subscription is cancelled, no further charges will be made, and
-              please send a confirmation email to my address on file."
+              “Please confirm: my subscription is cancelled, no further charges will be made, and
+              please send a confirmation email to my address on file.”
             </p>
           </div>
           <div>
             <p class="font-semibold text-white">Get reference:</p>
-            <p class="italic">"Could I get a confirmation number for this cancellation?"</p>
+            <p class="italic">“Could I get a confirmation number for this cancellation?”</p>
           </div>
         </div>
       </div>

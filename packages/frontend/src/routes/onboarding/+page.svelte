@@ -373,7 +373,7 @@
                 <div
                   class="h-5 w-5 animate-spin rounded-full border-2 border-primary-400 border-t-transparent"
                 ></div>
-                <span>Connecting...</span>
+                <span>Connecting…</span>
               {:else}
                 <svg
                   aria-hidden="true"

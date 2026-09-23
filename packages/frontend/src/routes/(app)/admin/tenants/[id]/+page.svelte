@@ -228,7 +228,7 @@
           class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white
 						hover:bg-primary-500 disabled:opacity-50 transition-colors duration-150"
         >
-          {saving ? 'Saving...' : 'Save Settings'}
+          {saving ? 'Saving…' : 'Save Settings'}
         </button>
       </div>
     </div>
@@ -348,7 +348,7 @@
           class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white
 						hover:bg-primary-500 disabled:opacity-50 transition-colors duration-150"
         >
-          {saving ? 'Saving...' : 'Save Branding'}
+          {saving ? 'Saving…' : 'Save Branding'}
         </button>
       </div>
     </div>

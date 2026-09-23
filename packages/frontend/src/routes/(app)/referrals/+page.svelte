@@ -81,7 +81,7 @@
             {data.code.code}
           </p>
         {:else}
-          <p class="mt-2 text-sm italic text-surface-500">Loading your code...</p>
+          <p class="mt-2 text-sm italic text-surface-500">Loading your code…</p>
         {/if}
       </div>
       <div class="mt-4 flex gap-2 sm:mt-0">

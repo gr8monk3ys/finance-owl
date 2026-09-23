@@ -295,7 +295,7 @@
                 bind:value={deletionReason}
                 rows="2"
                 class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-                placeholder="Help us improve by sharing why you're leaving..."></textarea>
+                placeholder="Help us improve by sharing why you're leaving…"></textarea>
             </div>
             <div class="flex gap-3">
               <Button type="submit" variant="danger" loading={deleting}>Confirm Deletion</Button>

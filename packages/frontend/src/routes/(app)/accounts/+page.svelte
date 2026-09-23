@@ -204,7 +204,7 @@
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
         />
       </svg>
-      Linking account... Exchanging token and fetching account details.
+      Linking account… Exchanging token and fetching account details.
     </div>
   {/if}
 
@@ -218,7 +218,7 @@
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
         />
       </svg>
-      Syncing transactions...
+      Syncing transactions…
     </div>
   {/if}
 
@@ -305,7 +305,7 @@
                   onclick={() => triggerSync(item.id)}
                   disabled={syncing === item.id}
                 >
-                  {syncing === item.id ? 'Syncing...' : 'Sync'}
+                  {syncing === item.id ? 'Syncing…' : 'Sync'}
                 </Button>
               {/if}
               <form method="POST" action="?/unlink" use:enhance>

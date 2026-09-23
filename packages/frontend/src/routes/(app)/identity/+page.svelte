@@ -615,7 +615,7 @@
               name="email"
               type="email"
               required
-              placeholder="Add email to monitor..."
+              placeholder="Add email to monitor…"
               class="flex-1 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
             <Button type="submit" size="sm">Add</Button>
@@ -755,11 +755,11 @@
               <input
                 type="password"
                 bind:value={passwordInput}
-                placeholder="Enter password to check..."
+                placeholder="Enter password to check…"
                 class="flex-1 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               />
               <Button type="submit" size="sm" disabled={isHashing || !passwordInput.trim()}>
-                {isHashing ? 'Hashing...' : 'Check'}
+                {isHashing ? 'Hashing…' : 'Check'}
               </Button>
             </div>
           </form>

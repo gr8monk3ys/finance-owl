@@ -329,7 +329,7 @@
         {#if selectedFile}
           <div class="mt-4 flex justify-end">
             <Button type="submit" loading={isLoading}>
-              {isLoading ? 'Parsing file...' : 'Upload & Parse'}
+              {isLoading ? 'Parsing file…' : 'Upload & Parse'}
             </Button>
           </div>
         {/if}
@@ -364,7 +364,7 @@
             required
             class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
-            <option value="">Choose an account...</option>
+            <option value="">Choose an account…</option>
             {#each data.accounts as account}
               <option value={account.id}>
                 {account.name}
@@ -588,7 +588,7 @@
             Back
           </Button>
           <Button type="submit" loading={isLoading} disabled={!selectedAccountId}>
-            {isLoading ? 'Generating preview...' : 'Preview Import'}
+            {isLoading ? 'Generating preview…' : 'Preview Import'}
           </Button>
         </div>
       </div>
@@ -743,7 +743,7 @@
           {/if}
           <Button type="submit" loading={isLoading} disabled={selectedCount === 0}>
             {isLoading
-              ? 'Importing...'
+              ? 'Importing…'
               : `Import ${selectedCount} Transaction${selectedCount !== 1 ? 's' : ''}`}
           </Button>
         </form>

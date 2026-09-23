@@ -394,7 +394,7 @@
                 </div>
                 <div class="flex items-center gap-2 rounded-xl bg-surface-700 px-4 py-3">
                   <Spinner size="sm" />
-                  <span class="text-sm text-surface-400">Thinking...</span>
+                  <span class="text-sm text-surface-400">Thinking…</span>
                 </div>
               </div>
             {/if}
@@ -443,7 +443,7 @@
           name="question"
           bind:value={question}
           placeholder={isAvailable
-            ? 'Ask about your spending, budgets, or transactions...'
+            ? 'Ask about your spending, budgets, or transactions…'
             : 'AI is offline -- Ollama must be running'}
           disabled={!isAvailable || isAsking}
           class="flex-1 rounded-xl border border-surface-600 bg-surface-700 px-4 py-3 text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500 disabled:opacity-50"
@@ -670,7 +670,7 @@
             </div>
             <p class="mt-4 text-lg text-surface-300">No anomalies detected</p>
             <p class="mt-1 text-sm text-surface-500">
-              Click "Scan Now" to check for unusual transactions in the last 7 days.
+              Click “Scan Now” to check for unusual transactions in the last 7 days.
             </p>
           </div>
         </Card>

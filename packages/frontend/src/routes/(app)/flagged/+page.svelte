@@ -408,7 +408,7 @@
           required
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
-          <option value="">Select a transaction...</option>
+          <option value="">Select a transaction…</option>
           {#each data.transactions as tx}
             <option value={tx.id}>
               {tx.merchantName || tx.name} - {fmt(tx.amount)} ({fmtDate(tx.date)})
@@ -506,7 +506,7 @@
             rows="3"
             bind:value={resolveComment}
             class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-            placeholder="Add a note about how this was resolved..."></textarea>
+            placeholder="Add a note about how this was resolved…"></textarea>
         </div>
 
         <div class="flex justify-end gap-3 pt-2">

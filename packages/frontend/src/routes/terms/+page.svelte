@@ -111,8 +111,8 @@
           <section id="acceptance">
             <h2 class="text-xl font-semibold text-white">1. Acceptance of Terms</h2>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
-              By creating an account or using Finance Owl (the "Service"), you agree to be bound by
-              these Terms of Service ("Terms"). If you do not agree to these Terms, you must not use
+              By creating an account or using Finance Owl (the “Service”), you agree to be bound by
+              these Terms of Service (“Terms”). If you do not agree to these Terms, you must not use
               the Service.
             </p>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
@@ -244,7 +244,7 @@
             <h2 class="text-xl font-semibold text-white">6. User Content</h2>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
               You retain ownership of any content you create within the Service, including budgets,
-              categories, notes, and financial goals ("User Content"). By using the Service, you
+              categories, notes, and financial goals (“User Content”). By using the Service, you
               grant us a limited license to store, process, and display your User Content solely to
               provide the Service to you.
             </p>

@@ -337,7 +337,7 @@
     <input
       type="text"
       bind:value={searchQuery}
-      placeholder="Search for help topics..."
+      placeholder="Search for help topics…"
       class="w-full rounded-xl border border-surface-600/80 bg-surface-800 py-3.5 pl-12 pr-4 text-white placeholder:text-surface-500 transition duration-200 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20"
     />
     {#if searchQuery.trim()}

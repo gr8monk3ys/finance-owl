@@ -503,7 +503,7 @@
             <div class="rounded-lg border border-surface-700 bg-surface-800 p-4">
               <input
                 type="text"
-                placeholder="Enter provider name..."
+                placeholder="Enter provider name…"
                 bind:value={selectedProvider}
                 class="w-full rounded-lg border border-surface-700 bg-surface-900 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               />
@@ -976,7 +976,7 @@
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          <p class="mt-4 text-surface-300">Generating your negotiation strategy...</p>
+          <p class="mt-4 text-surface-300">Generating your negotiation strategy…</p>
         </div>
       </Card>
     {/if}
@@ -1171,7 +1171,7 @@
             <h5 class="text-sm font-semibold text-white">Ask for Retention</h5>
           </div>
           <p class="text-sm text-surface-400">
-            Always ask for the "retention" or "loyalty" department. Regular customer service agents
+            Always ask for the “retention” or “loyalty” department. Regular customer service agents
             have limited discount authority. Retention teams are authorized to offer the best deals.
           </p>
         </div>
@@ -1194,7 +1194,7 @@
             <h5 class="text-sm font-semibold text-white">Be Prepared to Leave</h5>
           </div>
           <p class="text-sm text-surface-400">
-            The best offers often come from the "save" team when you confirm cancellation. Be
+            The best offers often come from the “save” team when you confirm cancellation. Be
             genuinely willing to switch providers for maximum leverage.
           </p>
         </div>
@@ -1293,7 +1293,7 @@
           name="notes"
           rows="3"
           class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Agent name, reference number, details about the offer..."></textarea>
+          placeholder="Agent name, reference number, details about the offer…"></textarea>
       </div>
 
       <div class="flex justify-end gap-3 pt-2">

@@ -570,7 +570,7 @@
                 </p>
               </div>
               <p class="mt-3 text-xs text-surface-500">
-                For urgent security incidents, include "URGENT" in the subject line for priority
+                For urgent security incidents, include “URGENT” in the subject line for priority
                 handling.
               </p>
             </div>

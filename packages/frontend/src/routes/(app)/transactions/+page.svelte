@@ -732,7 +732,7 @@
         name="notes"
         rows="2"
         class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
-        placeholder="Add a note..."></textarea>
+        placeholder="Add a note…"></textarea>
     </div>
 
     <div class="flex justify-end gap-3 border-t border-surface-700/50 pt-4">
@@ -847,7 +847,7 @@
             rows="2"
             class="flex-1 rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             value={selectedTransaction.notes || ''}
-            placeholder="Add a note..."></textarea>
+            placeholder="Add a note…"></textarea>
           <Button type="submit" size="sm">Save</Button>
         </div>
       </form>

@@ -311,7 +311,7 @@
         required
         rows="4"
         class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-        placeholder="Share your thoughts..."></textarea>
+        placeholder="Share your thoughts…"></textarea>
     </div>
 
     <label class="flex cursor-pointer items-center gap-2">
@@ -362,7 +362,7 @@
           required
           rows="3"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Write your reply..."></textarea>
+          placeholder="Write your reply…"></textarea>
       </div>
 
       <div class="flex justify-end gap-3 pt-2">

@@ -989,7 +989,7 @@
           name="explanation"
           required
           rows="4"
-          placeholder="Describe the inaccuracy in detail..."
+          placeholder="Describe the inaccuracy in detail…"
           class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         ></textarea>
       </div>

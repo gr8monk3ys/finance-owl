@@ -460,7 +460,7 @@
           />
         </svg>
         <p class="mt-3 text-surface-300">
-          Click "Analyze My Bills" to scan your recurring transactions for negotiation opportunities
+          Click “Analyze My Bills” to scan your recurring transactions for negotiation opportunities
         </p>
       </div>
     {/if}
@@ -742,7 +742,7 @@
           name="notes"
           rows="2"
           class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Any details about your situation..."></textarea>
+          placeholder="Any details about your situation…"></textarea>
       </div>
 
       <div class="flex justify-end gap-3 pt-2">
@@ -843,7 +843,7 @@
           name="notes"
           rows="2"
           class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
-          placeholder="Agent name, reference number, details..."></textarea>
+          placeholder="Agent name, reference number, details…"></textarea>
       </div>
 
       <div class="flex justify-end gap-3 pt-2">

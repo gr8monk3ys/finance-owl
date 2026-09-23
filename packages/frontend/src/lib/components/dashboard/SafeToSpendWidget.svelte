@@ -192,7 +192,7 @@
             onclick={checkAffordability}
             class="rounded-lg bg-primary-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-primary-500 disabled:opacity-50"
           >
-            {checking ? '...' : 'Check'}
+            {checking ? '…' : 'Check'}
           </button>
         </div>
 
