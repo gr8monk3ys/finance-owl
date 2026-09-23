@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { browser } from '$app/environment';
   import { enhance } from '$app/forms';
   import { goto, invalidateAll } from '$app/navigation';
@@ -874,6 +875,7 @@
       <!-- Delete (manual only) -->
       {#if selectedTransaction.isManual}
         <form
+          use:confirmSubmit={'Delete this transaction? This can’t be undone.'}
           method="POST"
           action="?/delete"
           use:enhance

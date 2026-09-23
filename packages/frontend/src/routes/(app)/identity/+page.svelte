@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Spinner } from '$components/ui';
@@ -665,7 +666,12 @@
                       <input type="hidden" name="email" value={monitored.email} />
                       <Button variant="ghost" size="sm" type="submit">Check</Button>
                     </form>
-                    <form method="POST" action="?/removeEmail" use:enhance>
+                    <form
+                      use:confirmSubmit={'Stop monitoring this email address?'}
+                      method="POST"
+                      action="?/removeEmail"
+                      use:enhance
+                    >
                       <input type="hidden" name="id" value={monitored.id} />
                       <button
                         type="submit"

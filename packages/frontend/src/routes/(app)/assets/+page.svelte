@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
@@ -956,6 +957,7 @@
     </form>
 
     <form
+      use:confirmSubmit={'Delete this property? This can’t be undone.'}
       method="POST"
       action="?/deleteProperty"
       use:enhance
@@ -1432,6 +1434,7 @@
     </form>
 
     <form
+      use:confirmSubmit={'Delete this vehicle? This can’t be undone.'}
       method="POST"
       action="?/deleteVehicle"
       use:enhance

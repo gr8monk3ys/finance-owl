@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { formatFileSize } from '$lib/utils/format';
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
@@ -482,7 +483,12 @@
             </span>
           {/if}
 
-          <form method="POST" action="?/deleteReceipt" use:enhance>
+          <form
+            use:confirmSubmit={'Delete this receipt? This can’t be undone.'}
+            method="POST"
+            action="?/deleteReceipt"
+            use:enhance
+          >
             <input type="hidden" name="receiptId" value={selectedReceipt.id} />
             <Button type="submit" size="sm" variant="danger">Delete</Button>
           </form>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Input, Modal } from '$components/ui';
@@ -356,6 +357,7 @@
                         </svg>
                       </Button>
                       <form
+                        use:confirmSubmit={'Delete this category? This can’t be undone.'}
                         method="POST"
                         action="?/deleteCategory"
                         use:enhance={() => {

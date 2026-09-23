@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
@@ -524,7 +525,13 @@
       </div>
     </form>
 
-    <form method="POST" action="?/delete" use:enhance class="mt-3 border-t border-surface-700 pt-3">
+    <form
+      use:confirmSubmit={'Delete this savings goal? This can’t be undone.'}
+      method="POST"
+      action="?/delete"
+      use:enhance
+      class="mt-3 border-t border-surface-700 pt-3"
+    >
       <input type="hidden" name="id" value={editingGoal.id} />
       <Button type="submit" variant="danger" size="sm">Delete Goal</Button>
     </form>
@@ -686,6 +693,7 @@
                   </p>
                 </div>
                 <form
+                  use:confirmSubmit={'Remove this contribution?'}
                   method="POST"
                   action="?/removeContribution"
                   use:enhance={() => {

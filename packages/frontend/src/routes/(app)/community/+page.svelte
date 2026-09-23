@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import { invalidateAll, goto } from '$app/navigation';
   import { page } from '$app/stores';
@@ -231,7 +232,13 @@
               {post.repliesCount}
             </button>
 
-            <form method="POST" action="?/deletePost" use:enhance class="ml-auto inline">
+            <form
+              use:confirmSubmit={'Delete this post? This can’t be undone.'}
+              method="POST"
+              action="?/deletePost"
+              use:enhance
+              class="ml-auto inline"
+            >
               <input type="hidden" name="postId" value={post.id} />
               <button
                 aria-label="Delete post"

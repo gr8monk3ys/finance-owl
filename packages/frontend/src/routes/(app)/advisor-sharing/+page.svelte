@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -140,7 +141,12 @@
                     />
                   </svg>
                 </button>
-                <form method="POST" action="?/revoke" use:enhance>
+                <form
+                  use:confirmSubmit={'Revoke this advisor’s access?'}
+                  method="POST"
+                  action="?/revoke"
+                  use:enhance
+                >
                   <input type="hidden" name="id" value={share.id} />
                   <button
                     aria-label="Revoke access"

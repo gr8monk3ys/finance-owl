@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
@@ -750,7 +751,13 @@
       </div>
     </form>
 
-    <form method="POST" action="?/delete" use:enhance class="mt-3 border-t border-surface-700 pt-3">
+    <form
+      use:confirmSubmit={'Delete this envelope? This can’t be undone.'}
+      method="POST"
+      action="?/delete"
+      use:enhance
+      class="mt-3 border-t border-surface-700 pt-3"
+    >
       <input type="hidden" name="id" value={editingEnvelope.id} />
       <Button type="submit" variant="danger" size="sm">Delete Envelope</Button>
     </form>

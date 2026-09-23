@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
@@ -440,6 +441,7 @@
 
                 <!-- Delete -->
                 <form
+                  use:confirmSubmit={'Delete this rule? This can’t be undone.'}
                   method="POST"
                   action="?/deleteRule"
                   use:enhance={() => {

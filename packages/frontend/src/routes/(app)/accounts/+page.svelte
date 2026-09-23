@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -309,7 +310,12 @@
                   {syncing === item.id ? 'Syncing…' : 'Sync'}
                 </Button>
               {/if}
-              <form method="POST" action="?/unlink" use:enhance>
+              <form
+                use:confirmSubmit={'Unlink this account from Finance Owl?'}
+                method="POST"
+                action="?/unlink"
+                use:enhance
+              >
                 <input type="hidden" name="plaidItemId" value={item.id} />
                 <Button type="submit" variant="ghost" size="sm">Unlink</Button>
               </form>

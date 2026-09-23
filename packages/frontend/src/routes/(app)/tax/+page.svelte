@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll, goto } from '$app/navigation';
@@ -498,6 +499,7 @@
     </form>
 
     <form
+      use:confirmSubmit={'Delete this document? This can’t be undone.'}
       method="POST"
       action="?/deleteDocument"
       use:enhance

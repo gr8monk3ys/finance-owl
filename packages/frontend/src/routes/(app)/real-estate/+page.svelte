@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -174,7 +175,12 @@
           </div>
 
           <div class="mt-4 flex justify-end border-t border-surface-700 pt-3">
-            <form method="POST" action="?/delete" use:enhance>
+            <form
+              use:confirmSubmit={'Remove this property? This can’t be undone.'}
+              method="POST"
+              action="?/delete"
+              use:enhance
+            >
               <input type="hidden" name="id" value={property.id} />
               <Button type="submit" variant="danger" size="sm">Remove</Button>
             </form>

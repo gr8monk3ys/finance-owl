@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import type { ActionData, PageData } from './$types';
@@ -666,6 +667,7 @@
           </p>
         </div>
         <form
+          use:confirmSubmit={'Sign out of all sessions?'}
           method="POST"
           action="?/logoutAll"
           use:enhance={() => {
