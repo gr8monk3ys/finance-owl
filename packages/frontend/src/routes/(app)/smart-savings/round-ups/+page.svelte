@@ -224,7 +224,7 @@
           <button
             type="button"
             onclick={() => (enabled = !enabled)}
-            class="relative h-6 w-11 rounded-full transition {enabled
+            class="relative h-6 w-11 rounded-full transition hover:brightness-110 {enabled
               ? 'bg-primary-600'
               : 'bg-surface-600'}"
             aria-label="Toggle round-ups"

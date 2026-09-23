@@ -560,7 +560,7 @@
           <!-- Toggle -->
           <button
             type="button"
-            class="relative h-5 w-9 shrink-0 rounded-full transition-colors duration-200 {widget.visible
+            class="relative h-5 w-9 shrink-0 rounded-full transition-colors duration-200 hover:brightness-110 {widget.visible
               ? 'bg-primary-600'
               : 'bg-surface-600'}"
             onclick={() => toggleWidget(widget.id)}

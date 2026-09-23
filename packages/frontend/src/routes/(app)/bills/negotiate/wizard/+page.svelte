@@ -377,7 +377,7 @@
       {#each [{ step: 1, label: 'Select Bill' }, { step: 2, label: 'Set Target' }, { step: 3, label: 'View Strategy' }, { step: 4, label: 'Track Outcome' }] as item}
         <button
           type="button"
-          class="flex flex-1 items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition {wizardStep ===
+          class="flex flex-1 items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition hover:bg-surface-800/60 {wizardStep ===
           item.step
             ? 'border-primary-500 text-primary-400'
             : wizardStep > item.step

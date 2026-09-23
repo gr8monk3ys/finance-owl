@@ -423,7 +423,8 @@
                   <input type="hidden" name="isActive" value={rule.isActive === 1 ? 0 : 1} />
                   <button
                     type="submit"
-                    class="relative h-6 w-11 rounded-full transition {rule.isActive === 1
+                    class="relative h-6 w-11 rounded-full transition hover:brightness-110 {rule.isActive ===
+                    1
                       ? 'bg-primary-600'
                       : 'bg-surface-600'}"
                     aria-label="Toggle rule"

@@ -473,7 +473,7 @@
       {#if acknowledgedBreaches.length > 0}
         <div>
           <button
-            class="mb-3 flex w-full items-center justify-between text-left"
+            class="mb-3 flex w-full items-center justify-between text-left rounded-lg transition-colors hover:bg-surface-700/40"
             onclick={() => (showAcknowledged = !showAcknowledged)}
           >
             <h3 class="flex items-center gap-2 text-lg font-semibold text-surface-400">

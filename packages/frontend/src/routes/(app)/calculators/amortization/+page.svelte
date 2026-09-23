@@ -359,7 +359,7 @@
       <!-- Amortization schedule table -->
       <Card>
         <button
-          class="flex w-full items-center justify-between text-left"
+          class="flex w-full items-center justify-between text-left rounded-lg transition-colors hover:bg-surface-700/40"
           onclick={() => (showFullSchedule = !showFullSchedule)}
         >
           <h3 class="text-lg font-semibold text-white">Amortization Schedule</h3>

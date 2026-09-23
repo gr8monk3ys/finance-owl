@@ -148,7 +148,7 @@
               <button
                 type="submit"
                 disabled={updating}
-                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-800 disabled:cursor-not-allowed disabled:opacity-50 {isConsentGranted(
+                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-800 disabled:cursor-not-allowed disabled:opacity-50 {isConsentGranted(
                   consent.key,
                 )
                   ? 'bg-primary-600'

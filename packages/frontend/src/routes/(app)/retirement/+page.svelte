@@ -289,7 +289,7 @@
   <!-- Profile Section (Collapsible) -->
   <Card padding="none">
     <button
-      class="flex w-full items-center justify-between p-6"
+      class="flex w-full items-center justify-between p-6 transition-colors hover:bg-surface-700/30"
       onclick={() => (profileOpen = !profileOpen)}
     >
       <h3 class="text-lg font-semibold text-white">Retirement Profile</h3>
@@ -559,7 +559,7 @@
   <!-- Scenario Comparison Section -->
   <Card padding="none">
     <button
-      class="flex w-full items-center justify-between p-6"
+      class="flex w-full items-center justify-between p-6 transition-colors hover:bg-surface-700/30"
       onclick={() => (scenariosOpen = !scenariosOpen)}
     >
       <h3 class="text-lg font-semibold text-white">Scenario Comparison</h3>
@@ -743,7 +743,7 @@
   <!-- 401(k) Fee Analyzer Section -->
   <Card padding="none">
     <button
-      class="flex w-full items-center justify-between p-6"
+      class="flex w-full items-center justify-between p-6 transition-colors hover:bg-surface-700/30"
       onclick={() => (feeAnalyzerOpen = !feeAnalyzerOpen)}
     >
       <h3 class="text-lg font-semibold text-white">401(k) Fee Analyzer</h3>

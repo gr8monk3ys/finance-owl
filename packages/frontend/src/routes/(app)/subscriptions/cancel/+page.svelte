@@ -263,7 +263,7 @@
           onclick={() => {
             if (i < currentStep) goToStep(i);
           }}
-          class="flex items-center gap-2 {i <= currentStep
+          class="flex items-center gap-2 hover:text-white {i <= currentStep
             ? 'text-white'
             : 'text-surface-500'}"
           disabled={i > currentStep}

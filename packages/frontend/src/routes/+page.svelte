@@ -201,7 +201,7 @@
           >
           <a
             href="/auth/register"
-            class="mt-1 block rounded-lg bg-emerald-600 px-3 py-2.5 text-center text-sm font-semibold text-white"
+            class="mt-1 block rounded-lg bg-emerald-600 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-emerald-500"
             >Get Started Free</a
           >
         </div>
@@ -958,7 +958,7 @@
       <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <!-- Brand -->
         <div class="sm:col-span-2 lg:col-span-1">
-          <a href="/" class="flex items-center gap-2">
+          <a href="/" class="flex items-center gap-2 transition hover:brightness-125">
             <div
               class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-700"
             >
