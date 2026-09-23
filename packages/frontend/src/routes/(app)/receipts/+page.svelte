@@ -154,21 +154,17 @@
   />
 
   <!-- Upload drop zone -->
-  <div
-    role="button"
-    tabindex="0"
-    class="rounded-xl border-2 border-dashed transition-colors {dragActive
+  <button
+    type="button"
+    class="block w-full rounded-xl border-2 border-dashed transition-colors {dragActive
       ? 'border-primary-500 bg-primary-500/10'
       : 'border-surface-600 bg-surface-800/50 hover:border-surface-500'}"
     ondragover={handleDragOver}
     ondragleave={handleDragLeave}
     ondrop={handleDrop}
     onclick={triggerFileInput}
-    onkeydown={(e) => {
-      if (e.key === 'Enter' || e.key === ' ') triggerFileInput();
-    }}
   >
-    <div class="flex flex-col items-center justify-center py-8">
+    <span class="flex flex-col items-center justify-center py-8">
       <svg
         aria-hidden="true"
         class="h-10 w-10 text-surface-500"
@@ -184,12 +180,13 @@
         />
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
-      <p class="mt-3 text-sm text-surface-300">
+      <span class="mt-3 block text-sm text-surface-300">
         <span class="font-medium text-primary-400">Click to upload</span> or drag and drop
-      </p>
-      <p class="mt-1 text-xs text-surface-500">JPEG, PNG, WebP, HEIC up to 10MB</p>
-    </div>
-  </div>
+      </span>
+      <span class="mt-1 block text-xs text-surface-500">JPEG, PNG, WebP, HEIC up to 10&nbsp;MB</span
+      >
+    </span>
+  </button>
 
   <!-- Receipt List -->
   {#if (data.receipts || []).length > 0}

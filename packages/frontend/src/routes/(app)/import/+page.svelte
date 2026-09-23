@@ -247,7 +247,13 @@
           ondragleave={handleDragLeave}
           ondrop={handleDrop}
           onclick={() => document.getElementById('fileInput')?.click()}
-          onkeydown={(e) => e.key === 'Enter' && document.getElementById('fileInput')?.click()}
+          onkeydown={(e) => {
+            if (e.target !== e.currentTarget) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              document.getElementById('fileInput')?.click();
+            }
+          }}
         >
           <input
             aria-label="Statement file"

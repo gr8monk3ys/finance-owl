@@ -175,77 +175,71 @@
         </h3>
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {#each spendingEnvelopes as envelope}
-            <button
-              type="button"
-              class="rounded-xl border border-surface-700 bg-surface-800 p-4 text-left transition hover:border-surface-600 hover:bg-surface-750 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-              onclick={() => (editingEnvelope = envelope)}
+            <!-- Card and quick-assign are sibling buttons: a button may not nest another. -->
+            <div
+              class="flex flex-col rounded-xl border border-surface-700 bg-surface-800 transition hover:border-surface-600 hover:bg-surface-750 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary-500"
             >
-              <div class="flex items-start justify-between">
-                <div class="flex items-center gap-2.5">
-                  <div
-                    class="h-3.5 w-3.5 rounded-full"
-                    style="background-color: {envelope.color ||
-                      envelope.categoryColor ||
-                      '#6366f1'}"
-                  ></div>
-                  <div>
-                    <p class="font-medium text-white">{envelope.name}</p>
-                    {#if envelope.categoryName}
-                      <p class="text-xs text-surface-500">{envelope.categoryName}</p>
-                    {/if}
+              <button
+                type="button"
+                class="flex-1 rounded-t-xl p-4 pb-0 text-left focus-visible:outline-none"
+                onclick={() => (editingEnvelope = envelope)}
+              >
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center gap-2.5">
+                    <div
+                      class="h-3.5 w-3.5 rounded-full"
+                      style="background-color: {envelope.color ||
+                        envelope.categoryColor ||
+                        '#6366f1'}"
+                    ></div>
+                    <div>
+                      <p class="font-medium text-white">{envelope.name}</p>
+                      {#if envelope.categoryName}
+                        <p class="text-xs text-surface-500">{envelope.categoryName}</p>
+                      {/if}
+                    </div>
+                  </div>
+                  {#if envelope.rollover}
+                    <span
+                      class="rounded-full bg-surface-700 px-2 py-0.5 text-[10px] text-surface-400"
+                    >
+                      rollover
+                    </span>
+                  {/if}
+                </div>
+
+                <div class="mt-3">
+                  <div class="flex items-end justify-between text-sm">
+                    <span class="text-surface-400">
+                      {fmt(envelope.spentAmount)} of {fmt(envelope.budgetedAmount)}
+                    </span>
+                    <span class="font-semibold {getProgressTextColor(envelope.percentUsed)}">
+                      {fmt(envelope.remainingAmount)}
+                    </span>
+                  </div>
+                  <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
+                    <div
+                      class="{getProgressColor(
+                        envelope.percentUsed,
+                      )} h-full rounded-full transition-[width]"
+                      style="width: {Math.min(envelope.percentUsed, 100)}%"
+                    ></div>
                   </div>
                 </div>
-                {#if envelope.rollover}
-                  <span
-                    class="rounded-full bg-surface-700 px-2 py-0.5 text-[10px] text-surface-400"
-                  >
-                    rollover
-                  </span>
-                {/if}
-              </div>
-
-              <div class="mt-3">
-                <div class="flex items-end justify-between text-sm">
-                  <span class="text-surface-400">
-                    {fmt(envelope.spentAmount)} of {fmt(envelope.budgetedAmount)}
-                  </span>
-                  <span class="font-semibold {getProgressTextColor(envelope.percentUsed)}">
-                    {fmt(envelope.remainingAmount)}
-                  </span>
-                </div>
-                <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
-                  <div
-                    class="{getProgressColor(
-                      envelope.percentUsed,
-                    )} h-full rounded-full transition-[width]"
-                    style="width: {Math.min(envelope.percentUsed, 100)}%"
-                  ></div>
-                </div>
-              </div>
-
-              <!-- Quick allocate button -->
-              <div class="mt-3 flex justify-end">
-                <span
-                  role="button"
-                  tabindex="0"
-                  class="text-xs text-primary-400 hover:text-primary-300"
-                  onclick={(e: MouseEvent) => {
-                    e.stopPropagation();
+              </button>
+              <div class="flex justify-end px-4 pb-4 pt-3">
+                <button
+                  type="button"
+                  class="rounded text-xs text-primary-400 hover:text-primary-300"
+                  onclick={() => {
                     allocatingEnvelope = envelope;
                     showAllocateModal = true;
                   }}
-                  onkeydown={(e: KeyboardEvent) => {
-                    if (e.key === 'Enter') {
-                      e.stopPropagation();
-                      allocatingEnvelope = envelope;
-                      showAllocateModal = true;
-                    }
-                  }}
                 >
                   + Assign Funds
-                </span>
+                </button>
               </div>
-            </button>
+            </div>
           {/each}
         </div>
       </div>
@@ -259,85 +253,80 @@
         </h3>
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {#each goalEnvelopes as envelope}
-            <button
-              type="button"
-              class="rounded-xl border border-surface-700 bg-surface-800 p-4 text-left transition hover:border-surface-600 hover:bg-surface-750 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-              onclick={() => (editingEnvelope = envelope)}
+            <!-- Card and quick-assign are sibling buttons: a button may not nest another. -->
+            <div
+              class="flex flex-col rounded-xl border border-surface-700 bg-surface-800 transition hover:border-surface-600 hover:bg-surface-750 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary-500"
             >
-              <div class="flex items-start justify-between">
-                <div class="flex items-center gap-2.5">
-                  <div
-                    class="h-3.5 w-3.5 rounded-full"
-                    style="background-color: {envelope.color || '#22c55e'}"
-                  ></div>
-                  <div>
-                    <p class="font-medium text-white">{envelope.name}</p>
+              <button
+                type="button"
+                class="flex-1 rounded-t-xl p-4 pb-0 text-left focus-visible:outline-none"
+                onclick={() => (editingEnvelope = envelope)}
+              >
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center gap-2.5">
+                    <div
+                      class="h-3.5 w-3.5 rounded-full"
+                      style="background-color: {envelope.color || '#22c55e'}"
+                    ></div>
+                    <div>
+                      <p class="font-medium text-white">{envelope.name}</p>
+                      {#if envelope.targetAmount}
+                        <p class="text-xs text-surface-500">
+                          Goal: {fmt(envelope.targetAmount)}
+                        </p>
+                      {/if}
+                    </div>
+                  </div>
+                  <svg
+                    aria-hidden="true"
+                    class="h-4 w-4 text-emerald-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                    />
+                  </svg>
+                </div>
+
+                <div class="mt-3">
+                  <div class="flex items-end justify-between text-sm">
+                    <span class="text-surface-400">
+                      {fmt(envelope.remainingAmount)} saved
+                    </span>
                     {#if envelope.targetAmount}
-                      <p class="text-xs text-surface-500">
-                        Goal: {fmt(envelope.targetAmount)}
-                      </p>
+                      <span class="font-semibold text-emerald-400">
+                        {formatPercent(envelope.goalProgress ?? 0)}
+                      </span>
                     {/if}
                   </div>
-                </div>
-                <svg
-                  aria-hidden="true"
-                  class="h-4 w-4 text-emerald-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                  />
-                </svg>
-              </div>
-
-              <div class="mt-3">
-                <div class="flex items-end justify-between text-sm">
-                  <span class="text-surface-400">
-                    {fmt(envelope.remainingAmount)} saved
-                  </span>
                   {#if envelope.targetAmount}
-                    <span class="font-semibold text-emerald-400">
-                      {formatPercent(envelope.goalProgress ?? 0)}
-                    </span>
+                    <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
+                      <div
+                        class="h-full rounded-full bg-emerald-500 transition-[width]"
+                        style="width: {Math.min(envelope.goalProgress ?? 0, 100)}%"
+                      ></div>
+                    </div>
                   {/if}
                 </div>
-                {#if envelope.targetAmount}
-                  <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
-                    <div
-                      class="h-full rounded-full bg-emerald-500 transition-[width]"
-                      style="width: {Math.min(envelope.goalProgress ?? 0, 100)}%"
-                    ></div>
-                  </div>
-                {/if}
-              </div>
-
-              <div class="mt-3 flex justify-end">
-                <span
-                  role="button"
-                  tabindex="0"
-                  class="text-xs text-primary-400 hover:text-primary-300"
-                  onclick={(e: MouseEvent) => {
-                    e.stopPropagation();
+              </button>
+              <div class="flex justify-end px-4 pb-4 pt-3">
+                <button
+                  type="button"
+                  class="rounded text-xs text-primary-400 hover:text-primary-300"
+                  onclick={() => {
                     allocatingEnvelope = envelope;
                     showAllocateModal = true;
                   }}
-                  onkeydown={(e: KeyboardEvent) => {
-                    if (e.key === 'Enter') {
-                      e.stopPropagation();
-                      allocatingEnvelope = envelope;
-                      showAllocateModal = true;
-                    }
-                  }}
                 >
                   + Assign Funds
-                </span>
+                </button>
               </div>
-            </button>
+            </div>
           {/each}
         </div>
       </div>
