@@ -793,7 +793,9 @@
           <p class="mt-0.5 text-sm">
             {#if selectedTransaction.pending}
               <span class="inline-flex items-center gap-1 text-accent-400">
-                <span class="h-1.5 w-1.5 rounded-full bg-accent-400 animate-pulse"></span>
+                <span
+                  class="h-1.5 w-1.5 rounded-full bg-accent-400 animate-pulse [animation-iteration-count:2]"
+                ></span>
                 Pending
               </span>
             {:else}

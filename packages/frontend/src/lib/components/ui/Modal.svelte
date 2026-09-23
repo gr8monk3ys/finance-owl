@@ -53,7 +53,7 @@
   <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
   <div
     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4
-			modal-backdrop-enter"
+			overscroll-contain modal-backdrop-enter"
     style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"
     role="dialog"
     tabindex="-1"
@@ -64,7 +64,7 @@
   >
     <div
       class="w-full rounded-t-2xl sm:rounded-xl bg-surface-800 border border-surface-700/50
-				shadow-2xl shadow-black/40
+				shadow-2xl shadow-black/40 pb-[env(safe-area-inset-bottom)] sm:pb-0
 				modal-slide-up sm:modal-content-enter
 				{sizes[size]}"
     >
@@ -86,7 +86,7 @@
           </button>
         </div>
       {/if}
-      <div class="p-6 {size === 'full' ? 'overflow-auto flex-1' : ''}">
+      <div class="p-6 {size === 'full' ? 'overflow-auto overscroll-contain flex-1' : ''}">
         {@render children()}
       </div>
       {#if footer}

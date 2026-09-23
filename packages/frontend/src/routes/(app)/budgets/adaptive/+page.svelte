@@ -614,7 +614,7 @@
 <!-- Auto-Adjust Modal -->
 {#if showAutoAdjustModal}
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+    class="fixed inset-0 z-50 flex items-center justify-center overscroll-contain bg-black/60 backdrop-blur-sm"
     role="dialog"
   >
     <div class="mx-4 w-full max-w-md rounded-2xl bg-surface-800 p-6 shadow-2xl">

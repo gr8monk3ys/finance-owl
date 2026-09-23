@@ -20,7 +20,7 @@
 
 <nav
   class="fixed bottom-0 left-0 right-0 z-40 border-t border-surface-700/50 lg:hidden
-		bg-surface-800/90 backdrop-blur-xl"
+		bg-surface-800/90 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]"
   aria-label="Mobile navigation"
 >
   <div class="flex items-stretch justify-around">

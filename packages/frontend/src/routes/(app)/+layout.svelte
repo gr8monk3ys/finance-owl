@@ -151,7 +151,7 @@
 
     <!-- Navigation -->
     <nav
-      class="overflow-y-auto px-3 py-3 space-y-1"
+      class="overflow-y-auto overscroll-contain px-3 py-3 space-y-1"
       style="max-height: calc(100vh - 4rem - 5.5rem);"
     >
       {#each groups as group}
