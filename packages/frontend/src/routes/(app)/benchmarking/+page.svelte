@@ -101,7 +101,7 @@
               id="ageRange"
               name="ageRange"
               required
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             >
               <option value="18-24">18 - 24</option>
               <option value="25-34">25 - 34</option>
@@ -119,7 +119,7 @@
               id="incomeRange"
               name="incomeRange"
               required
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             >
               <option value="under_25k">Under $25k</option>
               <option value="25k_50k">$25k - $50k</option>
@@ -138,7 +138,7 @@
               id="region"
               name="region"
               type="text"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               placeholder="e.g. Northeast, Midwest"
             />
           </div>
@@ -153,7 +153,7 @@
               min="1"
               max="10"
               value="1"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
         </div>
@@ -163,7 +163,7 @@
             id="isOptedIn"
             name="isOptedIn"
             type="checkbox"
-            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
           />
           <label for="isOptedIn" class="text-sm text-surface-300">
             Opt in to contribute anonymized data to improve benchmarks

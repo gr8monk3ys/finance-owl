@@ -453,7 +453,7 @@
         name="categoryId"
         required
         bind:value={createCategoryId}
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
       >
         <option value="" disabled>Select a category</option>
         {#each getBudgetCategoryTree(data.categories) as parent}
@@ -487,7 +487,7 @@
             min="0"
             required
             bind:value={createAmount}
-            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             placeholder="500.00"
           />
         </div>
@@ -499,7 +499,7 @@
           name="period"
           required
           bind:value={createPeriod}
-          class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+          class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
         >
           <option value="weekly">Weekly</option>
           <option value="biweekly">Biweekly</option>
@@ -524,7 +524,7 @@
         id="budgetRollover"
         name="rollover"
         type="checkbox"
-        class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+        class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
       />
       <label for="budgetRollover" class="text-sm text-surface-300">
         Roll over unused budget to next period
@@ -586,7 +586,7 @@
             min="0"
             required
             value={editingBudget.amount}
-            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
       </div>
@@ -597,7 +597,7 @@
           name="rollover"
           type="checkbox"
           checked={editingBudget.rollover}
-          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
         />
         <label for="editRollover" class="text-sm text-surface-300"> Roll over unused budget </label>
       </div>

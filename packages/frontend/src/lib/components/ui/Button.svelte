@@ -24,13 +24,13 @@
 
   const variants: Record<string, string> = {
     primary:
-      'bg-primary-600 text-white hover:bg-primary-500 focus:ring-primary-500/40 shadow-sm hover:shadow-md hover:shadow-primary-900/20 active:bg-primary-700',
+      'bg-primary-600 text-white hover:bg-primary-500 focus-visible:ring-primary-500/40 shadow-sm hover:shadow-md hover:shadow-primary-900/20 active:bg-primary-700',
     secondary:
-      'bg-surface-700 text-surface-200 hover:bg-surface-600 focus:ring-surface-500/40 border border-surface-600 hover:border-surface-500 active:bg-surface-700/80',
+      'bg-surface-700 text-surface-200 hover:bg-surface-600 focus-visible:ring-surface-500/40 border border-surface-600 hover:border-surface-500 active:bg-surface-700/80',
     danger:
-      'bg-red-600/90 text-white hover:bg-red-500 focus:ring-red-500/40 shadow-sm active:bg-red-700',
+      'bg-red-600/90 text-white hover:bg-red-500 focus-visible:ring-red-500/40 shadow-sm active:bg-red-700',
     ghost:
-      'text-surface-300 hover:bg-surface-700/60 hover:text-white focus:ring-surface-500/40 active:bg-surface-700/80',
+      'text-surface-300 hover:bg-surface-700/60 hover:text-white focus-visible:ring-surface-500/40 active:bg-surface-700/80',
   };
 
   const sizes: Record<string, string> = {
@@ -55,7 +55,7 @@
 <button
   class="btn-ripple inline-flex items-center justify-center rounded-lg font-medium
 		transition-all duration-200 ease-out
-		focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-surface-900
+		focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-surface-900
 		disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none
 		disabled:shadow-none
 		active:scale-[0.97]

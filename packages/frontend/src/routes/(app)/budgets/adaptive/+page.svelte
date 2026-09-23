@@ -649,7 +649,7 @@
               name="sensitivity"
               value="conservative"
               bind:group={sensitivity}
-              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
             />
             <div>
               <p class="text-sm font-medium text-white">Conservative</p>
@@ -668,7 +668,7 @@
               name="sensitivity"
               value="moderate"
               bind:group={sensitivity}
-              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
             />
             <div>
               <p class="text-sm font-medium text-white">Moderate</p>
@@ -687,7 +687,7 @@
               name="sensitivity"
               value="aggressive"
               bind:group={sensitivity}
-              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
             />
             <div>
               <p class="text-sm font-medium text-white">Aggressive</p>

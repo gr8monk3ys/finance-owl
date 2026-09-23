@@ -111,7 +111,7 @@
             id="defaultCurrency"
             name="defaultCurrency"
             bind:value={selectedCurrency}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             {#each data.supported as currency}
               <option value={currency.code}>
@@ -130,7 +130,7 @@
             id="displayFormat"
             name="displayFormat"
             bind:value={selectedFormat}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="symbol">Symbol ({getCurrencySymbol(selectedCurrency)}1,234.56)</option>
             <option value="code">Code (1,234.56 {selectedCurrency})</option>

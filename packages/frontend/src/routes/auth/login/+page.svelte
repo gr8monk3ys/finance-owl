@@ -178,7 +178,7 @@
             autocomplete="email"
             autocapitalize="off"
             spellcheck="false"
-            class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             placeholder="you@example.com"
           />
         </div>
@@ -198,7 +198,7 @@
             type="password"
             required
             autocomplete="current-password"
-            class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             placeholder="Enter your password"
           />
         </div>
@@ -218,7 +218,7 @@
               required
               autocomplete="one-time-code"
               aria-describedby="totp-help"
-              class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-center text-lg tracking-[0.3em] text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-center text-lg tracking-[0.3em] text-white placeholder-surface-500 transition focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               placeholder="000000"
             />
             <p id="totp-help" class="mt-1.5 text-xs text-surface-400">

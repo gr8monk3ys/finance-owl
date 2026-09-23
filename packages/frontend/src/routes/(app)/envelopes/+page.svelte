@@ -177,7 +177,7 @@
           {#each spendingEnvelopes as envelope}
             <button
               type="button"
-              class="rounded-xl border border-surface-700 bg-surface-800 p-4 text-left transition hover:border-surface-600 hover:bg-surface-750 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              class="rounded-xl border border-surface-700 bg-surface-800 p-4 text-left transition hover:border-surface-600 hover:bg-surface-750 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
               onclick={() => (editingEnvelope = envelope)}
             >
               <div class="flex items-start justify-between">
@@ -261,7 +261,7 @@
           {#each goalEnvelopes as envelope}
             <button
               type="button"
-              class="rounded-xl border border-surface-700 bg-surface-800 p-4 text-left transition hover:border-surface-600 hover:bg-surface-750 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              class="rounded-xl border border-surface-700 bg-surface-800 p-4 text-left transition hover:border-surface-600 hover:bg-surface-750 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
               onclick={() => (editingEnvelope = envelope)}
             >
               <div class="flex items-start justify-between">
@@ -373,7 +373,7 @@
         name="name"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder:text-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder:text-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         placeholder="e.g. Groceries, Rent, Emergency Fund"
       />
     </div>
@@ -389,7 +389,7 @@
           type="number"
           step="0.01"
           min="0"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           placeholder="0.00"
         />
       </div>
@@ -400,7 +400,7 @@
         <select
           id="envelopePeriod"
           name="period"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="monthly">Monthly</option>
           <option value="weekly">Weekly</option>
@@ -416,7 +416,7 @@
       <select
         id="envelopeCategory"
         name="categoryId"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
         <option value="">None</option>
         {#each data.categories as cat}
@@ -446,7 +446,7 @@
         <input
           name="rollover"
           type="checkbox"
-          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
         />
         <span class="text-sm text-surface-300">Roll over unused</span>
       </label>
@@ -454,7 +454,7 @@
         <input
           name="isGoal"
           type="checkbox"
-          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
         />
         <span class="text-sm text-surface-300">Savings goal</span>
       </label>
@@ -470,7 +470,7 @@
         type="number"
         step="0.01"
         min="0"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         placeholder="Optional"
       />
     </div>
@@ -537,7 +537,7 @@
           step="0.01"
           min="0.01"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           placeholder="0.00"
         />
       </div>
@@ -583,7 +583,7 @@
         id="transferFrom"
         name="fromEnvelopeId"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
         <option value="">Select...</option>
         {#each data.envelopes as env}
@@ -602,7 +602,7 @@
         id="transferTo"
         name="toEnvelopeId"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
         <option value="">Select...</option>
         {#each data.envelopes as env}
@@ -622,7 +622,7 @@
         step="0.01"
         min="0.01"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         placeholder="0.00"
       />
     </div>
@@ -663,7 +663,7 @@
           type="text"
           required
           value={editingEnvelope.name}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -678,7 +678,7 @@
           step="0.01"
           min="0"
           value={editingEnvelope.budgetedAmount}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -710,7 +710,7 @@
             name="rollover"
             type="checkbox"
             checked={editingEnvelope.rollover}
-            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
           />
           <span class="text-sm text-surface-300">Roll over unused</span>
         </label>
@@ -719,7 +719,7 @@
             name="isGoal"
             type="checkbox"
             checked={editingEnvelope.isGoal}
-            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
           />
           <span class="text-sm text-surface-300">Savings goal</span>
         </label>
@@ -736,7 +736,7 @@
           step="0.01"
           min="0"
           value={editingEnvelope.targetAmount ?? ''}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           placeholder="Optional"
         />
       </div>

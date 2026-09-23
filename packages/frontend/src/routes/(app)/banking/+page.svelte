@@ -1301,8 +1301,8 @@
     font-size: 0.9rem;
   }
 
-  .form-field input:focus,
-  .form-field select:focus {
+  .form-field input:focus-visible,
+  .form-field select:focus-visible {
     outline: none;
     border-color: var(--color-primary);
     box-shadow: 0 0 0 2px var(--color-primary-muted, rgba(99, 102, 241, 0.2));

@@ -505,7 +505,7 @@
                 type="text"
                 placeholder="Enter provider name..."
                 bind:value={selectedProvider}
-                class="w-full rounded-lg border border-surface-700 bg-surface-900 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="w-full rounded-lg border border-surface-700 bg-surface-900 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               />
               <p class="mt-2 text-xs text-surface-500">
                 No pre-configured providers for this category. Enter your provider name above.
@@ -545,7 +545,7 @@
               step="0.01"
               min="0"
               bind:value={currentAmount}
-              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               placeholder="e.g. 120.00"
             />
           </div>
@@ -563,7 +563,7 @@
               step="0.01"
               min="0"
               bind:value={targetAmount}
-              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               placeholder="e.g. 85.00"
             />
           </div>
@@ -1258,7 +1258,7 @@
           id="outcomeStatus"
           name="status"
           required
-          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="in_progress">Still In Progress</option>
           <option value="succeeded">Success - Got a Discount</option>
@@ -1278,7 +1278,7 @@
             name="negotiatedAmount"
             type="number"
             step="0.01"
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             placeholder="Leave blank if not successful"
           />
         </div>
@@ -1292,7 +1292,7 @@
           id="outcomeNotes"
           name="notes"
           rows="3"
-          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           placeholder="Agent name, reference number, details about the offer..."></textarea>
       </div>
 

@@ -446,7 +446,7 @@
             ? 'Ask about your spending, budgets, or transactions...'
             : 'AI is offline -- Ollama must be running'}
           disabled={!isAvailable || isAsking}
-          class="flex-1 rounded-xl border border-surface-600 bg-surface-700 px-4 py-3 text-white placeholder-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50"
+          class="flex-1 rounded-xl border border-surface-600 bg-surface-700 px-4 py-3 text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500 disabled:opacity-50"
         />
         <Button
           type="submit"

@@ -554,14 +554,14 @@
             type="text"
             placeholder="Search subscriptions..."
             bind:value={searchQuery}
-            class="w-full rounded-lg border border-surface-600 bg-surface-800 py-2 pl-10 pr-3 text-sm text-white placeholder-surface-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            class="w-full rounded-lg border border-surface-600 bg-surface-800 py-2 pl-10 pr-3 text-sm text-white placeholder-surface-500 focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
           />
         </div>
 
         <!-- Sort -->
         <select
           bind:value={sortBy}
-          class="rounded-lg border border-surface-600 bg-surface-800 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
+          class="rounded-lg border border-surface-600 bg-surface-800 px-3 py-2 text-sm text-white focus-visible:border-emerald-500 focus-visible:outline-none"
         >
           <option value="amount">Sort by Amount</option>
           <option value="name">Sort by Name</option>
@@ -572,7 +572,7 @@
         <!-- Category filter -->
         <select
           bind:value={filterCategory}
-          class="rounded-lg border border-surface-600 bg-surface-800 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
+          class="rounded-lg border border-surface-600 bg-surface-800 px-3 py-2 text-sm text-white focus-visible:border-emerald-500 focus-visible:outline-none"
         >
           <option value="all">All Categories</option>
           {#each uniqueCategories as cat}
@@ -921,7 +921,7 @@
         name="name"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         placeholder="Netflix"
       />
     </div>
@@ -934,7 +934,7 @@
         id="subMerchant"
         name="merchantName"
         type="text"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         placeholder="Netflix Inc"
       />
     </div>
@@ -949,7 +949,7 @@
           step="0.01"
           min="0"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
           placeholder="15.99"
         />
       </div>
@@ -961,7 +961,7 @@
           id="subFrequency"
           name="frequency"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         >
           <option value="weekly">Weekly</option>
           <option value="biweekly">Biweekly</option>
@@ -979,7 +979,7 @@
       <select
         id="subCategory"
         name="categoryId"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
       >
         <option value="">None</option>
         {#each data.categories as cat}
@@ -996,7 +996,7 @@
         id="subNextDate"
         name="nextExpectedDate"
         type="date"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
       />
     </div>
 
@@ -1036,7 +1036,7 @@
           type="text"
           required
           value={editingSubscription.merchantName || editingSubscription.name}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         />
       </div>
 
@@ -1053,7 +1053,7 @@
             min="0"
             required
             value={editingSubscription.estimatedAmount}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
           />
         </div>
         <div>
@@ -1064,7 +1064,7 @@
             id="editSubFreq"
             name="frequency"
             required
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
           >
             {#each ['weekly', 'biweekly', 'monthly', 'quarterly', 'annual'] as freq}
               <option value={freq} selected={editingSubscription.frequency === freq}>
@@ -1082,7 +1082,7 @@
         <select
           id="editSubCategory"
           name="categoryId"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         >
           <option value="">None</option>
           {#each data.categories as cat}
@@ -1102,7 +1102,7 @@
           name="nextExpectedDate"
           type="date"
           value={editingSubscription.nextExpectedDate ?? ''}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         />
       </div>
 

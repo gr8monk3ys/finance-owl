@@ -372,7 +372,7 @@
                   step="100"
                   min="0"
                   value={data.profile.currentSavings}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -389,7 +389,7 @@
                   step="50"
                   min="0"
                   value={data.profile.monthlyContribution}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -410,7 +410,7 @@
                   min="0"
                   max="100"
                   value={data.profile.employerMatch}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <span class="absolute right-3 top-2.5 text-surface-400">%</span>
               </div>
@@ -422,7 +422,7 @@
               <select
                 id="riskTolerance"
                 name="riskTolerance"
-                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               >
                 <option
                   value="conservative"
@@ -455,7 +455,7 @@
                   step="100"
                   min="0"
                   value={data.profile.desiredMonthlyIncome}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -475,7 +475,7 @@
                   step="100"
                   min="0"
                   value={data.profile.socialSecurityEstimate}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -492,7 +492,7 @@
                   step="100"
                   min="0"
                   value={data.profile.pensionAmount}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -513,7 +513,7 @@
                   min="0"
                   max="15"
                   value={data.profile.inflationRate}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <span class="absolute right-3 top-2.5 text-surface-400">%</span>
               </div>
@@ -531,7 +531,7 @@
                   min="0"
                   max="30"
                   value={data.profile.expectedReturn}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <span class="absolute right-3 top-2.5 text-surface-400">%</span>
               </div>
@@ -580,7 +580,7 @@
                 <input
                   type="text"
                   bind:value={scenario.label}
-                  class="bg-transparent text-sm font-medium text-white focus:outline-none"
+                  class="rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                   placeholder="Scenario name"
                 />
                 <button
@@ -611,7 +611,7 @@
                     min="50"
                     max="80"
                     bind:value={scenario.retirementAge}
-                    class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                    class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                   />
                 </div>
                 <div>
@@ -624,7 +624,7 @@
                     min="0"
                     step="50"
                     bind:value={scenario.monthlyContribution}
-                    class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                    class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                   />
                 </div>
               </div>
@@ -773,7 +773,7 @@
                   step="1000"
                   min="0"
                   value={data.profile.currentSavings || 100000}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -790,7 +790,7 @@
                   min="0"
                   max="5"
                   value="1.0"
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <span class="absolute right-3 top-2.5 text-surface-400">%</span>
               </div>
@@ -806,7 +806,7 @@
                 min="1"
                 max="50"
                 value={data.projection?.yearsToRetirement ?? 35}
-                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               />
             </div>
           </div>

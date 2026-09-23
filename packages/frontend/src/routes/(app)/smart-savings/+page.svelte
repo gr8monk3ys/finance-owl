@@ -825,7 +825,7 @@
         name="name"
         type="text"
         required
-        class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         placeholder="e.g., Coffee fund round-up"
       />
     </div>
@@ -839,7 +839,7 @@
         <select
           id="roundUpTo"
           name="roundUpTo"
-          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="1">$1.00</option>
           <option value="5">$5.00</option>
@@ -864,7 +864,7 @@
             step="1"
             value="10"
             required
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 pr-8 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 pr-8 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
           <span class="absolute right-3 top-1/2 -translate-y-1/2 text-surface-500">%</span>
         </div>
@@ -885,7 +885,7 @@
             step="1"
             value="200"
             required
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <p class="mt-1 text-xs text-surface-500">A fixed amount automatically saved each month</p>
@@ -905,7 +905,7 @@
             step="1"
             value="50"
             required
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 pr-8 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 pr-8 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
           <span class="absolute right-3 top-1/2 -translate-y-1/2 text-surface-500">%</span>
         </div>

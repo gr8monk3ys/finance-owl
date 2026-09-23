@@ -146,7 +146,7 @@
               oninput={onDownPaymentChange}
               min="0"
               step="1000"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -161,7 +161,7 @@
                 bind:value={downPayment}
                 oninput={onDownPaymentChange}
                 min="0"
-                class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               />
               <div class="flex items-center gap-1">
                 <input
@@ -171,7 +171,7 @@
                   min="0"
                   max="100"
                   step="0.5"
-                  class="w-20 rounded-lg border border-surface-600 bg-surface-700 px-2 py-2 text-white text-right focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="w-20 rounded-lg border border-surface-600 bg-surface-700 px-2 py-2 text-white text-right focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <span class="text-surface-400 text-sm">%</span>
               </div>
@@ -189,7 +189,7 @@
               min="0"
               max="30"
               step="0.125"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -222,7 +222,7 @@
               bind:value={propertyTax}
               min="0"
               step="100"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -236,7 +236,7 @@
               bind:value={homeInsurance}
               min="0"
               step="100"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -252,7 +252,7 @@
                 bind:value={pmi}
                 min="0"
                 step="100"
-                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               />
             </div>
           {/if}

@@ -362,7 +362,7 @@
             name="accountId"
             bind:value={selectedAccountId}
             required
-            class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="">Choose an account...</option>
             {#each data.accounts as account}
@@ -430,7 +430,7 @@
                   >
                   <select
                     id="col-date"
-                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none"
+                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.date}
                     onchange={(e) =>
                       updateMapping('date', parseInt((e.target as HTMLSelectElement).value))}
@@ -446,7 +446,7 @@
                   >
                   <select
                     id="col-description"
-                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none"
+                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.description}
                     onchange={(e) =>
                       updateMapping('description', parseInt((e.target as HTMLSelectElement).value))}
@@ -462,7 +462,7 @@
                   >
                   <select
                     id="col-amount"
-                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none"
+                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.amount}
                     onchange={(e) =>
                       updateMapping('amount', parseInt((e.target as HTMLSelectElement).value))}
@@ -479,7 +479,7 @@
                   >
                   <select
                     id="col-category"
-                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none"
+                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.category ?? -1}
                     onchange={(e) => {
                       const val = parseInt((e.target as HTMLSelectElement).value);
@@ -632,7 +632,7 @@
                 type="checkbox"
                 checked={selectAll}
                 onchange={toggleAll}
-                class="rounded border-surface-500 bg-surface-700 text-primary-600 focus:ring-primary-500"
+                class="rounded border-surface-500 bg-surface-700 text-primary-600 focus-visible:ring-primary-500"
               />
               Select all
             </label>
@@ -667,7 +667,7 @@
                     type="checkbox"
                     checked={row.selected}
                     onchange={() => toggleRow(idx)}
-                    class="rounded border-surface-500 bg-surface-700 text-primary-600 focus:ring-primary-500"
+                    class="rounded border-surface-500 bg-surface-700 text-primary-600 focus-visible:ring-primary-500"
                   />
                 </div>
                 <div class="col-span-2 text-sm text-surface-300">

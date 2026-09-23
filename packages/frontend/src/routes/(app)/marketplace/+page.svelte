@@ -189,7 +189,7 @@
     <select
       value={data.sort}
       onchange={handleSortChange}
-      class="rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+      class="rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
     >
       <option value="rating">Top Rated</option>
       <option value="interest_rate">Interest Rate</option>

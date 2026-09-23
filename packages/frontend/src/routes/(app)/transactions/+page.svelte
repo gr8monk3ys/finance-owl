@@ -275,7 +275,7 @@
             placeholder="Search by name, merchant, or amount…"
             autocomplete="off"
             spellcheck="false"
-            class="w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-surface-500 transition-colors focus:border-primary-500/50 focus:bg-surface-700 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+            class="w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-surface-500 transition-colors focus-visible:border-primary-500/50 focus-visible:bg-surface-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             onkeydown={(e) => e.key === 'Enter' && applySearchImmediately()}
           />
         </div>
@@ -341,7 +341,7 @@
             <select
               id="filterAccount"
               bind:value={filterAccountId}
-              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             >
               <option value="">All accounts</option>
               {#each data.accounts as account}
@@ -356,7 +356,7 @@
             <select
               id="filterCategory"
               bind:value={filterCategoryId}
-              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             >
               <option value="">All categories</option>
               {#each getBudgetCategoryTree(data.categories) as parent}
@@ -375,7 +375,7 @@
               id="filterStartDate"
               type="date"
               bind:value={filterStartDate}
-              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             />
           </div>
           <div>
@@ -386,7 +386,7 @@
               id="filterEndDate"
               type="date"
               bind:value={filterEndDate}
-              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             />
           </div>
         </div>
@@ -642,7 +642,7 @@
         id="txAccount"
         name="accountId"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
       >
         {#each data.accounts as account}
           <option value={account.id}>{account.name}</option>
@@ -661,7 +661,7 @@
             type="number"
             step="0.01"
             required
-            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             placeholder="0.00"
           />
         </div>
@@ -674,7 +674,7 @@
           type="date"
           required
           value={new Date().toISOString().split('T')[0]}
-          class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+          class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
         />
       </div>
     </div>
@@ -686,7 +686,7 @@
         name="name"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
         placeholder="e.g., Grocery Store"
       />
     </div>
@@ -699,7 +699,7 @@
         id="txMerchant"
         name="merchantName"
         type="text"
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
         placeholder="e.g., Whole Foods"
       />
     </div>
@@ -711,7 +711,7 @@
       <select
         id="txCategory"
         name="categoryId"
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
       >
         <option value="">Auto-categorize</option>
         {#each getBudgetCategoryTree(data.categories) as parent}
@@ -731,7 +731,7 @@
         id="txNotes"
         name="notes"
         rows="2"
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
         placeholder="Add a note..."></textarea>
     </div>
 
@@ -819,7 +819,7 @@
           <select
             id="detailCategory"
             name="categoryId"
-            class="flex-1 rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+            class="flex-1 rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             value={selectedTransaction.categoryId || ''}
           >
             <option value="">Uncategorized</option>
@@ -843,7 +843,7 @@
             id="detailNotes"
             name="notes"
             rows="2"
-            class="flex-1 rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+            class="flex-1 rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             value={selectedTransaction.notes || ''}
             placeholder="Add a note..."></textarea>
           <Button type="submit" size="sm">Save</Button>

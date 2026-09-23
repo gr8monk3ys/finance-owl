@@ -177,7 +177,7 @@
           type="text"
           placeholder="Search articles..."
           bind:value={searchQuery}
-          class="w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-10 pr-4 text-sm text-white placeholder-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-10 pr-4 text-sm text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
       <Button type="submit" size="sm">Search</Button>

@@ -183,7 +183,7 @@
               onkeydown={(e) => {
                 if (e.key === 'Enter') checkAffordability();
               }}
-              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-1.5 pl-6 pr-2 text-sm text-white placeholder-surface-600 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-1.5 pl-6 pr-2 text-sm text-white placeholder-surface-600 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <button

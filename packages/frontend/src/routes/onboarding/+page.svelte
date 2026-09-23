@@ -529,12 +529,12 @@
                       type="text"
                       bind:value={account.name}
                       placeholder="Account name (e.g., Chase Checking)"
-                      class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                      class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                     />
                     <div class="flex gap-3">
                       <select
                         bind:value={account.type}
-                        class="flex-1 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                        class="flex-1 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                       >
                         <option value="checking">Checking</option>
                         <option value="savings">Savings</option>
@@ -544,7 +544,7 @@
                         type="text"
                         bind:value={account.balance}
                         placeholder="$0.00"
-                        class="w-32 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                        class="w-32 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                       />
                     </div>
                   </div>
@@ -937,6 +937,12 @@
     border-radius: 9999px;
     background: rgb(51 65 85 / 0.8);
     outline: none;
+  }
+
+  /* The bare outline above is replaced for keyboard users here. */
+  input[type='range']:focus-visible {
+    outline: 2px solid #10b981;
+    outline-offset: 4px;
   }
 
   input[type='range']::-webkit-slider-thumb {

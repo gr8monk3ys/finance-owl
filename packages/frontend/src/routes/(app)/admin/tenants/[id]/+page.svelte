@@ -161,7 +161,7 @@
             type="text"
             bind:value={tenantName}
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 
@@ -189,7 +189,7 @@
             bind:value={customDomain}
             placeholder="app.acme.com"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 
@@ -200,7 +200,7 @@
               id="plan"
               bind:value={plan}
               class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-								focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+								focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             >
               <option value="free">Free</option>
               <option value="pro">Pro</option>
@@ -217,7 +217,7 @@
               bind:value={maxUsers}
               min="1"
               class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-								focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+								focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             />
           </div>
         </div>
@@ -247,7 +247,7 @@
             bind:value={appName}
             placeholder="Finance Owl"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 
@@ -267,7 +267,7 @@
                 type="text"
                 bind:value={primaryColor}
                 class="flex-1 rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white font-mono
-									focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+									focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
               />
             </div>
           </div>
@@ -286,7 +286,7 @@
                 type="text"
                 bind:value={accentColor}
                 class="flex-1 rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white font-mono
-									focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+									focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
               />
             </div>
           </div>
@@ -302,7 +302,7 @@
             bind:value={logoUrl}
             placeholder="https://example.com/logo.svg"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 
@@ -316,7 +316,7 @@
             bind:value={faviconUrl}
             placeholder="https://example.com/favicon.ico"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 

@@ -75,7 +75,7 @@
             onclick={onclose}
             class="rounded-lg p-1.5 text-surface-400 transition-all duration-150
 							hover:bg-surface-700 hover:text-white
-							focus:outline-none focus:ring-2 focus:ring-primary-500/40"
+							focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40"
             aria-label="Close dialog"
           >
             <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

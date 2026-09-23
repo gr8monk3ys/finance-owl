@@ -232,13 +232,15 @@
             bind:value={newTenantName}
             placeholder="Acme Corp"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 
         <div>
           <label for="slug" class="block text-sm font-medium text-surface-300 mb-1.5">Slug</label>
-          <div class="flex items-center rounded-lg border border-surface-600/50 bg-surface-700/50">
+          <div
+            class="flex items-center rounded-lg border border-surface-600/50 bg-surface-700/50 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500"
+          >
             <input
               id="slug"
               name="slug"
@@ -246,7 +248,7 @@
               bind:value={newTenantSlug}
               placeholder="acme"
               class="flex-1 bg-transparent px-3 py-2 text-sm text-white
-								placeholder:text-surface-500 focus:outline-none"
+								placeholder:text-surface-500 focus-visible:outline-none"
             />
             <span class="pr-3 text-xs text-surface-500">.financeowl.com</span>
           </div>

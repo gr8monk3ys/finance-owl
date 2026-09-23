@@ -67,12 +67,12 @@
       aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
       class="block w-full rounded-lg border bg-surface-700/50 px-3 py-2.5 text-white
 				placeholder:text-surface-500 transition-all duration-200
-				focus:outline-none focus:ring-2 focus:ring-offset-0
+				focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0
 				{hasPrefix ? 'pl-10' : ''}
 				{hasSuffix ? 'pr-10' : ''}
 				{error
-        ? 'border-red-500/60 focus:border-red-500 focus:ring-red-500/20 shadow-sm shadow-red-500/5'
-        : 'border-surface-600/80 hover:border-surface-500 focus:border-primary-500 focus:ring-primary-500/20'}
+        ? 'border-red-500/60 focus-visible:border-red-500 focus-visible:ring-red-500/20 shadow-sm shadow-red-500/5'
+        : 'border-surface-600/80 hover:border-surface-500 focus-visible:border-primary-500 focus-visible:ring-primary-500/20'}
 				{className}"
       {...rest}
     />

@@ -92,7 +92,7 @@
               />
               <label
                 for="emailBillReminders"
-                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus:ring-2 peer-focus:ring-primary-500"
+                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500"
               ></label>
               <label
                 for="emailBillReminders"
@@ -118,7 +118,7 @@
               />
               <label
                 for="emailBudgetAlerts"
-                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus:ring-2 peer-focus:ring-primary-500"
+                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500"
               ></label>
               <label
                 for="emailBudgetAlerts"
@@ -144,7 +144,7 @@
               />
               <label
                 for="emailAnomalies"
-                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus:ring-2 peer-focus:ring-primary-500"
+                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500"
               ></label>
               <label
                 for="emailAnomalies"
@@ -170,7 +170,7 @@
               />
               <label
                 for="emailWeeklyDigest"
-                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus:ring-2 peer-focus:ring-primary-500"
+                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500"
               ></label>
               <label
                 for="emailWeeklyDigest"
