@@ -104,6 +104,11 @@
   }
 </script>
 
+<svelte:head>
+  <!-- Warm the connection before Link loads its script from Plaid's CDN. -->
+  <link rel="preconnect" href="https://cdn.plaid.com" />
+</svelte:head>
+
 {#if error}
   <div role="alert" class="mb-2 rounded-lg bg-red-900/50 px-3 py-2 text-sm text-red-300">
     {error}

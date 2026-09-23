@@ -113,7 +113,13 @@
     <div class="flex h-16 items-center justify-between border-b border-surface-700/50 px-5">
       <a href="/dashboard" class="flex items-center gap-2.5 group">
         {#if currentLogo}
-          <img src={currentLogo} alt={currentAppName} class="h-8 w-8 rounded-lg object-contain" />
+          <img
+            src={currentLogo}
+            alt={currentAppName}
+            width="32"
+            height="32"
+            class="h-8 w-8 rounded-lg object-contain"
+          />
         {:else}
           <div
             class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/20 border border-primary-500/30 transition-colors duration-200 group-hover:bg-primary-600/30 group-hover:border-primary-500/50"

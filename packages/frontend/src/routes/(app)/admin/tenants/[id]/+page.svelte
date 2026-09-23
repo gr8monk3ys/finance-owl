@@ -354,7 +354,13 @@
           <p class="text-xs font-medium uppercase tracking-wider text-surface-500 mb-3">Preview</p>
           <div class="flex items-center gap-3">
             {#if logoUrl}
-              <img src={logoUrl} alt="Logo preview" class="h-8 w-8 rounded-lg object-contain" />
+              <img
+                width="32"
+                height="32"
+                src={logoUrl}
+                alt="Logo preview"
+                class="h-8 w-8 rounded-lg object-contain"
+              />
             {:else}
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white"

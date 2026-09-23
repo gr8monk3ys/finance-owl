@@ -114,6 +114,9 @@
             >
               {#if tenant.logoUrl}
                 <img
+                  width="24"
+                  height="24"
+                  loading="lazy"
                   src={tenant.logoUrl}
                   alt={tenant.name}
                   class="h-6 w-6 rounded object-contain"

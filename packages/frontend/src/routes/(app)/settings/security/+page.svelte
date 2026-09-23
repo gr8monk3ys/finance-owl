@@ -552,6 +552,8 @@
 
             <div class="flex justify-center rounded-lg bg-white p-4">
               <img
+                width="192"
+                height="192"
                 src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={encodeURIComponent(
                   totpSetupData.otpauth,
                 )}"
