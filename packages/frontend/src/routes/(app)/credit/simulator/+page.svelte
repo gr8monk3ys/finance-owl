@@ -150,7 +150,7 @@
   </div>
 
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+    <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
       {form.error}
     </div>
   {/if}
@@ -246,7 +246,7 @@
     <!-- Simulation Result -->
     {#if form?.simulationResult}
       <Card>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4" role="status">
           <div
             class="flex h-12 w-12 items-center justify-center rounded-full {form.simulationResult
               .estimatedImpact >= 0

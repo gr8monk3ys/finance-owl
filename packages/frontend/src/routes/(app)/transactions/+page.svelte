@@ -414,6 +414,7 @@
   <!-- Error -->
   {#if form?.error}
     <div
+      role="alert"
       class="flex items-center gap-2 rounded-lg border border-red-800/50 bg-red-950/50 p-3 text-sm text-red-300"
     >
       <svg

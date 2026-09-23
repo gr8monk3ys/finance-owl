@@ -135,6 +135,7 @@
 
   {#if form?.error}
     <div
+      role="alert"
       class="mx-auto max-w-md rounded-lg bg-red-900/50 px-4 py-3 text-center text-sm text-red-300"
     >
       {form.error}

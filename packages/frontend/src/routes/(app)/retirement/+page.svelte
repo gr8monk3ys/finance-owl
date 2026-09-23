@@ -145,7 +145,7 @@
 
   <!-- Error Messages -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Retirement Readiness Score -->
@@ -732,7 +732,7 @@
         {/if}
 
         {#if form?.scenarioError}
-          <div class="mt-4 rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+          <div role="alert" class="mt-4 rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
             {form.scenarioError}
           </div>
         {/if}
@@ -835,7 +835,9 @@
         </form>
 
         {#if form?.feeError}
-          <div class="mt-4 rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.feeError}</div>
+          <div role="alert" class="mt-4 rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+            {form.feeError}
+          </div>
         {/if}
 
         {#if feeAnalysis}

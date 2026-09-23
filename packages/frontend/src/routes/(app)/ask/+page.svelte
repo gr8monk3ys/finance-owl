@@ -242,7 +242,13 @@
     <div class="flex flex-col" style="height: calc(100vh - 18rem);">
       <!-- Messages area -->
       <Card class="flex-1 overflow-hidden" padding="none">
-        <div bind:this={chatContainer} class="h-full overflow-y-auto p-4 space-y-4">
+        <div
+          bind:this={chatContainer}
+          class="h-full overflow-y-auto p-4 space-y-4"
+          role="log"
+          aria-live="polite"
+          aria-label="Conversation"
+        >
           {#if messages.length === 0}
             <div class="flex h-full flex-col items-center justify-center text-center px-4">
               {#if !isAvailable}

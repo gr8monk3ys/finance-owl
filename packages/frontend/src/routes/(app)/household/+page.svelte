@@ -118,7 +118,10 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300">
+    <div
+      role="alert"
+      class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300"
+    >
       <svg
         aria-hidden="true"
         class="h-5 w-5 flex-shrink-0"

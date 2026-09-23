@@ -169,20 +169,22 @@
 
   <!-- Global messages -->
   {#if form?.categorySuccess}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
       Category created successfully.
     </div>
   {/if}
   {#if form?.categoryUpdateSuccess}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
       Category updated successfully.
     </div>
   {/if}
   {#if form?.categoryDeleteSuccess}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">Category deleted.</div>
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+      Category deleted.
+    </div>
   {/if}
   {#if form?.categoryError}
-    <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+    <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
       {form.categoryError}
     </div>
   {/if}
@@ -607,17 +609,23 @@
     </div>
 
     {#if form?.ruleSuccess}
-      <div class="mx-6 mt-4 rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+      <div
+        role="status"
+        class="mx-6 mt-4 rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300"
+      >
         Rule created successfully.
       </div>
     {/if}
     {#if form?.ruleDeleteSuccess}
-      <div class="mx-6 mt-4 rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+      <div
+        role="status"
+        class="mx-6 mt-4 rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300"
+      >
         Rule deleted.
       </div>
     {/if}
     {#if form?.ruleError}
-      <div class="mx-6 mt-4 rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+      <div role="alert" class="mx-6 mt-4 rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
         {form.ruleError}
       </div>
     {/if}

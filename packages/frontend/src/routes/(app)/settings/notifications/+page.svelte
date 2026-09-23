@@ -41,13 +41,13 @@
   </div>
 
   {#if form?.success}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
       Notification preferences saved successfully.
     </div>
   {/if}
 
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+    <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
       {form.error}
     </div>
   {/if}

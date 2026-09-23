@@ -187,6 +187,7 @@
 
   {#if error}
     <div
+      role="alert"
       class="flex items-center justify-between rounded-lg bg-red-900/50 p-3 text-sm text-red-300"
     >
       {error}

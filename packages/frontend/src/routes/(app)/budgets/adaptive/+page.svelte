@@ -195,14 +195,17 @@
 
   <!-- Error banner -->
   {#if form?.error}
-    <div class="rounded-lg border border-red-700/50 bg-red-900/30 p-4 text-sm text-red-300">
+    <div
+      role="alert"
+      class="rounded-lg border border-red-700/50 bg-red-900/30 p-4 text-sm text-red-300"
+    >
       {form.error}
     </div>
   {/if}
 
   <!-- Adjustments result banner -->
   {#if form?.adjustments && form.adjustments.length > 0}
-    <div class="rounded-lg border border-emerald-700/50 bg-emerald-900/30 p-4">
+    <div role="status" class="rounded-lg border border-emerald-700/50 bg-emerald-900/30 p-4">
       <p class="text-sm font-medium text-emerald-300">Budgets adjusted successfully!</p>
       <ul class="mt-2 space-y-1">
         {#each form.adjustments as adj}

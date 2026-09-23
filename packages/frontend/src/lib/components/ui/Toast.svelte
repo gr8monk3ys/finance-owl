@@ -31,10 +31,11 @@
   });
 </script>
 
-{#if visible}
-  <div class="fixed bottom-4 right-4 z-50 toast-enter">
+<!-- The live region stays mounted so each new toast is announced. -->
+<div class="fixed bottom-4 right-4 z-50" role="status" aria-live="polite">
+  {#if visible}
     <div
-      class="flex items-center gap-3 rounded-xl border px-4 py-3 shadow-xl shadow-black/30 backdrop-blur-sm {styles[
+      class="toast-enter flex items-center gap-3 rounded-xl border px-4 py-3 shadow-xl shadow-black/30 backdrop-blur-sm {styles[
         type
       ]}"
     >
@@ -61,5 +62,5 @@
         </svg>
       </button>
     </div>
-  </div>
-{/if}
+  {/if}
+</div>

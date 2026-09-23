@@ -147,7 +147,10 @@
 
     <!-- Error -->
     {#if form?.error}
-      <div class="rounded-lg bg-red-900/50 border border-red-800 p-4 text-sm text-red-300">
+      <div
+        role="alert"
+        class="rounded-lg bg-red-900/50 border border-red-800 p-4 text-sm text-red-300"
+      >
         {form.error}
       </div>
     {/if}

@@ -105,7 +105,7 @@
 </script>
 
 {#if error}
-  <div class="mb-2 rounded-lg bg-red-900/50 px-3 py-2 text-sm text-red-300">
+  <div role="alert" class="mb-2 rounded-lg bg-red-900/50 px-3 py-2 text-sm text-red-300">
     {error}
     <button
       onclick={() => {

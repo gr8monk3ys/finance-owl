@@ -29,7 +29,9 @@
       class="space-y-6 rounded-xl bg-surface-800 p-8 shadow-lg"
     >
       {#if form?.error}
-        <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+        <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+          {form.error}
+        </div>
       {/if}
 
       <div class="rounded-lg bg-primary-900/30 p-3 text-sm text-primary-300">

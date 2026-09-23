@@ -463,7 +463,7 @@
     }}
   >
     {#if form?.error}
-      <div class="form-error">{form.error}</div>
+      <div role="alert" class="form-error">{form.error}</div>
     {/if}
 
     {#if wizardStep === 1}
@@ -697,7 +697,7 @@
     }}
   >
     {#if form?.error}
-      <div class="form-error">{form.error}</div>
+      <div role="alert" class="form-error">{form.error}</div>
     {/if}
 
     <div class="form-grid">

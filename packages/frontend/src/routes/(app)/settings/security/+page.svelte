@@ -203,13 +203,13 @@
         </div>
 
         {#if form?.passwordSuccess}
-          <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+          <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
             Password changed successfully. All sessions have been refreshed.
           </div>
         {/if}
 
         {#if form?.passwordError}
-          <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+          <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
             {form.passwordError}
           </div>
         {/if}
@@ -276,13 +276,13 @@
       </div>
 
       {#if form?.passkeyError}
-        <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+        <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
           {form.passkeyError}
         </div>
       {/if}
 
       {#if form?.passkeyDeleteSuccess}
-        <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+        <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
           Passkey removed successfully.
         </div>
       {/if}
@@ -433,19 +433,19 @@
       </div>
 
       {#if form?.totpError}
-        <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+        <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
           {form.totpError}
         </div>
       {/if}
 
       {#if form?.totpEnableSuccess}
-        <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+        <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
           Two-factor authentication has been enabled successfully.
         </div>
       {/if}
 
       {#if form?.totpDisableSuccess}
-        <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+        <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
           Two-factor authentication has been disabled.
         </div>
       {/if}
@@ -681,13 +681,13 @@
       </div>
 
       {#if form?.logoutAllSuccess}
-        <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+        <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
           All sessions have been logged out.
         </div>
       {/if}
 
       {#if form?.logoutAllError}
-        <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+        <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
           {form.logoutAllError}
         </div>
       {/if}
