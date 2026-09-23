@@ -1,0 +1,19 @@
+# gitleaks false positives in history. Each entry is one finding in one commit
+# (fingerprint = commit:file:rule:line), so a real secret added anywhere later,
+# including these same files, still fails the scan. Checked 2026-09-22; none of
+# these is a credential and nothing needs rotating.
+
+# ENCRYPTION_KEY=replace-... : placeholder text in the example env file.
+30c194b59e7d666f40910373e6e32d3dbb888283:packages/backend/.env.example:generic-api-key:24
+
+# STRIPE_SECRET_KEY fallback 'sk_test_<word>' in the local dev bootstrap script:
+# a 19-char dictionary-word placeholder, not an issued Stripe test key (~107 chars).
+6e8fc8b241bb038b621c0a38755059a0091993ff:scripts/dev.mjs:stripe-access-token:143
+
+# CI-only ENCRYPTION_KEY fixture: the literal "0123456789abcdef" repeated four
+# times, used by the test job against its throwaway Postgres service.
+c6956c6047bc4a0ef94cda55c4f6c962869bd8c3:.github/workflows/ci.yml:generic-api-key:218
+c2c533037c6f2e98983847de01efd51715ca395f:.github/workflows/ci.yml:generic-api-key:323
+
+# Tailwind class name 'bg-surface-700' in the password-strength meter.
+e985f0f04a19017bf01c23e433262d09fe622152:packages/frontend/src/routes/auth/register/+page.svelte:generic-api-key:152
