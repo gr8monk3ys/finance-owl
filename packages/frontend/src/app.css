@@ -60,6 +60,9 @@ html {
   color-scheme: dark;
   /* Press feedback comes from hover/active styles, not the grey tap flash. */
   -webkit-tap-highlight-color: transparent;
+  /* The landing and onboarding pages have fixed top bars; keep focused
+     elements and anchor targets from scrolling underneath them. */
+  scroll-padding-top: 5rem;
 }
 
 /* In the base layer so any bg-/text- utility on an element still wins. */
