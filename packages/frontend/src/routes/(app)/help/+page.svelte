@@ -1,8 +1,12 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { publicRoutes, publicMailto, publicSite } from '$lib/config/public';
   import { Card } from '$components/ui';
 
-  let searchQuery = $state('');
+  let searchQuery = $state(readParam('q', ''));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('q', searchQuery, ''));
   let expandedItems = $state<Set<string>>(new Set());
 
   interface FaqItem {

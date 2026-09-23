@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatDecimal } from '$lib/utils/format';
   import { Card, Button, Spinner } from '$components/ui';
   import { enhance } from '$app/forms';
@@ -18,7 +19,12 @@
   let isAsking = $state(false);
   let isDetectingAnomalies = $state(false);
   let anomalies = $state<any[]>([]);
-  let activeTab = $state<'chat' | 'insights' | 'anomalies'>('chat');
+  let activeTab = $state<'chat' | 'insights' | 'anomalies'>(
+    readParam('tab', 'chat', ['chat', 'insights', 'anomalies']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'chat'));
   let chatContainer: HTMLDivElement | undefined = $state();
 
   const isAvailable = $derived(data.aiStatus?.available ?? false);

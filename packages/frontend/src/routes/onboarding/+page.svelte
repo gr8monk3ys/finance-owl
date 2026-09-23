@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import { formatCurrencyWhole } from '@finance-owl/shared';
 
@@ -134,10 +133,6 @@
 
   function toggleGoal(id: string) {
     goals = goals.map((g) => (g.id === id ? { ...g, checked: !g.checked } : g));
-  }
-
-  function goToDashboard() {
-    goto('/dashboard');
   }
 
   onMount(() => {
@@ -902,8 +897,8 @@
             </div>
           </div>
 
-          <button
-            onclick={goToDashboard}
+          <a
+            href="/dashboard"
             class="mt-10 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:-translate-y-0.5"
           >
             Go to Dashboard
@@ -917,7 +912,7 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
-          </button>
+          </a>
         </div>
       {/if}
     </div>

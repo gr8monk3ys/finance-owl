@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
@@ -9,7 +10,12 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let activeTab = $state<'suggestions' | 'insights' | 'predictions' | 'patterns'>('suggestions');
+  let activeTab = $state<'suggestions' | 'insights' | 'predictions' | 'patterns'>(
+    readParam('tab', 'suggestions', ['suggestions', 'insights', 'predictions', 'patterns']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'suggestions'));
   let sensitivity = $state<'conservative' | 'moderate' | 'aggressive'>('moderate');
   let isAutoAdjusting = $state(false);
   let acceptedCategories = $state<Set<string>>(new Set());

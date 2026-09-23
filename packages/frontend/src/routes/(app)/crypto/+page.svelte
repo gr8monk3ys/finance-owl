@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatPercent as fmtPercent } from '$lib/utils/format';
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
@@ -8,7 +9,9 @@
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
   // Tab state
-  let activeTab = $state<'holdings' | 'transactions' | 'watchlist'>('holdings');
+  let activeTab = $state<'holdings' | 'transactions' | 'watchlist'>(
+    readParam('tab', 'holdings', ['holdings', 'transactions', 'watchlist']),
+  );
 
   // Modal states
   let showAddHolding = $state(false);
@@ -22,7 +25,7 @@
   let selectedHolding = $state<any>(null);
   let selectedChartSymbol = $state('');
   let selectedChartName = $state('');
-  let chartPeriod = $state(30);
+  let chartPeriod = $state(Number(readParam('period', '30', ['7', '30', '90', '365'])));
   let chartData = $state<Array<[number, number]>>([]);
   let chartLoading = $state(false);
   let deleteHoldingId = $state('');
@@ -36,8 +39,14 @@
   let watchlistName = $state('');
 
   // Sorting
-  let sortField = $state<string>('value');
-  let sortDir = $state<'asc' | 'desc'>('desc');
+  let sortField = $state<string>(readParam('sort', 'value'));
+  let sortDir = $state<'asc' | 'desc'>(readParam('dir', 'desc', ['asc', 'desc']));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'holdings'));
+  $effect(() => syncParam('period', String(chartPeriod), '30'));
+  $effect(() => syncParam('sort', sortField, 'value'));
+  $effect(() => syncParam('dir', sortDir, 'desc'));
 
   // Refresh loading state
   let refreshing = $state(false);

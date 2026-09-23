@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { Card, Button } from '$components/ui';
@@ -8,7 +9,12 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let activeTab = $state<'spending' | 'income-expense' | 'net-worth' | 'trends'>('spending');
+  let activeTab = $state<'spending' | 'income-expense' | 'net-worth' | 'trends'>(
+    readParam('tab', 'spending', ['spending', 'income-expense', 'net-worth', 'trends']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'spending'));
 
   // Spending tab state
   let startDate = $state(

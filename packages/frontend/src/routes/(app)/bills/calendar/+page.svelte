@@ -1,13 +1,17 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
-  import { goto, invalidateAll } from '$app/navigation';
+  import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt, formatDateWith, formatMonthYear } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let viewMode = $state<'month' | 'week'>('month');
+  let viewMode = $state<'month' | 'week'>(readParam('view', 'month', ['month', 'week']));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('view', viewMode, 'month'));
   let selectedDate = $state<string | null>(null);
   let showDayDetail = $state(false);
 
@@ -23,30 +27,21 @@
 
   const monthLabel = $derived(formatMonthYear(new Date(year, month - 1, 1)));
 
-  function prevMonth() {
-    let newMonth = month - 1;
-    let newYear = year;
-    if (newMonth < 1) {
-      newMonth = 12;
-      newYear--;
-    }
-    goto(`/bills/calendar?year=${newYear}&month=${newMonth}`);
+  // Month navigation is plain links, so it can be opened in a new tab.
+  function calendarHref(y: number, m: number): string {
+    const view = viewMode === 'month' ? '' : `&view=${viewMode}`;
+    return `/bills/calendar?year=${y}&month=${m}${view}`;
   }
-
-  function nextMonth() {
-    let newMonth = month + 1;
-    let newYear = year;
-    if (newMonth > 12) {
-      newMonth = 1;
-      newYear++;
-    }
-    goto(`/bills/calendar?year=${newYear}&month=${newMonth}`);
-  }
-
-  function goToToday() {
+  const prevMonthHref = $derived(
+    month === 1 ? calendarHref(year - 1, 12) : calendarHref(year, month - 1),
+  );
+  const nextMonthHref = $derived(
+    month === 12 ? calendarHref(year + 1, 1) : calendarHref(year, month + 1),
+  );
+  const todayHref = $derived.by(() => {
     const now = new Date();
-    goto(`/bills/calendar?year=${now.getFullYear()}&month=${now.getMonth() + 1}`);
-  }
+    return calendarHref(now.getFullYear(), now.getMonth() + 1);
+  });
 
   // Build the full calendar grid (6 weeks x 7 days)
   const calendarGrid = $derived.by(() => {
@@ -261,11 +256,10 @@
     <!-- Calendar navigation -->
     <div class="flex items-center justify-between border-b border-surface-700 px-4 py-3">
       <div class="flex items-center gap-2">
-        <button
+        <a
           aria-label="Previous month"
-          type="button"
+          href={prevMonthHref}
           class="rounded-lg p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-white"
-          onclick={prevMonth}
         >
           <svg
             aria-hidden="true"
@@ -277,13 +271,12 @@
           >
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
-        </button>
+        </a>
         <h3 class="min-w-[180px] text-center text-lg font-semibold text-white">{monthLabel}</h3>
-        <button
+        <a
           aria-label="Next month"
-          type="button"
+          href={nextMonthHref}
           class="rounded-lg p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-white"
-          onclick={nextMonth}
         >
           <svg
             aria-hidden="true"
@@ -295,14 +288,13 @@
           >
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
           </svg>
-        </button>
-        <button
-          type="button"
+        </a>
+        <a
+          href={todayHref}
           class="ml-2 rounded-md px-2.5 py-1 text-xs font-medium text-primary-400 transition hover:bg-surface-700"
-          onclick={goToToday}
         >
           Today
-        </button>
+        </a>
       </div>
 
       <!-- View toggle -->

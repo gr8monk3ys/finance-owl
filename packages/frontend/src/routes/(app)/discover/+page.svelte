@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -7,10 +8,16 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let activeSection = $state<'unclaimed' | 'recommendations'>('unclaimed');
+  let activeSection = $state<'unclaimed' | 'recommendations'>(
+    readParam('section', 'unclaimed', ['unclaimed', 'recommendations']),
+  );
   let searchLoading = $state(false);
   let generateLoading = $state(false);
-  let filterType = $state<string>('all');
+  let filterType = $state<string>(readParam('type', 'all'));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('section', activeSection, 'unclaimed'));
+  $effect(() => syncParam('type', filterType, 'all'));
 
   $effect(() => {
     if (form?.success) {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatPercent, formatDecimal } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { goto, invalidateAll } from '$app/navigation';
@@ -9,7 +10,12 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let activeTab = $state<'holdings' | 'allocation' | 'performance'>('holdings');
+  let activeTab = $state<'holdings' | 'allocation' | 'performance'>(
+    readParam('tab', 'holdings', ['holdings', 'allocation', 'performance']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'holdings'));
   let syncing = $state(false);
 
   $effect(() => {

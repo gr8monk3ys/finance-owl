@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Badge } from '$components/ui';
@@ -6,7 +7,10 @@
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
-  let billingInterval = $state<'month' | 'year'>('month');
+  let billingInterval = $state<'month' | 'year'>(readParam('billing', 'month', ['month', 'year']));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('billing', billingInterval, 'month'));
   let checkoutLoading = $state<string | null>(null);
   let portalLoading = $state(false);
   let cancelLoading = $state(false);

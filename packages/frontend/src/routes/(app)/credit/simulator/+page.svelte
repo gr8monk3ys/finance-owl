@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
@@ -11,7 +12,10 @@
   let showProfileModal = $state(false);
   let saving = $state(false);
   let simulating = $state(false);
-  let activeScenario = $state<string | null>(null);
+  let activeScenario = $state<string | null>(readParam('scenario', '') || null);
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('scenario', activeScenario, null));
   let scenarioAmount = $state(5000);
   let scenarioCreditLimit = $state(5000);
   let scenarioCardAge = $state(24);

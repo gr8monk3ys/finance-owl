@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
@@ -19,14 +20,18 @@
   let selectedStrategy = $state('avalanche');
   let extraPayment = $state(200);
   let showPayoffResults = $state(false);
-  let expandedSchedule = $state<string | null>(null);
+  let expandedSchedule = $state<string | null>(readParam('schedule', '') || null);
 
   // Get plan/comparison from form action result
   let payoffPlan = $derived(form?.plan ?? null);
   let strategyComparison = $derived(form?.comparison ?? null);
 
   // Active tab: 'debts' or 'strategy'
-  let activeTab = $state<'debts' | 'strategy'>('debts');
+  let activeTab = $state<'debts' | 'strategy'>(readParam('tab', 'debts', ['debts', 'strategy']));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('schedule', expandedSchedule, null));
+  $effect(() => syncParam('tab', activeTab, 'debts'));
 
   $effect(() => {
     if (form?.success && !form?.plan && !form?.payments) {

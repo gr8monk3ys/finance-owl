@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
@@ -10,11 +11,22 @@
 
   let showCreateModal = $state(false);
   let editingSubscription = $state<any>(null);
-  let viewMode = $state<'monthly' | 'annual'>('monthly');
-  let searchQuery = $state('');
-  let sortBy = $state<'amount' | 'name' | 'date' | 'category'>('amount');
-  let filterCategory = $state<string>('all');
-  let activeTab = $state<'subscriptions' | 'calendar' | 'insights'>('subscriptions');
+  let viewMode = $state<'monthly' | 'annual'>(readParam('view', 'monthly', ['monthly', 'annual']));
+  let searchQuery = $state(readParam('q', ''));
+  let sortBy = $state<'amount' | 'name' | 'date' | 'category'>(
+    readParam('sort', 'amount', ['amount', 'name', 'date', 'category']),
+  );
+  let filterCategory = $state<string>(readParam('category', 'all'));
+  let activeTab = $state<'subscriptions' | 'calendar' | 'insights'>(
+    readParam('tab', 'subscriptions', ['subscriptions', 'calendar', 'insights']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('view', viewMode, 'monthly'));
+  $effect(() => syncParam('q', searchQuery, ''));
+  $effect(() => syncParam('sort', sortBy, 'amount'));
+  $effect(() => syncParam('category', filterCategory, 'all'));
+  $effect(() => syncParam('tab', activeTab, 'subscriptions'));
 
   $effect(() => {
     if (form?.success) {

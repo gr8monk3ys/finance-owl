@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
@@ -12,7 +13,12 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let activeTab = $state<'properties' | 'vehicles'>('properties');
+  let activeTab = $state<'properties' | 'vehicles'>(
+    readParam('tab', 'properties', ['properties', 'vehicles']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'properties'));
   let showAddPropertyModal = $state(false);
   let showAddVehicleModal = $state(false);
   let editingProperty = $state<any>(null);

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { Card, Button, Modal, Input } from '$components/ui';
@@ -17,7 +18,12 @@
   let transferType = $state<'internal' | 'external'>('internal');
 
   // Active tab
-  let activeTab = $state<'overview' | 'transfers' | 'interest'>('overview');
+  let activeTab = $state<'overview' | 'transfers' | 'interest'>(
+    readParam('tab', 'overview', ['overview', 'transfers', 'interest']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'overview'));
 
   // Derived
   const accounts = $derived(data.accounts);

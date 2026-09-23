@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll, goto } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -9,7 +10,12 @@
 
   let showAddModal = $state(false);
   let editingDocument = $state<any>(null);
-  let activeTab = $state<'summary' | 'documents' | 'deductions'>('summary');
+  let activeTab = $state<'summary' | 'documents' | 'deductions'>(
+    readParam('tab', 'summary', ['summary', 'documents', 'deductions']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'summary'));
 
   $effect(() => {
     if (form?.success) {

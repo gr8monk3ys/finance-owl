@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -10,8 +11,14 @@
   let showFlagModal = $state(false);
   let resolvingFlag = $state<any>(null);
   let resolveComment = $state('');
-  let activeTab = $state<'mine' | 'household'>('mine');
-  let statusFilter = $state<'all' | 'open' | 'resolved'>('all');
+  let activeTab = $state<'mine' | 'household'>(readParam('tab', 'mine', ['mine', 'household']));
+  let statusFilter = $state<'all' | 'open' | 'resolved'>(
+    readParam('status', 'all', ['all', 'open', 'resolved']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'mine'));
+  $effect(() => syncParam('status', statusFilter, 'all'));
 
   $effect(() => {
     if (form?.success) {

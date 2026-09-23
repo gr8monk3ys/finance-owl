@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll, goto } from '$app/navigation';
   import { Card, Button, Modal, Spinner } from '$components/ui';
@@ -13,7 +14,10 @@
   let selectedProvider = $state<any>(null);
   let providerLookup = $state<any>(null);
   let cancellationReason = $state('');
-  let providerSearch = $state('');
+  let providerSearch = $state(readParam('q', ''));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('q', providerSearch, ''));
   let showEmailModal = $state(false);
   let showScriptModal = $state(false);
   let copiedEmail = $state(false);

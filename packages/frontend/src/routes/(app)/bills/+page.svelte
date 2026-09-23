@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -13,7 +14,12 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let viewMode = $state<'timeline' | 'list' | 'calendar'>('timeline');
+  let viewMode = $state<'timeline' | 'list' | 'calendar'>(
+    readParam('view', 'timeline', ['timeline', 'list', 'calendar']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('view', viewMode, 'timeline'));
   let reminderDays = $state(3);
 
   $effect(() => {
