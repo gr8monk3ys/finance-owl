@@ -3,7 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatCurrencyWhole as fmt } from '@finance-owl/shared';
+  import { formatCurrencyWhole as fmt, formatNumber, formatDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -136,7 +136,9 @@
           <div class="mt-4 grid grid-cols-2 gap-3">
             {#if vehicle.mileage}
               <div>
-                <p class="text-sm font-medium text-white">{vehicle.mileage.toLocaleString()} mi</p>
+                <p class="text-sm font-medium text-white">
+                  {formatNumber(vehicle.mileage)}&nbsp;mi
+                </p>
                 <p class="text-xs text-surface-500">Mileage</p>
               </div>
             {/if}
@@ -161,7 +163,7 @@
             {/if}
             {#if vehicle.lastEstimateDate}
               <p class="text-xs text-surface-500">
-                Last estimated: {new Date(vehicle.lastEstimateDate).toLocaleDateString()}
+                Last estimated: {formatDate(vehicle.lastEstimateDate)}
               </p>
             {/if}
           </div>

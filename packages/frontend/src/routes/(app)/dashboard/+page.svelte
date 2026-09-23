@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { Card, Button, Modal } from '$components/ui';
   import { enhance } from '$app/forms';
   import NetWorthWidget from '$lib/components/dashboard/NetWorthWidget.svelte';
@@ -234,8 +235,7 @@
   }
 
   function fmtPct(pct: number): string {
-    const sign = pct >= 0 ? '+' : '';
-    return `${sign}${pct.toFixed(1)}%`;
+    return formatPercent(pct, 1, { signed: true });
   }
 
   const hasData = $derived(
@@ -438,7 +438,7 @@
               ></div>
             </div>
             <p class="mt-1 text-xs text-surface-400">
-              {data.budgetSummary.percentUsed.toFixed(0)}% of {fmt(
+              {formatPercent(data.budgetSummary.percentUsed)} of {fmt(
                 data.budgetSummary.totalBudgeted,
               )}
             </p>

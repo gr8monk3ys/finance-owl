@@ -2,7 +2,12 @@
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
-  import { formatDate, formatDateWith, formatMonthYearShort } from '@finance-owl/shared';
+  import {
+    formatDate,
+    formatDateWith,
+    formatMonthYearShort,
+    formatCurrencyWhole,
+  } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -607,11 +612,11 @@
                   </div>
                   <div class="text-right">
                     <p class="text-sm font-medium text-white">
-                      ${(account.balance || 0).toLocaleString()}
+                      {formatCurrencyWhole(account.balance || 0)}
                     </p>
                     {#if account.creditLimit}
                       <p class="text-xs text-surface-500">
-                        / ${account.creditLimit.toLocaleString()} limit
+                        / {formatCurrencyWhole(account.creditLimit)} limit
                       </p>
                     {/if}
                   </div>

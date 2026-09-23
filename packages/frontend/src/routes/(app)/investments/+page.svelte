@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent, formatDecimal } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { goto, invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -28,8 +29,7 @@
   }
 
   function fmtPct(pct: number): string {
-    const sign = pct >= 0 ? '+' : '';
-    return `${sign}${pct.toFixed(2)}%`;
+    return formatPercent(pct, 2, { signed: true });
   }
 
   function gainLossColor(value: number): string {
@@ -372,7 +372,7 @@
                       <p class="text-xs text-surface-500">{holding.securityName}</p>
                     </td>
                     <td class="px-4 py-3 text-right text-sm text-surface-300">
-                      {holding.quantity.toFixed(4)}
+                      {formatDecimal(holding.quantity, 4)}
                     </td>
                     <td class="px-4 py-3 text-right text-sm text-surface-300">
                       {fmt(holding.costBasis)}
@@ -501,7 +501,7 @@
                     ></span>
                     <span class="text-xs capitalize text-surface-300">{slice.type}</span>
                     <span class="ml-auto text-xs font-medium text-white">
-                      {slice.percentage.toFixed(1)}%
+                      {formatPercent(slice.percentage, 1)}
                     </span>
                   </div>
                 {/each}
@@ -522,7 +522,8 @@
                   <span class="text-sm capitalize text-surface-300">{slice.type}</span>
                   <div class="text-right">
                     <span class="text-sm font-medium text-white">{fmt(slice.value)}</span>
-                    <span class="ml-2 text-xs text-surface-400">{slice.percentage.toFixed(1)}%</span
+                    <span class="ml-2 text-xs text-surface-400"
+                      >{formatPercent(slice.percentage, 1)}</span
                     >
                   </div>
                 </div>

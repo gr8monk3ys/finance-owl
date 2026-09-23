@@ -3,7 +3,7 @@
   import { invalidateAll, goto } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatCurrency as fmt } from '@finance-owl/shared';
+  import { formatCurrency as fmt, formatDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -158,7 +158,7 @@
           </p>
           {#if data.summary?.generatedAt}
             <p class="mt-1 text-xs text-surface-500">
-              Last generated: {new Date(data.summary.generatedAt).toLocaleDateString()}
+              Last generated: {formatDate(data.summary.generatedAt)}
             </p>
           {/if}
         </div>

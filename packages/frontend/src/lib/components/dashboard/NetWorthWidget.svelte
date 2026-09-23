@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { Card } from '$components/ui';
   import { formatCurrency as fmt, formatDateShort } from '@finance-owl/shared';
 
@@ -50,7 +51,7 @@
             />
           {/if}
         </svg>
-        {trend.change >= 0 ? '+' : ''}{trend.change.toFixed(1)}%
+        {formatPercent(trend.change, 1, { signed: true })}
       </span>
     {/if}
   </div>

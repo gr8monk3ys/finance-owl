@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -153,7 +154,7 @@
                 {fmt(challenge.currentAmount)} of {fmt(challenge.targetAmount)}
               </span>
               <span class="text-sm font-semibold text-primary-400">
-                {progress.toFixed(0)}%
+                {formatPercent(progress)}
               </span>
             </div>
             <div class="mt-1.5 h-3 overflow-hidden rounded-full bg-surface-700">

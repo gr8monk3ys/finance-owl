@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent, formatDecimal } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { goto } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -9,7 +10,7 @@
 
   function fmtPercent(value: number | null | undefined): string {
     if (value === null || value === undefined) return '--';
-    return `${value.toFixed(2)}%`;
+    return formatPercent(value, 2);
   }
 
   function categoryLabel(cat: string): string {
@@ -281,7 +282,7 @@
                     <p class="text-xs text-surface-500">Rating</p>
                     <p class="font-semibold text-yellow-400">
                       {renderStars(product.rating)}
-                      <span class="text-surface-400">({product.rating.toFixed(1)})</span>
+                      <span class="text-surface-400">({formatDecimal(product.rating, 1)})</span>
                     </p>
                   </div>
                 {/if}

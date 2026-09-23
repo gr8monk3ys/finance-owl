@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent, formatDecimal } from '$lib/utils/format';
   import { goto } from '$app/navigation';
   import { Card, Button } from '$components/ui';
   import { LineChart } from '$components/charts';
@@ -10,8 +11,7 @@
   const periods = ['1M', '3M', '6M', '1Y', 'YTD', 'ALL'] as const;
 
   function fmtPct(pct: number): string {
-    const sign = pct >= 0 ? '+' : '';
-    return `${sign}${pct.toFixed(2)}%`;
+    return formatPercent(pct, 2, { signed: true });
   }
 
   function gainLossColor(value: number): string {
@@ -355,7 +355,7 @@
                   </span>
                 </td>
                 <td class="px-4 py-3 text-right text-surface-300">
-                  {holding.quantity.toFixed(4)}
+                  {formatDecimal(holding.quantity, 4)}
                 </td>
                 <td class="px-4 py-3 text-right text-surface-300">
                   {fmt(holding.costBasis)}

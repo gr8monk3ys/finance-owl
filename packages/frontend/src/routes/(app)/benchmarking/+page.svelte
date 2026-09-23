@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -14,7 +15,7 @@
   });
 
   function fmtPercent(value: number): string {
-    return `${value.toFixed(1)}%`;
+    return formatPercent(value, 1);
   }
 
   function statusColor(status: string): string {

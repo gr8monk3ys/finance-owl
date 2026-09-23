@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { Card } from '$components/ui';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
@@ -41,7 +42,7 @@
               {goal.icon ? goal.icon + ' ' : ''}{goal.name}
             </span>
             <span class="text-xs text-surface-400">
-              {pct(goal).toFixed(0)}%
+              {formatPercent(pct(goal))}
             </span>
           </div>
           <div class="mt-1 h-2 w-full overflow-hidden rounded-full bg-surface-700">

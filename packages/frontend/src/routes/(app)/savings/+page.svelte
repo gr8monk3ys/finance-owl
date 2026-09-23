@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -141,7 +142,7 @@
           ></div>
         </div>
         <p class="mt-1 text-xs {getProgressTextColor(data.summary.savingsRate)}">
-          {data.summary.savingsRate.toFixed(0)}% of target
+          {formatPercent(data.summary.savingsRate)} of target
         </p>
       </div>
     </Card>
@@ -297,7 +298,7 @@
                   {fmt(goal.currentAmount)} of {fmt(goal.targetAmount)}
                 </span>
                 <span class="text-sm font-semibold {getProgressTextColor(goal.progress)}">
-                  {goal.progress.toFixed(0)}%
+                  {formatPercent(goal.progress)}
                 </span>
               </div>
               <div class="mt-1.5 h-2.5 overflow-hidden rounded-full bg-surface-700">
@@ -617,7 +618,7 @@
           </div>
           <div class="text-right">
             <p class="text-2xl font-bold {getProgressTextColor(viewingGoal.progress)}">
-              {viewingGoal.progress.toFixed(1)}%
+              {formatPercent(viewingGoal.progress, 1)}
             </p>
             {#if viewingGoal.deadline}
               <p class="text-xs text-surface-500">{getDaysRemaining(viewingGoal.deadline)}</p>

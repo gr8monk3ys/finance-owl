@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Modal } from '$components/ui';
-  import { formatDate } from '@finance-owl/shared';
+  import { formatDate, formatCurrencyWhole } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -213,19 +214,19 @@
           <div class="rounded-lg bg-surface-800 p-3 text-center">
             <p class="text-xs text-surface-400">Utilization</p>
             <p class="mt-1 text-sm font-semibold text-white">
-              {(data.profile.creditUtilization * 100).toFixed(0)}%
+              {formatPercent(data.profile.creditUtilization * 100)}
             </p>
           </div>
           <div class="rounded-lg bg-surface-800 p-3 text-center">
             <p class="text-xs text-surface-400">Payment History</p>
             <p class="mt-1 text-sm font-semibold text-white">
-              {(data.profile.paymentHistory * 100).toFixed(0)}%
+              {formatPercent(data.profile.paymentHistory * 100)}
             </p>
           </div>
           <div class="rounded-lg bg-surface-800 p-3 text-center">
             <p class="text-xs text-surface-400">Total Debt</p>
             <p class="mt-1 text-sm font-semibold text-white">
-              ${data.profile.totalDebt.toLocaleString()}
+              {formatCurrencyWhole(data.profile.totalDebt)}
             </p>
           </div>
           <div class="rounded-lg bg-surface-800 p-3 text-center">

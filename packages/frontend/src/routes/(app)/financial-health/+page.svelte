@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatCurrency as fmt } from '@finance-owl/shared';
+  import { formatCurrency as fmt, formatDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -149,7 +150,7 @@
           </div>
         </div>
         <p class="mt-3 text-xs text-surface-500">
-          Last calculated: {new Date(data.score.calculatedAt).toLocaleDateString()}
+          Last calculated: {formatDate(data.score.calculatedAt)}
         </p>
       </div>
     </Card>
@@ -266,7 +267,7 @@
                 ></div>
               </div>
               <p class="mt-1 text-right text-xs text-surface-500">
-                {progress.toFixed(0)}%
+                {formatPercent(progress)}
               </p>
             </div>
 

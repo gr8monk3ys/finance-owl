@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { Card } from '$components/ui';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
@@ -255,7 +256,7 @@
                   </div>
                   <span class="font-medium text-white">
                     {fmt(seg.value)}
-                    <span class="text-xs text-surface-500">({seg.pct.toFixed(0)}%)</span>
+                    <span class="text-xs text-surface-500">({formatPercent(seg.pct)})</span>
                   </span>
                 </div>
               {/each}
@@ -373,7 +374,7 @@
                   </div>
                   <span class="font-medium text-white">
                     {fmt(seg.value)}
-                    <span class="text-xs text-surface-500">({seg.pct.toFixed(0)}%)</span>
+                    <span class="text-xs text-surface-500">({formatPercent(seg.pct)})</span>
                   </span>
                 </div>
               {/each}

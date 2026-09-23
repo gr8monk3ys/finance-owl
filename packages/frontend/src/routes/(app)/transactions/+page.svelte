@@ -6,7 +6,7 @@
   import { untrack } from 'svelte';
   import { Card, Button, Modal } from '$components/ui';
   import { getBudgetCategoryTree } from '$lib/utils/budgets';
-  import { formatCurrency } from '@finance-owl/shared';
+  import { formatCurrency, formatNumber } from '@finance-owl/shared';
   import {
     buildTransactionSearchParams,
     formatTransactionDate,
@@ -222,8 +222,8 @@
       <h2 class="text-3xl font-bold tracking-tight text-white">Transactions</h2>
       <p class="mt-1 text-sm text-surface-400">
         {#if data.transactions.meta.total > 0}
-          {data.transactions.meta.total.toLocaleString()} transaction{data.transactions.meta
-            .total !== 1
+          {formatNumber(data.transactions.meta.total)} transaction{data.transactions.meta.total !==
+          1
             ? 's'
             : ''}
         {:else}
@@ -576,7 +576,7 @@
           >
           <span class="mx-1">of</span>
           <span class="font-medium text-surface-300"
-            >{data.transactions.meta.total.toLocaleString()}</span
+            >{formatNumber(data.transactions.meta.total)}</span
           >
         </p>
         <div class="flex items-center gap-1">

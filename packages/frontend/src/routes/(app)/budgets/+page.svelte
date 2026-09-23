@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -257,7 +258,7 @@
           <span
             class="text-xs {getBudgetProgressTextColor(data.summary.percentUsed)} font-semibold"
           >
-            {data.summary.percentUsed.toFixed(0)}% used
+            {formatPercent(data.summary.percentUsed)} used
           </span>
           <div class="flex gap-2 text-xs text-surface-500">
             {#if onTrackCount > 0}
@@ -403,7 +404,7 @@
               <!-- Bottom stats -->
               <div class="mt-2 flex items-center justify-between text-xs">
                 <span class="{getBudgetProgressTextColor(budget.percentUsed)} font-medium">
-                  {budget.percentUsed.toFixed(0)}% used
+                  {formatPercent(budget.percentUsed)} used
                 </span>
                 {#if budget.percentUsed >= 100}
                   <span class="flex items-center gap-1 text-red-400">
@@ -569,7 +570,7 @@
         <div>
           <p class="text-sm font-medium text-white">{editingBudget.categoryName}</p>
           <p class="text-xs text-surface-500">
-            Currently {editingBudget.percentUsed.toFixed(0)}% used ({fmt(editingBudget.spent)} spent)
+            Currently {formatPercent(editingBudget.percentUsed)} used ({fmt(editingBudget.spent)} spent)
           </p>
         </div>
       </div>

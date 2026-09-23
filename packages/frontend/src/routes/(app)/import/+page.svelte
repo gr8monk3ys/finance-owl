@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatFileSize } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -278,7 +279,11 @@
               <div>
                 <p class="font-medium text-white">{selectedFile.name}</p>
                 <p class="text-sm text-surface-400">
-                  {getFileTypeLabel(selectedFile.name)} - {(selectedFile.size / 1024).toFixed(1)} KB
+                  {getFileTypeLabel(selectedFile.name)} - {formatFileSize(
+                    selectedFile.size,
+                    'kilobyte',
+                    1,
+                  )}
                 </p>
               </div>
               <button

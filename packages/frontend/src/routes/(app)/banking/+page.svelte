@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { Card, Button, Modal, Input } from '$components/ui';
   import type { PageData, ActionData } from './$types';
@@ -43,7 +44,7 @@
   }
 
   function fmtPct(decimal: number): string {
-    return `${(decimal * 100).toFixed(2)}%`;
+    return formatPercent(decimal * 100, 2);
   }
 
   function statusBadge(status: string): string {
@@ -411,11 +412,11 @@
               </div>
               <div class="rate-row">
                 <span>Savings APY</span>
-                <span class="rate-value">{(rate.savings.apy * 100).toFixed(2)}%</span>
+                <span class="rate-value">{fmtPct(rate.savings.apy)}</span>
               </div>
               <div class="rate-row">
                 <span>Checking APY</span>
-                <span class="rate-value">{(rate.checking.apy * 100).toFixed(2)}%</span>
+                <span class="rate-value">{fmtPct(rate.checking.apy)}</span>
               </div>
               {#if rate.savings.isVariable}
                 <div class="rate-note">Variable rate, subject to change</div>

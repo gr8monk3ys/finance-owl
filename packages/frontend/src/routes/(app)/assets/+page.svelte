@@ -1,9 +1,14 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatCurrencyWhole as fmt, formatDate as fmtDate } from '@finance-owl/shared';
+  import {
+    formatCurrencyWhole as fmt,
+    formatDate as fmtDate,
+    formatNumber,
+  } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -27,10 +32,10 @@
     current: number,
     purchase: number | null,
   ): { value: number; pct: string; positive: boolean } {
-    if (!purchase || purchase === 0) return { value: 0, pct: '0%', positive: true };
+    if (!purchase || purchase === 0) return { value: 0, pct: formatPercent(0), positive: true };
     const diff = current - purchase;
-    const pct = ((diff / purchase) * 100).toFixed(1);
-    return { value: diff, pct: `${diff >= 0 ? '+' : ''}${pct}%`, positive: diff >= 0 };
+    const pct = formatPercent((diff / purchase) * 100, 1, { signed: true });
+    return { value: diff, pct, positive: diff >= 0 };
   }
 
   function propertyTypeLabel(type: string): string {
@@ -374,7 +379,7 @@
                     </span>
                     {#if vehicle.mileage}
                       <span class="text-xs text-surface-500"
-                        >{vehicle.mileage.toLocaleString()} mi</span
+                        >{formatNumber(vehicle.mileage)}&nbsp;mi</span
                       >
                     {/if}
                   </div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { Card, Button } from '$components/ui';
   import { BarChart, DonutChart, LineChart } from '$components/charts';
@@ -314,8 +315,8 @@
                       <span class="text-sm font-medium text-white">{fmt(item.total)}</span>
                       <span class="ml-2 text-xs text-surface-500">
                         ({spendingTotal > 0
-                          ? ((item.total / spendingTotal) * 100).toFixed(1)
-                          : '0'}%)
+                          ? formatPercent((item.total / spendingTotal) * 100, 1)
+                          : formatPercent(0)})
                       </span>
                     </div>
                   </div>
@@ -345,7 +346,9 @@
                       <td class="px-4 py-2 text-right text-surface-300">{item.count}</td>
                       <td class="px-4 py-2 text-right font-medium text-white">{fmt(item.total)}</td>
                       <td class="px-4 py-2 text-right text-surface-300">
-                        {spendingTotal > 0 ? ((item.total / spendingTotal) * 100).toFixed(1) : '0'}%
+                        {spendingTotal > 0
+                          ? formatPercent((item.total / spendingTotal) * 100, 1)
+                          : formatPercent(0)}
                       </td>
                       <td class="px-4 py-2 text-right text-surface-300">
                         {item.count > 0 ? fmt(item.total / item.count) : fmt(0)}
@@ -547,7 +550,7 @@
                     {fmt(row.net)}
                   </td>
                   <td class="px-4 py-2 text-right text-surface-300">
-                    {savingsRate.toFixed(1)}%
+                    {formatPercent(savingsRate, 1)}
                   </td>
                 </tr>
               {/each}
@@ -567,7 +570,9 @@
                     : 'text-red-400'}">{fmt(ieNet)}</td
                 >
                 <td class="px-4 py-2 text-right font-semibold text-surface-300">
-                  {ieTotalIncome > 0 ? ((ieNet / ieTotalIncome) * 100).toFixed(1) : '0'}%
+                  {ieTotalIncome > 0
+                    ? formatPercent((ieNet / ieTotalIncome) * 100, 1)
+                    : formatPercent(0)}
                 </td>
               </tr>
             </tfoot>
@@ -843,7 +848,7 @@
                   <td class="px-4 py-2 text-surface-300">{trend.month}</td>
                   <td class="px-4 py-2 text-right font-medium text-white">{fmt(trend.total)}</td>
                   <td class="px-4 py-2 text-right {diff >= 0 ? 'text-red-400' : 'text-green-400'}">
-                    {diff >= 0 ? '+' : ''}{fmt(diff)} ({pct >= 0 ? '+' : ''}{pct.toFixed(1)}%)
+                    {diff >= 0 ? '+' : ''}{fmt(diff)} ({formatPercent(pct, 1, { signed: true })})
                   </td>
                   <td class="px-4 py-2">
                     <div

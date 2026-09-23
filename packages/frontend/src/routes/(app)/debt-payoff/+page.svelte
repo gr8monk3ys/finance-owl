@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -60,7 +61,7 @@
   ];
 
   function fmtPct(rate: number): string {
-    return rate.toFixed(2) + '%';
+    return formatPercent(rate, 2);
   }
 
   function getDebtTypeLabel(type: string): string {
@@ -377,7 +378,7 @@
                     )}
                   </span>
                   <span class="text-xs font-semibold text-primary-400">
-                    {debt.progress.toFixed(0)}%
+                    {formatPercent(debt.progress)}
                   </span>
                 </div>
                 <div class="mt-1 h-2 overflow-hidden rounded-full bg-surface-700">

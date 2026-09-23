@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatFileSize } from '$lib/utils/format';
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
@@ -330,7 +331,7 @@
             <div>
               <p class="text-sm font-medium text-white">{selectedFile.name}</p>
               <p class="text-xs text-surface-400">
-                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                {formatFileSize(selectedFile.size, 'megabyte', 2)}
               </p>
             </div>
           </div>

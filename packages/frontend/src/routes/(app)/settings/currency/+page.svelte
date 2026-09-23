@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatDecimal } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import type { ActionData, PageData } from './$types';
@@ -28,9 +29,9 @@
   });
 
   function formatRate(rate: number): string {
-    if (rate >= 100) return rate.toFixed(2);
-    if (rate >= 1) return rate.toFixed(4);
-    return rate.toFixed(6);
+    if (rate >= 100) return formatDecimal(rate, 2);
+    if (rate >= 1) return formatDecimal(rate, 4);
+    return formatDecimal(rate, 6);
   }
 
   function getCurrencySymbol(code: string): string {

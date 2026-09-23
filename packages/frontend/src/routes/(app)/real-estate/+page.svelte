@@ -3,7 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatCurrencyWhole as fmt } from '@finance-owl/shared';
+  import { formatCurrencyWhole as fmt, formatNumber, formatDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -142,7 +142,7 @@
             {#if property.squareFeet}
               <div>
                 <p class="text-lg font-semibold text-white">
-                  {property.squareFeet.toLocaleString()}
+                  {formatNumber(property.squareFeet)}
                 </p>
                 <p class="text-xs text-surface-500">Sq Ft</p>
               </div>
@@ -168,7 +168,7 @@
             {/if}
             {#if property.lastEstimateDate}
               <p class="text-xs text-surface-500">
-                Last estimated: {new Date(property.lastEstimateDate).toLocaleDateString()}
+                Last estimated: {formatDate(property.lastEstimateDate)}
               </p>
             {/if}
           </div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { Card } from '$components/ui';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
@@ -268,7 +269,7 @@
             </svg>
           </div>
 
-          <p class="mt-2 text-4xl font-bold {ratingColor.text}">{dtiRatio.toFixed(1)}%</p>
+          <p class="mt-2 text-4xl font-bold {ratingColor.text}">{formatPercent(dtiRatio, 1)}</p>
           <span
             class="mt-2 rounded-full px-4 py-1 text-sm font-semibold capitalize {ratingColor.text} ring-1 {ratingColor.ring}"
             style="background-color: {ratingColor.stroke}15"
@@ -346,7 +347,7 @@
                   </div>
                   <span class="font-medium text-white"
                     >{fmt(item.value)}
-                    <span class="text-surface-500 text-xs">({pct.toFixed(1)}%)</span></span
+                    <span class="text-surface-500 text-xs">({formatPercent(pct, 1)})</span></span
                   >
                 </div>
                 <div class="h-2 overflow-hidden rounded-full bg-surface-700">

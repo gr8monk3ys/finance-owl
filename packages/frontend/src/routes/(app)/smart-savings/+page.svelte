@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import { LineChart, BarChart } from '$components/charts';
   import type { PageData } from './$types';
-  import { formatCurrency as fmt } from '@finance-owl/shared';
+  import { formatCurrency as fmt, formatDate, formatCurrencyWhole } from '@finance-owl/shared';
 
   let { data } = $props<{ data: PageData }>();
 
@@ -13,7 +14,7 @@
   let analyzing = $state(false);
 
   function fmtPct(value: number): string {
-    return `${value.toFixed(1)}%`;
+    return formatPercent(value, 1);
   }
 
   const analysis = $derived(data.dashboard.analysis);
@@ -66,13 +67,13 @@
   function getRuleDescription(rule: any): string {
     switch (rule.ruleType) {
       case 'round_up':
-        return `Round up purchases to nearest $${rule.roundUpTo || 1}`;
+        return `Round up purchases to nearest ${formatCurrencyWhole(rule.roundUpTo || 1)}`;
       case 'percentage':
-        return `Save ${rule.amount || 0}% of every paycheck`;
+        return `Save ${formatPercent(rule.amount || 0)} of every paycheck`;
       case 'fixed':
         return `Save ${fmt(rule.amount || 0)} per month`;
       case 'surplus':
-        return `Save ${rule.amount || 50}% of monthly surplus`;
+        return `Save ${formatPercent(rule.amount || 50)} of monthly surplus`;
       default:
         return rule.name;
     }
@@ -742,7 +743,7 @@
             {#each history.transfers as transfer}
               <tr class="border-b border-surface-700/50">
                 <td class="px-4 py-2 text-surface-300">
-                  {new Date(transfer.createdAt).toLocaleDateString()}
+                  {formatDate(transfer.createdAt)}
                 </td>
                 <td class="px-4 py-2 text-white">{transfer.ruleName || 'Deleted rule'}</td>
                 <td class="px-4 py-2 text-surface-400">

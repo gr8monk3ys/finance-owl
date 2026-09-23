@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
+  import { formatCurrency } from '@finance-owl/shared';
   import { onMount } from 'svelte';
   import { Chart, DoughnutController, ArcElement, Tooltip, Legend } from 'chart.js';
 
@@ -50,8 +52,7 @@
               label(context) {
                 const value = context.parsed;
                 const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
-                const pct = ((value / total) * 100).toFixed(1);
-                return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })} (${pct}%)`;
+                return `${formatCurrency(value)} (${formatPercent((value / total) * 100, 1)})`;
               },
             },
           },

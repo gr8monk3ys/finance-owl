@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatDecimal } from '$lib/utils/format';
   import { Card, Button, Spinner } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
@@ -683,7 +684,7 @@
                   <span
                     class="rounded-lg bg-red-900/40 px-2 py-0.5 text-xs font-semibold text-red-400 border border-red-500/25"
                   >
-                    {Math.abs(anomaly.zScore).toFixed(1)}x std dev
+                    {formatDecimal(Math.abs(anomaly.zScore), 1)}× std dev
                   </span>
                   <h3 class="font-semibold text-white">{anomaly.merchantName}</h3>
                 </div>

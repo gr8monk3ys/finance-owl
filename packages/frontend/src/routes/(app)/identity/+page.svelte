@@ -3,7 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Spinner } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatDate as fmtDate } from '@finance-owl/shared';
+  import { formatDate as fmtDate, formatNumber } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -788,7 +788,7 @@
                 </div>
                 <p class="mt-2 text-sm text-red-200/80">
                   This password has been found in <strong class="text-red-200"
-                    >{result.exposureCount.toLocaleString()}</strong
+                    >{formatNumber(result.exposureCount)}</strong
                   >
                   data breach{result.exposureCount === 1 ? '' : 'es'}. Change this password
                   immediately wherever it is used.

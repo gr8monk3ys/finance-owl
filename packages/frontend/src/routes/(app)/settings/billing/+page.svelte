@@ -41,7 +41,7 @@
   function getPrice(plan: PlanDisplay): string {
     if (plan.name === 'free') return '$0';
     const price = billingInterval === 'month' ? plan.monthlyPrice : plan.yearlyPrice;
-    return `$${price.toFixed(2)}`;
+    return formatCurrency(price);
   }
 
   function getPeriod(plan: PlanDisplay): string {
@@ -54,7 +54,7 @@
     const monthlyCost = plan.monthlyPrice * 12;
     const savings = monthlyCost - plan.yearlyPrice;
     if (savings <= 0) return null;
-    return `Save $${savings.toFixed(2)}`;
+    return `Save ${formatCurrency(savings)}`;
   }
 
   function getPlanId(planName: string): string | undefined {

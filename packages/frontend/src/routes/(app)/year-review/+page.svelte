@@ -1,9 +1,15 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { goto, invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatCurrency as fmt, formatCurrencyCompact as fmtCompact } from '@finance-owl/shared';
+  import {
+    formatCurrency as fmt,
+    formatCurrencyCompact as fmtCompact,
+    formatNumber,
+    formatDateTime,
+  } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -194,7 +200,7 @@
       <Card>
         <p class="text-sm text-surface-400">Transactions</p>
         <p class="mt-1 text-lg font-bold text-white">
-          {data.review.transactionCount.toLocaleString()}
+          {formatNumber(data.review.transactionCount)}
         </p>
         <p class="text-xs text-surface-500">
           Avg: {fmt(data.review.averageTransaction)}
@@ -271,7 +277,7 @@
                 <div class="text-right">
                   <span class="text-sm font-medium text-white">{fmt(cat.amount)}</span>
                   <span class="ml-2 text-xs text-surface-400">
-                    {catPercent.toFixed(1)}%
+                    {formatPercent(catPercent, 1)}
                   </span>
                 </div>
               </div>
@@ -289,7 +295,7 @@
 
     <!-- Generation timestamp -->
     <p class="text-center text-xs text-surface-500">
-      Generated: {new Date(data.review.generatedAt).toLocaleString()}
+      Generated: {formatDateTime(data.review.generatedAt)}
     </p>
   {:else}
     <!-- Empty state -->

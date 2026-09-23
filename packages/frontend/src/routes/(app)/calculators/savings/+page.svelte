@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
-  import { formatCurrency as fmt } from '@finance-owl/shared';
+  import { formatCurrency as fmt, formatCurrencyCompact } from '@finance-owl/shared';
 
   // Inputs
   let initialDeposit = $state(5000);
@@ -121,8 +121,7 @@
   }
 
   function fmtShort(amount: number): string {
-    if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
-    if (amount >= 1000) return `$${(amount / 1000).toFixed(0)}K`;
+    if (amount >= 1000) return formatCurrencyCompact(amount);
     return fmt(amount);
   }
 </script>

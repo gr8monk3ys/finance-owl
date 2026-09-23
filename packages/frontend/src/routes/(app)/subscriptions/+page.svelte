@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal, Badge } from '$components/ui';
@@ -300,7 +301,9 @@
       <p class="mt-2 text-2xl font-bold text-white">{fmt(displayTotal)}</p>
       {#if monthChangePercent !== 0}
         <p class="mt-1 text-xs {monthChangePercent > 0 ? 'text-rose-400' : 'text-emerald-400'}">
-          {monthChangePercent > 0 ? '+' : ''}{monthChangePercent.toFixed(1)}% vs last period
+          {monthChangePercent > 0
+            ? formatPercent(monthChangePercent, 1, { signed: true })
+            : formatPercent(monthChangePercent, 1)} vs last period
         </p>
       {/if}
     </Card>
@@ -362,7 +365,7 @@
               <p class="text-sm font-medium text-white">{change.merchantName || change.name}</p>
               <p class="text-xs text-surface-400">
                 {change.direction === 'increase' ? 'Price increased' : 'Price decreased'}
-                by {Math.abs(change.changePercent).toFixed(1)}%
+                by {formatPercent(Math.abs(change.changePercent), 1)}
               </p>
             </div>
             <div class="text-right">
@@ -378,7 +381,9 @@
                   ? 'text-rose-400'
                   : 'text-emerald-400'}"
               >
-                {change.direction === 'increase' ? '+' : ''}{change.changePercent.toFixed(1)}%
+                {formatPercent(change.changePercent, 1, {
+                  signed: change.direction === 'increase',
+                })}
               </p>
             </div>
           </div>
@@ -854,7 +859,7 @@
                 </div>
                 <div class="text-right">
                   <span class="text-sm font-medium text-white">{fmt(seg.amount)}</span>
-                  <span class="ml-1 text-xs text-surface-500">({seg.pct.toFixed(0)}%)</span>
+                  <span class="ml-1 text-xs text-surface-500">({formatPercent(seg.pct)})</span>
                 </div>
               </div>
             {/each}

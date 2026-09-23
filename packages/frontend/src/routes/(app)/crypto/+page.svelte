@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent as fmtPercent } from '$lib/utils/format';
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
@@ -90,7 +91,7 @@
 
   // Allocation chart data
   const allocationLabels = $derived(
-    (portfolio?.allocation || []).map((a: any) => `${a.symbol} (${a.percentage.toFixed(1)}%)`),
+    (portfolio?.allocation || []).map((a: any) => `${a.symbol} (${fmtPercent(a.percentage, 1)})`),
   );
   const allocationData = $derived((portfolio?.allocation || []).map((a: any) => a.value));
   const allocationColors = $derived(
@@ -144,8 +145,7 @@
 
   function formatPercent(value: number | null | undefined): string {
     if (value == null) return '--';
-    const sign = value >= 0 ? '+' : '';
-    return `${sign}${value.toFixed(2)}%`;
+    return fmtPercent(value, 2, { signed: true });
   }
 
   function formatQuantity(value: number): string {
@@ -443,7 +443,9 @@
                 </div>
                 <div>
                   <p class="text-sm font-medium text-white">{item.symbol}</p>
-                  <p class="text-xs text-surface-400">{item.percentage.toFixed(1)}% of portfolio</p>
+                  <p class="text-xs text-surface-400">
+                    {fmtPercent(item.percentage, 1)} of portfolio
+                  </p>
                 </div>
               </div>
               <p class="text-sm font-medium text-white">{formatCurrency(item.value)}</p>
@@ -575,7 +577,7 @@
                         ></div>
                       </div>
                       <span class="text-xs text-surface-400">
-                        {portfolioPercent.toFixed(1)}%
+                        {fmtPercent(portfolioPercent, 1)}
                       </span>
                     </div>
                   </td>
@@ -695,7 +697,7 @@
               </div>
               <div>
                 <p class="text-xs text-surface-500">Portfolio</p>
-                <p class="text-sm text-surface-300">{portfolioPercent.toFixed(1)}%</p>
+                <p class="text-sm text-surface-300">{fmtPercent(portfolioPercent, 1)}</p>
               </div>
             </div>
             <div class="mt-3 flex gap-2 border-t border-surface-700 pt-3">

@@ -2,7 +2,7 @@
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Badge } from '$components/ui';
-  import { getAllPlans, type PlanTier } from '@finance-owl/shared';
+  import { getAllPlans, type PlanTier, formatCurrency } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -58,7 +58,7 @@
   function getPrice(plan: PlanDisplay): string {
     if (plan.name === 'free') return '$0';
     const price = billingInterval === 'month' ? plan.monthlyPrice : plan.yearlyPrice;
-    return `$${price.toFixed(2)}`;
+    return formatCurrency(price);
   }
 
   function getPeriod(plan: PlanDisplay): string {

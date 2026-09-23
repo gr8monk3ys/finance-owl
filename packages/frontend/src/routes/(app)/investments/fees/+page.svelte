@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent, formatDecimal } from '$lib/utils/format';
   import { Card } from '$components/ui';
   import { BarChart } from '$components/charts';
   import type { PageData } from './$types';
@@ -9,11 +10,11 @@
   // ---------- Formatters ----------
 
   function fmtPct(ratio: number): string {
-    return `${(ratio * 100).toFixed(2)}%`;
+    return formatPercent(ratio * 100, 2);
   }
 
   function fmtBps(ratio: number): string {
-    return `${(ratio * 10000).toFixed(1)} bps`;
+    return `${formatDecimal(ratio * 10000, 1)}\u00a0bps`;
   }
 
   // ---------- Expense ratio color coding ----------

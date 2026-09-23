@@ -3,7 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
   import type { PageData } from './$types';
-  import { formatCurrency as fmt } from '@finance-owl/shared';
+  import { formatCurrency as fmt, formatCurrencyWhole } from '@finance-owl/shared';
 
   let { data } = $props<{ data: PageData }>();
 
@@ -478,7 +478,7 @@
             <div>
               <p class="text-sm font-medium text-white">We round it up</p>
               <p class="text-xs text-surface-500">
-                To the nearest ${roundTo} = ${exampleRounded.toFixed(2)}
+                To the nearest {formatCurrencyWhole(roundTo)} = {fmt(exampleRounded)}
               </p>
             </div>
           </div>

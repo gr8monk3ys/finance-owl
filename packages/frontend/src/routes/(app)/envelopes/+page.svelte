@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -132,8 +133,7 @@
           ></div>
         </div>
         <p class="mt-1 text-right text-xs text-surface-500">
-          {((data.summary.totalAllocated / data.summary.totalIncome) * 100).toFixed(0)}% of income
-          allocated
+          {formatPercent((data.summary.totalAllocated / data.summary.totalIncome) * 100)} of income allocated
         </p>
       </div>
     {/if}
@@ -302,7 +302,7 @@
                   </span>
                   {#if envelope.targetAmount}
                     <span class="font-semibold text-emerald-400">
-                      {(envelope.goalProgress ?? 0).toFixed(0)}%
+                      {formatPercent(envelope.goalProgress ?? 0)}
                     </span>
                   {/if}
                 </div>
