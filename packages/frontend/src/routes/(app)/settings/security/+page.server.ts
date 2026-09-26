@@ -1,4 +1,5 @@
 import { fail } from '@sveltejs/kit';
+import QRCode from 'qrcode';
 import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/api';
 import { getErrorMessage } from '$lib/server/error';
@@ -100,11 +101,15 @@ export const actions: Actions = {
 
   setupTotp: async ({ locals }) => {
     try {
-      const result = await api('/auth/totp/setup', {
+      const result = (await api('/auth/totp/setup', {
         method: 'POST',
         accessToken: locals.accessToken,
-      });
-      return { totpSetup: result };
+      })) as { secret: string; otpauth: string };
+      // Render the QR code here so the otpauth URI (which embeds the TOTP
+      // secret) never leaves our servers for a third-party QR service.
+      const svg = await QRCode.toString(result.otpauth, { type: 'svg', margin: 0 });
+      const qrCode = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+      return { totpSetup: { ...result, qrCode } };
     } catch (e: unknown) {
       return fail(500, { totpError: getErrorMessage(e) || 'Failed to start TOTP setup.' });
     }

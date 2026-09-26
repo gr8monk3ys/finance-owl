@@ -19,7 +19,9 @@
   let totpSetupLoading = $state(false);
   let totpEnabling = $state(false);
   let totpDisabling = $state(false);
-  let totpSetupData = $state<{ secret: string; otpauth: string } | null>(null);
+  let totpSetupData = $state<{ secret: string; otpauth: string; qrCode: string } | null>(
+    null,
+  );
   let showDisableModal = $state(false);
   let totpCode = $state('');
   let totpDisableCode = $state('');
@@ -534,9 +536,7 @@
 
             <div class="flex justify-center rounded-lg bg-white p-4">
               <img
-                src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={encodeURIComponent(
-                  totpSetupData.otpauth,
-                )}"
+                src={totpSetupData.qrCode}
                 alt="TOTP QR Code"
                 class="h-48 w-48"
               />
