@@ -706,7 +706,9 @@
         <div class="divide-y divide-surface-700 rounded-lg border border-surface-700">
           {#each data.sessions as session (session.id)}
             <div class="flex items-center gap-3 px-4 py-3">
-              <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-700">
+              <div
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-700"
+              >
                 <svg
                   aria-hidden="true"
                   class="h-5 w-5 text-surface-400"
@@ -722,11 +724,11 @@
                   />
                 </svg>
               </div>
-              <div class="flex-1">
+              <div class="min-w-0 flex-1">
                 <p class="text-sm font-medium text-white">
                   {parseUserAgent(session.userAgent)}
                 </p>
-                <p class="text-xs text-surface-400">
+                <p class="break-words text-xs text-surface-400">
                   {session.ipAddress || 'Unknown IP'}
                   <span class="mx-1.5 text-surface-600">|</span>
                   Created {formatDate(session.createdAt)}

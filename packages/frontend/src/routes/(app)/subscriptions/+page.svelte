@@ -374,8 +374,13 @@
       <div class="space-y-2">
         {#each data.priceChanges as change}
           <div class="flex items-center justify-between rounded-lg bg-surface-800/50 p-3">
-            <div>
-              <p class="text-sm font-medium text-white">{change.merchantName || change.name}</p>
+            <div class="min-w-0">
+              <p
+                class="truncate text-sm font-medium text-white"
+                title={change.merchantName || change.name}
+              >
+                {change.merchantName || change.name}
+              </p>
               <p class="text-xs text-surface-400">
                 {change.direction === 'increase' ? 'Price increased' : 'Price decreased'}
                 by {formatPercent(Math.abs(change.changePercent), 1)}
@@ -433,11 +438,15 @@
       <div class="space-y-3">
         {#each data.duplicates as group}
           <div class="rounded-lg bg-surface-800/50 p-3">
-            <p class="mb-2 text-sm font-medium text-white capitalize">{group.normalizedName}</p>
+            <p class="mb-2 break-words text-sm font-medium text-white capitalize">
+              {group.normalizedName}
+            </p>
             <div class="space-y-1">
               {#each group.subscriptions as sub}
                 <div class="flex items-center justify-between text-xs">
-                  <span class="text-surface-400">{sub.merchantName}</span>
+                  <span class="truncate text-surface-400" title={sub.merchantName}
+                    >{sub.merchantName}</span
+                  >
                   <span class="text-white">{fmt(sub.estimatedAmount)}/{sub.frequency}</span>
                 </div>
               {/each}
@@ -488,7 +497,7 @@
             >
               <Card>
                 <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-3">
+                  <div class="flex min-w-0 items-center gap-3">
                     <div
                       class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-600/20"
                     >
@@ -507,8 +516,11 @@
                         />
                       </svg>
                     </div>
-                    <div>
-                      <p class="font-medium text-white">
+                    <div class="min-w-0">
+                      <p
+                        class="truncate font-medium text-white"
+                        title={sub.merchantName || sub.name}
+                      >
                         {sub.merchantName || sub.name}
                       </p>
                       <div class="mt-0.5 flex items-center gap-2">
@@ -619,7 +631,7 @@
           >
             <Card>
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <div
                     class="flex h-10 w-10 items-center justify-center rounded-lg {getCategoryBgColor(
                       sub.detectedCategory || 'other',
@@ -640,9 +652,12 @@
                       />
                     </svg>
                   </div>
-                  <div>
+                  <div class="min-w-0">
                     <div class="flex items-center gap-2">
-                      <p class="font-medium text-white">
+                      <p
+                        class="truncate font-medium text-white"
+                        title={sub.merchantName || sub.name}
+                      >
                         {sub.merchantName || sub.name}
                       </p>
                       {#if sub.isTrial}
@@ -661,7 +676,7 @@
                         {getFrequencyLabel(sub.frequency)}
                       </span>
                       {#if sub.categoryName}
-                        <span class="text-xs text-surface-500">
+                        <span class="truncate text-xs text-surface-500" title={sub.categoryName}>
                           {sub.categoryName}
                         </span>
                       {/if}
@@ -818,12 +833,17 @@
                     {formatDateWith(day.date, { month: 'short' })}
                   </span>
                 </div>
-                <div class="flex-1 space-y-1.5">
+                <div class="min-w-0 flex-1 space-y-1.5">
                   {#each day.bills as bill}
                     <div
                       class="flex items-center justify-between rounded-lg bg-surface-800/50 px-3 py-2"
                     >
-                      <span class="text-sm text-white">{bill.merchantName || bill.name}</span>
+                      <span
+                        class="truncate text-sm text-white"
+                        title={bill.merchantName || bill.name}
+                      >
+                        {bill.merchantName || bill.name}
+                      </span>
                       <span class="text-sm font-semibold text-white"
                         >{fmt(bill.estimatedAmount)}</span
                       >
@@ -875,9 +895,9 @@
           <div class="mt-4 space-y-2">
             {#each donutSegments as seg}
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
+                <div class="flex min-w-0 items-center gap-2">
                   <span class="h-3 w-3 rounded-full" style="background-color: {seg.color}"></span>
-                  <span class="text-sm text-surface-300">{seg.name}</span>
+                  <span class="truncate text-sm text-surface-300" title={seg.name}>{seg.name}</span>
                 </div>
                 <div class="text-right">
                   <span class="text-sm font-medium text-white">{fmt(seg.amount)}</span>
@@ -895,7 +915,7 @@
             {#each categoryBreakdown as cat}
               <div class="rounded-lg bg-surface-800/50 p-3">
                 <div class="flex items-center justify-between">
-                  <p class="text-sm font-medium text-white">{cat.name}</p>
+                  <p class="truncate text-sm font-medium text-white" title={cat.name}>{cat.name}</p>
                   <p class="text-sm font-semibold text-white">{fmt(cat.amount)}/mo</p>
                 </div>
                 <div class="mt-2 flex items-center gap-2">

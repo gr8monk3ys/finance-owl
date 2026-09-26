@@ -279,9 +279,11 @@
                     >
                   </div>
                   {#if account.bankName}
-                    <div class="detail">
+                    <div class="detail min-w-0">
                       <span class="detail-label">Bank</span>
-                      <span class="detail-value">{account.bankName}</span>
+                      <span class="detail-value truncate" title={account.bankName}>
+                        {account.bankName}
+                      </span>
                     </div>
                   {/if}
                 </div>
@@ -346,10 +348,10 @@
           {#each transfers as transfer}
             <Card>
               <div class="transfer-row">
-                <div class="transfer-info">
+                <div class="transfer-info min-w-0">
                   <div class="transfer-amount">{fmt(transfer.amount)}</div>
                   {#if transfer.memo}
-                    <div class="transfer-memo">{transfer.memo}</div>
+                    <div class="transfer-memo break-words">{transfer.memo}</div>
                   {/if}
                   <div class="transfer-date">{fmtDate(transfer.createdAt)}</div>
                 </div>
@@ -415,7 +417,10 @@
         {#each rates as rate}
           <Card>
             <div class="rate-card">
-              <div class="rate-provider">
+              <div
+                class="rate-provider truncate"
+                title={rate.provider === 'default' ? 'Finance Owl' : rate.provider}
+              >
                 {rate.provider === 'default' ? 'Finance Owl' : rate.provider}
               </div>
               <div class="rate-row">
@@ -431,6 +436,8 @@
               {/if}
             </div>
           </Card>
+        {:else}
+          <p class="rate-note">Rates aren’t available right now. Check back soon.</p>
         {/each}
       </div>
 
@@ -465,7 +472,7 @@
     }}
   >
     {#if form?.error}
-      <div role="alert" class="form-error">{form.error}</div>
+      <div role="alert" class="form-error break-words">{form.error}</div>
     {/if}
 
     {#if wizardStep === 1}
@@ -699,7 +706,7 @@
     }}
   >
     {#if form?.error}
-      <div role="alert" class="form-error">{form.error}</div>
+      <div role="alert" class="form-error break-words">{form.error}</div>
     {/if}
 
     <div class="form-grid">

@@ -219,7 +219,10 @@
             </div>
             <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between">
-                <p class="truncate text-sm font-medium text-white">
+                <p
+                  class="truncate text-sm font-medium text-white"
+                  title={receipt.merchantName || 'Unknown Merchant'}
+                >
                   {receipt.merchantName || 'Unknown Merchant'}
                 </p>
                 <span
@@ -316,7 +319,7 @@
           <div class="flex items-center gap-3">
             <svg
               aria-hidden="true"
-              class="h-8 w-8 text-surface-400"
+              class="h-8 w-8 shrink-0 text-surface-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -328,8 +331,10 @@
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <div>
-              <p class="text-sm font-medium text-white">{selectedFile.name}</p>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-medium text-white" title={selectedFile.name}>
+                {selectedFile.name}
+              </p>
               <p class="text-xs text-surface-400">
                 {formatFileSize(selectedFile.size, 'megabyte', 2)}
               </p>
@@ -439,7 +444,7 @@
                 <div class="space-y-1 rounded-lg border border-surface-700 p-3">
                   {#each items as item}
                     <div class="flex items-center justify-between text-sm">
-                      <span class="text-surface-300">{item.name}</span>
+                      <span class="min-w-0 break-words text-surface-300">{item.name}</span>
                       <span class="text-surface-400">
                         {item.quantity ? `x${item.quantity}` : ''}
                         {item.price ? formatAmount(item.price) : ''}

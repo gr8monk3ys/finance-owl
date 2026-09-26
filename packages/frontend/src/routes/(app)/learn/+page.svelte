@@ -252,7 +252,7 @@
               </svg>
             </div>
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-white">{topic.name}</p>
+              <p class="truncate text-sm font-medium text-white" title={topic.name}>{topic.name}</p>
               <p class="text-xs text-surface-400">
                 {topic.articleCount} articles
               </p>
@@ -269,6 +269,8 @@
             </div>
           {/if}
         </button>
+      {:else}
+        <p class="text-sm text-surface-400">No topics available yet.</p>
       {/each}
     </div>
   </div>
@@ -303,7 +305,7 @@
                 <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
             </div>
-            <h4 class="mt-2 text-sm font-medium text-white">{article.title}</h4>
+            <h4 class="mt-2 break-words text-sm font-medium text-white">{article.title}</h4>
           </a>
         {/each}
       </div>
@@ -374,7 +376,9 @@
                 {/if}
               </div>
             </div>
-            <h4 class="mt-3 text-sm font-semibold text-white group-hover:text-primary-300">
+            <h4
+              class="mt-3 break-words text-sm font-semibold text-white group-hover:text-primary-300"
+            >
               {article.title}
             </h4>
             <p class="mt-2 line-clamp-2 text-xs text-surface-400">

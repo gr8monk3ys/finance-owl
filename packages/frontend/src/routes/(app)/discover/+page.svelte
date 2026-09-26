@@ -133,7 +133,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Section Tabs -->
@@ -255,7 +257,7 @@
           {#each foundResults as result}
             <Card>
               <div class="flex items-start justify-between gap-4">
-                <div class="flex-1">
+                <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-2">
                     <span
                       class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {statusColor(
@@ -268,7 +270,9 @@
                       {propertyTypeLabel(result.propertyType)}
                     </span>
                   </div>
-                  <p class="mt-1 font-medium text-white">{result.holderName}</p>
+                  <p class="mt-1 truncate font-medium text-white" title={result.holderName}>
+                    {result.holderName}
+                  </p>
                   <div class="mt-1 flex items-center gap-4 text-sm text-surface-400">
                     <span>{result.state}</span>
                     {#if result.reportedAmount}
@@ -324,8 +328,10 @@
                 >
                   {result.status}
                 </span>
-                <div class="flex-1">
-                  <p class="font-medium text-surface-300">{result.holderName}</p>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate font-medium text-surface-300" title={result.holderName}>
+                    {result.holderName}
+                  </p>
                   <div class="flex items-center gap-4 text-sm text-surface-500">
                     <span>{propertyTypeLabel(result.propertyType)}</span>
                     <span>{result.state}</span>
@@ -446,11 +452,13 @@
               </div>
 
               <!-- Content -->
-              <div class="flex-1">
+              <div class="min-w-0 flex-1">
                 <div class="flex items-start justify-between">
-                  <div>
-                    <div class="flex items-center gap-2">
-                      <h4 class="font-semibold text-white">{rec.productName}</h4>
+                  <div class="min-w-0">
+                    <div class="flex min-w-0 items-center gap-2">
+                      <h4 class="truncate font-semibold text-white" title={rec.productName}>
+                        {rec.productName}
+                      </h4>
                       {#if rec.rewardType}
                         <span
                           class="inline-flex rounded-full bg-primary-900/50 px-2 py-0.5 text-xs font-medium text-primary-300"
@@ -459,7 +467,9 @@
                         </span>
                       {/if}
                     </div>
-                    <p class="text-sm text-surface-400">{rec.provider}</p>
+                    <p class="truncate text-sm text-surface-400" title={rec.provider}>
+                      {rec.provider}
+                    </p>
                     <span
                       class="mt-1 inline-flex rounded-full bg-surface-700 px-2 py-0.5 text-xs text-surface-400"
                     >
@@ -494,7 +504,7 @@
                   </form>
                 </div>
 
-                <p class="mt-2 text-sm text-surface-300">{rec.description}</p>
+                <p class="mt-2 break-words text-sm text-surface-300">{rec.description}</p>
 
                 <!-- Key Features -->
                 <div class="mt-3 flex flex-wrap gap-3 text-sm">
@@ -524,7 +534,7 @@
                 <!-- Match Reason -->
                 <div class="mt-3 rounded-lg bg-surface-900/50 px-3 py-2">
                   <p class="text-xs font-medium text-surface-500">Why this matches you</p>
-                  <p class="mt-0.5 text-sm text-surface-300">{rec.matchReason}</p>
+                  <p class="mt-0.5 break-words text-sm text-surface-300">{rec.matchReason}</p>
                 </div>
 
                 <!-- Match Score Bar -->

@@ -57,9 +57,13 @@
               </svg>
             </div>
             <div class="min-w-0">
-              <p class="truncate text-xs font-medium text-white">{account.name}</p>
+              <p class="truncate text-xs font-medium text-white" title={account.name}>
+                {account.name}
+              </p>
               {#if account.institutionName}
-                <p class="truncate text-xs text-surface-400">{account.institutionName}</p>
+                <p class="truncate text-xs text-surface-400" title={account.institutionName}>
+                  {account.institutionName}
+                </p>
               {/if}
             </div>
           </div>

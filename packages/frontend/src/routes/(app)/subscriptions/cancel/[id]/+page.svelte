@@ -139,7 +139,7 @@
   {:else}
     <!-- Header -->
     <div>
-      <h2 class="text-2xl font-bold text-white">
+      <h2 class="break-words text-2xl font-bold text-white">
         Cancel {data.subscription.merchantName || data.subscription.name}
       </h2>
       <p class="mt-1 text-surface-400">Follow the steps below to cancel your subscription</p>
@@ -172,8 +172,11 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <div>
-              <p class="font-semibold text-white">
+            <div class="min-w-0">
+              <p
+                class="truncate font-semibold text-white"
+                title={data.subscription.merchantName || data.subscription.name}
+              >
                 {data.subscription.merchantName || data.subscription.name}
               </p>
               <p class="text-xs text-surface-400">
@@ -210,7 +213,9 @@
             {#if data.subscription.categoryName}
               <div class="mt-2 flex justify-between text-sm">
                 <span class="text-surface-400">Category</span>
-                <span class="text-surface-300">{data.subscription.categoryName}</span>
+                <span class="truncate text-surface-300" title={data.subscription.categoryName}>
+                  {data.subscription.categoryName}
+                </span>
               </div>
             {/if}
           </div>
@@ -445,7 +450,7 @@
               {#if contactInfo?.email}
                 <a
                   href="mailto:{contactInfo.email}"
-                  class="mt-2 inline-flex items-center gap-1 text-xs text-primary-400 hover:text-primary-300"
+                  class="mt-2 inline-flex items-center gap-1 break-all text-xs text-primary-400 hover:text-primary-300"
                 >
                   {contactInfo.email}
                 </a>
@@ -521,7 +526,9 @@
               >
                 {i + 1}
               </div>
-              <p class="text-sm text-surface-300 leading-relaxed pt-0.5">{step}</p>
+              <p class="min-w-0 break-words text-sm text-surface-300 leading-relaxed pt-0.5">
+                {step}
+              </p>
             </li>
           {/each}
         </ol>
@@ -624,7 +631,7 @@
         </div>
 
         {#if request.notes}
-          <div class="mb-4 text-sm">
+          <div class="mb-4 break-words text-sm">
             <span class="text-surface-400">Notes:</span>
             <span class="ml-1 text-surface-300">{request.notes}</span>
           </div>

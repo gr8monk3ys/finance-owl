@@ -77,7 +77,7 @@
         {scoreLabel}
       </span>
 
-      <p class="mt-2 text-xs text-surface-500">
+      <p class="mt-2 break-words text-xs text-surface-500">
         {creditScore.source} &middot;
         {formatDate(creditScore.reportDate)}
       </p>

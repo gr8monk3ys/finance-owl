@@ -222,7 +222,7 @@
           d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-      {form.error}
+      <span class="min-w-0 break-words">{form.error}</span>
     </div>
   {/if}
 
@@ -412,13 +412,15 @@
               <Card>
                 <div class="flex items-start justify-between gap-4">
                   <div class="min-w-0 flex-1">
-                    <div class="flex items-center gap-2">
+                    <div class="flex min-w-0 items-center gap-2">
                       <span
                         class="h-2.5 w-2.5 rounded-full {hasCritical
                           ? 'bg-red-400'
                           : 'bg-orange-400'}"
                       ></span>
-                      <p class="font-semibold text-white">{breach.breachName}</p>
+                      <p class="truncate font-semibold text-white" title={breach.breachName}>
+                        {breach.breachName}
+                      </p>
                       {#if hasCritical}
                         <span
                           class="rounded-lg border border-red-500/25 bg-red-900/40 px-2 py-0.5 text-xs font-semibold text-red-300"
@@ -433,12 +435,12 @@
                     >
                       <span>Breach date: {fmtDate(breach.breachDate)}</span>
                       {#if breach.email}
-                        <span>Email: {breach.email}</span>
+                        <span class="min-w-0 break-all">Email: {breach.email}</span>
                       {/if}
                     </div>
 
                     {#if breach.breachDescription}
-                      <p class="mt-2 text-sm leading-relaxed text-surface-300">
+                      <p class="mt-2 break-words text-sm leading-relaxed text-surface-300">
                         {stripHtml(breach.breachDescription)}
                       </p>
                     {/if}
@@ -502,16 +504,18 @@
                 <Card>
                   <div class="flex items-start justify-between gap-4">
                     <div class="min-w-0 flex-1">
-                      <div class="flex items-center gap-2">
+                      <div class="flex min-w-0 items-center gap-2">
                         <span class="h-2 w-2 rounded-full bg-surface-500"></span>
-                        <p class="font-medium text-surface-300">{breach.breachName}</p>
+                        <p class="truncate font-medium text-surface-300" title={breach.breachName}>
+                          {breach.breachName}
+                        </p>
                       </div>
                       <div
                         class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-surface-500"
                       >
                         <span>Breach date: {fmtDate(breach.breachDate)}</span>
                         {#if breach.email}
-                          <span>Email: {breach.email}</span>
+                          <span class="min-w-0 break-all">Email: {breach.email}</span>
                         {/if}
                       </div>
                       {#if dataClasses.length > 0}
@@ -577,9 +581,10 @@
                   <div class="min-w-0 flex-1 pb-1">
                     <div class="flex items-center justify-between">
                       <p
-                        class="font-medium {breach.isAcknowledged
+                        class="truncate font-medium {breach.isAcknowledged
                           ? 'text-surface-400'
                           : 'text-white'}"
+                        title={breach.breachName}
                       >
                         {breach.breachName}
                       </p>
@@ -588,10 +593,12 @@
                       </span>
                     </div>
                     {#if breach.email}
-                      <p class="mt-0.5 text-xs text-surface-500">{breach.email}</p>
+                      <p class="mt-0.5 truncate text-xs text-surface-500" title={breach.email}>
+                        {breach.email}
+                      </p>
                     {/if}
                     {#if dataClasses.length > 0}
-                      <p class="mt-1 text-xs text-surface-500">
+                      <p class="mt-1 break-words text-xs text-surface-500">
                         {dataClasses.slice(0, 3).join(', ')}{dataClasses.length > 3
                           ? ` +${dataClasses.length - 3} more`
                           : ''}
@@ -650,7 +657,9 @@
                           d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                         />
                       </svg>
-                      <p class="truncate text-sm font-medium text-white">{monitored.email}</p>
+                      <p class="truncate text-sm font-medium text-white" title={monitored.email}>
+                        {monitored.email}
+                      </p>
                     </div>
                     <div class="mt-1 flex items-center gap-3 text-xs text-surface-500">
                       <span
@@ -861,7 +870,7 @@
             </div>
           </div>
           {#if data.summary.mostRecent}
-            <p class="mt-2 text-xs text-surface-500">
+            <p class="mt-2 break-words text-xs text-surface-500">
               Most recent breach: <span class="text-surface-400"
                 >{data.summary.mostRecent.name}</span
               >

@@ -266,8 +266,10 @@
           />
 
           {#if selectedFile}
-            <div class="flex items-center gap-3">
-              <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-600/20">
+            <div class="flex max-w-full items-center gap-3">
+              <div
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary-600/20"
+              >
                 <svg
                   aria-hidden="true"
                   class="h-6 w-6 text-primary-400"
@@ -283,8 +285,10 @@
                   />
                 </svg>
               </div>
-              <div>
-                <p class="font-medium text-white">{selectedFile.name}</p>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={selectedFile.name}>
+                  {selectedFile.name}
+                </p>
                 <p class="text-sm text-surface-400">
                   {getFileTypeLabel(selectedFile.name)} - {formatFileSize(
                     selectedFile.size,
@@ -586,8 +590,8 @@
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span>
-              <strong class="text-surface-300">{uploadResult.fileName}</strong> -
+            <span class="min-w-0">
+              <strong class="break-all text-surface-300">{uploadResult.fileName}</strong> -
               {uploadResult.transactions.length} transaction{uploadResult.transactions.length !== 1
                 ? 's'
                 : ''} found
@@ -694,10 +698,10 @@
                 <div class="col-span-2 text-sm text-surface-300">
                   {formatDate(row.date)}
                 </div>
-                <div class="col-span-5">
-                  <p class="text-sm font-medium text-white">{row.name}</p>
+                <div class="col-span-5 min-w-0">
+                  <p class="truncate text-sm font-medium text-white" title={row.name}>{row.name}</p>
                   {#if row.memo}
-                    <p class="text-xs text-surface-500">{row.memo}</p>
+                    <p class="truncate text-xs text-surface-500" title={row.memo}>{row.memo}</p>
                   {/if}
                 </div>
                 <div class="col-span-2 text-right">
@@ -723,6 +727,8 @@
                   {/if}
                 </div>
               </div>
+            {:else}
+              <p class="px-6 py-4 text-sm text-surface-400">No transactions found in this file.</p>
             {/each}
           </div>
         </div>
@@ -839,8 +845,10 @@
             <div
               class="[content-visibility:auto] [contain-intrinsic-size:auto_4rem] flex items-center justify-between px-6 py-3"
             >
-              <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-700">
+              <div class="flex min-w-0 items-center gap-3">
+                <div
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-700"
+                >
                   <svg
                     aria-hidden="true"
                     class="h-5 w-5 text-surface-400"
@@ -856,9 +864,11 @@
                     />
                   </svg>
                 </div>
-                <div>
-                  <p class="font-medium text-white">{entry.fileName}</p>
-                  <p class="text-xs text-surface-400">
+                <div class="min-w-0">
+                  <p class="truncate font-medium text-white" title={entry.fileName}>
+                    {entry.fileName}
+                  </p>
+                  <p class="break-words text-xs text-surface-400">
                     {entry.fileType.toUpperCase()} -
                     {entry.accountName || 'Unknown account'} -
                     {formatImportDate(entry.importedAt)}

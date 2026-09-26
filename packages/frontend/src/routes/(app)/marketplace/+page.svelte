@@ -85,9 +85,13 @@
           <Card>
             <div class="space-y-2">
               <div class="flex items-start justify-between">
-                <div>
-                  <p class="font-semibold text-white">{product.name}</p>
-                  <p class="text-sm text-surface-400">{product.provider}</p>
+                <div class="min-w-0">
+                  <p class="truncate font-semibold text-white" title={product.name}>
+                    {product.name}
+                  </p>
+                  <p class="truncate text-sm text-surface-400" title={product.provider}>
+                    {product.provider}
+                  </p>
                 </div>
                 <span
                   class="inline-flex rounded-full bg-primary-900/50 px-2 py-0.5 text-xs font-medium text-primary-300"
@@ -97,7 +101,9 @@
               </div>
 
               {#if product.description}
-                <p class="text-sm text-surface-400 line-clamp-2">{product.description}</p>
+                <p class="text-sm text-surface-400 line-clamp-2 break-words">
+                  {product.description}
+                </p>
               {/if}
 
               <div class="flex flex-wrap gap-3 text-sm">
@@ -229,11 +235,15 @@
       {#each data.products as product}
         <Card>
           <div class="flex items-start gap-4">
-            <div class="flex-1">
+            <div class="min-w-0 flex-1">
               <div class="flex items-start justify-between">
-                <div>
-                  <h4 class="font-semibold text-white">{product.name}</h4>
-                  <p class="text-sm text-surface-400">{product.provider}</p>
+                <div class="min-w-0">
+                  <h4 class="truncate font-semibold text-white" title={product.name}>
+                    {product.name}
+                  </h4>
+                  <p class="truncate text-sm text-surface-400" title={product.provider}>
+                    {product.provider}
+                  </p>
                 </div>
                 <span
                   class="inline-flex rounded-full bg-surface-700 px-2 py-0.5 text-xs text-surface-400"
@@ -243,7 +253,7 @@
               </div>
 
               {#if product.description}
-                <p class="mt-2 text-sm text-surface-300">{product.description}</p>
+                <p class="mt-2 break-words text-sm text-surface-300">{product.description}</p>
               {/if}
 
               <!-- Key Stats -->
@@ -277,7 +287,7 @@
                 {#if product.signupBonus}
                   <div>
                     <p class="text-xs text-surface-500">Signup Bonus</p>
-                    <p class="font-semibold text-primary-400">{product.signupBonus}</p>
+                    <p class="break-words font-semibold text-primary-400">{product.signupBonus}</p>
                   </div>
                 {/if}
                 {#if product.rating !== null && product.rating !== undefined}
@@ -292,7 +302,7 @@
               </div>
 
               {#if product.terms}
-                <p class="mt-2 text-xs text-surface-500">{product.terms}</p>
+                <p class="mt-2 break-words text-xs text-surface-500">{product.terms}</p>
               {/if}
             </div>
 

@@ -316,12 +316,14 @@
               <div class="space-y-2">
                 {#each data.spending as item, i}
                   <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
+                    <div class="flex min-w-0 items-center gap-2">
                       <span
-                        class="h-3 w-3 rounded-full"
+                        class="h-3 w-3 shrink-0 rounded-full"
                         style="background-color: {spendingColors[i]}"
                       ></span>
-                      <span class="text-sm text-surface-300">{item.group}</span>
+                      <span class="truncate text-sm text-surface-300" title={item.group}
+                        >{item.group}</span
+                      >
                     </div>
                     <div class="text-right">
                       <span class="text-sm font-medium text-white">{fmt(item.total)}</span>

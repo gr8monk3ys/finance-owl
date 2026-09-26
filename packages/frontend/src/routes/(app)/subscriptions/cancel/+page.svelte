@@ -312,16 +312,18 @@
                 onclick={() => selectSubscription(sub)}
                 class="flex w-full items-center justify-between rounded-lg border border-surface-700 p-4 text-left transition hover:border-primary-600/50 hover:bg-surface-700/50"
               >
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   {#if sub.categoryColor}
-                    <span class="h-3 w-3 rounded-full" style="background-color: {sub.categoryColor}"
+                    <span
+                      class="h-3 w-3 shrink-0 rounded-full"
+                      style="background-color: {sub.categoryColor}"
                     ></span>
                   {/if}
-                  <div>
-                    <p class="font-medium text-white">
+                  <div class="min-w-0">
+                    <p class="truncate font-medium text-white" title={sub.merchantName || sub.name}>
                       {sub.merchantName || sub.name}
                     </p>
-                    <p class="mt-0.5 text-xs text-surface-500">
+                    <p class="mt-0.5 truncate text-xs text-surface-500">
                       {getFrequencyLabel(sub.frequency)}
                       {#if sub.categoryName}
                         &middot; {sub.categoryName}
@@ -406,7 +408,9 @@
               }}
             >
               <div class="flex items-center justify-between">
-                <p class="text-sm font-medium text-white">{provider.name}</p>
+                <p class="min-w-0 truncate text-sm font-medium text-white" title={provider.name}>
+                  {provider.name}
+                </p>
                 <span
                   class="rounded-md border px-1.5 py-0.5 text-xs {getDifficultyColor(
                     provider.difficulty,
@@ -441,6 +445,10 @@
                 </span>
               </div>
             </a>
+          {:else}
+            <p class="break-words text-sm text-surface-500 sm:col-span-2 lg:col-span-3">
+              No providers match “{providerSearch}”.
+            </p>
           {/each}
         </div>
         {#if filteredProviders.length > 12}
@@ -460,7 +468,9 @@
         <div class="grid gap-4 sm:grid-cols-2">
           <Card>
             <div class="flex items-center gap-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-900/30">
+              <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-900/30"
+              >
                 <svg
                   aria-hidden="true"
                   class="h-5 w-5 text-red-400"
@@ -472,8 +482,11 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
-              <div>
-                <p class="font-semibold text-white">
+              <div class="min-w-0">
+                <p
+                  class="truncate font-semibold text-white"
+                  title={selectedSubscription.merchantName || selectedSubscription.name}
+                >
                   {selectedSubscription.merchantName || selectedSubscription.name}
                 </p>
                 <p class="text-xs text-surface-400">
@@ -515,7 +528,12 @@
         <!-- Provider details -->
         <Card>
           <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-white">{selectedProvider.name}</h3>
+            <h3
+              class="min-w-0 truncate text-lg font-semibold text-white"
+              title={selectedProvider.name}
+            >
+              {selectedProvider.name}
+            </h3>
             <span
               class="rounded-md border px-2 py-1 text-xs font-medium {getDifficultyColor(
                 selectedProvider.difficulty,
@@ -673,7 +691,9 @@
                   >
                     {i + 1}
                   </div>
-                  <p class="text-sm text-surface-300 leading-relaxed pt-0.5">{step}</p>
+                  <p class="min-w-0 break-words text-sm text-surface-300 leading-relaxed pt-0.5">
+                    {step}
+                  </p>
                 </li>
               {/each}
             </ol>
@@ -697,11 +717,11 @@
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <div>
+                <div class="min-w-0">
                   <p class="text-sm font-medium text-amber-300">Tips</p>
                   <ul class="mt-1.5 space-y-1">
                     {#each selectedProvider.tips as tip}
-                      <li class="text-xs text-amber-400/80">{tip}</li>
+                      <li class="break-words text-xs text-amber-400/80">{tip}</li>
                     {/each}
                   </ul>
                 </div>
@@ -776,13 +796,13 @@
                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <div>
+            <div class="min-w-0">
               <p class="text-sm font-medium text-green-300">
                 You will save {fmt(estimatedMonthlySaving)}/month ({fmt(
                   estimatedAnnualSaving,
                 )}/year)
               </p>
-              <p class="mt-1 text-xs text-green-400/80">
+              <p class="mt-1 break-words text-xs text-green-400/80">
                 By cancelling {selectedSubscription.merchantName || selectedSubscription.name}
               </p>
             </div>
@@ -895,7 +915,7 @@
             <div class="min-w-0 flex-1">
               <a
                 href="/subscriptions/cancel/{req.subscriptionId}"
-                class="text-sm font-medium text-white hover:text-primary-400 transition"
+                class="break-words text-sm font-medium text-white hover:text-primary-400 transition"
               >
                 {req.merchantName || req.subscriptionName || 'Unknown'}
               </a>
@@ -943,12 +963,12 @@
 >
   {#if selectedProvider}
     <div class="space-y-4">
-      <p class="text-sm text-surface-400">
+      <p class="break-words text-sm text-surface-400">
         Copy this email and send it to {selectedProvider.name} customer support to request cancellation.
       </p>
       <div class="rounded-lg border border-surface-600 bg-surface-900 p-4">
         <pre
-          class="whitespace-pre-wrap text-sm text-surface-300 font-mono leading-relaxed">{selectedProvider.emailTemplate ||
+          class="whitespace-pre-wrap break-words text-sm text-surface-300 font-mono leading-relaxed">{selectedProvider.emailTemplate ||
             `Subject: Subscription Cancellation Request - ${selectedProvider.name}
 
 Dear ${selectedProvider.name} Customer Support,
@@ -993,7 +1013,7 @@ Thank you,
 >
   {#if selectedProvider}
     <div class="space-y-4">
-      <p class="text-sm text-surface-400">
+      <p class="break-words text-sm text-surface-400">
         Use this script when calling {selectedProvider.name} to cancel your subscription.
       </p>
       {#if selectedProvider.phoneNumber}

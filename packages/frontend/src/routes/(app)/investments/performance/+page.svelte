@@ -250,18 +250,23 @@
           <div class="space-y-3">
             {#each topPerformers() as holding, i}
               <div class="flex items-center justify-between rounded-lg bg-surface-700/30 px-4 py-3">
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <span
-                    class="flex h-7 w-7 items-center justify-center rounded-full bg-green-600/20 text-xs font-bold text-green-400"
+                    class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-600/20 text-xs font-bold text-green-400"
                   >
                     {i + 1}
                   </span>
-                  <div>
-                    <p class="font-medium text-white">
+                  <div class="min-w-0">
+                    <p
+                      class="truncate font-medium text-white"
+                      title={holding.tickerSymbol || holding.securityName}
+                    >
                       {holding.tickerSymbol || holding.securityName}
                     </p>
                     {#if holding.tickerSymbol}
-                      <p class="text-xs text-surface-500">{holding.securityName}</p>
+                      <p class="truncate text-xs text-surface-500" title={holding.securityName}>
+                        {holding.securityName}
+                      </p>
                     {/if}
                   </div>
                 </div>
@@ -286,18 +291,23 @@
           <div class="space-y-3">
             {#each worstPerformers() as holding, i}
               <div class="flex items-center justify-between rounded-lg bg-surface-700/30 px-4 py-3">
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <span
-                    class="flex h-7 w-7 items-center justify-center rounded-full bg-red-600/20 text-xs font-bold text-red-400"
+                    class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-600/20 text-xs font-bold text-red-400"
                   >
                     {i + 1}
                   </span>
-                  <div>
-                    <p class="font-medium text-white">
+                  <div class="min-w-0">
+                    <p
+                      class="truncate font-medium text-white"
+                      title={holding.tickerSymbol || holding.securityName}
+                    >
                       {holding.tickerSymbol || holding.securityName}
                     </p>
                     {#if holding.tickerSymbol}
-                      <p class="text-xs text-surface-500">{holding.securityName}</p>
+                      <p class="truncate text-xs text-surface-500" title={holding.securityName}>
+                        {holding.securityName}
+                      </p>
                     {/if}
                   </div>
                 </div>
@@ -345,7 +355,9 @@
                   {holding.tickerSymbol || '--'}
                 </td>
                 <td class="px-4 py-3 text-surface-300">
-                  <span class="line-clamp-1 max-w-[200px]">{holding.securityName}</span>
+                  <span class="line-clamp-1 max-w-[200px]" title={holding.securityName}
+                    >{holding.securityName}</span
+                  >
                 </td>
                 <td class="px-4 py-3">
                   <span

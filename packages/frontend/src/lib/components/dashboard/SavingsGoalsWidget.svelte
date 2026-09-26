@@ -38,7 +38,7 @@
       {#each activeGoals as goal}
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-xs font-medium text-surface-300">
+            <span class="min-w-0 truncate text-xs font-medium text-surface-300" title={goal.name}>
               {goal.icon ? goal.icon + ' ' : ''}{goal.name}
             </span>
             <span class="text-xs text-surface-400">

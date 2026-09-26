@@ -254,10 +254,10 @@
         {#each data.debts as debt}
           <Card>
             <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
-                <div>
+              <div class="flex min-w-0 items-center gap-3">
+                <div class="min-w-0">
                   <div class="flex items-center gap-2">
-                    <p class="font-medium text-white">{debt.name}</p>
+                    <p class="truncate font-medium text-white" title={debt.name}>{debt.name}</p>
                     <span
                       class="rounded-full px-2 py-0.5 text-xs font-medium {getDebtTypeColor(
                         debt.type,
@@ -274,7 +274,9 @@
                     {/if}
                   </div>
                   {#if debt.lender}
-                    <p class="text-xs text-surface-500">{debt.lender}</p>
+                    <p class="truncate text-xs text-surface-500" title={debt.lender}>
+                      {debt.lender}
+                    </p>
                   {/if}
                 </div>
               </div>
@@ -408,7 +410,7 @@
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <p class="text-lg text-surface-300">Add debts first</p>
           <p class="mt-1 text-sm text-surface-500">
-            You need at least one active debt to build a payoff strategy.
+            You need at least 1 active debt to build a payoff strategy.
           </p>
         </div>
       </Card>
@@ -588,7 +590,9 @@
                       : 0}
                   <div>
                     <div class="flex items-center justify-between text-sm">
-                      <span class="text-white">{schedule.debtName}</span>
+                      <span class="truncate text-white" title={schedule.debtName}
+                        >{schedule.debtName}</span
+                      >
                       <span class="text-surface-400">
                         {getMonthsText(schedule.payoffMonth)}
                       </span>
@@ -649,13 +653,15 @@
                         (expandedSchedule =
                           expandedSchedule === schedule.debtId ? null : schedule.debtId)}
                     >
-                      <div class="flex items-center gap-3">
+                      <div class="flex min-w-0 items-center gap-3">
                         <div
                           class="h-3 w-3 rounded-full"
                           style="background-color: {chartColors[i % chartColors.length]}"
                         ></div>
-                        <div>
-                          <p class="font-medium text-white">{schedule.debtName}</p>
+                        <div class="min-w-0">
+                          <p class="truncate font-medium text-white" title={schedule.debtName}>
+                            {schedule.debtName}
+                          </p>
                           <p class="text-xs text-surface-500">
                             {fmt(schedule.startingBalance)} at {fmtPct(schedule.interestRate)} -- Payoff
                             in {getMonthsText(schedule.payoffMonth)}
@@ -1023,7 +1029,7 @@
   {#if payingDebt}
     <div class="mb-4 rounded-lg bg-surface-900 p-3">
       <p class="text-sm text-surface-400">Paying toward</p>
-      <p class="font-medium text-white">{payingDebt.name}</p>
+      <p class="break-words font-medium text-white">{payingDebt.name}</p>
       <p class="text-xs text-surface-500">
         Balance: {fmt(payingDebt.currentBalance)} -- Min. payment: {fmt(
           payingDebt.minimumPayment,
@@ -1135,7 +1141,7 @@
       <div class="max-h-72 space-y-2 overflow-y-auto">
         {#each paymentHistory as payment}
           <div class="flex items-center justify-between rounded-lg bg-surface-900 px-3 py-2">
-            <div>
+            <div class="min-w-0">
               <p class="text-sm font-medium text-white">
                 {fmt(payment.amount)}
                 {#if payment.isExtra}
@@ -1146,7 +1152,7 @@
                   </span>
                 {/if}
               </p>
-              <p class="text-xs text-surface-500">
+              <p class="break-words text-xs text-surface-500">
                 {fmtDate(payment.date)}
                 {#if payment.notes}
                   -- {payment.notes}

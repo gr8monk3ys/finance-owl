@@ -224,8 +224,8 @@
         </span>
       </div>
 
-      <h2 class="text-2xl font-bold text-white lg:text-3xl">{data.article.title}</h2>
-      <p class="text-surface-300">{data.article.summary}</p>
+      <h2 class="break-words text-2xl font-bold text-white lg:text-3xl">{data.article.title}</h2>
+      <p class="break-words text-surface-300">{data.article.summary}</p>
 
       <div class="flex items-center gap-3">
         <!-- Bookmark button -->
@@ -307,7 +307,7 @@
 
   <!-- Article Content -->
   <Card>
-    <article class="prose-custom">
+    <article class="prose-custom break-words">
       {@html renderedContent}
     </article>
   </Card>
@@ -332,8 +332,8 @@
               </span>
               <span class="text-xs text-surface-500">{article.readTimeMinutes} min</span>
             </div>
-            <h4 class="mt-2 text-sm font-medium text-white">{article.title}</h4>
-            <p class="mt-1 line-clamp-2 text-xs text-surface-400">
+            <h4 class="mt-2 break-words text-sm font-medium text-white">{article.title}</h4>
+            <p class="mt-1 line-clamp-2 break-words text-xs text-surface-400">
               {article.summary}
             </p>
           </a>

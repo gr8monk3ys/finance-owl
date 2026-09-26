@@ -373,7 +373,7 @@
         {#each rules as rule (rule.id)}
           <Card>
             <div class="flex items-start justify-between">
-              <div class="flex items-start gap-3">
+              <div class="flex min-w-0 items-start gap-3">
                 <div
                   class="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg {rule.isActive ===
                   1
@@ -395,8 +395,13 @@
                     />
                   </svg>
                 </div>
-                <div>
-                  <p class="font-medium {rule.isActive === 1 ? 'text-white' : 'text-surface-500'}">
+                <div class="min-w-0">
+                  <p
+                    class="truncate font-medium {rule.isActive === 1
+                      ? 'text-white'
+                      : 'text-surface-500'}"
+                    title={rule.name}
+                  >
                     {rule.name}
                   </p>
                   <p class="mt-0.5 text-sm text-surface-400">
@@ -631,13 +636,15 @@
         <div class="space-y-3">
           {#each highSpendCategories as cat}
             <div class="flex items-center justify-between rounded-lg bg-surface-800/50 p-4">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
-                  class="h-3 w-3 rounded-full"
+                  class="h-3 w-3 shrink-0 rounded-full"
                   style="background-color: {cat.categoryColor}"
                 ></div>
-                <div>
-                  <p class="text-sm font-medium text-white">{cat.categoryName}</p>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium text-white" title={cat.categoryName}>
+                    {cat.categoryName}
+                  </p>
                   <p class="text-xs text-surface-400">
                     Your avg: {fmt(cat.monthlyAverage)}/mo. Typical: {fmt(cat.overallAverage)}/mo
                   </p>
@@ -679,13 +686,15 @@
         <div class="space-y-3">
           {#each reductions as category}
             <div class="flex items-center justify-between rounded-lg bg-surface-800/50 p-3">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
-                  class="h-3 w-3 rounded-full"
+                  class="h-3 w-3 shrink-0 rounded-full"
                   style="background-color: {category.categoryColor}"
                 ></div>
-                <div>
-                  <p class="text-sm font-medium text-white">{category.categoryName}</p>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium text-white" title={category.categoryName}>
+                    {category.categoryName}
+                  </p>
                   <p class="text-xs text-surface-500">
                     {fmt(category.monthlyAverage)}/mo avg vs {fmt(category.overallAverage)}/mo
                     overall

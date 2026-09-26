@@ -116,13 +116,16 @@
         <Card>
           <div class="flex items-start justify-between">
             <div class="min-w-0 flex-1">
-              <p class="truncate font-semibold text-white">
+              <p
+                class="truncate font-semibold text-white"
+                title="{vehicle.year} {vehicle.make} {vehicle.model}"
+              >
                 {vehicle.year}
                 {vehicle.make}
                 {vehicle.model}
               </p>
               {#if vehicle.trim}
-                <p class="text-sm text-surface-400">{vehicle.trim}</p>
+                <p class="truncate text-sm text-surface-400" title={vehicle.trim}>{vehicle.trim}</p>
               {/if}
             </div>
             <span
@@ -144,8 +147,10 @@
               </div>
             {/if}
             {#if vehicle.vin}
-              <div>
-                <p class="truncate text-sm font-medium text-white">{vehicle.vin}</p>
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-white" title={vehicle.vin}>
+                  {vehicle.vin}
+                </p>
                 <p class="text-xs text-surface-500">VIN</p>
               </div>
             {/if}

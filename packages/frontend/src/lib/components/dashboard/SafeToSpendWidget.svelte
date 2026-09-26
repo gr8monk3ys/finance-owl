@@ -237,7 +237,7 @@
                 {affordResult.canAfford ? 'Yes, you can!' : 'Not recommended'}
               </p>
             </div>
-            <p class="mt-1 text-xs text-surface-300">
+            <p class="mt-1 break-words text-xs text-surface-300">
               {affordResult.recommendation}
             </p>
             {#if affordResult.canAfford}

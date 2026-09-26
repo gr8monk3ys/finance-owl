@@ -322,7 +322,7 @@
           Search updates as you type. Account, category, and date filters apply when you tap Apply
           Filters.
         </p>
-        <p class="text-surface-400">
+        <p class="break-words text-surface-400">
           {#if autoSearchPending || $navigating}
             Updating…
           {:else if hasSearchQuery}
@@ -503,36 +503,39 @@
                 <!-- Description -->
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-2">
-                    <p class="truncate font-medium text-white">
+                    <p class="truncate font-medium text-white" title={tx.merchantName || tx.name}>
                       {tx.merchantName || tx.name}
                     </p>
                     {#if tx.pending}
                       <span
-                        class="inline-flex items-center rounded-md bg-accent-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-accent-400 ring-1 ring-inset ring-accent-500/20"
+                        class="inline-flex shrink-0 items-center rounded-md bg-accent-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-accent-400 ring-1 ring-inset ring-accent-500/20"
                       >
                         Pending
                       </span>
                     {/if}
                     {#if tx.splitTransactionId}
                       <span
-                        class="inline-flex items-center rounded-md bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-blue-400 ring-1 ring-inset ring-blue-500/20"
+                        class="inline-flex shrink-0 items-center rounded-md bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-blue-400 ring-1 ring-inset ring-blue-500/20"
                       >
                         Split
                       </span>
                     {/if}
                   </div>
-                  <div class="mt-0.5 flex items-center gap-2 text-xs text-surface-500">
-                    <span>{formatTransactionDate(tx.date)}</span>
+                  <div class="mt-0.5 flex min-w-0 items-center gap-2 text-xs text-surface-500">
+                    <span class="shrink-0">{formatTransactionDate(tx.date)}</span>
                     {#if tx.categoryName}
                       <span class="text-surface-600">|</span>
-                      <span class="inline-flex items-center gap-1">
+                      <span class="inline-flex min-w-0 items-center gap-1">
                         {#if tx.categoryColor}
                           <span
-                            class="inline-block h-1.5 w-1.5 rounded-full"
+                            class="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
                             style="background-color: {tx.categoryColor}"
                           ></span>
                         {/if}
-                        <span style="color: {tx.categoryColor || 'inherit'}">{tx.categoryName}</span
+                        <span
+                          class="truncate"
+                          style="color: {tx.categoryColor || 'inherit'}"
+                          title={tx.categoryName}>{tx.categoryName}</span
                         >
                       </span>
                     {:else}
@@ -541,7 +544,9 @@
                     {/if}
                     {#if tx.accountName}
                       <span class="hidden text-surface-600 sm:inline">|</span>
-                      <span class="hidden sm:inline">{tx.accountName}</span>
+                      <span class="hidden min-w-0 truncate sm:inline" title={tx.accountName}
+                        >{tx.accountName}</span
+                      >
                     {/if}
                   </div>
                 </div>
@@ -775,12 +780,12 @@
         >
           {getMerchantInitials(selectedTransaction.merchantName || selectedTransaction.name)}
         </div>
-        <div class="flex-1">
-          <p class="text-lg font-semibold text-white">
+        <div class="min-w-0 flex-1">
+          <p class="break-words text-lg font-semibold text-white">
             {selectedTransaction.merchantName || selectedTransaction.name}
           </p>
           {#if selectedTransaction.merchantName && selectedTransaction.merchantName !== selectedTransaction.name}
-            <p class="text-sm text-surface-400">{selectedTransaction.name}</p>
+            <p class="break-words text-sm text-surface-400">{selectedTransaction.name}</p>
           {/if}
         </div>
         <p
@@ -804,7 +809,7 @@
         </div>
         <div>
           <p class="text-xs font-medium text-surface-500">Account</p>
-          <p class="mt-0.5 text-sm text-white">{selectedTransaction.accountName}</p>
+          <p class="mt-0.5 break-words text-sm text-white">{selectedTransaction.accountName}</p>
         </div>
         <div>
           <p class="text-xs font-medium text-surface-500">Status</p>

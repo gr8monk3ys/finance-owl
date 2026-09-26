@@ -492,7 +492,7 @@
                       {getStatusLabel(factor.status)}
                     </span>
                   </div>
-                  <p class="mt-1 text-sm text-surface-300">{factor.value}</p>
+                  <p class="mt-1 break-words text-sm text-surface-300">{factor.value}</p>
                   <div class="mt-2 flex items-center gap-2">
                     <span class="text-xs text-surface-500">
                       {getImpactLabel(factor.impact)}
@@ -605,7 +605,9 @@
               {#each data.report.accounts.slice(0, 5) as account}
                 <div class="flex items-center justify-between px-6 py-3">
                   <div class="min-w-0 flex-1">
-                    <p class="text-sm font-medium text-white">{account.accountName}</p>
+                    <p class="truncate text-sm font-medium text-white" title={account.accountName}>
+                      {account.accountName}
+                    </p>
                     <p class="text-xs text-surface-400">
                       {account.accountType.replace('_', ' ')} &middot; Opened {account.openedDate}
                     </p>
@@ -685,7 +687,7 @@
                 </svg>
               </div>
               <div class="min-w-0 flex-1">
-                <p class="text-sm text-white">{dispute.description}</p>
+                <p class="break-words text-sm text-white">{dispute.description}</p>
                 <p class="mt-1 text-xs text-surface-500">
                   {formatAlertDate(dispute.createdAt)}
                 </p>
@@ -819,7 +821,7 @@
                 </svg>
               </div>
               <div class="min-w-0 flex-1">
-                <p class="text-sm text-white">{alert.description}</p>
+                <p class="break-words text-sm text-white">{alert.description}</p>
                 {#if alert.previousValue && alert.newValue}
                   <p class="mt-0.5 text-xs text-surface-400">
                     {alert.previousValue} &rarr; {alert.newValue}
@@ -1211,7 +1213,7 @@
 
           <!-- Explanation -->
           <div class="rounded-lg border border-surface-700 bg-surface-700/30 p-4">
-            <p class="text-sm text-surface-300">{simulationResult.explanation}</p>
+            <p class="break-words text-sm text-surface-300">{simulationResult.explanation}</p>
           </div>
 
           <div class="flex justify-end pt-2">

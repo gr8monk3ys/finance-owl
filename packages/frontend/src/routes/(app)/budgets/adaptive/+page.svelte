@@ -209,7 +209,7 @@
       <p class="text-sm font-medium text-emerald-300">Budgets adjusted successfully!</p>
       <ul class="mt-2 space-y-1">
         {#each form.adjustments as adj}
-          <li class="text-sm text-emerald-200">
+          <li class="break-words text-sm text-emerald-200">
             {adj.categoryName}: {fmt(adj.previousAmount)} &rarr; {fmt(adj.newAmount)}
             <span class="text-emerald-400">({fmtPercent(adj.changePercent)})</span>
           </li>
@@ -277,9 +277,11 @@
           {@const accepted = acceptedCategories.has(suggestion.categoryId)}
           <Card class={accepted ? 'opacity-60' : ''}>
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div class="flex-1 space-y-2">
+              <div class="min-w-0 flex-1 space-y-2">
                 <div class="flex items-center gap-3">
-                  <h3 class="font-semibold text-white">{suggestion.categoryName}</h3>
+                  <h3 class="truncate font-semibold text-white" title={suggestion.categoryName}>
+                    {suggestion.categoryName}
+                  </h3>
                   <span
                     class="rounded-full px-2 py-0.5 text-xs font-medium {getConfidenceColor(
                       suggestion.confidence,
@@ -288,7 +290,7 @@
                     {suggestion.confidence} confidence
                   </span>
                 </div>
-                <p class="text-sm text-surface-400">{suggestion.reasoning}</p>
+                <p class="break-words text-sm text-surface-400">{suggestion.reasoning}</p>
                 <div class="flex flex-wrap gap-4 text-xs text-surface-500">
                   <span
                     >Avg: <span class="text-surface-300">{fmt(suggestion.averageSpending)}</span
@@ -368,12 +370,15 @@
               >
                 {styles.icon}
               </div>
-              <div class="flex-1">
-                <h3 class="font-semibold text-white">{insight.title}</h3>
-                <p class="mt-1 text-sm text-surface-300">{insight.description}</p>
+              <div class="min-w-0 flex-1">
+                <h3 class="break-words font-semibold text-white">{insight.title}</h3>
+                <p class="mt-1 break-words text-sm text-surface-300">{insight.description}</p>
                 {#if insight.categoryName}
                   <div class="mt-2 flex items-center gap-3">
-                    <span class="rounded-full bg-surface-700 px-2 py-0.5 text-xs text-surface-300">
+                    <span
+                      class="truncate rounded-full bg-surface-700 px-2 py-0.5 text-xs text-surface-300"
+                      title={insight.categoryName}
+                    >
                       {insight.categoryName}
                     </span>
                     {#if insight.amount}
@@ -433,8 +438,10 @@
         {#each data.predictions as prediction}
           <Card>
             <div class="flex items-start justify-between">
-              <div>
-                <h3 class="font-semibold text-white">{prediction.categoryName}</h3>
+              <div class="min-w-0">
+                <h3 class="truncate font-semibold text-white" title={prediction.categoryName}>
+                  {prediction.categoryName}
+                </h3>
                 <div class="mt-1 flex items-center gap-2">
                   <span class="text-lg font-bold text-primary-400">
                     {fmt(prediction.predictedAmount)}
@@ -589,16 +596,18 @@
                   />
                 </svg>
               </div>
-              <div>
+              <div class="min-w-0">
                 <div class="flex items-center gap-2">
-                  <h3 class="font-semibold text-white">{pattern.categoryName}</h3>
+                  <h3 class="truncate font-semibold text-white" title={pattern.categoryName}>
+                    {pattern.categoryName}
+                  </h3>
                   <span
                     class="rounded-full bg-surface-700 px-2 py-0.5 text-xs text-amber-400 capitalize"
                   >
                     {pattern.pattern.replace(/_/g, ' ')}
                   </span>
                 </div>
-                <p class="mt-1 text-sm text-surface-300">{pattern.recommendation}</p>
+                <p class="mt-1 break-words text-sm text-surface-300">{pattern.recommendation}</p>
                 <div class="mt-2 flex items-center gap-2 text-xs text-surface-500">
                   <span
                     >Average increase: <span class="text-amber-400 font-medium"

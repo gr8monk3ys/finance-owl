@@ -114,7 +114,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Summary -->
@@ -185,7 +187,7 @@
 
           <div class="pt-2">
             <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
                   class="flex h-10 w-10 items-center justify-center rounded-lg"
                   style="background-color: {goal.color || '#6366f1'}20"
@@ -206,8 +208,8 @@
                     />
                   </svg>
                 </div>
-                <div>
-                  <p class="font-medium text-white">{goal.name}</p>
+                <div class="min-w-0">
+                  <p class="truncate font-medium text-white" title={goal.name}>{goal.name}</p>
                   {#if goal.deadline}
                     {@const daysText = getDaysRemaining(goal.deadline)}
                     <p
@@ -547,7 +549,7 @@
   {#if contributingGoal}
     <div class="mb-4 rounded-lg bg-surface-900 p-3">
       <p class="text-sm text-surface-400">Contributing to</p>
-      <p class="font-medium text-white">{contributingGoal.name}</p>
+      <p class="break-words font-medium text-white">{contributingGoal.name}</p>
       <p class="text-xs text-surface-500">
         {fmt(contributingGoal.currentAmount)} / {fmt(contributingGoal.targetAmount)}
         &mdash; {fmt(contributingGoal.targetAmount - contributingGoal.currentAmount)} remaining
@@ -683,9 +685,9 @@
           <div class="mt-2 max-h-64 space-y-2 overflow-y-auto">
             {#each viewingGoal.contributions as contribution}
               <div class="flex items-center justify-between rounded-lg bg-surface-900 px-3 py-2">
-                <div>
+                <div class="min-w-0">
                   <p class="text-sm font-medium text-white">{fmt(contribution.amount)}</p>
-                  <p class="text-xs text-surface-500">
+                  <p class="break-words text-xs text-surface-500">
                     {fmtDate(contribution.date)}
                     {#if contribution.note}
                       &mdash; {contribution.note}

@@ -334,7 +334,7 @@
         >
           <div class="p-5">
             <div class="flex items-start justify-between gap-4">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <!-- Category icon -->
                 <div
                   class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold text-white/90"
@@ -343,9 +343,12 @@
                 >
                   {getBudgetCategoryIcon(budget.categoryName)}
                 </div>
-                <div>
+                <div class="min-w-0">
                   <div class="flex items-center gap-2">
-                    <p class="font-semibold text-white">
+                    <p
+                      class="truncate font-semibold text-white"
+                      title={budget.categoryName || 'Unknown Category'}
+                    >
                       {budget.categoryName || 'Unknown Category'}
                     </p>
                     <!-- Status badge -->
@@ -566,14 +569,16 @@
 
       <div class="flex items-center gap-3 rounded-lg bg-surface-750/50 p-3">
         <div
-          class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white/80"
+          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white/80"
           style="background: linear-gradient(135deg, {editingBudget.categoryColor ||
             '#64748b'}66, {editingBudget.categoryColor || '#64748b'}22)"
         >
           {getBudgetCategoryIcon(editingBudget.categoryName)}
         </div>
-        <div>
-          <p class="text-sm font-medium text-white">{editingBudget.categoryName}</p>
+        <div class="min-w-0">
+          <p class="truncate text-sm font-medium text-white" title={editingBudget.categoryName}>
+            {editingBudget.categoryName}
+          </p>
           <p class="text-xs text-surface-500">
             Currently {formatPercent(editingBudget.percentUsed)} used ({fmt(editingBudget.spent)} spent)
           </p>

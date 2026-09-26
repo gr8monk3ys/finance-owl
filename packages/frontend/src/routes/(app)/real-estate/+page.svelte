@@ -114,8 +114,13 @@
         <Card>
           <div class="flex items-start justify-between">
             <div class="min-w-0 flex-1">
-              <p class="truncate font-semibold text-white">{property.address}</p>
-              <p class="text-sm text-surface-400">
+              <p class="truncate font-semibold text-white" title={property.address}>
+                {property.address}
+              </p>
+              <p
+                class="truncate text-sm text-surface-400"
+                title="{property.city}, {property.state} {property.zipCode}"
+              >
                 {property.city}, {property.state}
                 {property.zipCode}
               </p>

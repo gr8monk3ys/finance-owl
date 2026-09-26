@@ -213,7 +213,9 @@
               <div class="flex items-start justify-between">
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2">
-                    <p class="truncate font-medium text-white">{property.name}</p>
+                    <p class="truncate font-medium text-white" title={property.name}>
+                      {property.name}
+                    </p>
                     <span
                       class="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium {propertyTypeBadgeColor(
                         property.propertyType,
@@ -223,7 +225,17 @@
                     </span>
                   </div>
                   {#if property.address || property.city}
-                    <p class="mt-0.5 truncate text-xs text-surface-500">
+                    <p
+                      class="mt-0.5 truncate text-xs text-surface-500"
+                      title={[
+                        [property.address, property.city, property.state]
+                          .filter(Boolean)
+                          .join(', '),
+                        property.zipCode,
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
                       {[property.address, property.city, property.state].filter(Boolean).join(', ')}
                       {#if property.zipCode}
                         {property.zipCode}{/if}
@@ -368,7 +380,12 @@
             <div class="pt-2">
               <div class="flex items-start justify-between">
                 <div class="flex-1 min-w-0">
-                  <p class="truncate font-medium text-white">
+                  <p
+                    class="truncate font-medium text-white"
+                    title={[vehicle.year, vehicle.make, vehicle.model, vehicle.trim]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
                     {vehicle.year}
                     {vehicle.make}
                     {vehicle.model}

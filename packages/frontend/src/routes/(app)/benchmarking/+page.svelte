@@ -186,10 +186,10 @@
     <!-- Profile Summary -->
     <Card>
       <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <div>
+        <div class="flex min-w-0 items-center gap-4">
+          <div class="min-w-0">
             <p class="text-sm text-surface-400">Your Cohort</p>
-            <p class="text-white">
+            <p class="break-words text-white">
               Age {data.profile.ageRange} &middot; {incomeRangeLabel(data.profile.incomeRange)}
               {#if data.profile.region}
                 &middot; {data.profile.region}

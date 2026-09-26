@@ -360,14 +360,16 @@
                     ? 'bg-primary-600 text-white'
                     : 'bg-surface-700 text-surface-200'}"
                 >
-                  <p class="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+                  <p class="whitespace-pre-wrap break-words text-sm leading-relaxed">
+                    {message.content}
+                  </p>
 
                   {#if message.sources && message.sources.length > 0}
                     <div class="mt-3 border-t border-surface-600/50 pt-2">
                       <p class="text-xs font-medium text-surface-400">Sources:</p>
                       <ul class="mt-1 space-y-1">
                         {#each message.sources as source}
-                          <li class="text-xs text-surface-400">
+                          <li class="break-words text-xs text-surface-400">
                             <a
                               href="/transactions?search={encodeURIComponent(
                                 source.text.split(',')[0] || '',
@@ -555,10 +557,15 @@
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
-                  <h3 class="text-lg font-semibold text-white">{insight.title}</h3>
+                  <h3
+                    class="min-w-0 truncate text-lg font-semibold text-white"
+                    title={insight.title}
+                  >
+                    {insight.title}
+                  </h3>
                   {#if insight.type}
                     <span
-                      class="rounded-full border px-2 py-0.5 text-xs font-medium {getInsightTypeColor(
+                      class="shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium {getInsightTypeColor(
                         insight.type,
                       )}"
                     >
@@ -566,7 +573,9 @@
                     </span>
                   {/if}
                 </div>
-                <p class="mt-2 text-sm leading-relaxed text-surface-300">{insight.body}</p>
+                <p class="mt-2 break-words text-sm leading-relaxed text-surface-300">
+                  {insight.body}
+                </p>
               </div>
               <span class="flex-shrink-0 text-xs text-surface-500">
                 {formatTimeAgo(insight.createdAt)}
@@ -605,7 +614,7 @@
                   <div class="mt-2 flex flex-wrap gap-2">
                     {#each insight.data.topCategories as cat}
                       <span
-                        class="rounded-lg border border-surface-700 bg-surface-800 px-3 py-1.5 text-xs text-surface-300"
+                        class="max-w-full break-words rounded-lg border border-surface-700 bg-surface-800 px-3 py-1.5 text-xs text-surface-300"
                       >
                         {cat.name}:
                         <span class="font-medium text-white">{formatCurrency(cat.total)}</span>
@@ -696,13 +705,18 @@
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
                   <span
-                    class="rounded-lg bg-red-900/40 px-2 py-0.5 text-xs font-semibold text-red-400 border border-red-500/25"
+                    class="shrink-0 rounded-lg bg-red-900/40 px-2 py-0.5 text-xs font-semibold text-red-400 border border-red-500/25"
                   >
                     {formatDecimal(Math.abs(anomaly.zScore), 1)}× std dev
                   </span>
-                  <h3 class="font-semibold text-white">{anomaly.merchantName}</h3>
+                  <h3
+                    class="min-w-0 truncate font-semibold text-white"
+                    title={anomaly.merchantName}
+                  >
+                    {anomaly.merchantName}
+                  </h3>
                 </div>
-                <p class="mt-1.5 text-sm text-surface-400">{anomaly.reason}</p>
+                <p class="mt-1.5 break-words text-sm text-surface-400">{anomaly.reason}</p>
                 <div class="mt-3 flex flex-wrap gap-3 text-xs text-surface-500">
                   <span class="flex items-center gap-1">
                     <svg

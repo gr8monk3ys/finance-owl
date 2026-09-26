@@ -278,9 +278,11 @@
             {data.summary.feeScore}
           </span>
         </div>
-        <div>
+        <div class="min-w-0">
           <h3 class="text-lg font-semibold text-white">Your Fee Assessment</h3>
-          <p class="mt-1 text-sm text-surface-300">{data.summary.feeScoreDescription}</p>
+          <p class="mt-1 break-words text-sm text-surface-300">
+            {data.summary.feeScoreDescription}
+          </p>
           <div class="mt-3 flex gap-4 text-xs text-surface-500">
             <span
               >Portfolio: <span class="text-surface-300"
@@ -328,7 +330,7 @@
                   <p class="font-medium text-white">
                     {holding.tickerSymbol || '--'}
                   </p>
-                  <p class="text-xs text-surface-500">{holding.securityName}</p>
+                  <p class="break-words text-xs text-surface-500">{holding.securityName}</p>
                 </td>
                 <td class="px-4 py-3">
                   <span
@@ -487,10 +489,10 @@
           {#each data.alternatives as alt}
             <div class="px-6 py-4">
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
+                <div class="flex min-w-0 items-center gap-4">
                   <!-- Current holding -->
                   <div class="min-w-[120px]">
-                    <p class="text-sm font-medium text-white">{alt.currentHolding}</p>
+                    <p class="break-words text-sm font-medium text-white">{alt.currentHolding}</p>
                     <p class="text-xs text-red-400">
                       ER: {fmtPct(alt.currentExpenseRatio)}
                     </p>
@@ -517,7 +519,7 @@
                     <p class="text-sm font-medium text-green-400">
                       {alt.suggestedSymbol}
                     </p>
-                    <p class="text-xs text-surface-500">{alt.suggestedName}</p>
+                    <p class="break-words text-xs text-surface-500">{alt.suggestedName}</p>
                     <p class="text-xs text-green-400/70">
                       ER: {fmtPct(alt.suggestedExpenseRatio)}
                     </p>
@@ -545,8 +547,8 @@
         <div class="space-y-3">
           {#each data.fees.feesByCategory as cat}
             <div class="flex items-center justify-between rounded-lg bg-surface-700/50 px-4 py-3">
-              <div>
-                <p class="font-medium text-white">{cat.category}</p>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={cat.category}>{cat.category}</p>
                 <p class="text-xs text-surface-400">
                   Avg ER: <span class={erColor(cat.avgExpenseRatio)}
                     >{fmtPct(cat.avgExpenseRatio)}</span

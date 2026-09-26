@@ -152,7 +152,7 @@
       {#each data.posts as post}
         <Card>
           <div class="flex items-start justify-between">
-            <div class="flex-1">
+            <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2">
                 <span
                   class="rounded-full px-2 py-0.5 text-xs font-medium capitalize {getCategoryColor(
@@ -180,8 +180,8 @@
                 {/if}
                 <span class="text-xs text-surface-500">{fmtDate(post.createdAt)}</span>
               </div>
-              <h3 class="mt-2 text-lg font-semibold text-white">{post.title}</h3>
-              <p class="mt-1 text-sm text-surface-300 line-clamp-3">{post.content}</p>
+              <h3 class="mt-2 break-words text-lg font-semibold text-white">{post.title}</h3>
+              <p class="mt-1 break-words text-sm text-surface-300 line-clamp-3">{post.content}</p>
             </div>
           </div>
 
@@ -346,8 +346,8 @@
 <Modal open={replyingToPost !== null} onclose={() => (replyingToPost = null)} title="Reply to Post">
   {#if replyingToPost}
     <div class="mb-4 rounded-lg bg-surface-900 p-3">
-      <p class="text-sm font-medium text-white">{replyingToPost.title}</p>
-      <p class="mt-1 text-xs text-surface-500 line-clamp-2">{replyingToPost.content}</p>
+      <p class="break-words text-sm font-medium text-white">{replyingToPost.title}</p>
+      <p class="mt-1 break-words text-xs text-surface-500 line-clamp-2">{replyingToPost.content}</p>
     </div>
 
     <form

@@ -70,7 +70,7 @@
     >
       {#if title}
         <div class="flex items-center justify-between border-b border-surface-700/50 px-6 py-4">
-          <h2 class="text-lg font-semibold text-white">{title}</h2>
+          <h2 class="min-w-0 truncate text-lg font-semibold text-white" {title}>{title}</h2>
           <button
             onclick={onclose}
             class="rounded-lg p-1.5 text-surface-400 transition duration-150

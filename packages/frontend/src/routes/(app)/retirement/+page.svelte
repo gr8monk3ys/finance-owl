@@ -646,6 +646,10 @@
                 </div>
               </div>
             </div>
+          {:else}
+            <p class="text-sm text-surface-500">
+              No scenarios yet. Add a scenario to compare it with your current plan.
+            </p>
           {/each}
         </div>
 

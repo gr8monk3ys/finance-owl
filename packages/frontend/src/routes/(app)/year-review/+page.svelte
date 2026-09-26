@@ -75,6 +75,8 @@
           >
             {year}
           </button>
+        {:else}
+          <span class="px-3 py-1.5 text-sm text-surface-400">No years yet</span>
         {/each}
       </div>
 
@@ -191,11 +193,21 @@
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <Card>
         <p class="text-sm text-surface-400">Top Category</p>
-        <p class="mt-1 text-lg font-bold text-white">{data.review.topCategory ?? 'N/A'}</p>
+        <p
+          class="mt-1 truncate text-lg font-bold text-white"
+          title={data.review.topCategory ?? 'N/A'}
+        >
+          {data.review.topCategory ?? 'N/A'}
+        </p>
       </Card>
       <Card>
         <p class="text-sm text-surface-400">Top Merchant</p>
-        <p class="mt-1 text-lg font-bold text-white">{data.review.topMerchant ?? 'N/A'}</p>
+        <p
+          class="mt-1 truncate text-lg font-bold text-white"
+          title={data.review.topMerchant ?? 'N/A'}
+        >
+          {data.review.topMerchant ?? 'N/A'}
+        </p>
       </Card>
       <Card>
         <p class="text-sm text-surface-400">Transactions</p>
@@ -210,7 +222,9 @@
         <p class="text-sm text-surface-400">Biggest Purchase</p>
         <p class="mt-1 text-lg font-bold text-white">{fmt(data.review.biggestPurchase)}</p>
         {#if data.review.biggestPurchaseDescription}
-          <p class="text-xs text-surface-500">{data.review.biggestPurchaseDescription}</p>
+          <p class="break-words text-xs text-surface-500">
+            {data.review.biggestPurchaseDescription}
+          </p>
         {/if}
       </Card>
     </div>
@@ -273,7 +287,9 @@
               data.review.totalSpending > 0 ? (cat.amount / data.review.totalSpending) * 100 : 0}
             <div>
               <div class="flex items-center justify-between">
-                <span class="text-sm text-surface-300">{cat.name}</span>
+                <span class="min-w-0 truncate text-sm text-surface-300" title={cat.name}
+                  >{cat.name}</span
+                >
                 <div class="text-right">
                   <span class="text-sm font-medium text-white">{fmt(cat.amount)}</span>
                   <span class="ml-2 text-xs text-surface-400">

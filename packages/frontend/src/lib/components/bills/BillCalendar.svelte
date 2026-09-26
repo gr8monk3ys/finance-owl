@@ -263,7 +263,7 @@
         {#each selectedDayBills as bill}
           {@const status = getBillStatus(bill)}
           <div class="flex items-center justify-between py-2.5">
-            <div class="flex items-center gap-3">
+            <div class="flex min-w-0 items-center gap-3">
               {#if status === 'overdue'}
                 <span class="flex h-6 w-6 items-center justify-center rounded-full bg-red-400/10">
                   <svg
@@ -285,8 +285,11 @@
                   style="background-color: {bill.categoryColor}"
                 ></span>
               {/if}
-              <div>
-                <p class="text-sm font-medium text-white">
+              <div class="min-w-0">
+                <p
+                  class="truncate text-sm font-medium text-white"
+                  title={bill.merchantName || bill.name}
+                >
                   {bill.merchantName || bill.name}
                 </p>
                 <p class="text-xs text-surface-500">

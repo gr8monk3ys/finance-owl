@@ -461,7 +461,7 @@
         </h3>
         <p class="mt-2 text-sm text-surface-400">
           Yearly plans save you approximately 17% compared to monthly billing. You're billed once
-          per year instead of twelve times.
+          per year instead of 12 times.
         </p>
       </div>
       <div>

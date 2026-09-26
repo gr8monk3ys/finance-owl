@@ -134,6 +134,7 @@
                 <a
                   href="/admin/tenants/{tenant.id}"
                   class="text-sm font-medium text-white hover:text-primary-400 transition-colors truncate"
+                  title={tenant.name}
                 >
                   {tenant.name}
                 </a>
@@ -152,7 +153,10 @@
                   {tenant.plan}
                 </span>
               </div>
-              <p class="text-xs text-surface-500 truncate">
+              <p
+                class="text-xs text-surface-500 truncate"
+                title="{tenant.slug}.financeowl.com{tenant.domain ? ` | ${tenant.domain}` : ''}"
+              >
                 {tenant.slug}.financeowl.com
                 {#if tenant.domain}
                   | {tenant.domain}

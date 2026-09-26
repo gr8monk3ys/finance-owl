@@ -31,9 +31,11 @@
     <div class="mt-3 space-y-1.5">
       {#each categoryBreakdown.slice(0, 5) as cat}
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
+          <div class="flex min-w-0 items-center gap-2">
             <span class="h-2 w-2 rounded-full" style="background-color: {cat.categoryColor}"></span>
-            <span class="truncate text-xs text-surface-300">{cat.categoryName}</span>
+            <span class="truncate text-xs text-surface-300" title={cat.categoryName}
+              >{cat.categoryName}</span
+            >
           </div>
           <span class="text-xs font-medium text-surface-300">{fmt(cat.total)}</span>
         </div>

@@ -371,7 +371,7 @@
 
   <!-- Search results count -->
   {#if searchQuery.trim()}
-    <p class="text-sm text-surface-400">
+    <p class="break-words text-sm text-surface-400">
       {totalResults} result{totalResults !== 1 ? 's' : ''} found for "{searchQuery}"
     </p>
   {/if}
@@ -590,7 +590,9 @@
         class="rounded-2xl border border-surface-600 bg-surface-800 px-6 py-5 text-left transition hover:border-surface-500 hover:bg-surface-700"
       >
         <h3 class="text-sm font-semibold text-white">Email Support</h3>
-        <p class="mt-2 text-sm leading-relaxed text-surface-400">{publicSite.supportEmail}</p>
+        <p class="mt-2 break-all text-sm leading-relaxed text-surface-400">
+          {publicSite.supportEmail}
+        </p>
       </a>
     </div>
   </div>

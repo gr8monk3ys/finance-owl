@@ -3,7 +3,10 @@
   import { page } from '$app/stores';
 
   const statusCode = $derived($page.status);
-  const errorMessage = $derived($page.error?.message ?? 'Something went wrong');
+  const errorMessage = $derived(
+    $page.error?.message ??
+      'Something went wrong. Try again, or contact support if it keeps happening.',
+  );
 
   interface ErrorInfo {
     title: string;
@@ -139,7 +142,7 @@
     <h1 class="mt-4 text-2xl font-bold text-white">{info.title}</h1>
 
     <!-- Description -->
-    <p class="mt-3 text-sm leading-relaxed text-surface-400">{info.description}</p>
+    <p class="mt-3 break-words text-sm leading-relaxed text-surface-400">{info.description}</p>
 
     <!-- Action Buttons -->
     <div class="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">

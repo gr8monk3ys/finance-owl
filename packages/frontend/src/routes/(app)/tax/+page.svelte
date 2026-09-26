@@ -88,7 +88,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Section Tabs -->
@@ -226,7 +228,7 @@
         {#each data.documents as doc}
           <Card>
             <div class="flex items-start justify-between">
-              <div>
+              <div class="min-w-0">
                 <div class="flex items-center gap-2">
                   <span
                     class="inline-flex rounded-full bg-surface-700 px-2 py-0.5 text-xs font-medium text-surface-300"
@@ -243,10 +245,12 @@
                 </div>
                 <p class="mt-1 font-medium text-white">{fmt(doc.amount)}</p>
                 {#if doc.description}
-                  <p class="mt-0.5 text-sm text-surface-400">{doc.description}</p>
+                  <p class="mt-0.5 break-words text-sm text-surface-400">{doc.description}</p>
                 {/if}
                 {#if doc.category}
-                  <p class="mt-0.5 text-xs text-surface-500">{doc.category}</p>
+                  <p class="mt-0.5 truncate text-xs text-surface-500" title={doc.category}>
+                    {doc.category}
+                  </p>
                 {/if}
               </div>
               <div class="flex items-center gap-2">
@@ -286,12 +290,16 @@
         {#each data.deductions as txn}
           <Card>
             <div class="flex items-center justify-between">
-              <div>
-                <p class="font-medium text-white">{txn.merchantName || txn.name}</p>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={txn.merchantName || txn.name}>
+                  {txn.merchantName || txn.name}
+                </p>
                 <div class="flex items-center gap-3 text-sm text-surface-400">
                   <span>{txn.date}</span>
                   {#if txn.categoryName}
-                    <span class="text-surface-500">{txn.categoryName}</span>
+                    <span class="min-w-0 truncate text-surface-500" title={txn.categoryName}>
+                      {txn.categoryName}
+                    </span>
                   {/if}
                 </div>
               </div>

@@ -215,9 +215,9 @@
         <div>
           <!-- Parent category row -->
           <div class="flex items-center justify-between px-6 py-3">
-            <div class="flex items-center gap-3">
+            <div class="flex min-w-0 items-center gap-3">
               <span
-                class="flex h-8 w-8 items-center justify-center rounded-lg text-sm"
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm"
                 style="background-color: {category.color || '#71717a'}20; color: {category.color ||
                   '#71717a'}"
               >
@@ -226,8 +226,10 @@
                   style="background-color: {category.color || '#71717a'}"
                 ></span>
               </span>
-              <div>
-                <p class="text-sm font-medium text-white">{category.name}</p>
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-white" title={category.name}>
+                  {category.name}
+                </p>
                 {#if category.icon}
                   <p class="text-xs text-surface-500">{category.icon}</p>
                 {/if}
@@ -318,12 +320,14 @@
             <div class="ml-11 border-l border-surface-700/50">
               {#each children as child (child.id)}
                 <div class="flex items-center justify-between py-2 pl-4 pr-6">
-                  <div class="flex items-center gap-2">
+                  <div class="flex min-w-0 items-center gap-2">
                     <span
-                      class="h-2 w-2 rounded-full"
+                      class="h-2 w-2 shrink-0 rounded-full"
                       style="background-color: {child.color || category.color || '#71717a'}"
                     ></span>
-                    <span class="text-sm text-surface-300">{child.name}</span>
+                    <span class="truncate text-sm text-surface-300" title={child.name}
+                      >{child.name}</span
+                    >
                     {#if child.isSystem && !child.userId}
                       <span
                         class="rounded-full bg-surface-700 px-1.5 py-0.5 text-[10px] font-medium text-surface-400"
@@ -657,19 +661,22 @@
       <div class="divide-y divide-surface-700/50">
         {#each data.rules as rule (rule.id)}
           <div class="flex items-center justify-between px-6 py-3">
-            <div class="flex items-center gap-3">
-              <div class="flex items-center gap-2">
+            <div class="flex min-w-0 items-center gap-3">
+              <div class="flex min-w-0 items-center gap-2">
                 <span
-                  class="h-2.5 w-2.5 rounded-full"
+                  class="h-2.5 w-2.5 shrink-0 rounded-full"
                   style="background-color: {getCategoryColor(rule.categoryId)}"
                 ></span>
-                <span class="text-sm font-medium text-white">
+                <span
+                  class="truncate text-sm font-medium text-white"
+                  title={getCategoryName(rule.categoryId)}
+                >
                   {getCategoryName(rule.categoryId)}
                 </span>
               </div>
               <svg
                 aria-hidden="true"
-                class="h-4 w-4 text-surface-500"
+                class="h-4 w-4 shrink-0 text-surface-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -681,13 +688,13 @@
                   d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
                 />
               </svg>
-              <div>
+              <div class="min-w-0">
                 <span
                   class="rounded-md bg-surface-700 px-2 py-0.5 text-xs font-medium text-surface-300"
                 >
                   {matchTypeLabels[rule.matchType] || rule.matchType}
                 </span>
-                <span class="ml-1.5 text-sm text-surface-300">
+                <span class="ml-1.5 break-all text-sm text-surface-300">
                   &ldquo;{rule.matchValue}&rdquo;
                 </span>
               </div>

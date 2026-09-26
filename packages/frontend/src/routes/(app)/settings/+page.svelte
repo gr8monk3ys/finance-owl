@@ -66,9 +66,13 @@
       >
         {data.user?.name?.charAt(0)?.toUpperCase() || '?'}
       </div>
-      <div class="flex-1">
-        <h2 class="text-lg font-semibold text-white">{data.user?.name || 'User'}</h2>
-        <p class="text-sm text-surface-400">{data.user?.email || ''}</p>
+      <div class="min-w-0 flex-1">
+        <h2 class="truncate text-lg font-semibold text-white" title={data.user?.name || 'User'}>
+          {data.user?.name || 'User'}
+        </h2>
+        <p class="truncate text-sm text-surface-400" title={data.user?.email || ''}>
+          {data.user?.email || ''}
+        </p>
       </div>
     </div>
   </Card>

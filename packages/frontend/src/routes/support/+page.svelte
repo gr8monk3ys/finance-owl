@@ -90,7 +90,7 @@
         >
           <h2 class="text-base font-semibold text-white">{card.title}</h2>
           <p class="mt-2 text-sm leading-relaxed text-surface-400">{card.description}</p>
-          <p class="mt-4 text-sm font-medium text-primary-400">{card.label}</p>
+          <p class="mt-4 break-all text-sm font-medium text-primary-400">{card.label}</p>
         </a>
       {/each}
     </section>
@@ -145,7 +145,7 @@
           <p class="text-xs uppercase tracking-wide text-surface-400">Company</p>
           <p class="mt-2 text-sm text-surface-300">{publicSite.legalEntityName}</p>
           {#if publicSite.companyAddress}
-            <p class="mt-1 text-sm text-surface-400">{publicSite.companyAddress}</p>
+            <p class="mt-1 break-words text-sm text-surface-400">{publicSite.companyAddress}</p>
           {/if}
         </div>
       </div>

@@ -235,7 +235,7 @@
           {@const progress = getProgressPercent(goal.currentValue, goal.targetValue)}
           <Card>
             <div class="flex items-start justify-between">
-              <div>
+              <div class="min-w-0">
                 <div class="flex items-center gap-2">
                   <span
                     class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium
@@ -248,7 +248,7 @@
                   {/if}
                 </div>
                 {#if goal.description}
-                  <p class="mt-1 text-sm text-surface-300">{goal.description}</p>
+                  <p class="mt-1 break-words text-sm text-surface-300">{goal.description}</p>
                 {/if}
               </div>
               <div class="text-right">

@@ -418,8 +418,13 @@
           <div class="space-y-2">
             {#each pending as roundUp (roundUp.transactionId)}
               <div class="flex items-center justify-between rounded-lg bg-surface-800/50 p-3">
-                <div>
-                  <p class="text-sm font-medium text-white">{roundUp.transactionName}</p>
+                <div class="min-w-0">
+                  <p
+                    class="truncate text-sm font-medium text-white"
+                    title={roundUp.transactionName}
+                  >
+                    {roundUp.transactionName}
+                  </p>
                   <p class="text-xs text-surface-500">{roundUp.transactionDate}</p>
                 </div>
                 <div class="text-right">

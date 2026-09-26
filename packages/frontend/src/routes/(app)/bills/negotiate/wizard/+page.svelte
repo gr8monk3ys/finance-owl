@@ -477,8 +477,8 @@
                     : 'border-surface-700 bg-surface-800 hover:border-surface-600'}"
                   onclick={() => (selectedProvider = p.name)}
                 >
-                  <div>
-                    <p class="text-sm font-medium text-white">{p.name}</p>
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-medium text-white" title={p.name}>{p.name}</p>
                     <div class="mt-1 flex items-center gap-2">
                       <span
                         class="inline-flex rounded-full px-1.5 py-0.5 text-xs font-medium {difficultyBadge(
@@ -683,8 +683,8 @@
       <!-- Strategy Header -->
       <Card>
         <div class="flex items-start justify-between">
-          <div>
-            <h3 class="text-lg font-semibold text-white">
+          <div class="min-w-0">
+            <h3 class="break-words text-lg font-semibold text-white">
               Negotiation Strategy: {strategy.provider}
             </h3>
             <div class="mt-2 flex flex-wrap items-center gap-2">
@@ -723,11 +723,13 @@
         <div class="mt-4 grid gap-3 sm:grid-cols-3">
           <div class="rounded-lg bg-surface-900/50 p-3">
             <p class="text-xs text-surface-500">Best Time to Call</p>
-            <p class="mt-1 text-sm font-medium text-white">{strategy.bestTimeToCall}</p>
+            <p class="mt-1 break-words text-sm font-medium text-white">{strategy.bestTimeToCall}</p>
           </div>
           <div class="rounded-lg bg-surface-900/50 p-3">
             <p class="text-xs text-surface-500">Department</p>
-            <p class="mt-1 text-sm font-medium text-white">{strategy.departmentToAsk}</p>
+            <p class="mt-1 break-words text-sm font-medium text-white">
+              {strategy.departmentToAsk}
+            </p>
           </div>
           <div class="rounded-lg bg-surface-900/50 p-3">
             <p class="text-xs text-surface-500">Recommended Approach</p>
@@ -746,16 +748,16 @@
             <div class="rounded-lg border border-surface-700 bg-surface-900/30 p-4">
               <div class="mb-2 flex items-center gap-2">
                 <span
-                  class="flex h-7 w-7 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white"
+                  class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white"
                 >
                   {step.order}
                 </span>
-                <h5 class="font-semibold text-white">{step.title}</h5>
+                <h5 class="min-w-0 break-words font-semibold text-white">{step.title}</h5>
               </div>
-              <p class="mb-3 text-sm text-surface-400">{step.description}</p>
+              <p class="mb-3 break-words text-sm text-surface-400">{step.description}</p>
               {#if step.script}
                 <div class="relative rounded-lg bg-surface-800 p-3">
-                  <p class="pr-8 text-sm italic text-surface-300">{step.script}</p>
+                  <p class="break-words pr-8 text-sm italic text-surface-300">{step.script}</p>
                   <button
                     type="button"
                     class="absolute right-2 top-2 rounded p-1 text-surface-500 transition hover:bg-surface-700 hover:text-white"
@@ -797,12 +799,14 @@
                 </div>
               {/if}
               {#if step.notes}
-                <p class="mt-2 text-xs text-surface-500">
+                <p class="mt-2 break-words text-xs text-surface-500">
                   <span class="font-medium text-surface-400">Tip:</span>
                   {step.notes}
                 </p>
               {/if}
             </div>
+          {:else}
+            <p class="text-sm text-surface-500">No script steps for this provider yet.</p>
           {/each}
         </div>
       </Card>
@@ -818,7 +822,7 @@
               onclick={() => copyToClipboard(phrase, 100 + i)}
             >
               <span class="mt-0.5 flex-shrink-0 text-xs font-bold text-primary-400">{i + 1}.</span>
-              <span class="flex-1 text-sm text-surface-300">{phrase}</span>
+              <span class="min-w-0 flex-1 break-words text-sm text-surface-300">{phrase}</span>
               {#if copiedIndex === 100 + i}
                 <svg
                   aria-hidden="true"
@@ -847,6 +851,8 @@
                 </svg>
               {/if}
             </button>
+          {:else}
+            <p class="text-sm text-surface-500">No key phrases for this provider yet.</p>
           {/each}
         </div>
       </Card>
@@ -859,11 +865,13 @@
             {#each strategy.competitorOffers as offer}
               <div class="rounded-lg border border-surface-700 bg-surface-900/50 p-4">
                 <div class="flex items-center justify-between">
-                  <p class="font-medium text-white">{offer.competitor}</p>
+                  <p class="min-w-0 truncate font-medium text-white" title={offer.competitor}>
+                    {offer.competitor}
+                  </p>
                   <p class="text-sm font-bold text-primary-400">{offer.price}</p>
                 </div>
-                <p class="mt-1 text-xs text-surface-500">{offer.details}</p>
-                <p class="mt-2 text-xs italic text-surface-400">{offer.useAs}</p>
+                <p class="mt-1 break-words text-xs text-surface-500">{offer.details}</p>
+                <p class="mt-2 break-words text-xs italic text-surface-400">{offer.useAs}</p>
               </div>
             {/each}
           </div>
@@ -879,7 +887,7 @@
               <div class="flex gap-2 rounded-lg bg-surface-900/50 p-3">
                 <span class="mt-0.5 flex-shrink-0 text-xs font-bold text-primary-400">{i + 1}.</span
                 >
-                <p class="text-sm text-surface-300">{tip}</p>
+                <p class="min-w-0 break-words text-sm text-surface-300">{tip}</p>
               </div>
             {/each}
           </div>
@@ -948,20 +956,22 @@
           <div class="space-y-4">
             <div class="rounded-lg bg-surface-900/50 p-4">
               <p class="text-xs font-medium text-surface-500">Subject</p>
-              <p class="mt-1 text-sm font-medium text-white">{emailTemplate.subject}</p>
+              <p class="mt-1 break-words text-sm font-medium text-white">{emailTemplate.subject}</p>
             </div>
             <div class="rounded-lg bg-surface-900/50 p-4">
               <p class="text-xs font-medium text-surface-500">Body</p>
               <pre
-                class="mt-2 whitespace-pre-wrap text-sm text-surface-300">{emailTemplate.body}</pre>
+                class="mt-2 whitespace-pre-wrap break-words text-sm text-surface-300">{emailTemplate.body}</pre>
             </div>
             <div class="rounded-lg border border-surface-700 bg-surface-900/30 p-4">
               <p class="text-xs font-medium text-surface-500">
                 Follow-up Email (send after 5 business days)
               </p>
-              <p class="mt-2 text-xs text-surface-400">Subject: {emailTemplate.followUpSubject}</p>
+              <p class="mt-2 break-words text-xs text-surface-400">
+                Subject: {emailTemplate.followUpSubject}
+              </p>
               <pre
-                class="mt-2 whitespace-pre-wrap text-xs text-surface-400">{emailTemplate.followUpBody}</pre>
+                class="mt-2 whitespace-pre-wrap break-words text-xs text-surface-400">{emailTemplate.followUpBody}</pre>
             </div>
           </div>
         </Card>
@@ -1002,9 +1012,11 @@
           {#each attempts as attempt}
             <div class="rounded-lg border border-surface-700 bg-surface-900/30 p-4">
               <div class="flex items-start justify-between">
-                <div>
+                <div class="min-w-0">
                   <div class="flex items-center gap-2">
-                    <p class="font-medium text-white">{attempt.provider}</p>
+                    <p class="min-w-0 truncate font-medium text-white" title={attempt.provider}>
+                      {attempt.provider}
+                    </p>
                     <span
                       class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {statusBadge(
                         attempt.status,
@@ -1039,7 +1051,7 @@
                 </div>
               </div>
               {#if attempt.notes}
-                <p class="mt-2 text-xs text-surface-500">{attempt.notes}</p>
+                <p class="mt-2 break-words text-xs text-surface-500">{attempt.notes}</p>
               {/if}
               {#if attempt.status !== 'succeeded' && attempt.status !== 'failed'}
                 <div class="mt-3 flex gap-2">
@@ -1089,9 +1101,9 @@
         <div class="space-y-3">
           {#each succeededAttempts as attempt}
             <div class="flex items-center justify-between rounded-lg bg-green-500/5 p-4">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
-                  class="flex h-10 w-10 items-center justify-center rounded-full bg-green-600/20"
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-600/20"
                 >
                   <svg
                     aria-hidden="true"
@@ -1108,8 +1120,10 @@
                     />
                   </svg>
                 </div>
-                <div>
-                  <p class="font-medium text-white">{attempt.provider}</p>
+                <div class="min-w-0">
+                  <p class="truncate font-medium text-white" title={attempt.provider}>
+                    {attempt.provider}
+                  </p>
                   <p class="text-xs text-surface-500">
                     {categoryLabel(attempt.billType)} - {formatDate(attempt.completedAt)}
                   </p>

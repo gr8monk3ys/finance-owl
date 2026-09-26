@@ -119,9 +119,11 @@
         {@const daysLeft = getDaysRemaining(challenge.endDate)}
         <Card>
           <div class="flex items-start justify-between">
-            <div>
+            <div class="min-w-0">
               <div class="flex items-center gap-2">
-                <h3 class="font-semibold text-white">{challenge.name}</h3>
+                <h3 class="truncate font-semibold text-white" title={challenge.name}>
+                  {challenge.name}
+                </h3>
                 <span
                   class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {getStatusColor(
                     challenge.status,
@@ -131,7 +133,7 @@
                 </span>
               </div>
               {#if challenge.description}
-                <p class="mt-1 text-sm text-surface-400">{challenge.description}</p>
+                <p class="mt-1 break-words text-sm text-surface-400">{challenge.description}</p>
               {/if}
             </div>
             <div class="flex items-center gap-3">
@@ -185,7 +187,7 @@
         {#each pastChallenges as challenge}
           <Card>
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <span
                   class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {getStatusColor(
                     challenge.status,
@@ -193,8 +195,10 @@
                 >
                   {challenge.status}
                 </span>
-                <div>
-                  <p class="font-medium text-white">{challenge.name}</p>
+                <div class="min-w-0">
+                  <p class="truncate font-medium text-white" title={challenge.name}>
+                    {challenge.name}
+                  </p>
                   <p class="text-xs text-surface-500">
                     {fmt(challenge.currentAmount)} saved
                     {#if challenge.streakDays > 0}
@@ -239,6 +243,10 @@
             </p>
           {/if}
         </button>
+      {:else}
+        <p class="text-sm text-surface-400">
+          No challenge templates are available right now. Reload the page to try again.
+        </p>
       {/each}
     </div>
   {:else}
@@ -324,7 +332,7 @@
     >
       <input type="hidden" name="challengeId" value={entryChallenge.id} />
 
-      <p class="text-sm text-surface-400">
+      <p class="break-words text-sm text-surface-400">
         Adding entry to <span class="font-medium text-white">{entryChallenge.name}</span>
       </p>
 

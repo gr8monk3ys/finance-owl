@@ -270,7 +270,7 @@
             </p>
           </div>
         </div>
-        <p class="mt-3 text-sm text-surface-300">{form.simulationResult.explanation}</p>
+        <p class="mt-3 break-words text-sm text-surface-300">{form.simulationResult.explanation}</p>
       </Card>
     {/if}
 

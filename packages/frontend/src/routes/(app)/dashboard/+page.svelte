@@ -542,6 +542,10 @@
             <QuickActionsWidget />
           {/if}
         </div>
+      {:else}
+        <p class="text-sm text-surface-400 sm:col-span-2 lg:col-span-3">
+          All widgets are hidden. Use Customize to turn some back on.
+        </p>
       {/each}
     </div>
   {/if}

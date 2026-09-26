@@ -228,7 +228,10 @@
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
-                  <p class="font-medium text-white">
+                  <p
+                    class="truncate font-medium text-white"
+                    title={flag.transactionName ?? 'Unknown Transaction'}
+                  >
                     {flag.transactionName ?? 'Unknown Transaction'}
                   </p>
                   <span
@@ -264,7 +267,7 @@
                         d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
                       />
                     </svg>
-                    <p class="text-sm text-surface-300">{flag.reason}</p>
+                    <p class="min-w-0 break-words text-sm text-surface-300">{flag.reason}</p>
                   </div>
                 {/if}
                 <p class="mt-2 text-xs text-surface-500">
@@ -304,7 +307,10 @@
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
-                  <p class="font-medium text-surface-300">
+                  <p
+                    class="truncate font-medium text-surface-300"
+                    title={flag.transactionName ?? 'Unknown Transaction'}
+                  >
                     {flag.transactionName ?? 'Unknown Transaction'}
                   </p>
                   <span
@@ -320,7 +326,7 @@
                   <span>{fmtDate(flag.transactionDate)}</span>
                 </div>
                 {#if flag.reason}
-                  <p class="mt-2 text-sm text-surface-400">
+                  <p class="mt-2 break-words text-sm text-surface-400">
                     Reason: {flag.reason}
                   </p>
                 {/if}
@@ -336,7 +342,9 @@
                     >
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
                     </svg>
-                    <p class="text-sm text-green-300/80">{flag.resolveComment}</p>
+                    <p class="min-w-0 break-words text-sm text-green-300/80">
+                      {flag.resolveComment}
+                    </p>
                   </div>
                 {/if}
                 <div class="mt-2 flex items-center gap-4 text-xs text-surface-500">
@@ -485,7 +493,7 @@
     <div class="space-y-4">
       <!-- Flag summary -->
       <div class="rounded-lg border border-surface-700 bg-surface-900/50 p-4">
-        <p class="font-medium text-white">
+        <p class="break-words font-medium text-white">
           {resolvingFlag.transactionName ?? 'Unknown Transaction'}
         </p>
         <div class="mt-1 flex items-center gap-3 text-sm text-surface-400">
@@ -493,7 +501,7 @@
           <span>{fmtDate(resolvingFlag.transactionDate)}</span>
         </div>
         {#if resolvingFlag.reason}
-          <p class="mt-2 text-sm text-surface-300">
+          <p class="mt-2 break-words text-sm text-surface-300">
             Reason: {resolvingFlag.reason}
           </p>
         {/if}

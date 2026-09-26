@@ -30,11 +30,14 @@
     <div class="mt-3 space-y-3">
       {#each topBudgets as budget}
         <div>
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-medium text-surface-300">
+          <div class="flex items-center justify-between gap-2">
+            <span
+              class="min-w-0 truncate text-xs font-medium text-surface-300"
+              title={budget.categoryName || 'Uncategorized'}
+            >
               {budget.categoryName || 'Uncategorized'}
             </span>
-            <span class="text-xs text-surface-400">
+            <span class="shrink-0 text-xs text-surface-400">
               {fmt(budget.spent)} / {fmt(budget.amount)}
             </span>
           </div>

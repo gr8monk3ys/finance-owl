@@ -31,7 +31,7 @@
       {#each recentTx as tx}
         <div class="flex items-center justify-between py-2">
           <div class="min-w-0 flex-1">
-            <p class="truncate text-xs font-medium text-white">
+            <p class="truncate text-xs font-medium text-white" title={tx.merchantName || tx.name}>
               {tx.merchantName || tx.name}
             </p>
             <p class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-surface-400">

@@ -443,7 +443,7 @@
         >
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2">
-              <p class="truncate text-sm font-medium text-white">{bill.name}</p>
+              <p class="truncate text-sm font-medium text-white" title={bill.name}>{bill.name}</p>
               <span
                 class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium"
                 style="background-color: {getBillBgColor(bill)}; color: {getBillColor(bill)}"
@@ -452,12 +452,12 @@
               </span>
             </div>
             <div class="mt-1 flex items-center gap-2 text-xs text-surface-400">
-              <span>{bill.category}</span>
+              <span class="truncate" title={bill.category}>{bill.category}</span>
               <span>-</span>
               <span class="capitalize">{bill.frequency}</span>
               {#if bill.accountName}
                 <span>-</span>
-                <span>{bill.accountName}</span>
+                <span class="truncate" title={bill.accountName}>{bill.accountName}</span>
               {/if}
             </div>
           </div>

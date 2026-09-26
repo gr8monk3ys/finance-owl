@@ -669,18 +669,20 @@
               : 0}
           <Card>
             <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
                   class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-600 text-sm font-bold text-white"
                 >
                   {holding.symbol.slice(0, 3)}
                 </div>
-                <div>
+                <div class="min-w-0">
                   <p translate="no" class="font-medium text-white">{holding.symbol}</p>
-                  <p class="text-xs text-surface-400">{holding.name}</p>
+                  <p class="truncate text-xs text-surface-400" title={holding.name}>
+                    {holding.name}
+                  </p>
                 </div>
               </div>
-              <div class="text-right">
+              <div class="shrink-0 text-right">
                 <p class="font-medium text-white">
                   {formatCurrency(holding.currentValue ?? holding.totalCost)}
                 </p>
@@ -773,12 +775,20 @@
             <div
               class="[content-visibility:auto] [contain-intrinsic-size:auto_4.5rem] flex items-center justify-between px-6 py-4"
             >
-              <div class="flex items-center gap-4">
-                <span class="rounded-full px-2.5 py-1 text-xs font-medium {txTypeColor(tx.type)}">
+              <div class="flex min-w-0 items-center gap-4">
+                <span
+                  class="shrink-0 rounded-full px-2.5 py-1 text-xs font-medium {txTypeColor(
+                    tx.type,
+                  )}"
+                >
                   {txTypeLabel(tx.type)}
                 </span>
-                <div>
-                  <p translate="no" class="text-sm font-medium text-white">
+                <div class="min-w-0">
+                  <p
+                    translate="no"
+                    class="truncate text-sm font-medium text-white"
+                    title={holding ? `${holding.symbol} - ${holding.name}` : 'Unknown'}
+                  >
                     {holding ? `${holding.symbol} - ${holding.name}` : 'Unknown'}
                   </p>
                   <p class="text-xs text-surface-400">
@@ -791,7 +801,7 @@
                   </p>
                 </div>
               </div>
-              <div class="text-right">
+              <div class="shrink-0 text-right">
                 <p
                   class="text-sm font-medium {tx.type === 'sell' ? 'text-green-400' : 'text-white'}"
                 >
@@ -858,15 +868,15 @@
         {#each data.watchlist as item}
           <Card>
             <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
                   class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-600 text-sm font-bold text-white"
                 >
                   {item.symbol.slice(0, 3)}
                 </div>
-                <div>
+                <div class="min-w-0">
                   <p translate="no" class="font-medium text-white">{item.symbol}</p>
-                  <p class="text-xs text-surface-400">{item.name}</p>
+                  <p class="truncate text-xs text-surface-400" title={item.name}>{item.name}</p>
                 </div>
               </div>
               <form method="POST" action="?/removeFromWatchlist" use:enhance>
@@ -989,8 +999,8 @@
               >
                 {coin.symbol.slice(0, 2)}
               </div>
-              <div>
-                <p class="text-sm font-medium text-white">{coin.name}</p>
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-white" title={coin.name}>{coin.name}</p>
                 <p translate="no" class="text-xs text-surface-400">{coin.symbol}</p>
               </div>
             </button>
@@ -1004,14 +1014,16 @@
         <div
           class="flex items-center justify-between rounded-lg border border-surface-700 bg-surface-700/50 px-4 py-3"
         >
-          <div class="flex items-center gap-3">
+          <div class="flex min-w-0 items-center gap-3">
             <div
               class="flex h-8 w-8 items-center justify-center rounded-full bg-surface-600 text-xs font-bold text-white"
             >
               {selectedCoin.symbol.slice(0, 2)}
             </div>
-            <div>
-              <p class="text-sm font-medium text-white">{selectedCoin.name}</p>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-medium text-white" title={selectedCoin.name}>
+                {selectedCoin.name}
+              </p>
               <p translate="no" class="text-xs text-surface-400">{selectedCoin.symbol}</p>
             </div>
           </div>
@@ -1124,9 +1136,11 @@
           >
             {selectedHolding.symbol.slice(0, 3)}
           </div>
-          <div>
+          <div class="min-w-0">
             <p translate="no" class="text-sm font-medium text-white">{selectedHolding.symbol}</p>
-            <p class="text-xs text-surface-400">{selectedHolding.name}</p>
+            <p class="truncate text-xs text-surface-400" title={selectedHolding.name}>
+              {selectedHolding.name}
+            </p>
           </div>
         </div>
 
@@ -1374,8 +1388,8 @@
             >
               {coin.symbol.slice(0, 2)}
             </div>
-            <div>
-              <p class="text-sm font-medium text-white">{coin.name}</p>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-medium text-white" title={coin.name}>{coin.name}</p>
               <p translate="no" class="text-xs text-surface-400">{coin.symbol}</p>
             </div>
           </button>
@@ -1451,7 +1465,7 @@
     {:else}
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <p class="text-sm text-surface-400">
-          Price history unavailable. CoinGecko may be rate-limiting requests.
+          Price history unavailable. CoinGecko may be rate-limiting requests; try again in a minute.
         </p>
       </div>
     {/if}

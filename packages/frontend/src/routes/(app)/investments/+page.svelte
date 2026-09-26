@@ -335,14 +335,18 @@
       {#each data.holdings as accountGroup}
         <Card padding="none">
           <div class="border-b border-surface-700 px-6 py-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="font-semibold text-white">{accountGroup.accountName}</h3>
+            <div class="flex items-center justify-between gap-4">
+              <div class="min-w-0">
+                <h3 class="truncate font-semibold text-white" title={accountGroup.accountName}>
+                  {accountGroup.accountName}
+                </h3>
                 {#if accountGroup.institutionName}
-                  <p class="text-xs text-surface-500">{accountGroup.institutionName}</p>
+                  <p class="truncate text-xs text-surface-500" title={accountGroup.institutionName}>
+                    {accountGroup.institutionName}
+                  </p>
                 {/if}
               </div>
-              <div class="text-right">
+              <div class="shrink-0 text-right">
                 <p class="font-semibold text-white">{fmt(accountGroup.totalValue)}</p>
                 <p class="text-xs {gainLossColor(accountGroup.totalGainLoss)}">
                   {fmt(accountGroup.totalGainLoss)} ({fmtPct(accountGroup.totalGainLossPercent)})
@@ -539,6 +543,8 @@
                   ></div>
                 </div>
               </div>
+            {:else}
+              <p class="text-sm text-surface-500">No allocation data available</p>
             {/each}
           </div>
         </Card>

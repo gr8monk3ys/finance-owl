@@ -319,9 +319,9 @@
       <div class="space-y-2">
         {#each expiring as neg}
           <div class="flex items-center justify-between rounded-lg bg-surface-900/50 px-4 py-3">
-            <div>
-              <p class="font-medium text-white">{neg.billName}</p>
-              <p class="text-sm text-surface-400">
+            <div class="min-w-0">
+              <p class="truncate font-medium text-white" title={neg.billName}>{neg.billName}</p>
+              <p class="break-words text-sm text-surface-400">
                 {neg.provider} - Expires {formatDate(neg.expirationDate)}
                 <span class="text-red-400">
                   ({daysUntil(neg.expirationDate)} days left)
@@ -391,8 +391,10 @@
         {#each analysisResults as bill}
           <div class="rounded-lg border border-surface-700 bg-surface-900/50 p-4">
             <div class="mb-3 flex items-start justify-between">
-              <div class="flex items-center gap-2">
-                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-700">
+              <div class="flex min-w-0 items-center gap-2">
+                <div
+                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-700"
+                >
                   <svg
                     aria-hidden="true"
                     class="h-4 w-4 text-surface-300"
@@ -408,8 +410,10 @@
                     />
                   </svg>
                 </div>
-                <div>
-                  <p class="font-medium text-white">{bill.billName}</p>
+                <div class="min-w-0">
+                  <p class="truncate font-medium text-white" title={bill.billName}>
+                    {bill.billName}
+                  </p>
                   <span
                     class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {categoryBadge(
                       bill.category,
@@ -603,8 +607,10 @@
       <div class="space-y-3">
         {#each successfulNegotiations as neg}
           <div class="flex items-center justify-between rounded-lg bg-surface-900/50 px-4 py-3">
-            <div class="flex items-center gap-3">
-              <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-600/20">
+            <div class="flex min-w-0 items-center gap-3">
+              <div
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-600/20"
+              >
                 <svg
                   aria-hidden="true"
                   class="h-4 w-4 text-green-400"
@@ -616,8 +622,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
               </div>
-              <div>
-                <p class="font-medium text-white">{neg.billName}</p>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={neg.billName}>{neg.billName}</p>
                 <p class="text-xs text-surface-500">
                   {formatDate(neg.negotiationDate ?? neg.createdAt)}
                   {#if neg.expirationDate}
@@ -661,7 +667,9 @@
 
       <div class="rounded-lg bg-surface-900/50 p-4">
         <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-700">
+          <div
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-700"
+          >
             <svg
               aria-hidden="true"
               class="h-5 w-5 text-surface-300"
@@ -677,8 +685,10 @@
               />
             </svg>
           </div>
-          <div>
-            <p class="font-medium text-white">{selectedBill.billName}</p>
+          <div class="min-w-0">
+            <p class="truncate font-medium text-white" title={selectedBill.billName}>
+              {selectedBill.billName}
+            </p>
             <span
               class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {categoryBadge(
                 selectedBill.category,
@@ -780,7 +790,7 @@
       <input type="hidden" name="negotiationId" value={selectedNegotiation.id} />
 
       <div class="rounded-lg bg-surface-900/50 p-3">
-        <p class="font-medium text-white">{selectedNegotiation.billName}</p>
+        <p class="break-words font-medium text-white">{selectedNegotiation.billName}</p>
         <p class="text-sm text-surface-400">
           Current: {fmt(selectedNegotiation.currentAmount)}/mo | Target: {fmt(
             selectedNegotiation.targetAmount,
@@ -877,8 +887,10 @@
       <!-- Provider & Contact Info -->
       <div class="rounded-lg bg-surface-900/50 p-4">
         <div class="flex items-center justify-between">
-          <div>
-            <h4 class="font-semibold text-white">{currentScript.provider}</h4>
+          <div class="min-w-0">
+            <h4 class="truncate font-semibold text-white" title={currentScript.provider}>
+              {currentScript.provider}
+            </h4>
             <span
               class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {categoryBadge(
                 currentScript.category,
@@ -1013,9 +1025,11 @@
           <div class="space-y-2">
             {#each currentScript.competitorPricing as comp}
               <div class="flex items-center justify-between rounded-lg bg-surface-900/50 px-3 py-2">
-                <div>
-                  <p class="text-sm font-medium text-white">{comp.competitor}</p>
-                  <p class="text-xs text-surface-500">{comp.details}</p>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium text-white" title={comp.competitor}>
+                    {comp.competitor}
+                  </p>
+                  <p class="break-words text-xs text-surface-500">{comp.details}</p>
                 </div>
                 <p class="text-sm font-medium text-primary-400">{comp.price}</p>
               </div>
@@ -1033,7 +1047,7 @@
               <div class="flex gap-2 rounded-lg bg-surface-900/50 p-3">
                 <span class="mt-0.5 flex-shrink-0 text-xs font-bold text-primary-400">{i + 1}.</span
                 >
-                <p class="text-sm text-surface-300">{tip}</p>
+                <p class="min-w-0 break-words text-sm text-surface-300">{tip}</p>
               </div>
             {/each}
           </div>

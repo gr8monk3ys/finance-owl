@@ -208,7 +208,7 @@
       {#if nextBill}
         {@const days = daysUntil(nextBill.expectedDate)}
         <p class="mt-1 text-xl font-bold text-white">{fmt(nextBill.estimatedAmount)}</p>
-        <p class="mt-1 text-xs text-surface-500">
+        <p class="mt-1 break-words text-xs text-surface-500">
           {nextBill.merchantName || nextBill.name}
           {#if days === 0}
             - <span class="text-amber-400">today</span>
@@ -247,12 +247,12 @@
             />
           </svg>
         </div>
-        <div class="flex-1">
+        <div class="min-w-0 flex-1">
           <p class="font-medium text-amber-400">
             {reminderBills.length} bill{reminderBills.length !== 1 ? 's' : ''} due within {reminderDays}
             days
           </p>
-          <p class="text-sm text-surface-400">
+          <p class="break-words text-sm text-surface-400">
             Total: {fmt(reminderBills.reduce((s: number, b: any) => s + b.estimatedAmount, 0))}
             - {reminderBills.map((b: any) => b.merchantName || b.name).join(', ')}
           </p>
@@ -309,12 +309,17 @@
         <div class="mt-3 space-y-2">
           {#each overdueBills as bill}
             <div class="flex items-center justify-between rounded-lg bg-red-950/30 p-3">
-              <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-600/20">
+              <div class="flex min-w-0 items-center gap-3">
+                <div
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-600/20"
+                >
                   <span class="text-sm font-bold text-red-400">!</span>
                 </div>
-                <div>
-                  <p class="text-sm font-medium text-white">
+                <div class="min-w-0">
+                  <p
+                    class="truncate text-sm font-medium text-white"
+                    title={bill.merchantName || bill.name}
+                  >
                     {bill.merchantName || bill.name}
                   </p>
                   <p class="text-xs text-red-400">
@@ -370,15 +375,18 @@
                     ></div>
 
                     <div class="flex items-center justify-between rounded-lg bg-surface-800/50 p-3">
-                      <div class="flex items-center gap-3">
+                      <div class="flex min-w-0 items-center gap-3">
                         {#if bill.categoryColor}
                           <span
-                            class="h-2.5 w-2.5 rounded-full"
+                            class="h-2.5 w-2.5 shrink-0 rounded-full"
                             style="background-color: {bill.categoryColor}"
                           ></span>
                         {/if}
-                        <div>
-                          <p class="text-sm font-medium text-white">
+                        <div class="min-w-0">
+                          <p
+                            class="truncate text-sm font-medium text-white"
+                            title={bill.merchantName || bill.name}
+                          >
                             {bill.merchantName || bill.name}
                           </p>
                           <p class="text-xs text-surface-500">
@@ -484,15 +492,18 @@
         <div class="mt-3 divide-y divide-surface-700">
           {#each overdueBills as bill}
             <div class="flex items-center justify-between py-3">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 {#if bill.categoryColor}
                   <span
-                    class="h-2.5 w-2.5 rounded-full"
+                    class="h-2.5 w-2.5 shrink-0 rounded-full"
                     style="background-color: {bill.categoryColor}"
                   ></span>
                 {/if}
-                <div>
-                  <p class="text-sm font-medium text-white">
+                <div class="min-w-0">
+                  <p
+                    class="truncate text-sm font-medium text-white"
+                    title={bill.merchantName || bill.name}
+                  >
                     {bill.merchantName || bill.name}
                   </p>
                   <p class="text-xs text-red-400">
@@ -527,15 +538,18 @@
           {#each futureBills as bill}
             {@const days = daysUntil(bill.expectedDate)}
             <div class="flex items-center justify-between py-3">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 {#if bill.categoryColor}
                   <span
-                    class="h-2.5 w-2.5 rounded-full"
+                    class="h-2.5 w-2.5 shrink-0 rounded-full"
                     style="background-color: {bill.categoryColor}"
                   ></span>
                 {/if}
-                <div>
-                  <p class="text-sm font-medium text-white">
+                <div class="min-w-0">
+                  <p
+                    class="truncate text-sm font-medium text-white"
+                    title={bill.merchantName || bill.name}
+                  >
                     {bill.merchantName || bill.name}
                   </p>
                   <p class="text-xs text-surface-500">
@@ -620,15 +634,18 @@
         <div class="mt-3 divide-y divide-surface-700">
           {#each data.subscriptions.slice(0, 10) as sub}
             <div class="flex items-center justify-between py-3">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 {#if sub.categoryColor}
                   <span
-                    class="h-2.5 w-2.5 rounded-full"
+                    class="h-2.5 w-2.5 shrink-0 rounded-full"
                     style="background-color: {sub.categoryColor}"
                   ></span>
                 {/if}
-                <div>
-                  <p class="text-sm font-medium text-white">
+                <div class="min-w-0">
+                  <p
+                    class="truncate text-sm font-medium text-white"
+                    title={sub.merchantName || sub.name}
+                  >
                     {sub.merchantName || sub.name}
                   </p>
                   <p class="text-xs text-surface-500">

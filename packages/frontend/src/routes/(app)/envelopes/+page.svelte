@@ -89,7 +89,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Ready to Assign Banner -->
@@ -186,17 +188,21 @@
                 onclick={() => (editingEnvelope = envelope)}
               >
                 <div class="flex items-start justify-between">
-                  <div class="flex items-center gap-2.5">
+                  <div class="flex min-w-0 items-center gap-2.5">
                     <div
                       class="h-3.5 w-3.5 rounded-full"
                       style="background-color: {envelope.color ||
                         envelope.categoryColor ||
                         '#6366f1'}"
                     ></div>
-                    <div>
-                      <p class="font-medium text-white">{envelope.name}</p>
+                    <div class="min-w-0">
+                      <p class="truncate font-medium text-white" title={envelope.name}>
+                        {envelope.name}
+                      </p>
                       {#if envelope.categoryName}
-                        <p class="text-xs text-surface-500">{envelope.categoryName}</p>
+                        <p class="truncate text-xs text-surface-500" title={envelope.categoryName}>
+                          {envelope.categoryName}
+                        </p>
                       {/if}
                     </div>
                   </div>
@@ -264,13 +270,15 @@
                 onclick={() => (editingEnvelope = envelope)}
               >
                 <div class="flex items-start justify-between">
-                  <div class="flex items-center gap-2.5">
+                  <div class="flex min-w-0 items-center gap-2.5">
                     <div
                       class="h-3.5 w-3.5 rounded-full"
                       style="background-color: {envelope.color || '#22c55e'}"
                     ></div>
-                    <div>
-                      <p class="font-medium text-white">{envelope.name}</p>
+                    <div class="min-w-0">
+                      <p class="truncate font-medium text-white" title={envelope.name}>
+                        {envelope.name}
+                      </p>
                       {#if envelope.targetAmount}
                         <p class="text-xs text-surface-500">
                           Goal: {fmt(envelope.targetAmount)}
@@ -507,7 +515,9 @@
             class="h-3 w-3 rounded-full"
             style="background-color: {allocatingEnvelope.color || '#6366f1'}"
           ></div>
-          <p class="font-medium text-white">{allocatingEnvelope.name}</p>
+          <p class="min-w-0 truncate font-medium text-white" title={allocatingEnvelope.name}>
+            {allocatingEnvelope.name}
+          </p>
         </div>
         <p class="mt-1 text-sm text-surface-400">
           Currently: {fmt(allocatingEnvelope.budgetedAmount)} budgeted,

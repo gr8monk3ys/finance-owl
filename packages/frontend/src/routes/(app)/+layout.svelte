@@ -114,7 +114,7 @@
   >
     <!-- Logo -->
     <div class="flex h-16 items-center justify-between border-b border-surface-700/50 px-5">
-      <a href="/dashboard" class="flex items-center gap-2.5 group">
+      <a href="/dashboard" class="flex min-w-0 items-center gap-2.5 group">
         {#if currentLogo}
           <img
             src={currentLogo}
@@ -143,8 +143,10 @@
             </svg>
           </div>
         {/if}
-        <span translate="no" class="text-lg font-bold text-white tracking-tight"
-          >{currentAppName}</span
+        <span
+          translate="no"
+          class="truncate text-lg font-bold text-white tracking-tight"
+          title={currentAppName}>{currentAppName}</span
         >
       </a>
       <button
@@ -503,8 +505,12 @@
           {data.user?.name?.charAt(0).toUpperCase() ?? '?'}
         </div>
         <div class="flex-1 min-w-0">
-          <p class="truncate text-sm font-medium text-white leading-tight">{data.user?.name}</p>
-          <p class="truncate text-xs text-surface-400 leading-tight">{data.user?.email}</p>
+          <p class="truncate text-sm font-medium text-white leading-tight" title={data.user?.name}>
+            {data.user?.name}
+          </p>
+          <p class="truncate text-xs text-surface-400 leading-tight" title={data.user?.email}>
+            {data.user?.email}
+          </p>
         </div>
       </div>
       <form
@@ -569,7 +575,9 @@
 
       <!-- Page title / breadcrumb -->
       <div class="flex items-center gap-2 min-w-0">
-        <h1 class="text-lg font-semibold text-white truncate">{getPageTitle()}</h1>
+        <h1 class="text-lg font-semibold text-white truncate" title={getPageTitle()}>
+          {getPageTitle()}
+        </h1>
       </div>
 
       <div class="flex-1"></div>

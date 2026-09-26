@@ -136,7 +136,7 @@
           d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-      {form.error}
+      <span class="min-w-0 break-words">{form.error}</span>
     </div>
   {/if}
 
@@ -222,7 +222,7 @@
             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
           />
         </svg>
-        <span class="text-sm text-surface-300">
+        <span class="min-w-0 break-words text-sm text-surface-300">
           You belong to {data.households.length} households. Viewing:
           <strong class="text-white">{data.household.name}</strong>
         </span>
@@ -236,7 +236,7 @@
         <!-- Household Card -->
         <Card>
           <div class="flex items-start justify-between">
-            <div class="flex items-center gap-4">
+            <div class="flex min-w-0 items-center gap-4">
               <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600/20">
                 <svg
                   aria-hidden="true"
@@ -253,8 +253,10 @@
                   />
                 </svg>
               </div>
-              <div>
-                <h3 class="text-lg font-semibold text-white">{data.household.name}</h3>
+              <div class="min-w-0">
+                <h3 class="truncate text-lg font-semibold text-white" title={data.household.name}>
+                  {data.household.name}
+                </h3>
                 <p class="mt-0.5 text-sm text-surface-400">
                   {memberCount} member{memberCount !== 1 ? 's' : ''}
                   {#if data.sharedAccounts.length > 0}
@@ -352,15 +354,19 @@
           <div class="mt-4 divide-y divide-surface-700">
             {#each data.household.members ?? [] as member}
               <div class="flex items-center justify-between py-3.5">
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <div
                     class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-600 text-sm font-semibold text-white"
                   >
                     {member.userName?.charAt(0).toUpperCase() ?? '?'}
                   </div>
-                  <div>
-                    <p class="font-medium text-white">{member.userName}</p>
-                    <p class="text-xs text-surface-400">{member.userEmail}</p>
+                  <div class="min-w-0">
+                    <p class="truncate font-medium text-white" title={member.userName}>
+                      {member.userName}
+                    </p>
+                    <p class="truncate text-xs text-surface-400" title={member.userEmail}>
+                      {member.userEmail}
+                    </p>
                   </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -419,6 +425,8 @@
                   {/if}
                 </div>
               </div>
+            {:else}
+              <p class="py-3.5 text-sm text-surface-400">No members yet.</p>
             {/each}
           </div>
         </Card>
@@ -485,8 +493,13 @@
                   class="flex items-center justify-between rounded-lg border border-surface-700 bg-surface-900/50 p-3"
                 >
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-medium text-white">{sa.accountName}</p>
-                    <p class="mt-0.5 truncate text-xs text-surface-400">
+                    <p class="truncate text-sm font-medium text-white" title={sa.accountName}>
+                      {sa.accountName}
+                    </p>
+                    <p
+                      class="mt-0.5 truncate text-xs text-surface-400"
+                      title="{sa.institutionName ?? sa.accountType} -- shared by {sa.sharedByName}"
+                    >
                       {sa.institutionName ?? sa.accountType}
                       <span class="text-surface-500"> -- shared by {sa.sharedByName}</span>
                     </p>
@@ -789,9 +802,9 @@
         >
           {editingMember.userName?.charAt(0).toUpperCase() ?? '?'}
         </div>
-        <div>
-          <p class="font-medium text-white">{editingMember.userName}</p>
-          <p class="text-xs text-surface-400">{editingMember.userEmail}</p>
+        <div class="min-w-0">
+          <p class="break-words font-medium text-white">{editingMember.userName}</p>
+          <p class="break-all text-xs text-surface-400">{editingMember.userEmail}</p>
         </div>
       </div>
 
@@ -860,8 +873,8 @@
             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
           />
         </svg>
-        <div>
-          <p class="font-medium text-red-300">
+        <div class="min-w-0">
+          <p class="break-words font-medium text-red-300">
             Remove {confirmRemoveMember.userName} from the household?
           </p>
           <p class="mt-1 text-sm text-surface-400">
@@ -901,8 +914,8 @@
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
           />
         </svg>
-        <div>
-          <p class="font-medium text-red-300">
+        <div class="min-w-0">
+          <p class="break-words font-medium text-red-300">
             Leave "{data.household.name}"?
           </p>
           <p class="mt-1 text-sm text-surface-400">
@@ -942,8 +955,8 @@
             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
           />
         </svg>
-        <div>
-          <p class="font-medium text-red-300">
+        <div class="min-w-0">
+          <p class="break-words font-medium text-red-300">
             Delete "{data.household.name}" permanently?
           </p>
           <p class="mt-1 text-sm text-surface-400">

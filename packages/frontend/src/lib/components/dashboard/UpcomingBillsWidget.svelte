@@ -48,7 +48,10 @@
         {@const days = daysUntil(bill.expectedDate)}
         <div class="flex items-center justify-between py-2">
           <div class="min-w-0 flex-1">
-            <p class="truncate text-xs font-medium text-white">
+            <p
+              class="truncate text-xs font-medium text-white"
+              title={bill.merchantName || bill.name}
+            >
               {bill.merchantName || bill.name}
             </p>
             <p

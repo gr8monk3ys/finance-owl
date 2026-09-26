@@ -411,8 +411,8 @@
         <div class="space-y-3">
           {#each data.cashFlow.incomeItems as item}
             <div class="flex items-center justify-between rounded-lg bg-surface-700/30 px-4 py-3">
-              <div>
-                <p class="text-sm font-medium text-white">{item.name}</p>
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-white" title={item.name}>{item.name}</p>
                 <p class="text-xs capitalize text-surface-500">
                   {item.frequency} - {fmt(item.amount)}/occurrence
                 </p>
@@ -454,8 +454,8 @@
         <div class="space-y-3">
           {#each data.cashFlow.expenseItems as item}
             <div class="flex items-center justify-between rounded-lg bg-surface-700/30 px-4 py-3">
-              <div>
-                <p class="text-sm font-medium text-white">{item.name}</p>
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-white" title={item.name}>{item.name}</p>
                 <p class="text-xs capitalize text-surface-500">
                   {item.frequency} - {fmt(item.amount)}/occurrence
                 </p>

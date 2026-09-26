@@ -78,7 +78,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Active Shares -->
@@ -115,9 +117,13 @@
         {#each activeShares as share}
           <div class="rounded-lg border border-surface-700 bg-surface-800 p-4">
             <div class="flex items-start justify-between">
-              <div>
-                <p class="font-medium text-white">{share.advisorName}</p>
-                <p class="text-sm text-surface-400">{share.advisorEmail}</p>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={share.advisorName}>
+                  {share.advisorName}
+                </p>
+                <p class="truncate text-sm text-surface-400" title={share.advisorEmail}>
+                  {share.advisorEmail}
+                </p>
               </div>
               <div class="flex items-center gap-2">
                 <button
@@ -212,9 +218,13 @@
         {#each inactiveShares as share}
           <div class="rounded-lg border border-surface-700 bg-surface-900/50 p-3 opacity-60">
             <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-surface-300">{share.advisorName}</p>
-                <p class="text-xs text-surface-500">{share.advisorEmail}</p>
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-surface-300" title={share.advisorName}>
+                  {share.advisorName}
+                </p>
+                <p class="truncate text-xs text-surface-500" title={share.advisorEmail}>
+                  {share.advisorEmail}
+                </p>
               </div>
               <span
                 class="rounded-full bg-red-500/20 px-2 py-0.5 text-xs text-red-300 border border-red-500/30"
@@ -325,8 +335,8 @@
     <div class="space-y-3">
       <div class="rounded-lg bg-surface-900 p-3">
         <p class="text-sm text-surface-400">Advisor</p>
-        <p class="font-medium text-white">{viewingLogs.advisorName}</p>
-        <p class="text-xs text-surface-500">{viewingLogs.advisorEmail}</p>
+        <p class="break-words font-medium text-white">{viewingLogs.advisorName}</p>
+        <p class="break-all text-xs text-surface-500">{viewingLogs.advisorEmail}</p>
       </div>
       <p class="text-sm text-surface-400">
         Access logs are tracked when the advisor views your shared portal.

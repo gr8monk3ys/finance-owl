@@ -49,7 +49,7 @@
       >
         <path stroke-linecap="round" stroke-linejoin="round" d={icons[type]} />
       </svg>
-      <span class="text-sm font-medium">{message}</span>
+      <span class="min-w-0 break-words text-sm font-medium">{message}</span>
       <button
         aria-label="Dismiss notification"
         onclick={ondismiss}
