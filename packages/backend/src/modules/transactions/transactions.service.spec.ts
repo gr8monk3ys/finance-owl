@@ -72,7 +72,7 @@ describe('TransactionsService', () => {
     };
 
     mockCategorizationService = {
-      categorize: vi.fn(),
+      categorize: vi.fn().mockResolvedValue({ categoryId: null, source: null }),
     };
 
     const mockCacheService = {
@@ -85,7 +85,11 @@ describe('TransactionsService', () => {
         .mockImplementation((_key: string, _ttl: number, factory: () => Promise<any>) => factory()),
     };
 
-    service = new TransactionsService(mockDb, mockCacheService as any);
+    service = new TransactionsService(
+      mockDb,
+      mockCacheService as any,
+      mockCategorizationService as any,
+    );
   });
 
   // ---------------------------------------------------------------------------
@@ -273,6 +277,51 @@ describe('TransactionsService', () => {
 
       expect(result).toEqual(insertedTx);
       expect(mockDb.update).not.toHaveBeenCalled();
+    });
+
+    it('should auto-categorize a transaction when no category is given', async () => {
+      const createData = {
+        accountId: 'account-1',
+        amount: 15.49,
+        name: 'Netflix',
+        merchantName: 'Netflix',
+        date: '2026-02-10',
+      };
+
+      const insertedTx = {
+        id: 'txn-new',
+        userId: mockUserId,
+        ...createData,
+        categoryId: null,
+        isManual: true,
+        pending: false,
+        categorizationSource: null,
+      };
+
+      const recategorizedTx = {
+        ...insertedTx,
+        categoryId: 'cat-streaming',
+        categorizationSource: 'rule',
+      };
+
+      // Ownership check: account (no categoryId supplied)
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'account-1' }]));
+      mockDb.insert.mockReturnValueOnce(mockQuery([insertedTx]));
+      mockCategorizationService.categorize.mockResolvedValue({
+        categoryId: 'cat-streaming',
+        source: 'rule',
+      });
+      mockDb.update.mockReturnValueOnce(mockQuery([recategorizedTx]));
+
+      const result = await service.createManual(mockUserId, createData);
+
+      expect(mockCategorizationService.categorize).toHaveBeenCalledWith({
+        userId: mockUserId,
+        description: 'Netflix',
+        merchantName: 'Netflix',
+      });
+      expect(mockDb.update).toHaveBeenCalled();
+      expect(result).toEqual(recategorizedTx);
     });
 
     it('should default pending to false when not specified', async () => {

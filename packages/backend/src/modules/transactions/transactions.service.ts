@@ -2,6 +2,7 @@ import { Injectable, Inject, NotFoundException, BadRequestException } from '@nes
 import { eq, and, gte, lte, like, desc, sql, count, isNull, or } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
+import { AutoCategorizationService } from '../categories/auto-categorization.service';
 import * as schema from '../../database/schema';
 import { paginate } from '@finance-owl/shared';
 
@@ -24,6 +25,7 @@ export class TransactionsService {
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
 
     private readonly cacheService: CacheService,
+    private readonly autoCategorizationService: AutoCategorizationService,
   ) {}
 
   /**
@@ -249,10 +251,27 @@ export class TransactionsService {
       })
       .returning();
 
-    // TODO: re-add auto-categorization when rule-based categorizer is implemented
+    let result = transaction;
+
+    if (!data.categoryId) {
+      const auto = await this.autoCategorizationService.categorize({
+        userId,
+        description: data.name,
+        merchantName: data.merchantName,
+      });
+
+      if (auto.categoryId) {
+        const [recategorized] = await this.db
+          .update(schema.transactions)
+          .set({ categoryId: auto.categoryId, categorizationSource: auto.source })
+          .where(eq(schema.transactions.id, transaction.id))
+          .returning();
+        result = recategorized;
+      }
+    }
 
     await this.invalidateUserCaches(userId);
-    return transaction;
+    return result;
   }
 
   async update(
