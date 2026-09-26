@@ -26,7 +26,14 @@
       class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-400 transition hover:bg-surface-700 hover:text-white"
       aria-label="Back to settings"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -34,13 +41,13 @@
   </div>
 
   {#if form?.success}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
       Notification preferences saved successfully.
     </div>
   {/if}
 
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+    <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
       {form.error}
     </div>
   {/if}
@@ -85,7 +92,7 @@
               />
               <label
                 for="emailBillReminders"
-                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus:ring-2 peer-focus:ring-primary-500"
+                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500"
               ></label>
               <label
                 for="emailBillReminders"
@@ -111,7 +118,7 @@
               />
               <label
                 for="emailBudgetAlerts"
-                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus:ring-2 peer-focus:ring-primary-500"
+                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500"
               ></label>
               <label
                 for="emailBudgetAlerts"
@@ -137,7 +144,7 @@
               />
               <label
                 for="emailAnomalies"
-                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus:ring-2 peer-focus:ring-primary-500"
+                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500"
               ></label>
               <label
                 for="emailAnomalies"
@@ -163,7 +170,7 @@
               />
               <label
                 for="emailWeeklyDigest"
-                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus:ring-2 peer-focus:ring-primary-500"
+                class="block h-6 w-11 cursor-pointer rounded-full bg-surface-600 transition-colors peer-checked:bg-primary-600 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500"
               ></label>
               <label
                 for="emailWeeklyDigest"

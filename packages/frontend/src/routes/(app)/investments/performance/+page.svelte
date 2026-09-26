@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent, formatDecimal } from '$lib/utils/format';
   import { goto } from '$app/navigation';
   import { Card, Button } from '$components/ui';
   import { LineChart } from '$components/charts';
@@ -10,8 +11,7 @@
   const periods = ['1M', '3M', '6M', '1Y', 'YTD', 'ALL'] as const;
 
   function fmtPct(pct: number): string {
-    const sign = pct >= 0 ? '+' : '';
-    return `${sign}${pct.toFixed(2)}%`;
+    return formatPercent(pct, 2, { signed: true });
   }
 
   function gainLossColor(value: number): string {
@@ -109,7 +109,7 @@
       class="text-surface-400 transition hover:text-white"
       aria-label="Back to investments"
     >
-      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path
           fill-rule="evenodd"
           d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
@@ -180,6 +180,7 @@
     {:else}
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -249,18 +250,23 @@
           <div class="space-y-3">
             {#each topPerformers() as holding, i}
               <div class="flex items-center justify-between rounded-lg bg-surface-700/30 px-4 py-3">
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <span
-                    class="flex h-7 w-7 items-center justify-center rounded-full bg-green-600/20 text-xs font-bold text-green-400"
+                    class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-600/20 text-xs font-bold text-green-400"
                   >
                     {i + 1}
                   </span>
-                  <div>
-                    <p class="font-medium text-white">
+                  <div class="min-w-0">
+                    <p
+                      class="truncate font-medium text-white"
+                      title={holding.tickerSymbol || holding.securityName}
+                    >
                       {holding.tickerSymbol || holding.securityName}
                     </p>
                     {#if holding.tickerSymbol}
-                      <p class="text-xs text-surface-500">{holding.securityName}</p>
+                      <p class="truncate text-xs text-surface-500" title={holding.securityName}>
+                        {holding.securityName}
+                      </p>
                     {/if}
                   </div>
                 </div>
@@ -285,18 +291,23 @@
           <div class="space-y-3">
             {#each worstPerformers() as holding, i}
               <div class="flex items-center justify-between rounded-lg bg-surface-700/30 px-4 py-3">
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <span
-                    class="flex h-7 w-7 items-center justify-center rounded-full bg-red-600/20 text-xs font-bold text-red-400"
+                    class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-600/20 text-xs font-bold text-red-400"
                   >
                     {i + 1}
                   </span>
-                  <div>
-                    <p class="font-medium text-white">
+                  <div class="min-w-0">
+                    <p
+                      class="truncate font-medium text-white"
+                      title={holding.tickerSymbol || holding.securityName}
+                    >
                       {holding.tickerSymbol || holding.securityName}
                     </p>
                     {#if holding.tickerSymbol}
-                      <p class="text-xs text-surface-500">{holding.securityName}</p>
+                      <p class="truncate text-xs text-surface-500" title={holding.securityName}>
+                        {holding.securityName}
+                      </p>
                     {/if}
                   </div>
                 </div>
@@ -344,7 +355,9 @@
                   {holding.tickerSymbol || '--'}
                 </td>
                 <td class="px-4 py-3 text-surface-300">
-                  <span class="line-clamp-1 max-w-[200px]">{holding.securityName}</span>
+                  <span class="line-clamp-1 max-w-[200px]" title={holding.securityName}
+                    >{holding.securityName}</span
+                  >
                 </td>
                 <td class="px-4 py-3">
                   <span
@@ -354,7 +367,7 @@
                   </span>
                 </td>
                 <td class="px-4 py-3 text-right text-surface-300">
-                  {holding.quantity.toFixed(4)}
+                  {formatDecimal(holding.quantity, 4)}
                 </td>
                 <td class="px-4 py-3 text-right text-surface-300">
                   {fmt(holding.costBasis)}

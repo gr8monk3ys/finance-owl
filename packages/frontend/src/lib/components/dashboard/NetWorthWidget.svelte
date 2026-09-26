@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { Card } from '$components/ui';
   import { formatCurrency as fmt, formatDateShort } from '@finance-owl/shared';
 
@@ -33,7 +34,7 @@
           ? 'bg-green-400/10 text-green-400'
           : 'bg-red-400/10 text-red-400'}"
       >
-        <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+        <svg aria-hidden="true" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
           {#if trend.isPositive}
             <path
               fill-rule="evenodd"
@@ -50,7 +51,7 @@
             />
           {/if}
         </svg>
-        {trend.change >= 0 ? '+' : ''}{trend.change.toFixed(1)}%
+        {formatPercent(trend.change, 1, { signed: true })}
       </span>
     {/if}
   </div>
@@ -92,6 +93,7 @@
   {:else}
     <div class="flex flex-col items-center justify-center py-6 text-center">
       <svg
+        aria-hidden="true"
         class="h-8 w-8 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"
@@ -105,7 +107,7 @@
         />
       </svg>
       <p class="mt-2 text-xs text-surface-500">
-        <a href="/accounts" class="text-primary-400 hover:text-primary-300">Link accounts</a>
+        <a href="/accounts" class="text-primary-400 hover:text-primary-300">Link Accounts</a>
         to see your net worth
       </p>
     </div>

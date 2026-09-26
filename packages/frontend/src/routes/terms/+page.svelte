@@ -60,6 +60,7 @@
       <div class="flex items-center gap-3">
         <a href="/" class="text-surface-400 transition hover:text-white" aria-label="Back to home">
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -92,7 +93,7 @@
           {#each sections as section}
             <button
               onclick={() => scrollToSection(section.id)}
-              class="block w-full rounded-lg px-3 py-1.5 text-left text-sm transition-all duration-150
+              class="block w-full rounded-lg px-3 py-1.5 text-left text-sm transition-colors duration-150
 								{activeSection === section.id
                 ? 'bg-primary-600/15 text-primary-400 font-medium'
                 : 'text-surface-400 hover:bg-surface-800 hover:text-surface-200'}"
@@ -110,9 +111,9 @@
           <section id="acceptance">
             <h2 class="text-xl font-semibold text-white">1. Acceptance of Terms</h2>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
-              By creating an account or using Finance Owl (the "Service"), you agree to be bound by
-              these Terms of Service ("Terms"). If you do not agree to these Terms, you must not use
-              the Service.
+              By creating an account or using <span translate="no">Finance Owl</span> (the “Service”),
+              you agree to be bound by these Terms of Service (“Terms”). If you do not agree to these
+              Terms, you must not use the Service.
             </p>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
               These Terms constitute a legally binding agreement between you and {publicSite.legalEntityName}
@@ -125,12 +126,14 @@
           <section id="description">
             <h2 class="text-xl font-semibold text-white">2. Description of Service</h2>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
-              Finance Owl is a personal finance management platform that may provide tools to:
+              <span translate="no">Finance Owl</span> is a personal finance management platform that may
+              provide tools to:
             </p>
             <ul class="mt-3 space-y-2">
               {#each ['Aggregate and view financial accounts from multiple institutions', 'Track and categorize transactions automatically', 'Detect and manage recurring subscriptions', 'Create and monitor budgets using envelope-based budgeting', 'Set and track savings goals with smart automation', 'Receive AI-powered financial insights and recommendations', 'Track investments and net worth across accounts', 'Negotiate bills and find savings opportunities'] as item}
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -242,7 +245,7 @@
             <h2 class="text-xl font-semibold text-white">6. User Content</h2>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
               You retain ownership of any content you create within the Service, including budgets,
-              categories, notes, and financial goals ("User Content"). By using the Service, you
+              categories, notes, and financial goals (“User Content”). By using the Service, you
               grant us a limited license to store, process, and display your User Content solely to
               provide the Service to you.
             </p>
@@ -261,6 +264,7 @@
                 {#each ['Use the Service for any unlawful purpose or in violation of any applicable laws', 'Attempt to gain unauthorized access to the Service, other accounts, or computer systems', 'Interfere with or disrupt the Service or servers connected to the Service', 'Use automated means (bots, scrapers) to access the Service without our written permission', 'Reverse engineer, decompile, or disassemble any aspect of the Service', 'Impersonate any person or entity, or falsely represent your affiliation', 'Use the Service to transmit viruses, malware, or other harmful code', 'Resell, sublicense, or redistribute access to the Service'] as item}
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-red-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -319,6 +323,7 @@
                   class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent-600/20 text-accent-400"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -361,6 +366,7 @@
             <ul class="mt-3 space-y-2">
               <li class="flex items-start gap-2 text-sm text-surface-300">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-4 w-4 shrink-0 text-surface-500"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -376,6 +382,7 @@
               </li>
               <li class="flex items-start gap-2 text-sm text-surface-300">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-4 w-4 shrink-0 text-surface-500"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -391,6 +398,7 @@
               </li>
               <li class="flex items-start gap-2 text-sm text-surface-300">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-4 w-4 shrink-0 text-surface-500"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -457,6 +465,7 @@
               <div class="mt-4 space-y-2">
                 <p class="flex items-center gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -468,12 +477,15 @@
                       d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
                     /></svg
                   >
-                  <a href={publicMailto.legal} class="text-primary-400 hover:text-primary-300"
+                  <a
+                    href={publicMailto.legal}
+                    class="min-w-0 break-all text-primary-400 hover:text-primary-300"
                     >{publicSite.legalEmail}</a
                   >
                 </p>
                 <p class="flex items-center gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -494,6 +506,7 @@
                 {#if publicSite.companyAddress}
                   <p class="flex items-center gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 text-surface-500"
                       fill="none"
                       viewBox="0 0 24 24"

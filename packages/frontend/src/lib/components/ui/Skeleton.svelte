@@ -33,7 +33,7 @@
         style="width: {i === lines - 1 ? '75%' : resolvedWidth}; height: {resolvedHeight};"
       ></div>
     {/each}
-    <span class="sr-only">Loading...</span>
+    <span class="sr-only">Loading…</span>
   </div>
 {:else}
   <div
@@ -42,6 +42,6 @@
     role="status"
     aria-label="Loading"
   >
-    <span class="sr-only">Loading...</span>
+    <span class="sr-only">Loading…</span>
   </div>
 {/if}

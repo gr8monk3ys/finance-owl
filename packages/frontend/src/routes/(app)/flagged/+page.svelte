@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -10,8 +11,14 @@
   let showFlagModal = $state(false);
   let resolvingFlag = $state<any>(null);
   let resolveComment = $state('');
-  let activeTab = $state<'mine' | 'household'>('mine');
-  let statusFilter = $state<'all' | 'open' | 'resolved'>('all');
+  let activeTab = $state<'mine' | 'household'>(readParam('tab', 'mine', ['mine', 'household']));
+  let statusFilter = $state<'all' | 'open' | 'resolved'>(
+    readParam('status', 'all', ['all', 'open', 'resolved']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'mine'));
+  $effect(() => syncParam('status', statusFilter, 'all'));
 
   $effect(() => {
     if (form?.success) {
@@ -64,6 +71,7 @@
     </div>
     <Button onclick={() => (showFlagModal = true)}>
       <svg
+        aria-hidden="true"
         class="mr-1.5 h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -82,8 +90,12 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300">
+    <div
+      role="alert"
+      class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300"
+    >
       <svg
+        aria-hidden="true"
         class="h-5 w-5 flex-shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -139,6 +151,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-500/15">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-yellow-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -162,6 +175,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-500/15">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -214,7 +228,10 @@
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
-                  <p class="font-medium text-white">
+                  <p
+                    class="truncate font-medium text-white"
+                    title={flag.transactionName ?? 'Unknown Transaction'}
+                  >
                     {flag.transactionName ?? 'Unknown Transaction'}
                   </p>
                   <span
@@ -237,6 +254,7 @@
                 {#if flag.reason}
                   <div class="mt-2.5 flex items-start gap-2 rounded-lg bg-surface-700/50 px-3 py-2">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 flex-shrink-0 text-surface-500"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -249,7 +267,7 @@
                         d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
                       />
                     </svg>
-                    <p class="text-sm text-surface-300">{flag.reason}</p>
+                    <p class="min-w-0 break-words text-sm text-surface-300">{flag.reason}</p>
                   </div>
                 {/if}
                 <p class="mt-2 text-xs text-surface-500">
@@ -289,7 +307,10 @@
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
-                  <p class="font-medium text-surface-300">
+                  <p
+                    class="truncate font-medium text-surface-300"
+                    title={flag.transactionName ?? 'Unknown Transaction'}
+                  >
                     {flag.transactionName ?? 'Unknown Transaction'}
                   </p>
                   <span
@@ -305,13 +326,14 @@
                   <span>{fmtDate(flag.transactionDate)}</span>
                 </div>
                 {#if flag.reason}
-                  <p class="mt-2 text-sm text-surface-400">
+                  <p class="mt-2 break-words text-sm text-surface-400">
                     Reason: {flag.reason}
                   </p>
                 {/if}
                 {#if flag.resolveComment}
                   <div class="mt-2 flex items-start gap-2 rounded-lg bg-green-900/15 px-3 py-2">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500/50"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -320,7 +342,9 @@
                     >
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
                     </svg>
-                    <p class="text-sm text-green-300/80">{flag.resolveComment}</p>
+                    <p class="min-w-0 break-words text-sm text-green-300/80">
+                      {flag.resolveComment}
+                    </p>
                   </div>
                 {/if}
                 <div class="mt-2 flex items-center gap-4 text-xs text-surface-500">
@@ -341,6 +365,7 @@
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-700/50">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -362,7 +387,7 @@
               : 'No flags have been resolved yet.'}
           </p>
           <Button variant="ghost" size="sm" class="mt-3" onclick={() => (statusFilter = 'all')}>
-            Show all flags
+            Show All Flags
           </Button>
         {:else}
           <p class="mt-4 text-lg text-surface-300">No flagged transactions</p>
@@ -396,12 +421,13 @@
       </label>
       {#if data.transactions.length > 0}
         <select
+          autocomplete="off"
           id="flagTransactionId"
           name="transactionId"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
-          <option value="">Select a transaction...</option>
+          <option value="">Select a transaction…</option>
           {#each data.transactions as tx}
             <option value={tx.id}>
               {tx.merchantName || tx.name} - {fmt(tx.amount)} ({fmtDate(tx.date)})
@@ -410,12 +436,14 @@
         </select>
       {:else}
         <input
+          autocomplete="off"
+          spellcheck={false}
           id="flagTransactionId"
           name="transactionId"
           type="text"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="Enter transaction ID"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="Enter transaction ID…"
         />
       {/if}
     </div>
@@ -425,11 +453,12 @@
         Reason <span class="text-surface-500">(optional)</span>
       </label>
       <textarea
+        autocomplete="off"
         id="flagReason"
         name="reason"
         rows="3"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Why are you flagging this transaction?"></textarea>
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Why are you flagging this transaction?…"></textarea>
       <p class="mt-1.5 text-xs text-surface-500">
         Provide context so others know why this transaction was flagged.
       </p>
@@ -439,6 +468,7 @@
       <Button variant="ghost" type="button" onclick={() => (showFlagModal = false)}>Cancel</Button>
       <Button type="submit">
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -463,7 +493,7 @@
     <div class="space-y-4">
       <!-- Flag summary -->
       <div class="rounded-lg border border-surface-700 bg-surface-900/50 p-4">
-        <p class="font-medium text-white">
+        <p class="break-words font-medium text-white">
           {resolvingFlag.transactionName ?? 'Unknown Transaction'}
         </p>
         <div class="mt-1 flex items-center gap-3 text-sm text-surface-400">
@@ -471,7 +501,7 @@
           <span>{fmtDate(resolvingFlag.transactionDate)}</span>
         </div>
         {#if resolvingFlag.reason}
-          <p class="mt-2 text-sm text-surface-300">
+          <p class="mt-2 break-words text-sm text-surface-300">
             Reason: {resolvingFlag.reason}
           </p>
         {/if}
@@ -493,12 +523,13 @@
             Resolution Comment <span class="text-surface-500">(optional)</span>
           </label>
           <textarea
+            autocomplete="off"
             id="resolveComment"
             name="comment"
             rows="3"
             bind:value={resolveComment}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            placeholder="Add a note about how this was resolved..."></textarea>
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+            placeholder="Add a note about how this was resolved…"></textarea>
         </div>
 
         <div class="flex justify-end gap-3 pt-2">
@@ -507,6 +538,7 @@
           </Button>
           <Button type="submit">
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"

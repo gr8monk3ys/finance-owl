@@ -60,7 +60,7 @@
   href="#main-content"
   class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-emerald-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
 >
-  Skip to content
+  Skip to Content
 </a>
 <nav class="fixed top-0 z-50 w-full border-b border-white/5 bg-gray-950/80 backdrop-blur-xl">
   <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -69,7 +69,7 @@
       <div
         class="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg shadow-emerald-900/30 transition-transform duration-200 group-hover:scale-105"
       >
-        <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+        <svg aria-hidden="true" class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor">
           <path
             d="M12 2C9.5 2 7.5 3.5 7 5.5C5.5 5 3.5 5.5 2.5 7C1.5 8.5 2 10.5 3 11.5C2 12.5 1.5 14.5 2.5 16C3.5 17.5 5.5 18 7 17.5C7.5 19.5 9.5 21 12 21C14.5 21 16.5 19.5 17 17.5C18.5 18 20.5 17.5 21.5 16C22.5 14.5 22 12.5 21 11.5C22 10.5 22.5 8.5 21.5 7C20.5 5.5 18.5 5 17 5.5C16.5 3.5 14.5 2 12 2Z"
           />
@@ -84,7 +84,7 @@
           />
         </svg>
       </div>
-      <span class="text-xl font-bold text-white tracking-tight"
+      <span translate="no" class="text-xl font-bold text-white tracking-tight"
         >Finance <span class="text-emerald-400">Owl</span></span
       >
     </a>
@@ -137,11 +137,25 @@
       type="button"
     >
       {#if mobileNavOpen}
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg
+          aria-hidden="true"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
       {:else}
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg
+          aria-hidden="true"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       {/if}
@@ -187,7 +201,7 @@
           >
           <a
             href="/auth/register"
-            class="mt-1 block rounded-lg bg-emerald-600 px-3 py-2.5 text-center text-sm font-semibold text-white"
+            class="mt-1 block rounded-lg bg-emerald-600 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-emerald-500"
             >Get Started Free</a
           >
         </div>
@@ -227,7 +241,7 @@
       >
         <span class="relative flex h-2 w-2">
           <span
-            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"
+            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 [animation-iteration-count:4]"
           ></span>
           <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
         </span>
@@ -256,10 +270,11 @@
       <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
         <a
           href="/auth/register"
-          class="group relative inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition-all duration-200 hover:bg-emerald-500 hover:shadow-2xl hover:shadow-emerald-900/50 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+          class="group relative inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition duration-200 hover:bg-emerald-500 hover:shadow-2xl hover:shadow-emerald-900/50 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
         >
           Get Started Free
           <svg
+            aria-hidden="true"
             class="h-5 w-5 transition-transform group-hover:translate-x-0.5"
             fill="none"
             viewBox="0 0 24 24"
@@ -272,9 +287,14 @@
         <button
           type="button"
           onclick={() => scrollTo('how-it-works')}
-          class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-base font-medium text-gray-300 transition-all duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+          class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-base font-medium text-gray-300 transition duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
         >
-          <svg class="h-5 w-5 text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            class="h-5 w-5 text-emerald-400"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"
             />
@@ -287,6 +307,7 @@
       <div class="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
         <div class="flex items-center gap-2 text-sm text-gray-500">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-emerald-500/70"
             fill="none"
             viewBox="0 0 24 24"
@@ -303,6 +324,7 @@
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-500">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-emerald-500/70"
             fill="none"
             viewBox="0 0 24 24"
@@ -324,6 +346,7 @@
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-500">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-emerald-500/70"
             fill="none"
             viewBox="0 0 24 24"
@@ -392,7 +415,7 @@
               <div class="flex items-end justify-between gap-1" style="height: 80px;">
                 {#each [40, 55, 35, 65, 45, 70, 50, 80, 60, 75, 55, 85] as h}
                   <div
-                    class="flex-1 rounded-t bg-gradient-to-t from-emerald-600/40 to-emerald-400/60 transition-all"
+                    class="flex-1 rounded-t bg-gradient-to-t from-emerald-600/40 to-emerald-400/60 transition-[width]"
                     style="height: {h}%"
                   ></div>
                 {/each}
@@ -430,8 +453,8 @@
           Your Complete Financial Toolkit
         </h2>
         <p class="mt-4 text-lg text-gray-400">
-          Stop juggling multiple apps. Finance Owl brings all your money management into one
-          powerful dashboard.
+          Stop juggling multiple apps. <span translate="no">Finance Owl</span> brings all your money management
+          into one powerful dashboard.
         </p>
       </div>
 
@@ -439,12 +462,13 @@
       <div class="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <!-- Subscription Tracker -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 transition-colors group-hover:bg-emerald-500/15"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
@@ -467,12 +491,13 @@
 
         <!-- Bill Negotiation -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 transition-colors group-hover:bg-amber-500/15"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
@@ -495,12 +520,13 @@
 
         <!-- Smart Savings -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 transition-colors group-hover:bg-blue-500/15"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
@@ -523,12 +549,13 @@
 
         <!-- Investment Tracking -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400 transition-colors group-hover:bg-violet-500/15"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
@@ -551,12 +578,13 @@
 
         <!-- Budget Envelopes -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-500/10 text-rose-400 transition-colors group-hover:bg-rose-500/15"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
@@ -579,12 +607,13 @@
 
         <!-- Spending Insights -->
         <div
-          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
+          class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
             class="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 transition-colors group-hover:bg-cyan-500/15"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
@@ -695,14 +724,14 @@
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="animate-on-scroll mx-auto max-w-3xl text-center">
         <p class="text-sm font-semibold uppercase tracking-wider text-emerald-400">
-          Why Finance Owl
+          Why <span translate="no">Finance Owl</span>
         </p>
         <h2 class="mt-3 text-3xl font-bold text-white sm:text-4xl">
-          Built for clarity, control, and follow-through
+          Built for Clarity, Control, and Follow-Through
         </h2>
         <p class="mt-4 text-lg text-gray-400">
-          Finance Owl focuses on the workflows people return to every week: reviewing spending,
-          adjusting budgets, and keeping financial decisions organized in one place.
+          <span translate="no">Finance Owl</span> focuses on the workflows people return to every week:
+          reviewing spending, adjusting budgets, and keeping financial decisions organized in one place.
         </p>
       </div>
 
@@ -780,6 +809,7 @@
             {#each ['Link up to 2 accounts', 'Basic budget tracking', 'Subscription detection', 'Monthly spending reports', 'Mobile app access'] as feature}
               <li class="flex items-center gap-3 text-sm text-gray-300">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 shrink-0 text-emerald-500"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -821,6 +851,7 @@
             {#each ['Unlimited linked accounts', 'AI spending insights', 'Subscription tracking', 'Bill negotiation tools', 'Smart savings automation', 'Investment tracking', 'Priority support'] as feature}
               <li class="flex items-center gap-3 text-sm text-gray-300">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 shrink-0 text-emerald-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -853,6 +884,7 @@
             {#each ['Everything in Pro', 'Household sharing for up to 10 members', 'Shared budgets and goals', 'Advisor sharing', 'API access', 'Dedicated support'] as feature}
               <li class="flex items-center gap-3 text-sm text-gray-300">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 shrink-0 text-emerald-500"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -896,10 +928,11 @@
         <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href="/auth/register"
-            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition-all hover:bg-emerald-500 hover:shadow-2xl hover:-translate-y-0.5"
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition hover:bg-emerald-500 hover:shadow-2xl hover:-translate-y-0.5"
           >
             Get Started Free
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -925,11 +958,16 @@
       <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <!-- Brand -->
         <div class="sm:col-span-2 lg:col-span-1">
-          <a href="/" class="flex items-center gap-2">
+          <a href="/" class="flex items-center gap-2 transition hover:brightness-125">
             <div
               class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-700"
             >
-              <svg class="h-4.5 w-4.5 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                aria-hidden="true"
+                class="h-4.5 w-4.5 text-white"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path
                   d="M12 2C9.5 2 7.5 3.5 7 5.5C5.5 5 3.5 5.5 2.5 7C1.5 8.5 2 10.5 3 11.5C2 12.5 1.5 14.5 2.5 16C3.5 17.5 5.5 18 7 17.5C7.5 19.5 9.5 21 12 21C14.5 21 16.5 19.5 17 17.5C18.5 18 20.5 17.5 21.5 16C22.5 14.5 22 12.5 21 11.5C22 10.5 22.5 8.5 21.5 7C20.5 5.5 18.5 5 17 5.5C16.5 3.5 14.5 2 12 2Z"
                 />
@@ -937,7 +975,7 @@
                 <circle cx="14.5" cy="10" r="1.5" fill="#064e3b" />
               </svg>
             </div>
-            <span class="text-lg font-bold text-white"
+            <span translate="no" class="text-lg font-bold text-white"
               >Finance <span class="text-emerald-400">Owl</span></span
             >
           </a>
@@ -1021,7 +1059,9 @@
       <div
         class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 sm:flex-row"
       >
-        <p class="text-sm text-gray-400">{currentYear} Finance Owl. All rights reserved.</p>
+        <p class="text-sm text-gray-400">
+          {currentYear} <span translate="no">Finance Owl</span>. All rights reserved.
+        </p>
         <div class="flex gap-4">
           <!-- Support -->
           <a
@@ -1030,6 +1070,7 @@
             aria-label="Support"
           >
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -1049,7 +1090,7 @@
             class="text-gray-400 transition hover:text-white"
             aria-label="GitHub"
           >
-            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
               <path
                 d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
               />

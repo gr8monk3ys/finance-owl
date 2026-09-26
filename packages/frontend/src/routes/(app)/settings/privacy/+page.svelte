@@ -80,7 +80,14 @@
       class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-400 transition hover:bg-surface-700 hover:text-white"
       aria-label="Back to settings"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -93,13 +100,13 @@
   </div>
 
   {#if form?.success}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
       {form.message || 'Settings updated successfully.'}
     </div>
   {/if}
 
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+    <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
       {form.error}
     </div>
   {/if}
@@ -141,7 +148,7 @@
               <button
                 type="submit"
                 disabled={updating}
-                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-surface-800 disabled:cursor-not-allowed disabled:opacity-50 {isConsentGranted(
+                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-800 disabled:cursor-not-allowed disabled:opacity-50 {isConsentGranted(
                   consent.key,
                 )
                   ? 'bg-primary-600'
@@ -187,6 +194,7 @@
       >
         <Button type="submit" loading={exporting} class="w-full sm:w-auto">
           <svg
+            aria-hidden="true"
             class="mr-2 h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -244,6 +252,7 @@
           class="w-full sm:w-auto"
         >
           <svg
+            aria-hidden="true"
             class="mr-2 h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -281,12 +290,13 @@
                 Reason for leaving (optional)
               </label>
               <textarea
+                autocomplete="off"
                 id="deletion-reason"
                 name="reason"
                 bind:value={deletionReason}
                 rows="2"
-                class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                placeholder="Help us improve by sharing why you're leaving..."></textarea>
+                class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+                placeholder="Help us improve by sharing why you're leaving…"></textarea>
             </div>
             <div class="flex gap-3">
               <Button type="submit" variant="danger" loading={deleting}>Confirm Deletion</Button>
@@ -329,6 +339,7 @@
       <div class="space-y-3 text-sm text-surface-400">
         <div class="flex items-start gap-3">
           <svg
+            aria-hidden="true"
             class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -348,6 +359,7 @@
         </div>
         <div class="flex items-start gap-3">
           <svg
+            aria-hidden="true"
             class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -367,6 +379,7 @@
         </div>
         <div class="flex items-start gap-3">
           <svg
+            aria-hidden="true"
             class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -386,6 +399,7 @@
         </div>
         <div class="flex items-start gap-3">
           <svg
+            aria-hidden="true"
             class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"

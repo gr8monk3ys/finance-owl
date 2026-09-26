@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { Card, Button } from '$components/ui';
   import { BarChart, DonutChart, LineChart } from '$components/charts';
@@ -7,7 +9,12 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let activeTab = $state<'spending' | 'income-expense' | 'net-worth' | 'trends'>('spending');
+  let activeTab = $state<'spending' | 'income-expense' | 'net-worth' | 'trends'>(
+    readParam('tab', 'spending', ['spending', 'income-expense', 'net-worth', 'trends']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'spending'));
 
   // Spending tab state
   let startDate = $state(
@@ -168,6 +175,7 @@
     <div class="flex gap-2">
       <Button variant="secondary" onclick={handlePrint}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -224,7 +232,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Spending Tab -->
@@ -252,27 +260,33 @@
               >Start Date</label
             >
             <input
+              autocomplete="off"
+              name="startDate"
               id="startDate"
               type="date"
               bind:value={startDate}
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
             <label for="endDate" class="block text-sm font-medium text-surface-300">End Date</label>
             <input
+              autocomplete="off"
+              name="endDate"
               id="endDate"
               type="date"
               bind:value={endDate}
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
             <label for="groupBy" class="block text-sm font-medium text-surface-300">Group By</label>
             <select
+              autocomplete="off"
+              name="groupBy"
               id="groupBy"
               bind:value={groupBy}
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             >
               <option value="category">Category</option>
               <option value="merchant">Merchant</option>
@@ -302,19 +316,21 @@
               <div class="space-y-2">
                 {#each data.spending as item, i}
                   <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
+                    <div class="flex min-w-0 items-center gap-2">
                       <span
-                        class="h-3 w-3 rounded-full"
+                        class="h-3 w-3 shrink-0 rounded-full"
                         style="background-color: {spendingColors[i]}"
                       ></span>
-                      <span class="text-sm text-surface-300">{item.group}</span>
+                      <span class="truncate text-sm text-surface-300" title={item.group}
+                        >{item.group}</span
+                      >
                     </div>
                     <div class="text-right">
                       <span class="text-sm font-medium text-white">{fmt(item.total)}</span>
                       <span class="ml-2 text-xs text-surface-500">
                         ({spendingTotal > 0
-                          ? ((item.total / spendingTotal) * 100).toFixed(1)
-                          : '0'}%)
+                          ? formatPercent((item.total / spendingTotal) * 100, 1)
+                          : formatPercent(0)})
                       </span>
                     </div>
                   </div>
@@ -344,7 +360,9 @@
                       <td class="px-4 py-2 text-right text-surface-300">{item.count}</td>
                       <td class="px-4 py-2 text-right font-medium text-white">{fmt(item.total)}</td>
                       <td class="px-4 py-2 text-right text-surface-300">
-                        {spendingTotal > 0 ? ((item.total / spendingTotal) * 100).toFixed(1) : '0'}%
+                        {spendingTotal > 0
+                          ? formatPercent((item.total / spendingTotal) * 100, 1)
+                          : formatPercent(0)}
                       </td>
                       <td class="px-4 py-2 text-right text-surface-300">
                         {item.count > 0 ? fmt(item.total / item.count) : fmt(0)}
@@ -389,10 +407,11 @@
                 >Export</label
               >
               <select
+                autocomplete="off"
                 id="exportType"
                 name="type"
                 bind:value={exportType}
-                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               >
                 <option value="transactions">Transactions</option>
                 <option value="budgets">Budgets</option>
@@ -403,6 +422,7 @@
             <input type="hidden" name="endDate" value={endDate} />
             <Button type="submit">
               <svg
+                aria-hidden="true"
                 class="mr-1.5 h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -430,6 +450,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -449,6 +470,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-red-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -472,6 +494,7 @@
               : 'bg-red-600/20'}"
           >
             <svg
+              aria-hidden="true"
               class="h-5 w-5 {ieNet >= 0 ? 'text-green-400' : 'text-red-400'}"
               fill="none"
               viewBox="0 0 24 24"
@@ -542,7 +565,7 @@
                     {fmt(row.net)}
                   </td>
                   <td class="px-4 py-2 text-right text-surface-300">
-                    {savingsRate.toFixed(1)}%
+                    {formatPercent(savingsRate, 1)}
                   </td>
                 </tr>
               {/each}
@@ -562,7 +585,9 @@
                     : 'text-red-400'}">{fmt(ieNet)}</td
                 >
                 <td class="px-4 py-2 text-right font-semibold text-surface-300">
-                  {ieTotalIncome > 0 ? ((ieNet / ieTotalIncome) * 100).toFixed(1) : '0'}%
+                  {ieTotalIncome > 0
+                    ? formatPercent((ieNet / ieTotalIncome) * 100, 1)
+                    : formatPercent(0)}
                 </td>
               </tr>
             </tfoot>
@@ -579,6 +604,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -604,6 +630,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-red-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -634,6 +661,7 @@
               : 'bg-red-600/20'}"
           >
             <svg
+              aria-hidden="true"
               class="h-5 w-5 {(data.netWorth?.netWorth ?? 0) >= 0
                 ? 'text-green-400'
                 : 'text-red-400'}"
@@ -678,7 +706,7 @@
             </div>
             <div class="h-4 overflow-hidden rounded-full bg-surface-700">
               <div
-                class="h-full rounded-full bg-green-500 transition-all"
+                class="h-full rounded-full bg-green-500 transition-[width]"
                 style="width: {(totalAssets / maxBar) * 100}%"
               ></div>
             </div>
@@ -690,7 +718,7 @@
             </div>
             <div class="h-4 overflow-hidden rounded-full bg-surface-700">
               <div
-                class="h-full rounded-full bg-red-500 transition-all"
+                class="h-full rounded-full bg-red-500 transition-[width]"
                 style="width: {(totalLiabilities / maxBar) * 100}%"
               ></div>
             </div>
@@ -835,14 +863,14 @@
                   <td class="px-4 py-2 text-surface-300">{trend.month}</td>
                   <td class="px-4 py-2 text-right font-medium text-white">{fmt(trend.total)}</td>
                   <td class="px-4 py-2 text-right {diff >= 0 ? 'text-red-400' : 'text-green-400'}">
-                    {diff >= 0 ? '+' : ''}{fmt(diff)} ({pct >= 0 ? '+' : ''}{pct.toFixed(1)}%)
+                    {diff >= 0 ? '+' : ''}{fmt(diff)} ({formatPercent(pct, 1, { signed: true })})
                   </td>
                   <td class="px-4 py-2">
                     <div
                       class="h-2 w-full max-w-[120px] overflow-hidden rounded-full bg-surface-700"
                     >
                       <div
-                        class="h-full rounded-full transition-all {trend.total > trendAvg
+                        class="h-full rounded-full transition-[width] {trend.total > trendAvg
                           ? 'bg-red-500'
                           : 'bg-green-500'}"
                         style="width: {Math.min((trend.total / (trendAvg * 2)) * 100, 100)}%"

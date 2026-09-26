@@ -140,8 +140,15 @@
 <div class="space-y-4">
   <!-- Calendar navigation -->
   <div class="flex items-center justify-between">
-    <Button variant="ghost" size="sm" onclick={prevMonth}>
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <Button variant="ghost" size="sm" onclick={prevMonth} aria-label="Previous month">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </Button>
@@ -155,8 +162,15 @@
         Today
       </button>
     </div>
-    <Button variant="ghost" size="sm" onclick={nextMonth}>
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <Button variant="ghost" size="sm" onclick={nextMonth} aria-label="Next month">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
       </svg>
     </Button>
@@ -208,7 +222,12 @@
                 title="{bill.merchantName || bill.name}: {fmt(bill.estimatedAmount)}"
               >
                 {#if status === 'overdue'}
-                  <svg class="h-2.5 w-2.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <svg
+                    aria-hidden="true"
+                    class="h-2.5 w-2.5 shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
                     <path
                       fill-rule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -244,10 +263,15 @@
         {#each selectedDayBills as bill}
           {@const status = getBillStatus(bill)}
           <div class="flex items-center justify-between py-2.5">
-            <div class="flex items-center gap-3">
+            <div class="flex min-w-0 items-center gap-3">
               {#if status === 'overdue'}
                 <span class="flex h-6 w-6 items-center justify-center rounded-full bg-red-400/10">
-                  <svg class="h-3.5 w-3.5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                  <svg
+                    aria-hidden="true"
+                    class="h-3.5 w-3.5 text-red-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
                     <path
                       fill-rule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -261,8 +285,11 @@
                   style="background-color: {bill.categoryColor}"
                 ></span>
               {/if}
-              <div>
-                <p class="text-sm font-medium text-white">
+              <div class="min-w-0">
+                <p
+                  class="truncate text-sm font-medium text-white"
+                  title={bill.merchantName || bill.name}
+                >
                   {bill.merchantName || bill.name}
                 </p>
                 <p class="text-xs text-surface-500">

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { Card } from '$components/ui';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
@@ -82,7 +83,14 @@
       href="/calculators"
       class="text-surface-400 hover:text-white transition"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -119,7 +127,7 @@
         </div>
         <div class="h-5 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="h-full rounded-full bg-green-500/60 transition-all"
+            class="h-full rounded-full bg-green-500/60 transition-[width]"
             style="width: {(totalAssets / maxVal) * 100}%"
           ></div>
         </div>
@@ -131,7 +139,7 @@
         </div>
         <div class="h-5 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="h-full rounded-full bg-red-500/60 transition-all"
+            class="h-full rounded-full bg-red-500/60 transition-[width]"
             style="width: {(totalLiabilities / maxVal) * 100}%"
           ></div>
         </div>
@@ -150,12 +158,14 @@
               >Cash & Savings</label
             >
             <input
+              autocomplete="off"
+              name="cash"
               id="cash"
               type="number"
               bind:value={cashAndSavings}
               min="0"
               step="500"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
@@ -163,12 +173,14 @@
               >Investments (stocks, bonds, retirement)</label
             >
             <input
+              autocomplete="off"
+              name="invest"
               id="invest"
               type="number"
               bind:value={investments}
               min="0"
               step="500"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
@@ -176,12 +188,14 @@
               >Property Value</label
             >
             <input
+              autocomplete="off"
+              name="property"
               id="property"
               type="number"
               bind:value={propertyValue}
               min="0"
               step="1000"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
@@ -189,12 +203,14 @@
               >Vehicle Value</label
             >
             <input
+              autocomplete="off"
+              name="vehicles"
               id="vehicles"
               type="number"
               bind:value={vehicleValue}
               min="0"
               step="500"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
@@ -202,12 +218,14 @@
               >Other Assets</label
             >
             <input
+              autocomplete="off"
+              name="otherA"
               id="otherA"
               type="number"
               bind:value={otherAssets}
               min="0"
               step="500"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
         </div>
@@ -217,7 +235,13 @@
       {#if assetSegments.length > 0}
         <Card>
           <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-            <svg width="130" height="130" viewBox="0 0 130 130" class="flex-shrink-0">
+            <svg
+              aria-hidden="true"
+              width="130"
+              height="130"
+              viewBox="0 0 130 130"
+              class="flex-shrink-0"
+            >
               {#each assetSegments as seg}
                 <circle
                   cx="65"
@@ -242,7 +266,7 @@
                   </div>
                   <span class="font-medium text-white">
                     {fmt(seg.value)}
-                    <span class="text-xs text-surface-500">({seg.pct.toFixed(0)}%)</span>
+                    <span class="text-xs text-surface-500">({formatPercent(seg.pct)})</span>
                   </span>
                 </div>
               {/each}
@@ -262,12 +286,14 @@
               >Mortgage Balance</label
             >
             <input
+              autocomplete="off"
+              name="mortBal"
               id="mortBal"
               type="number"
               bind:value={mortgageBalance}
               min="0"
               step="1000"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
@@ -275,12 +301,14 @@
               >Auto Loans</label
             >
             <input
+              autocomplete="off"
+              name="autoLoan"
               id="autoLoan"
               type="number"
               bind:value={autoLoans}
               min="0"
               step="500"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
@@ -288,12 +316,14 @@
               >Student Loans</label
             >
             <input
+              autocomplete="off"
+              name="stuLoan"
               id="stuLoan"
               type="number"
               bind:value={studentLoans}
               min="0"
               step="500"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
@@ -301,12 +331,14 @@
               >Credit Card Debt</label
             >
             <input
+              autocomplete="off"
+              name="ccDebt"
               id="ccDebt"
               type="number"
               bind:value={creditCardDebt}
               min="0"
               step="100"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
@@ -314,12 +346,14 @@
               >Other Liabilities</label
             >
             <input
+              autocomplete="off"
+              name="otherL"
               id="otherL"
               type="number"
               bind:value={otherLiabilities}
               min="0"
               step="500"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
         </div>
@@ -329,7 +363,13 @@
       {#if liabilitySegments.length > 0}
         <Card>
           <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-            <svg width="130" height="130" viewBox="0 0 130 130" class="flex-shrink-0">
+            <svg
+              aria-hidden="true"
+              width="130"
+              height="130"
+              viewBox="0 0 130 130"
+              class="flex-shrink-0"
+            >
               {#each liabilitySegments as seg}
                 <circle
                   cx="65"
@@ -354,7 +394,7 @@
                   </div>
                   <span class="font-medium text-white">
                     {fmt(seg.value)}
-                    <span class="text-xs text-surface-500">({seg.pct.toFixed(0)}%)</span>
+                    <span class="text-xs text-surface-500">({formatPercent(seg.pct)})</span>
                   </span>
                 </div>
               {/each}

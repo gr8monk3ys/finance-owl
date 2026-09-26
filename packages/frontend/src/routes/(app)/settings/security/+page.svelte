@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import type { ActionData, PageData } from './$types';
@@ -167,7 +168,14 @@
       class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-400 transition hover:bg-surface-700 hover:text-white"
       aria-label="Back to settings"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -196,13 +204,13 @@
         </div>
 
         {#if form?.passwordSuccess}
-          <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+          <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
             Password changed successfully. All sessions have been refreshed.
           </div>
         {/if}
 
         {#if form?.passwordError}
-          <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+          <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
             {form.passwordError}
           </div>
         {/if}
@@ -255,6 +263,7 @@
         </div>
         <Button size="sm" onclick={registerPasskey} loading={passkeyRegistering}>
           <svg
+            aria-hidden="true"
             class="mr-1.5 h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -268,13 +277,13 @@
       </div>
 
       {#if form?.passkeyError}
-        <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+        <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
           {form.passkeyError}
         </div>
       {/if}
 
       {#if form?.passkeyDeleteSuccess}
-        <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+        <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
           Passkey removed successfully.
         </div>
       {/if}
@@ -282,6 +291,7 @@
       {#if data.credentials.length === 0}
         <div class="rounded-lg border border-dashed border-surface-600 px-6 py-8 text-center">
           <svg
+            aria-hidden="true"
             class="mx-auto h-10 w-10 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -306,6 +316,7 @@
               <div class="flex items-center gap-3">
                 <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-700">
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -366,8 +377,14 @@
                   </Button>
                 </div>
               {:else}
-                <Button variant="ghost" size="sm" onclick={() => (deleteConfirmId = credential.id)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onclick={() => (deleteConfirmId = credential.id)}
+                  aria-label="Delete passkey"
+                >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -417,19 +434,19 @@
       </div>
 
       {#if form?.totpError}
-        <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+        <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
           {form.totpError}
         </div>
       {/if}
 
       {#if form?.totpEnableSuccess}
-        <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+        <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
           Two-factor authentication has been enabled successfully.
         </div>
       {/if}
 
       {#if form?.totpDisableSuccess}
-        <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+        <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
           Two-factor authentication has been disabled.
         </div>
       {/if}
@@ -440,6 +457,7 @@
           <div class="flex items-center gap-3">
             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-900/30">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 text-green-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -492,11 +510,12 @@
               </p>
 
               <Input
+                spellcheck={false}
                 id="disableCode"
                 name="code"
                 type="text"
                 label="Verification Code"
-                placeholder="000000"
+                placeholder="000000…"
                 required
                 autocomplete="one-time-code"
                 inputmode="numeric"
@@ -534,6 +553,8 @@
 
             <div class="flex justify-center rounded-lg bg-white p-4">
               <img
+                width="192"
+                height="192"
                 src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={encodeURIComponent(
                   totpSetupData.otpauth,
                 )}"
@@ -543,9 +564,11 @@
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-white">Or enter the key manually</h3>
+              <h3 class="text-sm font-medium text-white">Or Enter the Key Manually</h3>
               <div class="mt-2 rounded-lg bg-surface-900 px-3 py-2">
-                <code class="break-all text-xs text-primary-400">{totpSetupData.secret}</code>
+                <code translate="no" class="break-all text-xs text-primary-400"
+                  >{totpSetupData.secret}</code
+                >
               </div>
             </div>
 
@@ -569,11 +592,12 @@
                 </div>
 
                 <Input
+                  spellcheck={false}
                   id="totpCode"
                   name="code"
                   type="text"
                   label="Verification Code"
-                  placeholder="000000"
+                  placeholder="000000…"
                   required
                   autocomplete="one-time-code"
                   inputmode="numeric"
@@ -605,6 +629,7 @@
               <div class="flex items-center gap-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-700">
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-surface-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -644,6 +669,7 @@
           </p>
         </div>
         <form
+          use:confirmSubmit={'Sign out of all sessions?'}
           method="POST"
           action="?/logoutAll"
           use:enhance={() => {
@@ -661,13 +687,13 @@
       </div>
 
       {#if form?.logoutAllSuccess}
-        <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+        <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
           All sessions have been logged out.
         </div>
       {/if}
 
       {#if form?.logoutAllError}
-        <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+        <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
           {form.logoutAllError}
         </div>
       {/if}
@@ -680,8 +706,11 @@
         <div class="divide-y divide-surface-700 rounded-lg border border-surface-700">
           {#each data.sessions as session (session.id)}
             <div class="flex items-center gap-3 px-4 py-3">
-              <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-700">
+              <div
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-700"
+              >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-surface-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -695,11 +724,11 @@
                   />
                 </svg>
               </div>
-              <div class="flex-1">
+              <div class="min-w-0 flex-1">
                 <p class="text-sm font-medium text-white">
                   {parseUserAgent(session.userAgent)}
                 </p>
-                <p class="text-xs text-surface-400">
+                <p class="break-words text-xs text-surface-400">
                   {session.ipAddress || 'Unknown IP'}
                   <span class="mx-1.5 text-surface-600">|</span>
                   Created {formatDate(session.createdAt)}

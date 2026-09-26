@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -40,7 +41,7 @@
   });
 
   function fmtPct(value: number): string {
-    return `${value.toFixed(1)}%`;
+    return formatPercent(value, 1);
   }
 
   function getScoreColor(score: number): string {
@@ -144,7 +145,7 @@
 
   <!-- Error Messages -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Retirement Readiness Score -->
@@ -155,7 +156,7 @@
           <p class="text-sm text-surface-400">Readiness Score</p>
           <div class="relative mt-3 h-28 w-28">
             <!-- Score circle background -->
-            <svg class="h-28 w-28 -rotate-90" viewBox="0 0 100 100">
+            <svg aria-hidden="true" class="h-28 w-28 -rotate-90" viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="42" fill="none" stroke="#1e293b" stroke-width="8" />
               <circle
                 cx="50"
@@ -240,6 +241,7 @@
       <div class="rounded-lg border border-orange-700/50 bg-orange-900/20 p-4">
         <div class="flex items-start gap-3">
           <svg
+            aria-hidden="true"
             class="mt-0.5 h-5 w-5 flex-shrink-0 text-orange-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -287,11 +289,12 @@
   <!-- Profile Section (Collapsible) -->
   <Card padding="none">
     <button
-      class="flex w-full items-center justify-between p-6"
+      class="flex w-full items-center justify-between p-6 transition-colors hover:bg-surface-700/30"
       onclick={() => (profileOpen = !profileOpen)}
     >
       <h3 class="text-lg font-semibold text-white">Retirement Profile</h3>
       <svg
+        aria-hidden="true"
         class="h-5 w-5 text-surface-400 transition-transform {profileOpen ? 'rotate-180' : ''}"
         fill="none"
         viewBox="0 0 24 24"
@@ -364,13 +367,14 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="currentSavings"
                   name="currentSavings"
                   type="number"
                   step="100"
                   min="0"
                   value={data.profile.currentSavings}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -381,13 +385,14 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="monthlyContribution"
                   name="monthlyContribution"
                   type="number"
                   step="50"
                   min="0"
                   value={data.profile.monthlyContribution}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -401,6 +406,7 @@
               </label>
               <div class="relative mt-1">
                 <input
+                  autocomplete="off"
                   id="employerMatch"
                   name="employerMatch"
                   type="number"
@@ -408,7 +414,7 @@
                   min="0"
                   max="100"
                   value={data.profile.employerMatch}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <span class="absolute right-3 top-2.5 text-surface-400">%</span>
               </div>
@@ -418,9 +424,10 @@
                 Risk Tolerance
               </label>
               <select
+                autocomplete="off"
                 id="riskTolerance"
                 name="riskTolerance"
-                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               >
                 <option
                   value="conservative"
@@ -447,13 +454,14 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="desiredMonthlyIncome"
                   name="desiredMonthlyIncome"
                   type="number"
                   step="100"
                   min="0"
                   value={data.profile.desiredMonthlyIncome}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -467,13 +475,14 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="socialSecurityEstimate"
                   name="socialSecurityEstimate"
                   type="number"
                   step="100"
                   min="0"
                   value={data.profile.socialSecurityEstimate}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -484,13 +493,14 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="pensionAmount"
                   name="pensionAmount"
                   type="number"
                   step="100"
                   min="0"
                   value={data.profile.pensionAmount}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -504,6 +514,7 @@
               </label>
               <div class="relative mt-1">
                 <input
+                  autocomplete="off"
                   id="inflationRate"
                   name="inflationRate"
                   type="number"
@@ -511,7 +522,7 @@
                   min="0"
                   max="15"
                   value={data.profile.inflationRate}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <span class="absolute right-3 top-2.5 text-surface-400">%</span>
               </div>
@@ -522,6 +533,7 @@
               </label>
               <div class="relative mt-1">
                 <input
+                  autocomplete="off"
                   id="expectedReturn"
                   name="expectedReturn"
                   type="number"
@@ -529,7 +541,7 @@
                   min="0"
                   max="30"
                   value={data.profile.expectedReturn}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <span class="absolute right-3 top-2.5 text-surface-400">%</span>
               </div>
@@ -547,11 +559,12 @@
   <!-- Scenario Comparison Section -->
   <Card padding="none">
     <button
-      class="flex w-full items-center justify-between p-6"
+      class="flex w-full items-center justify-between p-6 transition-colors hover:bg-surface-700/30"
       onclick={() => (scenariosOpen = !scenariosOpen)}
     >
       <h3 class="text-lg font-semibold text-white">Scenario Comparison</h3>
       <svg
+        aria-hidden="true"
         class="h-5 w-5 text-surface-400 transition-transform {scenariosOpen ? 'rotate-180' : ''}"
         fill="none"
         viewBox="0 0 24 24"
@@ -575,10 +588,13 @@
             <div class="rounded-lg border border-surface-700 p-4">
               <div class="flex items-center justify-between">
                 <input
+                  autocomplete="off"
+                  name="scenario-name"
+                  aria-label="Scenario name"
                   type="text"
                   bind:value={scenario.label}
-                  class="bg-transparent text-sm font-medium text-white focus:outline-none"
-                  placeholder="Scenario name"
+                  class="rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+                  placeholder="Scenario name…"
                 />
                 <button
                   aria-label="Remove scenario"
@@ -586,6 +602,7 @@
                   onclick={() => removeScenario(i)}
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -602,12 +619,14 @@
                     >Retirement Age</label
                   >
                   <input
+                    autocomplete="off"
+                    name="retirement-age-{i}"
                     id="retirement-age-{i}"
                     type="number"
                     min="50"
                     max="80"
                     bind:value={scenario.retirementAge}
-                    class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                    class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                   />
                 </div>
                 <div>
@@ -615,16 +634,22 @@
                     >Monthly Contribution</label
                   >
                   <input
+                    autocomplete="off"
+                    name="monthly-contribution-{i}"
                     id="monthly-contribution-{i}"
                     type="number"
                     min="0"
                     step="50"
                     bind:value={scenario.monthlyContribution}
-                    class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                    class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                   />
                 </div>
               </div>
             </div>
+          {:else}
+            <p class="text-sm text-surface-500">
+              No scenarios yet. Add a scenario to compare it with your current plan.
+            </p>
           {/each}
         </div>
 
@@ -711,7 +736,7 @@
         {/if}
 
         {#if form?.scenarioError}
-          <div class="mt-4 rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+          <div role="alert" class="mt-4 rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
             {form.scenarioError}
           </div>
         {/if}
@@ -722,11 +747,12 @@
   <!-- 401(k) Fee Analyzer Section -->
   <Card padding="none">
     <button
-      class="flex w-full items-center justify-between p-6"
+      class="flex w-full items-center justify-between p-6 transition-colors hover:bg-surface-700/30"
       onclick={() => (feeAnalyzerOpen = !feeAnalyzerOpen)}
     >
       <h3 class="text-lg font-semibold text-white">401(k) Fee Analyzer</h3>
       <svg
+        aria-hidden="true"
         class="h-5 w-5 text-surface-400 transition-transform {feeAnalyzerOpen ? 'rotate-180' : ''}"
         fill="none"
         viewBox="0 0 24 24"
@@ -762,13 +788,14 @@
               <div class="relative mt-1">
                 <span class="absolute left-3 top-2.5 text-surface-400">$</span>
                 <input
+                  autocomplete="off"
                   id="feeBalance"
                   name="currentBalance"
                   type="number"
                   step="1000"
                   min="0"
                   value={data.profile.currentSavings || 100000}
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-8 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
               </div>
             </div>
@@ -778,6 +805,7 @@
               </label>
               <div class="relative mt-1">
                 <input
+                  autocomplete="off"
                   id="feePercent"
                   name="annualFeePercent"
                   type="number"
@@ -785,7 +813,7 @@
                   min="0"
                   max="5"
                   value="1.0"
-                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <span class="absolute right-3 top-2.5 text-surface-400">%</span>
               </div>
@@ -795,13 +823,14 @@
                 Years to Retirement
               </label>
               <input
+                autocomplete="off"
                 id="feeYears"
                 name="yearsToRetirement"
                 type="number"
                 min="1"
                 max="50"
                 value={data.projection?.yearsToRetirement ?? 35}
-                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               />
             </div>
           </div>
@@ -810,7 +839,9 @@
         </form>
 
         {#if form?.feeError}
-          <div class="mt-4 rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.feeError}</div>
+          <div role="alert" class="mt-4 rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+            {form.feeError}
+          </div>
         {/if}
 
         {#if feeAnalysis}
@@ -835,6 +866,7 @@
             <div class="rounded-lg border border-surface-700 bg-surface-900/50 p-4">
               <div class="flex items-start gap-3">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"

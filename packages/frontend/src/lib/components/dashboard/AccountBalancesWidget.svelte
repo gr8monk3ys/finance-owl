@@ -46,6 +46,7 @@
               class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-surface-700"
             >
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5 text-surface-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -56,9 +57,13 @@
               </svg>
             </div>
             <div class="min-w-0">
-              <p class="truncate text-xs font-medium text-white">{account.name}</p>
+              <p class="truncate text-xs font-medium text-white" title={account.name}>
+                {account.name}
+              </p>
               {#if account.institutionName}
-                <p class="truncate text-xs text-surface-400">{account.institutionName}</p>
+                <p class="truncate text-xs text-surface-400" title={account.institutionName}>
+                  {account.institutionName}
+                </p>
               {/if}
             </div>
           </div>
@@ -80,6 +85,7 @@
   {:else}
     <div class="flex flex-col items-center justify-center py-6 text-center">
       <svg
+        aria-hidden="true"
         class="h-8 w-8 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"
@@ -93,7 +99,7 @@
         />
       </svg>
       <p class="mt-2 text-xs text-surface-400">
-        <a href="/accounts" class="text-primary-400 hover:text-primary-300">Link your accounts</a>
+        <a href="/accounts" class="text-primary-400 hover:text-primary-300">Link Your Accounts</a>
       </p>
     </div>
   {/if}

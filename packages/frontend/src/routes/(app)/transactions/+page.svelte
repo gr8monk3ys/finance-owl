@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { browser } from '$app/environment';
   import { enhance } from '$app/forms';
   import { goto, invalidateAll } from '$app/navigation';
@@ -6,7 +7,7 @@
   import { untrack } from 'svelte';
   import { Card, Button, Modal } from '$components/ui';
   import { getBudgetCategoryTree } from '$lib/utils/budgets';
-  import { formatCurrency } from '@finance-owl/shared';
+  import { formatCurrency, formatNumber } from '@finance-owl/shared';
   import {
     buildTransactionSearchParams,
     formatTransactionDate,
@@ -222,8 +223,8 @@
       <h2 class="text-3xl font-bold tracking-tight text-white">Transactions</h2>
       <p class="mt-1 text-sm text-surface-400">
         {#if data.transactions.meta.total > 0}
-          {data.transactions.meta.total.toLocaleString()} transaction{data.transactions.meta
-            .total !== 1
+          {formatNumber(data.transactions.meta.total)} transaction{data.transactions.meta.total !==
+          1
             ? 's'
             : ''}
         {:else}
@@ -233,6 +234,7 @@
     </div>
     <Button onclick={() => (showCreateModal = true)}>
       <svg
+        aria-hidden="true"
         class="mr-1.5 h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -252,6 +254,7 @@
       <div class="flex flex-col gap-2 sm:flex-row">
         <div class="relative flex-1">
           <svg
+            aria-hidden="true"
             class="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -265,6 +268,7 @@
             />
           </svg>
           <input
+            aria-label="Search transactions"
             type="search"
             name="search"
             bind:value={searchInput}
@@ -273,7 +277,7 @@
             placeholder="Search by name, merchant, or amount…"
             autocomplete="off"
             spellcheck="false"
-            class="w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-surface-500 transition-colors focus:border-primary-500/50 focus:bg-surface-700 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+            class="w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-surface-500 transition-colors focus-visible:border-primary-500/50 focus-visible:bg-surface-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             onkeydown={(e) => e.key === 'Enter' && applySearchImmediately()}
           />
         </div>
@@ -287,6 +291,7 @@
           onclick={() => (showFilters = !showFilters)}
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -317,7 +322,7 @@
           Search updates as you type. Account, category, and date filters apply when you tap Apply
           Filters.
         </p>
-        <p class="text-surface-400">
+        <p class="break-words text-surface-400">
           {#if autoSearchPending || $navigating}
             Updating…
           {:else if hasSearchQuery}
@@ -336,9 +341,11 @@
               >Account</label
             >
             <select
+              autocomplete="off"
+              name="filterAccount"
               id="filterAccount"
               bind:value={filterAccountId}
-              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             >
               <option value="">All accounts</option>
               {#each data.accounts as account}
@@ -351,9 +358,11 @@
               >Category</label
             >
             <select
+              autocomplete="off"
+              name="filterCategory"
               id="filterCategory"
               bind:value={filterCategoryId}
-              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             >
               <option value="">All categories</option>
               {#each getBudgetCategoryTree(data.categories) as parent}
@@ -369,10 +378,12 @@
               >From</label
             >
             <input
+              autocomplete="off"
+              name="filterStartDate"
               id="filterStartDate"
               type="date"
               bind:value={filterStartDate}
-              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             />
           </div>
           <div>
@@ -380,10 +391,12 @@
               >To</label
             >
             <input
+              autocomplete="off"
+              name="filterEndDate"
               id="filterEndDate"
               type="date"
               bind:value={filterEndDate}
-              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+              class="w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-sm text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             />
           </div>
         </div>
@@ -402,9 +415,11 @@
   <!-- Error -->
   {#if form?.error}
     <div
+      role="alert"
       class="flex items-center gap-2 rounded-lg border border-red-800/50 bg-red-950/50 p-3 text-sm text-red-300"
     >
       <svg
+        aria-hidden="true"
         class="h-4 w-4 shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -432,6 +447,7 @@
       <div class="relative flex flex-col items-center justify-center py-16 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-700/50">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -468,7 +484,7 @@
         <div class="space-y-1.5">
           {#each group.transactions as tx, txIdx}
             <button
-              class="group w-full rounded-xl border border-surface-700/30 bg-surface-800 px-4 py-3 text-left transition-all duration-200
+              class="[content-visibility:auto] [contain-intrinsic-size:auto_4.5rem] group w-full rounded-xl border border-surface-700/30 bg-surface-800 px-4 py-3 text-left transition duration-200
 								hover:border-surface-600/50 hover:bg-surface-750 hover:shadow-md hover:shadow-black/10
 								{txIdx % 2 === 1 ? 'bg-surface-800/70' : ''}"
               onclick={() => openDetail(tx)}
@@ -487,36 +503,39 @@
                 <!-- Description -->
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-2">
-                    <p class="truncate font-medium text-white">
+                    <p class="truncate font-medium text-white" title={tx.merchantName || tx.name}>
                       {tx.merchantName || tx.name}
                     </p>
                     {#if tx.pending}
                       <span
-                        class="inline-flex items-center rounded-md bg-accent-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-accent-400 ring-1 ring-inset ring-accent-500/20"
+                        class="inline-flex shrink-0 items-center rounded-md bg-accent-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-accent-400 ring-1 ring-inset ring-accent-500/20"
                       >
                         Pending
                       </span>
                     {/if}
                     {#if tx.splitTransactionId}
                       <span
-                        class="inline-flex items-center rounded-md bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-blue-400 ring-1 ring-inset ring-blue-500/20"
+                        class="inline-flex shrink-0 items-center rounded-md bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-blue-400 ring-1 ring-inset ring-blue-500/20"
                       >
                         Split
                       </span>
                     {/if}
                   </div>
-                  <div class="mt-0.5 flex items-center gap-2 text-xs text-surface-500">
-                    <span>{formatTransactionDate(tx.date)}</span>
+                  <div class="mt-0.5 flex min-w-0 items-center gap-2 text-xs text-surface-500">
+                    <span class="shrink-0">{formatTransactionDate(tx.date)}</span>
                     {#if tx.categoryName}
                       <span class="text-surface-600">|</span>
-                      <span class="inline-flex items-center gap-1">
+                      <span class="inline-flex min-w-0 items-center gap-1">
                         {#if tx.categoryColor}
                           <span
-                            class="inline-block h-1.5 w-1.5 rounded-full"
+                            class="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
                             style="background-color: {tx.categoryColor}"
                           ></span>
                         {/if}
-                        <span style="color: {tx.categoryColor || 'inherit'}">{tx.categoryName}</span
+                        <span
+                          class="truncate"
+                          style="color: {tx.categoryColor || 'inherit'}"
+                          title={tx.categoryName}>{tx.categoryName}</span
                         >
                       </span>
                     {:else}
@@ -525,7 +544,9 @@
                     {/if}
                     {#if tx.accountName}
                       <span class="hidden text-surface-600 sm:inline">|</span>
-                      <span class="hidden sm:inline">{tx.accountName}</span>
+                      <span class="hidden min-w-0 truncate sm:inline" title={tx.accountName}
+                        >{tx.accountName}</span
+                      >
                     {/if}
                   </div>
                 </div>
@@ -571,7 +592,7 @@
           >
           <span class="mx-1">of</span>
           <span class="font-medium text-surface-300"
-            >{data.transactions.meta.total.toLocaleString()}</span
+            >{formatNumber(data.transactions.meta.total)}</span
           >
         </p>
         <div class="flex items-center gap-1">
@@ -582,6 +603,7 @@
             onclick={() => goToPage(data.transactions.meta.page - 1)}
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -602,6 +624,7 @@
             onclick={() => goToPage(data.transactions.meta.page + 1)}
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -632,10 +655,11 @@
     <div>
       <label for="txAccount" class="block text-sm font-medium text-surface-300">Account</label>
       <select
+        autocomplete="off"
         id="txAccount"
         name="accountId"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
       >
         {#each data.accounts as account}
           <option value={account.id}>{account.name}</option>
@@ -649,25 +673,27 @@
         <div class="relative mt-1">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="txAmount"
             name="amount"
             type="number"
             step="0.01"
             required
-            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
-            placeholder="0.00"
+            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
+            placeholder="0.00…"
           />
         </div>
       </div>
       <div>
         <label for="txDate" class="block text-sm font-medium text-surface-300">Date</label>
         <input
+          autocomplete="off"
           id="txDate"
           name="date"
           type="date"
           required
           value={new Date().toISOString().split('T')[0]}
-          class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+          class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
         />
       </div>
     </div>
@@ -675,12 +701,13 @@
     <div>
       <label for="txName" class="block text-sm font-medium text-surface-300">Description</label>
       <input
+        autocomplete="off"
         id="txName"
         name="name"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
-        placeholder="e.g., Grocery Store"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
+        placeholder="e.g., Grocery Store…"
       />
     </div>
 
@@ -689,11 +716,12 @@
         >Merchant (optional)</label
       >
       <input
+        autocomplete="off"
         id="txMerchant"
         name="merchantName"
         type="text"
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
-        placeholder="e.g., Whole Foods"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
+        placeholder="e.g., Whole Foods…"
       />
     </div>
 
@@ -702,9 +730,10 @@
         >Category (optional)</label
       >
       <select
+        autocomplete="off"
         id="txCategory"
         name="categoryId"
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
       >
         <option value="">Auto-categorize</option>
         {#each getBudgetCategoryTree(data.categories) as parent}
@@ -721,11 +750,12 @@
         >Notes (optional)</label
       >
       <textarea
+        autocomplete="off"
         id="txNotes"
         name="notes"
         rows="2"
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
-        placeholder="Add a note..."></textarea>
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
+        placeholder="Add a note…"></textarea>
     </div>
 
     <div class="flex justify-end gap-3 border-t border-surface-700/50 pt-4">
@@ -750,12 +780,12 @@
         >
           {getMerchantInitials(selectedTransaction.merchantName || selectedTransaction.name)}
         </div>
-        <div class="flex-1">
-          <p class="text-lg font-semibold text-white">
+        <div class="min-w-0 flex-1">
+          <p class="break-words text-lg font-semibold text-white">
             {selectedTransaction.merchantName || selectedTransaction.name}
           </p>
           {#if selectedTransaction.merchantName && selectedTransaction.merchantName !== selectedTransaction.name}
-            <p class="text-sm text-surface-400">{selectedTransaction.name}</p>
+            <p class="break-words text-sm text-surface-400">{selectedTransaction.name}</p>
           {/if}
         </div>
         <p
@@ -779,14 +809,16 @@
         </div>
         <div>
           <p class="text-xs font-medium text-surface-500">Account</p>
-          <p class="mt-0.5 text-sm text-white">{selectedTransaction.accountName}</p>
+          <p class="mt-0.5 break-words text-sm text-white">{selectedTransaction.accountName}</p>
         </div>
         <div>
           <p class="text-xs font-medium text-surface-500">Status</p>
           <p class="mt-0.5 text-sm">
             {#if selectedTransaction.pending}
               <span class="inline-flex items-center gap-1 text-accent-400">
-                <span class="h-1.5 w-1.5 rounded-full bg-accent-400 animate-pulse"></span>
+                <span
+                  class="h-1.5 w-1.5 rounded-full bg-accent-400 animate-pulse [animation-iteration-count:2]"
+                ></span>
                 Pending
               </span>
             {:else}
@@ -810,9 +842,10 @@
         >
         <div class="mt-1 flex gap-2">
           <select
+            autocomplete="off"
             id="detailCategory"
             name="categoryId"
-            class="flex-1 rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+            class="flex-1 rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             value={selectedTransaction.categoryId || ''}
           >
             <option value="">Uncategorized</option>
@@ -833,12 +866,13 @@
         <label for="detailNotes" class="block text-sm font-medium text-surface-300">Notes</label>
         <div class="mt-1 flex gap-2">
           <textarea
+            autocomplete="off"
             id="detailNotes"
             name="notes"
             rows="2"
-            class="flex-1 rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+            class="flex-1 rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             value={selectedTransaction.notes || ''}
-            placeholder="Add a note..."></textarea>
+            placeholder="Add a note…"></textarea>
           <Button type="submit" size="sm">Save</Button>
         </div>
       </form>
@@ -846,6 +880,7 @@
       <!-- Delete (manual only) -->
       {#if selectedTransaction.isManual}
         <form
+          use:confirmSubmit={'Delete this transaction? This can’t be undone.'}
           method="POST"
           action="?/delete"
           use:enhance

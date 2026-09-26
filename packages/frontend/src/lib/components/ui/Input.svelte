@@ -27,6 +27,10 @@
     ...rest
   }: Props = $props();
 
+  // Callers that omit `id` still get a label bound to its input.
+  const generatedId = $props.id();
+  const inputId = $derived(id ?? generatedId);
+
   let focused = $state(false);
 
   const charCount = $derived(typeof value === 'string' ? value.length : 0);
@@ -39,7 +43,7 @@
 <div class="group">
   {#if label}
     <label
-      for={id}
+      for={inputId}
       class="mb-1.5 block text-sm font-medium transition-colors duration-150
 				{error ? 'text-red-400' : focused ? 'text-primary-400' : 'text-surface-300'}"
     >
@@ -58,21 +62,21 @@
     {/if}
 
     <input
-      {id}
+      id={inputId}
       bind:value
       {maxlength}
       onfocus={() => (focused = true)}
       onblur={() => (focused = false)}
       aria-invalid={error ? 'true' : undefined}
-      aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
+      aria-describedby={error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined}
       class="block w-full rounded-lg border bg-surface-700/50 px-3 py-2.5 text-white
-				placeholder:text-surface-500 transition-all duration-200
-				focus:outline-none focus:ring-2 focus:ring-offset-0
+				placeholder:text-surface-500 transition duration-200
+				focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0
 				{hasPrefix ? 'pl-10' : ''}
 				{hasSuffix ? 'pr-10' : ''}
 				{error
-        ? 'border-red-500/60 focus:border-red-500 focus:ring-red-500/20 shadow-sm shadow-red-500/5'
-        : 'border-surface-600/80 hover:border-surface-500 focus:border-primary-500 focus:ring-primary-500/20'}
+        ? 'border-red-500/60 focus-visible:border-red-500 focus-visible:ring-red-500/20 shadow-sm shadow-red-500/5'
+        : 'border-surface-600/80 hover:border-surface-500 focus-visible:border-primary-500 focus-visible:ring-primary-500/20'}
 				{className}"
       {...rest}
     />
@@ -95,22 +99,23 @@
   </div>
 
   <div class="mt-1.5 flex items-center justify-between min-h-[1.25rem]">
-    {#if error}
-      <p id="{id}-error" class="text-xs text-red-400 fade-in-up flex items-center gap-1">
-        <svg class="h-3 w-3 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-          <path
-            fill-rule="evenodd"
-            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-            clip-rule="evenodd"
-          />
-        </svg>
-        {error}
-      </p>
-    {:else if hint}
-      <p id="{id}-hint" class="text-xs text-surface-500">{hint}</p>
-    {:else}
-      <span></span>
-    {/if}
+    <!-- Always mounted so a validation error is announced when it appears. -->
+    <div aria-live="polite" class="min-w-0">
+      {#if error}
+        <p id="{inputId}-error" class="text-xs text-red-400 fade-in-up flex items-center gap-1">
+          <svg aria-hidden="true" class="h-3 w-3 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          {error}
+        </p>
+      {:else if hint}
+        <p id="{inputId}-hint" class="text-xs text-surface-500">{hint}</p>
+      {/if}
+    </div>
 
     {#if showCount && maxlength}
       <p

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import { formatCurrencyWhole } from '@finance-owl/shared';
 
@@ -136,10 +135,6 @@
     goals = goals.map((g) => (g.id === id ? { ...g, checked: !g.checked } : g));
   }
 
-  function goToDashboard() {
-    goto('/dashboard');
-  }
-
   onMount(() => {
     // Try to get user name from page data or localStorage
     userName = 'there';
@@ -158,7 +153,12 @@
         <!-- Step indicator -->
         <div class="flex items-center gap-2">
           <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/20">
-            <svg class="h-4 w-4 text-primary-400" viewBox="0 0 24 24" fill="currentColor">
+            <svg
+              aria-hidden="true"
+              class="h-4 w-4 text-primary-400"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
               <path
                 d="M12 2C9.5 2 7.5 3.5 7 5.5C5.5 5 3.5 5.5 2.5 7C1.5 8.5 2 10.5 3 11.5C2 12.5 1.5 14.5 2.5 16C3.5 17.5 5.5 18 7 17.5C7.5 19.5 9.5 21 12 21C14.5 21 16.5 19.5 17 17.5C18.5 18 20.5 17.5 21.5 16C22.5 14.5 22 12.5 21 11.5C22 10.5 22.5 8.5 21.5 7C20.5 5.5 18.5 5 17 5.5C16.5 3.5 14.5 2 12 2Z"
               />
@@ -175,7 +175,7 @@
       <!-- Progress track -->
       <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-800">
         <div
-          class="h-full rounded-full bg-gradient-to-r from-primary-600 to-primary-400 transition-all duration-500 ease-out"
+          class="h-full rounded-full bg-gradient-to-r from-primary-600 to-primary-400 transition-[width] duration-500 ease-out"
           style="width: {progress}%"
         ></div>
       </div>
@@ -192,7 +192,12 @@
           <div
             class="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-500/20 to-primary-600/10 ring-1 ring-primary-500/20"
           >
-            <svg class="h-14 w-14 text-primary-400" viewBox="0 0 24 24" fill="currentColor">
+            <svg
+              aria-hidden="true"
+              class="h-14 w-14 text-primary-400"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
               <path
                 d="M12 2C9.5 2 7.5 3.5 7 5.5C5.5 5 3.5 5.5 2.5 7C1.5 8.5 2 10.5 3 11.5C2 12.5 1.5 14.5 2.5 16C3.5 17.5 5.5 18 7 17.5C7.5 19.5 9.5 21 12 21C14.5 21 16.5 19.5 17 17.5C18.5 18 20.5 17.5 21.5 16C22.5 14.5 22 12.5 21 11.5C22 10.5 22.5 8.5 21.5 7C20.5 5.5 18.5 5 17 5.5C16.5 3.5 14.5 2 12 2Z"
               />
@@ -209,7 +214,7 @@
           </div>
 
           <h1 class="mt-8 text-3xl font-bold text-white sm:text-4xl">
-            Welcome to Finance Owl, {userName}!
+            Welcome to <span translate="no">Finance Owl</span>, {userName}!
           </h1>
           <p class="mt-4 text-lg text-surface-400">
             Your personal finance command center is almost ready. Let us get you set up in about 2
@@ -222,6 +227,7 @@
                 class="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-primary-500/10"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -243,6 +249,7 @@
                 class="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-amber-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -264,6 +271,7 @@
                 class="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-blue-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -284,10 +292,11 @@
 
           <button
             onclick={nextStep}
-            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:-translate-y-0.5"
+            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:-translate-y-0.5"
           >
             Let's Go
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -308,6 +317,7 @@
               class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-500/10 ring-1 ring-primary-500/20"
             >
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-primary-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -335,6 +345,7 @@
                 class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary-500/20"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-6 w-6 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -357,9 +368,10 @@
                 <div
                   class="h-5 w-5 animate-spin rounded-full border-2 border-primary-400 border-t-transparent"
                 ></div>
-                <span>Connecting...</span>
+                <span>Connecting…</span>
               {:else}
                 <svg
+                  aria-hidden="true"
                   class="h-6 w-6 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -381,6 +393,7 @@
           <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
             <div class="flex items-center gap-1.5 text-xs text-surface-500">
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5 text-primary-500/70"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -397,6 +410,7 @@
             </div>
             <div class="flex items-center gap-1.5 text-xs text-surface-500">
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5 text-primary-500/70"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -418,6 +432,7 @@
             </div>
             <div class="flex items-center gap-1.5 text-xs text-surface-500">
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5 text-primary-500/70"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -441,6 +456,7 @@
               class="flex items-center gap-1 rounded-lg px-4 py-2 text-sm text-surface-400 transition hover:text-white"
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -456,7 +472,7 @@
                 onclick={skipStep}
                 class="rounded-lg border border-surface-700 px-5 py-2.5 text-sm font-medium text-surface-400 transition hover:border-surface-600 hover:text-white"
               >
-                Skip for now
+                Skip for Now
               </button>
               {#if bankLinked}
                 <button
@@ -479,6 +495,7 @@
               class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 ring-1 ring-amber-500/20"
             >
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-amber-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -504,25 +521,35 @@
                 <div class="flex items-start gap-3">
                   <div class="flex-1 space-y-3">
                     <input
+                      autocomplete="off"
+                      name="account-name"
+                      aria-label={`Account ${i + 1} name`}
                       type="text"
                       bind:value={account.name}
-                      placeholder="Account name (e.g., Chase Checking)"
-                      class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                      placeholder="Account name (e.g., Chase Checking)…"
+                      class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                     />
                     <div class="flex gap-3">
                       <select
+                        autocomplete="off"
+                        name="account-type"
+                        aria-label={`Account ${i + 1} type`}
                         bind:value={account.type}
-                        class="flex-1 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                        class="flex-1 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                       >
                         <option value="checking">Checking</option>
                         <option value="savings">Savings</option>
                         <option value="credit">Credit Card</option>
                       </select>
                       <input
+                        autocomplete="off"
+                        inputmode="decimal"
+                        name="account-balance"
+                        aria-label={`Account ${i + 1} balance`}
                         type="text"
                         bind:value={account.balance}
-                        placeholder="$0.00"
-                        class="w-32 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                        placeholder="$0.00…"
+                        class="w-32 rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                       />
                     </div>
                   </div>
@@ -533,6 +560,7 @@
                       class="mt-1 rounded-lg p-1.5 text-surface-500 transition hover:bg-surface-700 hover:text-red-400"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -557,6 +585,7 @@
             class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-surface-600 py-3 text-sm text-surface-400 transition hover:border-primary-500/30 hover:text-primary-400"
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -565,7 +594,7 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Add another account
+            Add Another Account
           </button>
 
           <!-- Navigation -->
@@ -575,6 +604,7 @@
               class="flex items-center gap-1 rounded-lg px-4 py-2 text-sm text-surface-400 transition hover:text-white"
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -611,6 +641,7 @@
               class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 ring-1 ring-blue-500/20"
             >
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-blue-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -640,6 +671,8 @@
                   >
                 </div>
                 <input
+                  name="budget-amount"
+                  aria-label={`${category.name} budget`}
                   type="range"
                   min="0"
                   max={category.max}
@@ -672,6 +705,7 @@
               class="flex items-center gap-1 rounded-lg px-4 py-2 text-sm text-surface-400 transition hover:text-white"
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -708,6 +742,7 @@
               class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500/10 ring-1 ring-violet-500/20"
             >
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-violet-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -731,18 +766,19 @@
             {#each goals as goal}
               <button
                 onclick={() => toggleGoal(goal.id)}
-                class="flex w-full items-center gap-4 rounded-xl border p-4 text-left transition-all
+                class="flex w-full items-center gap-4 rounded-xl border p-4 text-left transition-colors
 									{goal.checked
                   ? 'border-primary-500/30 bg-primary-950/20'
                   : 'border-surface-700/50 bg-surface-800/50 hover:border-surface-600'}"
               >
                 <!-- Checkbox -->
                 <div
-                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition-all
+                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition-colors
 										{goal.checked ? 'border-primary-500 bg-primary-500' : 'border-surface-600'}"
                 >
                   {#if goal.checked}
                     <svg
+                      aria-hidden="true"
                       class="h-3.5 w-3.5 text-white"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -768,6 +804,7 @@
               class="flex items-center gap-1 rounded-lg px-4 py-2 text-sm text-surface-400 transition hover:text-white"
             >
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -822,6 +859,7 @@
             class="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-500/20 to-primary-600/10 ring-1 ring-primary-500/20"
           >
             <svg
+              aria-hidden="true"
               class="h-14 w-14 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -859,12 +897,13 @@
             </div>
           </div>
 
-          <button
-            onclick={goToDashboard}
-            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:-translate-y-0.5"
+          <a
+            href="/dashboard"
+            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:-translate-y-0.5"
           >
             Go to Dashboard
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -873,7 +912,7 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
-          </button>
+          </a>
         </div>
       {/if}
     </div>
@@ -905,6 +944,12 @@
     border-radius: 9999px;
     background: rgb(51 65 85 / 0.8);
     outline: none;
+  }
+
+  /* The bare outline above is replaced for keyboard users here. */
+  input[type='range']:focus-visible {
+    outline: 2px solid #10b981;
+    outline-offset: 4px;
   }
 
   input[type='range']::-webkit-slider-thumb {

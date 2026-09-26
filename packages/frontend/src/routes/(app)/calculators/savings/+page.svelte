@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Card } from '$components/ui';
-  import { formatCurrency as fmt } from '@finance-owl/shared';
+  import { formatCurrency as fmt, formatCurrencyCompact } from '@finance-owl/shared';
 
   // Inputs
   let initialDeposit = $state(5000);
@@ -121,8 +121,7 @@
   }
 
   function fmtShort(amount: number): string {
-    if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
-    if (amount >= 1000) return `$${(amount / 1000).toFixed(0)}K`;
+    if (amount >= 1000) return formatCurrencyCompact(amount);
     return fmt(amount);
   }
 </script>
@@ -138,7 +137,14 @@
       href="/calculators"
       class="text-surface-400 hover:text-white transition"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -156,12 +162,14 @@
               >Initial Deposit</label
             >
             <input
+              autocomplete="off"
+              name="initial"
               id="initial"
               type="number"
               bind:value={initialDeposit}
               min="0"
               step="100"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -170,12 +178,14 @@
               >Monthly Contribution</label
             >
             <input
+              autocomplete="off"
+              name="monthly"
               id="monthly"
               type="number"
               bind:value={monthlyContribution}
               min="0"
               step="50"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -184,13 +194,15 @@
               >Annual Return Rate (%)</label
             >
             <input
+              autocomplete="off"
+              name="rate"
               id="rate"
               type="number"
               bind:value={annualRate}
               min="0"
               max="50"
               step="0.1"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -199,6 +211,7 @@
               >Time Period (Years)</label
             >
             <input
+              name="years"
               id="years"
               type="range"
               bind:value={years}
@@ -218,9 +231,11 @@
               >Compounding Frequency</label
             >
             <select
+              autocomplete="off"
+              name="frequency"
               id="frequency"
               bind:value={compoundingFrequency}
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             >
               {#each frequencyOptions as opt}
                 <option value={opt.value}>{opt.label}</option>
@@ -253,7 +268,13 @@
       <Card>
         <h3 class="text-lg font-semibold text-white mb-4">Growth Over Time</h3>
         <div class="overflow-hidden rounded-lg bg-surface-900 p-4">
-          <svg viewBox="0 0 600 250" class="w-full" preserveAspectRatio="xMidYMid meet">
+          <svg
+            role="img"
+            aria-label="Projected savings balance, contributions and interest over time"
+            viewBox="0 0 600 250"
+            class="w-full"
+            preserveAspectRatio="xMidYMid meet"
+          >
             <!-- Grid lines -->
             {#each [0, 0.25, 0.5, 0.75, 1] as pct}
               <line

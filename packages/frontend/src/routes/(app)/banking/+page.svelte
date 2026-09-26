@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { Card, Button, Modal, Input } from '$components/ui';
   import type { PageData, ActionData } from './$types';
@@ -16,7 +18,12 @@
   let transferType = $state<'internal' | 'external'>('internal');
 
   // Active tab
-  let activeTab = $state<'overview' | 'transfers' | 'interest'>('overview');
+  let activeTab = $state<'overview' | 'transfers' | 'interest'>(
+    readParam('tab', 'overview', ['overview', 'transfers', 'interest']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'overview'));
 
   // Derived
   const accounts = $derived(data.accounts);
@@ -43,7 +50,7 @@
   }
 
   function fmtPct(decimal: number): string {
-    return `${(decimal * 100).toFixed(2)}%`;
+    return formatPercent(decimal * 100, 2);
   }
 
   function statusBadge(status: string): string {
@@ -76,12 +83,13 @@
   <header class="page-header">
     <div class="header-content">
       <div>
-        <h1>Banking</h1>
+        <h2 class="page-title">Banking</h2>
         <p class="subtitle">High-yield savings & checking accounts</p>
       </div>
       <div class="header-actions">
         <Button variant="primary" onclick={() => (showOpenAccount = true)}>
           <svg
+            aria-hidden="true"
             width="16"
             height="16"
             viewBox="0 0 24 24"
@@ -101,6 +109,7 @@
   <div class="fdic-banner">
     <div class="fdic-icon">
       <svg
+        aria-hidden="true"
         width="20"
         height="20"
         viewBox="0 0 24 24"
@@ -117,7 +126,7 @@
       <strong>FDIC Insured</strong> up to {fdic.maxCoverageFormatted} per depositor
     </div>
     <a href={fdic.learnMoreUrl} target="_blank" rel="noopener noreferrer" class="fdic-link">
-      Learn more
+      Learn More
     </a>
   </div>
 
@@ -187,6 +196,7 @@
         <Card>
           <div class="empty-state">
             <svg
+              aria-hidden="true"
               width="48"
               height="48"
               viewBox="0 0 24 24"
@@ -219,6 +229,7 @@
                   >
                     {#if account.type === 'savings'}
                       <svg
+                        aria-hidden="true"
                         width="18"
                         height="18"
                         viewBox="0 0 24 24"
@@ -232,6 +243,7 @@
                       </svg>
                     {:else}
                       <svg
+                        aria-hidden="true"
                         width="18"
                         height="18"
                         viewBox="0 0 24 24"
@@ -262,18 +274,23 @@
                   </div>
                   <div class="detail">
                     <span class="detail-label">Account</span>
-                    <span class="detail-value">****{account.accountNumberMask || '----'}</span>
+                    <span translate="no" class="detail-value"
+                      >****{account.accountNumberMask || '----'}</span
+                    >
                   </div>
                   {#if account.bankName}
-                    <div class="detail">
+                    <div class="detail min-w-0">
                       <span class="detail-label">Bank</span>
-                      <span class="detail-value">{account.bankName}</span>
+                      <span class="detail-value truncate" title={account.bankName}>
+                        {account.bankName}
+                      </span>
                     </div>
                   {/if}
                 </div>
                 {#if account.fdicInsured}
                   <div class="fdic-badge-small">
                     <svg
+                      aria-hidden="true"
                       width="12"
                       height="12"
                       viewBox="0 0 24 24"
@@ -311,6 +328,7 @@
         <Card>
           <div class="empty-state">
             <svg
+              aria-hidden="true"
               width="48"
               height="48"
               viewBox="0 0 24 24"
@@ -330,10 +348,10 @@
           {#each transfers as transfer}
             <Card>
               <div class="transfer-row">
-                <div class="transfer-info">
+                <div class="transfer-info min-w-0">
                   <div class="transfer-amount">{fmt(transfer.amount)}</div>
                   {#if transfer.memo}
-                    <div class="transfer-memo">{transfer.memo}</div>
+                    <div class="transfer-memo break-words">{transfer.memo}</div>
                   {/if}
                   <div class="transfer-date">{fmtDate(transfer.createdAt)}</div>
                 </div>
@@ -399,22 +417,27 @@
         {#each rates as rate}
           <Card>
             <div class="rate-card">
-              <div class="rate-provider">
+              <div
+                class="rate-provider truncate"
+                title={rate.provider === 'default' ? 'Finance Owl' : rate.provider}
+              >
                 {rate.provider === 'default' ? 'Finance Owl' : rate.provider}
               </div>
               <div class="rate-row">
                 <span>Savings APY</span>
-                <span class="rate-value">{(rate.savings.apy * 100).toFixed(2)}%</span>
+                <span class="rate-value">{fmtPct(rate.savings.apy)}</span>
               </div>
               <div class="rate-row">
                 <span>Checking APY</span>
-                <span class="rate-value">{(rate.checking.apy * 100).toFixed(2)}%</span>
+                <span class="rate-value">{fmtPct(rate.checking.apy)}</span>
               </div>
               {#if rate.savings.isVariable}
                 <div class="rate-note">Variable rate, subject to change</div>
               {/if}
             </div>
           </Card>
+        {:else}
+          <p class="rate-note">Rates aren’t available right now. Check back soon.</p>
         {/each}
       </div>
 
@@ -449,7 +472,7 @@
     }}
   >
     {#if form?.error}
-      <div class="form-error">{form.error}</div>
+      <div role="alert" class="form-error break-words">{form.error}</div>
     {/if}
 
     {#if wizardStep === 1}
@@ -467,6 +490,7 @@
           >
             <div class="type-icon savings">
               <svg
+                aria-hidden="true"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
@@ -491,6 +515,7 @@
           >
             <div class="type-icon checking">
               <svg
+                aria-hidden="true"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
@@ -527,23 +552,54 @@
         <div class="form-grid">
           <div class="form-field full-width">
             <label for="fullName">Full Legal Name</label>
-            <input type="text" id="fullName" name="fullName" required placeholder="John Doe" />
+            <input
+              autocomplete="name"
+              type="text"
+              id="fullName"
+              name="fullName"
+              required
+              placeholder="John Doe…"
+            />
           </div>
           <div class="form-field">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" required placeholder="john@example.com" />
+            <input
+              autocomplete="email"
+              spellcheck={false}
+              type="email"
+              id="email"
+              name="email"
+              required
+              placeholder="john@example.com…"
+            />
           </div>
           <div class="form-field">
             <label for="phone">Phone (optional)</label>
-            <input type="tel" id="phone" name="phone" placeholder="+1 555-123-4567" />
+            <input
+              autocomplete="tel"
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="+1 555-123-4567…"
+            />
           </div>
           <div class="form-field">
             <label for="dateOfBirth">Date of Birth</label>
-            <input type="date" id="dateOfBirth" name="dateOfBirth" required />
+            <input autocomplete="bday" type="date" id="dateOfBirth" name="dateOfBirth" required />
           </div>
           <div class="form-field">
             <label for="ssn">SSN (Last 4)</label>
-            <input type="password" id="ssn" name="ssn" required maxlength="4" placeholder="1234" />
+            <input
+              autocomplete="off"
+              inputmode="numeric"
+              spellcheck={false}
+              type="password"
+              id="ssn"
+              name="ssn"
+              required
+              maxlength="4"
+              placeholder="1234…"
+            />
           </div>
         </div>
 
@@ -563,31 +619,57 @@
         <div class="form-grid">
           <div class="form-field full-width">
             <label for="street">Street Address</label>
-            <input type="text" id="street" name="street" required placeholder="123 Main St" />
+            <input
+              autocomplete="street-address"
+              type="text"
+              id="street"
+              name="street"
+              required
+              placeholder="123 Main St…"
+            />
           </div>
           <div class="form-field">
             <label for="city">City</label>
-            <input type="text" id="city" name="city" required placeholder="New York" />
+            <input
+              autocomplete="address-level2"
+              type="text"
+              id="city"
+              name="city"
+              required
+              placeholder="New York…"
+            />
           </div>
           <div class="form-field">
             <label for="state">State</label>
-            <input type="text" id="state" name="state" required maxlength="2" placeholder="NY" />
+            <input
+              autocomplete="address-level1"
+              type="text"
+              id="state"
+              name="state"
+              required
+              maxlength="2"
+              placeholder="NY…"
+            />
           </div>
           <div class="form-field">
             <label for="postalCode">Zip Code</label>
             <input
+              autocomplete="postal-code"
+              inputmode="numeric"
+              spellcheck={false}
               type="text"
               id="postalCode"
               name="postalCode"
               required
               maxlength="10"
-              placeholder="10001"
+              placeholder="10001…"
             />
           </div>
         </div>
 
         <div class="disclosure-box">
           <svg
+            aria-hidden="true"
             width="16"
             height="16"
             viewBox="0 0 24 24"
@@ -624,13 +706,13 @@
     }}
   >
     {#if form?.error}
-      <div class="form-error">{form.error}</div>
+      <div role="alert" class="form-error break-words">{form.error}</div>
     {/if}
 
     <div class="form-grid">
       <div class="form-field full-width">
         <label for="transferFrom">From Account</label>
-        <select id="transferFrom" name="fromAccountId" required>
+        <select autocomplete="off" id="transferFrom" name="fromAccountId" required>
           <option value="">Select source account</option>
           {#each accounts.filter((a: any) => a.status === 'active') as acct}
             <option value={acct.id}>
@@ -659,7 +741,7 @@
       {#if transferType === 'internal'}
         <div class="form-field full-width">
           <label for="transferTo">To Account</label>
-          <select id="transferTo" name="toAccountId" required>
+          <select autocomplete="off" id="transferTo" name="toAccountId" required>
             <option value="">Select destination account</option>
             {#each accounts.filter((a: any) => a.status === 'active') as acct}
               <option value={acct.id}>
@@ -673,22 +755,28 @@
         <div class="form-field">
           <label for="routingNumber">Routing Number</label>
           <input
+            autocomplete="off"
+            inputmode="numeric"
+            spellcheck={false}
             type="text"
             id="routingNumber"
             name="routingNumber"
             required
             maxlength="9"
-            placeholder="021000021"
+            placeholder="021000021…"
           />
         </div>
         <div class="form-field">
           <label for="accountNumber">Account Number</label>
           <input
+            autocomplete="off"
+            inputmode="numeric"
+            spellcheck={false}
             type="text"
             id="accountNumber"
             name="accountNumber"
             required
-            placeholder="123456789"
+            placeholder="123456789…"
           />
         </div>
       {/if}
@@ -696,18 +784,25 @@
       <div class="form-field">
         <label for="transferAmount">Amount ($)</label>
         <input
+          autocomplete="off"
           type="number"
           id="transferAmount"
           name="amount"
           required
           min="0.01"
           step="0.01"
-          placeholder="100.00"
+          placeholder="100.00…"
         />
       </div>
       <div class="form-field">
         <label for="transferMemo">Memo (optional)</label>
-        <input type="text" id="transferMemo" name="memo" placeholder="Rent payment" />
+        <input
+          autocomplete="off"
+          type="text"
+          id="transferMemo"
+          name="memo"
+          placeholder="Rent payment…"
+        />
       </div>
     </div>
 
@@ -740,7 +835,7 @@
     flex-wrap: wrap;
   }
 
-  h1 {
+  .page-title {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--text-1);
@@ -855,7 +950,9 @@
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
   }
 
   .tab:hover {
@@ -1211,7 +1308,9 @@
     border: 2px solid var(--border-1);
     border-radius: 0.75rem;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease;
     text-align: center;
   }
 
@@ -1291,8 +1390,8 @@
     font-size: 0.9rem;
   }
 
-  .form-field input:focus,
-  .form-field select:focus {
+  .form-field input:focus-visible,
+  .form-field select:focus-visible {
     outline: none;
     border-color: var(--color-primary);
     box-shadow: 0 0 0 2px var(--color-primary-muted, rgba(99, 102, 241, 0.2));

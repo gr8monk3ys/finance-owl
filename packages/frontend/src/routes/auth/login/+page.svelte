@@ -39,7 +39,12 @@
         <div
           class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 shadow-lg shadow-primary-900/40 transition-transform duration-200 group-hover:scale-105"
         >
-          <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor">
+          <svg
+            aria-hidden="true"
+            class="h-7 w-7 text-white"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
             <path
               d="M12 2C9.5 2 7.5 3.5 7 5.5C5.5 5 3.5 5.5 2.5 7C1.5 8.5 2 10.5 3 11.5C2 12.5 1.5 14.5 2.5 16C3.5 17.5 5.5 18 7 17.5C7.5 19.5 9.5 21 12 21C14.5 21 16.5 19.5 17 17.5C18.5 18 20.5 17.5 21.5 16C22.5 14.5 22 12.5 21 11.5C22 10.5 22.5 8.5 21.5 7C20.5 5.5 18.5 5 17 5.5C16.5 3.5 14.5 2 12 2Z"
             />
@@ -55,8 +60,10 @@
           </svg>
         </div>
       </a>
-      <h1 class="mt-5 text-2xl font-bold text-white">Welcome back</h1>
-      <p class="mt-2 text-surface-300">Sign in to your Finance Owl account</p>
+      <h1 class="mt-5 text-2xl font-bold text-white">Welcome Back</h1>
+      <p class="mt-2 text-surface-300">
+        Sign in to your <span translate="no">Finance Owl</span> account
+      </p>
     </div>
 
     <div
@@ -71,7 +78,7 @@
           aria-disabled="true"
           title="Google sign-in is coming soon"
         >
-          <svg class="h-5 w-5" viewBox="0 0 24 24">
+          <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
               fill="#4285F4"
@@ -102,7 +109,7 @@
           aria-disabled="true"
           title="Apple sign-in is coming soon"
         >
-          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+          <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <path
               d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.53-3.23 0-1.44.62-2.2.44-3.06-.4C3.79 16.18 4.36 9.22 8.87 9c1.27.07 2.15.72 2.91.76.98-.2 1.92-.81 3-.86 1.46.07 2.56.63 3.27 1.63-2.98 1.81-2.27 5.78.5 6.88-.6 1.57-1.37 3.13-2.5 4.87zM12.03 8.94c-.17-2.27 1.65-4.18 3.87-4.44.29 2.55-2.33 4.55-3.87 4.44z"
             />
@@ -145,6 +152,7 @@
             class="flex items-center gap-2 rounded-lg bg-red-900/30 border border-red-800/30 p-3 text-sm text-red-300"
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4 shrink-0"
               fill="none"
               viewBox="0 0 24 24"
@@ -172,8 +180,8 @@
             autocomplete="email"
             autocapitalize="off"
             spellcheck="false"
-            class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            placeholder="you@example.com"
+            class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+            placeholder="you@example.com…"
           />
         </div>
 
@@ -192,8 +200,8 @@
             type="password"
             required
             autocomplete="current-password"
-            class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            placeholder="Enter your password"
+            class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-white placeholder-surface-500 transition focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+            placeholder="Enter your password…"
           />
         </div>
 
@@ -203,6 +211,7 @@
               >Two-Factor Code</label
             >
             <input
+              spellcheck={false}
               id="totpCode"
               name="totpCode"
               type="text"
@@ -212,8 +221,8 @@
               required
               autocomplete="one-time-code"
               aria-describedby="totp-help"
-              class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-center text-lg tracking-[0.3em] text-white placeholder-surface-500 transition focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-              placeholder="000000"
+              class="mt-1.5 block w-full rounded-xl border border-surface-600 bg-surface-700/50 px-4 py-2.5 text-center text-lg tracking-[0.3em] text-white placeholder-surface-500 transition focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+              placeholder="000000…"
             />
             <p id="totp-help" class="mt-1.5 text-xs text-surface-400">
               Enter the 6-digit code from your authenticator app.
@@ -224,14 +233,14 @@
         <button
           type="submit"
           disabled={loading}
-          class="relative flex w-full items-center justify-center rounded-xl bg-primary-600 px-4 py-3 font-semibold text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:shadow-primary-900/50 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="relative flex w-full items-center justify-center rounded-xl bg-primary-600 px-4 py-3 font-semibold text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:shadow-primary-900/50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {#if loading}
             <div
               class="absolute left-4 h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"
             ></div>
           {/if}
-          {loading ? 'Signing in...' : 'Sign in'}
+          {loading ? 'Signing In…' : 'Sign In'}
         </button>
       </form>
     </div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent, formatDecimal } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { goto } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -9,7 +10,7 @@
 
   function fmtPercent(value: number | null | undefined): string {
     if (value === null || value === undefined) return '--';
-    return `${value.toFixed(2)}%`;
+    return formatPercent(value, 2);
   }
 
   function categoryLabel(cat: string): string {
@@ -72,7 +73,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Recommendations Section -->
@@ -84,9 +85,13 @@
           <Card>
             <div class="space-y-2">
               <div class="flex items-start justify-between">
-                <div>
-                  <p class="font-semibold text-white">{product.name}</p>
-                  <p class="text-sm text-surface-400">{product.provider}</p>
+                <div class="min-w-0">
+                  <p class="truncate font-semibold text-white" title={product.name}>
+                    {product.name}
+                  </p>
+                  <p class="truncate text-sm text-surface-400" title={product.provider}>
+                    {product.provider}
+                  </p>
                 </div>
                 <span
                   class="inline-flex rounded-full bg-primary-900/50 px-2 py-0.5 text-xs font-medium text-primary-300"
@@ -96,7 +101,9 @@
               </div>
 
               {#if product.description}
-                <p class="text-sm text-surface-400 line-clamp-2">{product.description}</p>
+                <p class="text-sm text-surface-400 line-clamp-2 break-words">
+                  {product.description}
+                </p>
               {/if}
 
               <div class="flex flex-wrap gap-3 text-sm">
@@ -144,6 +151,7 @@
                   >
                     Learn More
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -186,9 +194,12 @@
       {data.products.length} product{data.products.length !== 1 ? 's' : ''}
     </p>
     <select
+      autocomplete="off"
+      name="sort-products"
+      aria-label="Sort products"
       value={data.sort}
       onchange={handleSortChange}
-      class="rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+      class="rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
     >
       <option value="rating">Top Rated</option>
       <option value="interest_rate">Interest Rate</option>
@@ -202,6 +213,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -223,11 +235,15 @@
       {#each data.products as product}
         <Card>
           <div class="flex items-start gap-4">
-            <div class="flex-1">
+            <div class="min-w-0 flex-1">
               <div class="flex items-start justify-between">
-                <div>
-                  <h4 class="font-semibold text-white">{product.name}</h4>
-                  <p class="text-sm text-surface-400">{product.provider}</p>
+                <div class="min-w-0">
+                  <h4 class="truncate font-semibold text-white" title={product.name}>
+                    {product.name}
+                  </h4>
+                  <p class="truncate text-sm text-surface-400" title={product.provider}>
+                    {product.provider}
+                  </p>
                 </div>
                 <span
                   class="inline-flex rounded-full bg-surface-700 px-2 py-0.5 text-xs text-surface-400"
@@ -237,7 +253,7 @@
               </div>
 
               {#if product.description}
-                <p class="mt-2 text-sm text-surface-300">{product.description}</p>
+                <p class="mt-2 break-words text-sm text-surface-300">{product.description}</p>
               {/if}
 
               <!-- Key Stats -->
@@ -271,7 +287,7 @@
                 {#if product.signupBonus}
                   <div>
                     <p class="text-xs text-surface-500">Signup Bonus</p>
-                    <p class="font-semibold text-primary-400">{product.signupBonus}</p>
+                    <p class="break-words font-semibold text-primary-400">{product.signupBonus}</p>
                   </div>
                 {/if}
                 {#if product.rating !== null && product.rating !== undefined}
@@ -279,14 +295,14 @@
                     <p class="text-xs text-surface-500">Rating</p>
                     <p class="font-semibold text-yellow-400">
                       {renderStars(product.rating)}
-                      <span class="text-surface-400">({product.rating.toFixed(1)})</span>
+                      <span class="text-surface-400">({formatDecimal(product.rating, 1)})</span>
                     </p>
                   </div>
                 {/if}
               </div>
 
               {#if product.terms}
-                <p class="mt-2 text-xs text-surface-500">{product.terms}</p>
+                <p class="mt-2 break-words text-xs text-surface-500">{product.terms}</p>
               {/if}
             </div>
 
@@ -309,6 +325,7 @@
                   >
                     Learn More
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"

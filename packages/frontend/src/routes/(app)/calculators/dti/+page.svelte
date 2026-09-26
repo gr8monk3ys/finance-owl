@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { Card } from '$components/ui';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
@@ -110,7 +111,14 @@
       href="/calculators"
       class="text-surface-400 hover:text-white transition"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -127,12 +135,14 @@
             >Gross Monthly Income</label
           >
           <input
+            autocomplete="off"
+            name="income"
             id="income"
             type="number"
             bind:value={monthlyIncome}
             min="1"
             step="100"
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
       </Card>
@@ -145,23 +155,27 @@
               >Mortgage / Rent</label
             >
             <input
+              autocomplete="off"
+              name="mortgage"
               id="mortgage"
               type="number"
               bind:value={mortgage}
               min="0"
               step="50"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
             <label for="car" class="block text-sm font-medium text-surface-300">Car Payment</label>
             <input
+              autocomplete="off"
+              name="car"
               id="car"
               type="number"
               bind:value={carPayment}
               min="0"
               step="50"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
@@ -169,12 +183,14 @@
               >Student Loans</label
             >
             <input
+              autocomplete="off"
+              name="student"
               id="student"
               type="number"
               bind:value={studentLoans}
               min="0"
               step="50"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
@@ -182,24 +198,28 @@
               >Credit Card Payments</label
             >
             <input
+              autocomplete="off"
+              name="credit"
               id="credit"
               type="number"
               bind:value={creditCards}
               min="0"
               step="50"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <div>
             <label for="other" class="block text-sm font-medium text-surface-300">Other Debts</label
             >
             <input
+              autocomplete="off"
+              name="other"
               id="other"
               type="number"
               bind:value={otherDebts}
               min="0"
               step="50"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
         </div>
@@ -214,7 +234,7 @@
           <h3 class="mb-4 text-lg font-semibold text-white">Your DTI Ratio</h3>
 
           <div class="relative">
-            <svg width="200" height="120" viewBox="0 0 200 120">
+            <svg aria-hidden="true" width="200" height="120" viewBox="0 0 200 120">
               <!-- Background arc -->
               <path
                 d="M 20 100 A 80 80 0 0 1 180 100"
@@ -261,7 +281,7 @@
             </svg>
           </div>
 
-          <p class="mt-2 text-4xl font-bold {ratingColor.text}">{dtiRatio.toFixed(1)}%</p>
+          <p class="mt-2 text-4xl font-bold {ratingColor.text}">{formatPercent(dtiRatio, 1)}</p>
           <span
             class="mt-2 rounded-full px-4 py-1 text-sm font-semibold capitalize {ratingColor.text} ring-1 {ratingColor.ring}"
             style="background-color: {ratingColor.stroke}15"
@@ -279,6 +299,7 @@
             style="background-color: {ratingColor.stroke}20"
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -338,12 +359,12 @@
                   </div>
                   <span class="font-medium text-white"
                     >{fmt(item.value)}
-                    <span class="text-surface-500 text-xs">({pct.toFixed(1)}%)</span></span
+                    <span class="text-surface-500 text-xs">({formatPercent(pct, 1)})</span></span
                   >
                 </div>
                 <div class="h-2 overflow-hidden rounded-full bg-surface-700">
                   <div
-                    class="h-full rounded-full transition-all"
+                    class="h-full rounded-full transition-[width]"
                     style="width: {Math.min(pct, 100)}%; background-color: {item.color}"
                   ></div>
                 </div>

@@ -39,7 +39,7 @@
 <Card class="h-full">
   <div class="flex items-center justify-between">
     <h3 class="text-sm font-medium text-surface-400">Upcoming Bills</h3>
-    <a href="/bills" class="text-xs text-primary-400 hover:text-primary-300">View all</a>
+    <a href="/bills" class="text-xs text-primary-400 hover:text-primary-300">View All</a>
   </div>
 
   {#if upcomingBills.length > 0}
@@ -48,7 +48,10 @@
         {@const days = daysUntil(bill.expectedDate)}
         <div class="flex items-center justify-between py-2">
           <div class="min-w-0 flex-1">
-            <p class="truncate text-xs font-medium text-white">
+            <p
+              class="truncate text-xs font-medium text-white"
+              title={bill.merchantName || bill.name}
+            >
               {bill.merchantName || bill.name}
             </p>
             <p
@@ -70,6 +73,7 @@
   {:else}
     <div class="flex flex-col items-center justify-center py-6 text-center">
       <svg
+        aria-hidden="true"
         class="h-8 w-8 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"

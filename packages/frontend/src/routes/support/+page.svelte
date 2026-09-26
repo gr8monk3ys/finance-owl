@@ -57,6 +57,7 @@
       <div class="flex items-center gap-3">
         <a href="/" class="text-surface-400 transition hover:text-white" aria-label="Back to home">
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -89,14 +90,14 @@
         >
           <h2 class="text-base font-semibold text-white">{card.title}</h2>
           <p class="mt-2 text-sm leading-relaxed text-surface-400">{card.description}</p>
-          <p class="mt-4 text-sm font-medium text-primary-400">{card.label}</p>
+          <p class="mt-4 break-all text-sm font-medium text-primary-400">{card.label}</p>
         </a>
       {/each}
     </section>
 
     <section class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
       <div class="rounded-2xl border border-surface-700/60 bg-surface-800/70 p-6">
-        <h2 class="text-lg font-semibold text-white">Before you email us</h2>
+        <h2 class="text-lg font-semibold text-white">Before You Email Us</h2>
         <p class="mt-2 text-sm leading-relaxed text-surface-400">
           Include enough detail for us to reproduce the issue without a long back-and-forth.
         </p>
@@ -104,6 +105,7 @@
           {#each supportChecklist as item}
             <li class="flex items-start gap-3 text-sm text-surface-300">
               <svg
+                aria-hidden="true"
                 class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -125,7 +127,7 @@
       </div>
 
       <div class="rounded-2xl border border-surface-700/60 bg-surface-800/70 p-6">
-        <h2 class="text-lg font-semibold text-white">Self-serve resources</h2>
+        <h2 class="text-lg font-semibold text-white">Self-Serve Resources</h2>
         <p class="mt-2 text-sm leading-relaxed text-surface-400">
           These pages answer most launch, policy, and account questions.
         </p>
@@ -143,7 +145,7 @@
           <p class="text-xs uppercase tracking-wide text-surface-400">Company</p>
           <p class="mt-2 text-sm text-surface-300">{publicSite.legalEntityName}</p>
           {#if publicSite.companyAddress}
-            <p class="mt-1 text-sm text-surface-400">{publicSite.companyAddress}</p>
+            <p class="mt-1 break-words text-sm text-surface-400">{publicSite.companyAddress}</p>
           {/if}
         </div>
       </div>

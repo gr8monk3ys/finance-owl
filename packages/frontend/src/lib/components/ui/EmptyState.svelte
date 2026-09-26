@@ -31,7 +31,14 @@
 				bg-surface-700/50 text-surface-400
 				border border-surface-600/30"
     >
-      <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <svg
+        aria-hidden="true"
+        class="h-8 w-8"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+      >
         <path
           stroke-linecap="round"
           stroke-linejoin="round"

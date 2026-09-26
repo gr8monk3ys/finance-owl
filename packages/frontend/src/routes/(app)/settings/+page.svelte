@@ -66,9 +66,13 @@
       >
         {data.user?.name?.charAt(0)?.toUpperCase() || '?'}
       </div>
-      <div class="flex-1">
-        <h2 class="text-lg font-semibold text-white">{data.user?.name || 'User'}</h2>
-        <p class="text-sm text-surface-400">{data.user?.email || ''}</p>
+      <div class="min-w-0 flex-1">
+        <h2 class="truncate text-lg font-semibold text-white" title={data.user?.name || 'User'}>
+          {data.user?.name || 'User'}
+        </h2>
+        <p class="truncate text-sm text-surface-400" title={data.user?.email || ''}>
+          {data.user?.email || ''}
+        </p>
       </div>
     </div>
   </Card>
@@ -85,6 +89,7 @@
         >
           {#if link.icon === 'shield'}
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -99,6 +104,7 @@
             </svg>
           {:else if link.icon === 'tag'}
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -114,6 +120,7 @@
             </svg>
           {:else if link.icon === 'bell'}
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -128,6 +135,7 @@
             </svg>
           {:else if link.icon === 'credit-card'}
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -142,6 +150,7 @@
             </svg>
           {:else if link.icon === 'download'}
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -162,6 +171,7 @@
               {link.title}
             </h3>
             <svg
+              aria-hidden="true"
               class="h-4 w-4 text-surface-500 transition group-hover:translate-x-0.5 group-hover:text-surface-300"
               fill="none"
               viewBox="0 0 24 24"
@@ -186,6 +196,7 @@
       >
         <div class="flex items-center gap-3">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-surface-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -200,10 +211,11 @@
           </svg>
           <div>
             <p class="text-sm font-medium text-white">Account</p>
-            <p class="text-xs text-surface-400">Profile information and email</p>
+            <p class="text-xs text-surface-400">Profile Information and Email</p>
           </div>
         </div>
         <svg
+          aria-hidden="true"
           class="h-4 w-4 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"
@@ -220,6 +232,7 @@
       >
         <div class="flex items-center gap-3">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-surface-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -234,10 +247,11 @@
           </svg>
           <div>
             <p class="text-sm font-medium text-white">Data Export & Deletion</p>
-            <p class="text-xs text-surface-400">Download or delete your financial data</p>
+            <p class="text-xs text-surface-400">Download or Delete Your Financial Data</p>
           </div>
         </div>
         <svg
+          aria-hidden="true"
           class="h-4 w-4 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"

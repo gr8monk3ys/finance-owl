@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { formatFileSize } from '$lib/utils/format';
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
@@ -143,6 +145,8 @@
 
   <!-- Hidden file input -->
   <input
+    name="receipt-image"
+    aria-label="Receipt image"
     type="file"
     accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
     class="hidden"
@@ -151,22 +155,19 @@
   />
 
   <!-- Upload drop zone -->
-  <div
-    role="button"
-    tabindex="0"
-    class="rounded-xl border-2 border-dashed transition-colors {dragActive
+  <button
+    type="button"
+    class="block w-full rounded-xl border-2 border-dashed transition-colors {dragActive
       ? 'border-primary-500 bg-primary-500/10'
       : 'border-surface-600 bg-surface-800/50 hover:border-surface-500'}"
     ondragover={handleDragOver}
     ondragleave={handleDragLeave}
     ondrop={handleDrop}
     onclick={triggerFileInput}
-    onkeydown={(e) => {
-      if (e.key === 'Enter' || e.key === ' ') triggerFileInput();
-    }}
   >
-    <div class="flex flex-col items-center justify-center py-8">
+    <span class="flex flex-col items-center justify-center py-8">
       <svg
+        aria-hidden="true"
         class="h-10 w-10 text-surface-500"
         fill="none"
         viewBox="0 0 24 24"
@@ -180,12 +181,13 @@
         />
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
-      <p class="mt-3 text-sm text-surface-300">
-        <span class="font-medium text-primary-400">Click to upload</span> or drag and drop
-      </p>
-      <p class="mt-1 text-xs text-surface-500">JPEG, PNG, WebP, HEIC up to 10MB</p>
-    </div>
-  </div>
+      <span class="mt-3 block text-sm text-surface-300">
+        <span class="font-medium text-primary-400">Click to Upload</span> or Drag and Drop
+      </span>
+      <span class="mt-1 block text-xs text-surface-500">JPEG, PNG, WebP, HEIC up to 10&nbsp;MB</span
+      >
+    </span>
+  </button>
 
   <!-- Receipt List -->
   {#if (data.receipts || []).length > 0}
@@ -201,6 +203,7 @@
               class="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-lg bg-surface-700"
             >
               <svg
+                aria-hidden="true"
                 class="h-7 w-7 text-surface-500"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -216,7 +219,10 @@
             </div>
             <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between">
-                <p class="truncate text-sm font-medium text-white">
+                <p
+                  class="truncate text-sm font-medium text-white"
+                  title={receipt.merchantName || 'Unknown Merchant'}
+                >
                   {receipt.merchantName || 'Unknown Merchant'}
                 </p>
                 <span
@@ -236,6 +242,7 @@
               {#if receipt.transactionId}
                 <span class="mt-1 inline-flex items-center gap-1 text-xs text-primary-400">
                   <svg
+                    aria-hidden="true"
                     class="h-3 w-3"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -260,6 +267,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -310,7 +318,8 @@
         <div class="rounded-lg border border-surface-700 bg-surface-700/50 p-4">
           <div class="flex items-center gap-3">
             <svg
-              class="h-8 w-8 text-surface-400"
+              aria-hidden="true"
+              class="h-8 w-8 shrink-0 text-surface-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -322,10 +331,12 @@
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <div>
-              <p class="text-sm font-medium text-white">{selectedFile.name}</p>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-medium text-white" title={selectedFile.name}>
+                {selectedFile.name}
+              </p>
               <p class="text-xs text-surface-400">
-                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                {formatFileSize(selectedFile.size, 'megabyte', 2)}
               </p>
             </div>
           </div>
@@ -398,22 +409,31 @@
         <input type="hidden" name="receiptId" value={selectedReceipt.id} />
         <div class="space-y-3">
           <Input
+            autocomplete="off"
             id="merchantName"
             name="merchantName"
             label="Merchant Name"
             bind:value={editMerchant}
-            placeholder="e.g., Walmart, Target"
+            placeholder="e.g., Walmart, Target…"
           />
           <Input
+            autocomplete="off"
             id="totalAmount"
             name="totalAmount"
             label="Total Amount"
             type="number"
             step="0.01"
             bind:value={editAmount}
-            placeholder="0.00"
+            placeholder="0.00…"
           />
-          <Input id="receiptDate" name="date" label="Date" type="date" bind:value={editDate} />
+          <Input
+            autocomplete="off"
+            id="receiptDate"
+            name="date"
+            label="Date"
+            type="date"
+            bind:value={editDate}
+          />
 
           <!-- Line items -->
           {#if selectedReceipt.items}
@@ -424,7 +444,7 @@
                 <div class="space-y-1 rounded-lg border border-surface-700 p-3">
                   {#each items as item}
                     <div class="flex items-center justify-between text-sm">
-                      <span class="text-surface-300">{item.name}</span>
+                      <span class="min-w-0 break-words text-surface-300">{item.name}</span>
                       <span class="text-surface-400">
                         {item.quantity ? `x${item.quantity}` : ''}
                         {item.price ? formatAmount(item.price) : ''}
@@ -451,6 +471,7 @@
           {:else}
             <span class="inline-flex items-center gap-1.5 text-sm text-primary-400">
               <svg
+                aria-hidden="true"
                 class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -467,7 +488,12 @@
             </span>
           {/if}
 
-          <form method="POST" action="?/deleteReceipt" use:enhance>
+          <form
+            use:confirmSubmit={'Delete this receipt? This can’t be undone.'}
+            method="POST"
+            action="?/deleteReceipt"
+            use:enhance
+          >
             <input type="hidden" name="receiptId" value={selectedReceipt.id} />
             <Button type="submit" size="sm" variant="danger">Delete</Button>
           </form>
@@ -496,11 +522,12 @@
             Account
           </label>
           <select
+            autocomplete="off"
             id="txAccountId"
             name="accountId"
             bind:value={txAccountId}
             required
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="">Select an account</option>
             {#each data.accounts || [] as account}
@@ -510,23 +537,26 @@
         </div>
 
         <Input
+          autocomplete="off"
           id="txName"
           name="name"
           label="Transaction Name"
           bind:value={txName}
           required
-          placeholder="e.g., Grocery shopping"
+          placeholder="e.g., Grocery shopping…"
         />
 
         <Input
+          autocomplete="off"
           id="txMerchant"
           name="merchantName"
           label="Merchant (optional)"
           bind:value={txMerchant}
-          placeholder="e.g., Walmart"
+          placeholder="e.g., Walmart…"
         />
 
         <Input
+          autocomplete="off"
           id="txAmount"
           name="amount"
           label="Amount"
@@ -534,10 +564,18 @@
           step="0.01"
           bind:value={txAmount}
           required
-          placeholder="0.00"
+          placeholder="0.00…"
         />
 
-        <Input id="txDate" name="date" label="Date" type="date" bind:value={txDate} required />
+        <Input
+          autocomplete="off"
+          id="txDate"
+          name="date"
+          label="Date"
+          type="date"
+          bind:value={txDate}
+          required
+        />
 
         {#if form && 'error' in form && form.error}
           <p class="text-sm text-red-400">{form.error}</p>
@@ -561,12 +599,14 @@
       <input type="hidden" name="receiptId" value={selectedReceipt.id} />
       <div class="space-y-4">
         <Input
+          autocomplete="off"
+          spellcheck={false}
           id="linkTxId"
           name="transactionId"
           label="Transaction ID"
           bind:value={linkTxId}
           required
-          placeholder="Paste the transaction ID"
+          placeholder="Paste the transaction ID…"
         />
         <p class="text-xs text-surface-500">
           You can find the transaction ID on the Transactions page. Copy it from the transaction

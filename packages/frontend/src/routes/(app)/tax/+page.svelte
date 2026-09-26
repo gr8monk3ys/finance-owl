@@ -1,15 +1,22 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll, goto } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatCurrency as fmt } from '@finance-owl/shared';
+  import { formatCurrency as fmt, formatDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
   let showAddModal = $state(false);
   let editingDocument = $state<any>(null);
-  let activeTab = $state<'summary' | 'documents' | 'deductions'>('summary');
+  let activeTab = $state<'summary' | 'documents' | 'deductions'>(
+    readParam('tab', 'summary', ['summary', 'documents', 'deductions']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'summary'));
 
   $effect(() => {
     if (form?.success) {
@@ -66,9 +73,12 @@
       <p class="mt-1 text-sm text-surface-400">Track documents and estimate your tax liability.</p>
     </div>
     <select
+      autocomplete="off"
+      name="tax-year"
+      aria-label="Tax year"
       value={data.year}
       onchange={handleYearChange}
-      class="rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+      class="rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
     >
       {#each yearOptions as yr}
         <option value={yr}>{yr}</option>
@@ -78,7 +88,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Section Tabs -->
@@ -158,7 +170,7 @@
           </p>
           {#if data.summary?.generatedAt}
             <p class="mt-1 text-xs text-surface-500">
-              Last generated: {new Date(data.summary.generatedAt).toLocaleDateString()}
+              Last generated: {formatDate(data.summary.generatedAt)}
             </p>
           {/if}
         </div>
@@ -192,6 +204,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -215,7 +228,7 @@
         {#each data.documents as doc}
           <Card>
             <div class="flex items-start justify-between">
-              <div>
+              <div class="min-w-0">
                 <div class="flex items-center gap-2">
                   <span
                     class="inline-flex rounded-full bg-surface-700 px-2 py-0.5 text-xs font-medium text-surface-300"
@@ -232,10 +245,12 @@
                 </div>
                 <p class="mt-1 font-medium text-white">{fmt(doc.amount)}</p>
                 {#if doc.description}
-                  <p class="mt-0.5 text-sm text-surface-400">{doc.description}</p>
+                  <p class="mt-0.5 break-words text-sm text-surface-400">{doc.description}</p>
                 {/if}
                 {#if doc.category}
-                  <p class="mt-0.5 text-xs text-surface-500">{doc.category}</p>
+                  <p class="mt-0.5 truncate text-xs text-surface-500" title={doc.category}>
+                    {doc.category}
+                  </p>
                 {/if}
               </div>
               <div class="flex items-center gap-2">
@@ -275,12 +290,16 @@
         {#each data.deductions as txn}
           <Card>
             <div class="flex items-center justify-between">
-              <div>
-                <p class="font-medium text-white">{txn.merchantName || txn.name}</p>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={txn.merchantName || txn.name}>
+                  {txn.merchantName || txn.name}
+                </p>
                 <div class="flex items-center gap-3 text-sm text-surface-400">
                   <span>{txn.date}</span>
                   {#if txn.categoryName}
-                    <span class="text-surface-500">{txn.categoryName}</span>
+                    <span class="min-w-0 truncate text-surface-500" title={txn.categoryName}>
+                      {txn.categoryName}
+                    </span>
                   {/if}
                 </div>
               </div>
@@ -310,10 +329,11 @@
     <div>
       <label for="docType" class="block text-sm font-medium text-surface-300">Type</label>
       <select
+        autocomplete="off"
         id="docType"
         name="type"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
         <option value="w2">W-2</option>
         <option value="1099">1099</option>
@@ -327,14 +347,15 @@
     <div>
       <label for="docAmount" class="block text-sm font-medium text-surface-300">Amount</label>
       <input
+        autocomplete="off"
         id="docAmount"
         name="amount"
         type="number"
         step="0.01"
         min="0"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="5000.00"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="5000.00…"
       />
     </div>
 
@@ -343,22 +364,24 @@
         >Description</label
       >
       <input
+        autocomplete="off"
         id="docDescription"
         name="description"
         type="text"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Employer W-2, charity name, etc."
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Employer W-2, charity name, etc.…"
       />
     </div>
 
     <div>
       <label for="docCategory" class="block text-sm font-medium text-surface-300">Category</label>
       <input
+        autocomplete="off"
         id="docCategory"
         name="category"
         type="text"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Income, Medical, Charitable, etc."
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Income, Medical, Charitable, etc.…"
       />
     </div>
 
@@ -367,7 +390,7 @@
         id="docDeductible"
         name="isDeductible"
         type="checkbox"
-        class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+        class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
       />
       <label for="docDeductible" class="text-sm text-surface-300">
         This is a tax-deductible expense
@@ -403,11 +426,12 @@
       <div>
         <label for="editDocType" class="block text-sm font-medium text-surface-300">Type</label>
         <select
+          autocomplete="off"
           id="editDocType"
           name="type"
           required
           value={editingDocument.type}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="w2">W-2</option>
           <option value="1099">1099</option>
@@ -421,6 +445,7 @@
       <div>
         <label for="editDocAmount" class="block text-sm font-medium text-surface-300">Amount</label>
         <input
+          autocomplete="off"
           id="editDocAmount"
           name="amount"
           type="number"
@@ -428,7 +453,7 @@
           min="0"
           required
           value={editingDocument.amount}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -437,11 +462,12 @@
           >Description</label
         >
         <input
+          autocomplete="off"
           id="editDocDescription"
           name="description"
           type="text"
           value={editingDocument.description ?? ''}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -450,11 +476,12 @@
           >Category</label
         >
         <input
+          autocomplete="off"
           id="editDocCategory"
           name="category"
           type="text"
           value={editingDocument.category ?? ''}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -464,7 +491,7 @@
           name="isDeductible"
           type="checkbox"
           checked={editingDocument.isDeductible}
-          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
         />
         <label for="editDocDeductible" class="text-sm text-surface-300">
           This is a tax-deductible expense
@@ -480,6 +507,7 @@
     </form>
 
     <form
+      use:confirmSubmit={'Delete this document? This can’t be undone.'}
       method="POST"
       action="?/deleteDocument"
       use:enhance

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -87,7 +89,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Ready to Assign Banner -->
@@ -124,7 +128,7 @@
       <div class="mt-4">
         <div class="h-2 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="h-full rounded-full bg-emerald-500/80 transition-all"
+            class="h-full rounded-full bg-emerald-500/80 transition-[width]"
             style="width: {Math.min(
               (data.summary.totalAllocated / data.summary.totalIncome) * 100,
               100,
@@ -132,8 +136,7 @@
           ></div>
         </div>
         <p class="mt-1 text-right text-xs text-surface-500">
-          {((data.summary.totalAllocated / data.summary.totalIncome) * 100).toFixed(0)}% of income
-          allocated
+          {formatPercent((data.summary.totalAllocated / data.summary.totalIncome) * 100)} of income allocated
         </p>
       </div>
     {/if}
@@ -144,6 +147,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -174,77 +178,75 @@
         </h3>
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {#each spendingEnvelopes as envelope}
-            <button
-              type="button"
-              class="rounded-xl border border-surface-700 bg-surface-800 p-4 text-left transition hover:border-surface-600 hover:bg-surface-750 focus:outline-none focus:ring-2 focus:ring-primary-500"
-              onclick={() => (editingEnvelope = envelope)}
+            <!-- Card and quick-assign are sibling buttons: a button may not nest another. -->
+            <div
+              class="flex flex-col rounded-xl border border-surface-700 bg-surface-800 transition hover:border-surface-600 hover:bg-surface-750 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary-500"
             >
-              <div class="flex items-start justify-between">
-                <div class="flex items-center gap-2.5">
-                  <div
-                    class="h-3.5 w-3.5 rounded-full"
-                    style="background-color: {envelope.color ||
-                      envelope.categoryColor ||
-                      '#6366f1'}"
-                  ></div>
-                  <div>
-                    <p class="font-medium text-white">{envelope.name}</p>
-                    {#if envelope.categoryName}
-                      <p class="text-xs text-surface-500">{envelope.categoryName}</p>
-                    {/if}
+              <button
+                type="button"
+                class="flex-1 rounded-t-xl p-4 pb-0 text-left focus-visible:outline-none"
+                onclick={() => (editingEnvelope = envelope)}
+              >
+                <div class="flex items-start justify-between">
+                  <div class="flex min-w-0 items-center gap-2.5">
+                    <div
+                      class="h-3.5 w-3.5 rounded-full"
+                      style="background-color: {envelope.color ||
+                        envelope.categoryColor ||
+                        '#6366f1'}"
+                    ></div>
+                    <div class="min-w-0">
+                      <p class="truncate font-medium text-white" title={envelope.name}>
+                        {envelope.name}
+                      </p>
+                      {#if envelope.categoryName}
+                        <p class="truncate text-xs text-surface-500" title={envelope.categoryName}>
+                          {envelope.categoryName}
+                        </p>
+                      {/if}
+                    </div>
+                  </div>
+                  {#if envelope.rollover}
+                    <span
+                      class="rounded-full bg-surface-700 px-2 py-0.5 text-[10px] text-surface-400"
+                    >
+                      rollover
+                    </span>
+                  {/if}
+                </div>
+
+                <div class="mt-3">
+                  <div class="flex items-end justify-between text-sm">
+                    <span class="text-surface-400">
+                      {fmt(envelope.spentAmount)} of {fmt(envelope.budgetedAmount)}
+                    </span>
+                    <span class="font-semibold {getProgressTextColor(envelope.percentUsed)}">
+                      {fmt(envelope.remainingAmount)}
+                    </span>
+                  </div>
+                  <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
+                    <div
+                      class="{getProgressColor(
+                        envelope.percentUsed,
+                      )} h-full rounded-full transition-[width]"
+                      style="width: {Math.min(envelope.percentUsed, 100)}%"
+                    ></div>
                   </div>
                 </div>
-                {#if envelope.rollover}
-                  <span
-                    class="rounded-full bg-surface-700 px-2 py-0.5 text-[10px] text-surface-400"
-                  >
-                    rollover
-                  </span>
-                {/if}
-              </div>
-
-              <div class="mt-3">
-                <div class="flex items-end justify-between text-sm">
-                  <span class="text-surface-400">
-                    {fmt(envelope.spentAmount)} of {fmt(envelope.budgetedAmount)}
-                  </span>
-                  <span class="font-semibold {getProgressTextColor(envelope.percentUsed)}">
-                    {fmt(envelope.remainingAmount)}
-                  </span>
-                </div>
-                <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
-                  <div
-                    class="{getProgressColor(
-                      envelope.percentUsed,
-                    )} h-full rounded-full transition-all"
-                    style="width: {Math.min(envelope.percentUsed, 100)}%"
-                  ></div>
-                </div>
-              </div>
-
-              <!-- Quick allocate button -->
-              <div class="mt-3 flex justify-end">
-                <span
-                  role="button"
-                  tabindex="0"
-                  class="text-xs text-primary-400 hover:text-primary-300"
-                  onclick={(e: MouseEvent) => {
-                    e.stopPropagation();
+              </button>
+              <div class="flex justify-end px-4 pb-4 pt-3">
+                <button
+                  type="button"
+                  class="rounded text-xs text-primary-400 hover:text-primary-300"
+                  onclick={() => {
                     allocatingEnvelope = envelope;
                     showAllocateModal = true;
                   }}
-                  onkeydown={(e: KeyboardEvent) => {
-                    if (e.key === 'Enter') {
-                      e.stopPropagation();
-                      allocatingEnvelope = envelope;
-                      showAllocateModal = true;
-                    }
-                  }}
                 >
                   + Assign Funds
-                </span>
+                </button>
               </div>
-            </button>
+            </div>
           {/each}
         </div>
       </div>
@@ -258,84 +260,82 @@
         </h3>
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {#each goalEnvelopes as envelope}
-            <button
-              type="button"
-              class="rounded-xl border border-surface-700 bg-surface-800 p-4 text-left transition hover:border-surface-600 hover:bg-surface-750 focus:outline-none focus:ring-2 focus:ring-primary-500"
-              onclick={() => (editingEnvelope = envelope)}
+            <!-- Card and quick-assign are sibling buttons: a button may not nest another. -->
+            <div
+              class="flex flex-col rounded-xl border border-surface-700 bg-surface-800 transition hover:border-surface-600 hover:bg-surface-750 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary-500"
             >
-              <div class="flex items-start justify-between">
-                <div class="flex items-center gap-2.5">
-                  <div
-                    class="h-3.5 w-3.5 rounded-full"
-                    style="background-color: {envelope.color || '#22c55e'}"
-                  ></div>
-                  <div>
-                    <p class="font-medium text-white">{envelope.name}</p>
-                    {#if envelope.targetAmount}
-                      <p class="text-xs text-surface-500">
-                        Goal: {fmt(envelope.targetAmount)}
+              <button
+                type="button"
+                class="flex-1 rounded-t-xl p-4 pb-0 text-left focus-visible:outline-none"
+                onclick={() => (editingEnvelope = envelope)}
+              >
+                <div class="flex items-start justify-between">
+                  <div class="flex min-w-0 items-center gap-2.5">
+                    <div
+                      class="h-3.5 w-3.5 rounded-full"
+                      style="background-color: {envelope.color || '#22c55e'}"
+                    ></div>
+                    <div class="min-w-0">
+                      <p class="truncate font-medium text-white" title={envelope.name}>
+                        {envelope.name}
                       </p>
+                      {#if envelope.targetAmount}
+                        <p class="text-xs text-surface-500">
+                          Goal: {fmt(envelope.targetAmount)}
+                        </p>
+                      {/if}
+                    </div>
+                  </div>
+                  <svg
+                    aria-hidden="true"
+                    class="h-4 w-4 text-emerald-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                    />
+                  </svg>
+                </div>
+
+                <div class="mt-3">
+                  <div class="flex items-end justify-between text-sm">
+                    <span class="text-surface-400">
+                      {fmt(envelope.remainingAmount)} saved
+                    </span>
+                    {#if envelope.targetAmount}
+                      <span class="font-semibold text-emerald-400">
+                        {formatPercent(envelope.goalProgress ?? 0)}
+                      </span>
                     {/if}
                   </div>
-                </div>
-                <svg
-                  class="h-4 w-4 text-emerald-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                  />
-                </svg>
-              </div>
-
-              <div class="mt-3">
-                <div class="flex items-end justify-between text-sm">
-                  <span class="text-surface-400">
-                    {fmt(envelope.remainingAmount)} saved
-                  </span>
                   {#if envelope.targetAmount}
-                    <span class="font-semibold text-emerald-400">
-                      {(envelope.goalProgress ?? 0).toFixed(0)}%
-                    </span>
+                    <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
+                      <div
+                        class="h-full rounded-full bg-emerald-500 transition-[width]"
+                        style="width: {Math.min(envelope.goalProgress ?? 0, 100)}%"
+                      ></div>
+                    </div>
                   {/if}
                 </div>
-                {#if envelope.targetAmount}
-                  <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
-                    <div
-                      class="h-full rounded-full bg-emerald-500 transition-all"
-                      style="width: {Math.min(envelope.goalProgress ?? 0, 100)}%"
-                    ></div>
-                  </div>
-                {/if}
-              </div>
-
-              <div class="mt-3 flex justify-end">
-                <span
-                  role="button"
-                  tabindex="0"
-                  class="text-xs text-primary-400 hover:text-primary-300"
-                  onclick={(e: MouseEvent) => {
-                    e.stopPropagation();
+              </button>
+              <div class="flex justify-end px-4 pb-4 pt-3">
+                <button
+                  type="button"
+                  class="rounded text-xs text-primary-400 hover:text-primary-300"
+                  onclick={() => {
                     allocatingEnvelope = envelope;
                     showAllocateModal = true;
                   }}
-                  onkeydown={(e: KeyboardEvent) => {
-                    if (e.key === 'Enter') {
-                      e.stopPropagation();
-                      allocatingEnvelope = envelope;
-                      showAllocateModal = true;
-                    }
-                  }}
                 >
                   + Assign Funds
-                </span>
+                </button>
               </div>
-            </button>
+            </div>
           {/each}
         </div>
       </div>
@@ -367,12 +367,13 @@
     <div>
       <label for="envelopeName" class="block text-sm font-medium text-surface-300"> Name </label>
       <input
+        autocomplete="off"
         id="envelopeName"
         name="name"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder:text-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="e.g. Groceries, Rent, Emergency Fund"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder:text-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="e.g. Groceries, Rent, Emergency Fund…"
       />
     </div>
 
@@ -382,13 +383,14 @@
           Budget Amount
         </label>
         <input
+          autocomplete="off"
           id="envelopeAmount"
           name="budgetedAmount"
           type="number"
           step="0.01"
           min="0"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="0.00"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="0.00…"
         />
       </div>
       <div>
@@ -396,9 +398,10 @@
           Period
         </label>
         <select
+          autocomplete="off"
           id="envelopePeriod"
           name="period"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="monthly">Monthly</option>
           <option value="weekly">Weekly</option>
@@ -412,9 +415,10 @@
         Link to Category (optional)
       </label>
       <select
+        autocomplete="off"
         id="envelopeCategory"
         name="categoryId"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
         <option value="">None</option>
         {#each data.categories as cat}
@@ -444,7 +448,7 @@
         <input
           name="rollover"
           type="checkbox"
-          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
         />
         <span class="text-sm text-surface-300">Roll over unused</span>
       </label>
@@ -452,7 +456,7 @@
         <input
           name="isGoal"
           type="checkbox"
-          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
         />
         <span class="text-sm text-surface-300">Savings goal</span>
       </label>
@@ -463,13 +467,14 @@
         Target Amount (for goals)
       </label>
       <input
+        autocomplete="off"
         id="targetAmount"
         name="targetAmount"
         type="number"
         step="0.01"
         min="0"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Optional"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Optional…"
       />
     </div>
 
@@ -510,7 +515,9 @@
             class="h-3 w-3 rounded-full"
             style="background-color: {allocatingEnvelope.color || '#6366f1'}"
           ></div>
-          <p class="font-medium text-white">{allocatingEnvelope.name}</p>
+          <p class="min-w-0 truncate font-medium text-white" title={allocatingEnvelope.name}>
+            {allocatingEnvelope.name}
+          </p>
         </div>
         <p class="mt-1 text-sm text-surface-400">
           Currently: {fmt(allocatingEnvelope.budgetedAmount)} budgeted,
@@ -529,14 +536,15 @@
           Amount to Assign
         </label>
         <input
+          autocomplete="off"
           id="allocateAmount"
           name="amount"
           type="number"
           step="0.01"
           min="0.01"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="0.00"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="0.00…"
         />
       </div>
 
@@ -578,12 +586,13 @@
         From Envelope
       </label>
       <select
+        autocomplete="off"
         id="transferFrom"
         name="fromEnvelopeId"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
-        <option value="">Select...</option>
+        <option value="">Select…</option>
         {#each data.envelopes as env}
           <option value={env.id}>
             {env.name} ({fmt(env.remainingAmount)} available)
@@ -597,12 +606,13 @@
         To Envelope
       </label>
       <select
+        autocomplete="off"
         id="transferTo"
         name="toEnvelopeId"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
-        <option value="">Select...</option>
+        <option value="">Select…</option>
         {#each data.envelopes as env}
           <option value={env.id}>{env.name}</option>
         {/each}
@@ -614,14 +624,15 @@
         Amount
       </label>
       <input
+        autocomplete="off"
         id="transferAmount"
         name="amount"
         type="number"
         step="0.01"
         min="0.01"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="0.00"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="0.00…"
       />
     </div>
 
@@ -656,12 +667,13 @@
       <div>
         <label for="editName" class="block text-sm font-medium text-surface-300"> Name </label>
         <input
+          autocomplete="off"
           id="editName"
           name="name"
           type="text"
           required
           value={editingEnvelope.name}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -670,13 +682,14 @@
           Budget Amount
         </label>
         <input
+          autocomplete="off"
           id="editBudgetedAmount"
           name="budgetedAmount"
           type="number"
           step="0.01"
           min="0"
           value={editingEnvelope.budgetedAmount}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -708,7 +721,7 @@
             name="rollover"
             type="checkbox"
             checked={editingEnvelope.rollover}
-            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
           />
           <span class="text-sm text-surface-300">Roll over unused</span>
         </label>
@@ -717,7 +730,7 @@
             name="isGoal"
             type="checkbox"
             checked={editingEnvelope.isGoal}
-            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
           />
           <span class="text-sm text-surface-300">Savings goal</span>
         </label>
@@ -728,14 +741,15 @@
           Target Amount (for goals)
         </label>
         <input
+          autocomplete="off"
           id="editTargetAmount"
           name="targetAmount"
           type="number"
           step="0.01"
           min="0"
           value={editingEnvelope.targetAmount ?? ''}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="Optional"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="Optional…"
         />
       </div>
 
@@ -747,7 +761,13 @@
       </div>
     </form>
 
-    <form method="POST" action="?/delete" use:enhance class="mt-3 border-t border-surface-700 pt-3">
+    <form
+      use:confirmSubmit={'Delete this envelope? This can’t be undone.'}
+      method="POST"
+      action="?/delete"
+      use:enhance
+      class="mt-3 border-t border-surface-700 pt-3"
+    >
       <input type="hidden" name="id" value={editingEnvelope.id} />
       <Button type="submit" variant="danger" size="sm">Delete Envelope</Button>
     </form>

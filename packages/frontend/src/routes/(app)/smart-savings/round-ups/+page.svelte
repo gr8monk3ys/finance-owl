@@ -3,7 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
   import type { PageData } from './$types';
-  import { formatCurrency as fmt } from '@finance-owl/shared';
+  import { formatCurrency as fmt, formatCurrencyWhole } from '@finance-owl/shared';
 
   let { data } = $props<{ data: PageData }>();
 
@@ -69,6 +69,7 @@
           aria-label="Back to Smart Savings"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -93,6 +94,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -119,6 +121,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -145,6 +148,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-purple-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -169,6 +173,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-yellow-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -219,7 +224,7 @@
           <button
             type="button"
             onclick={() => (enabled = !enabled)}
-            class="relative h-6 w-11 rounded-full transition {enabled
+            class="relative h-6 w-11 rounded-full transition hover:brightness-110 {enabled
               ? 'bg-primary-600'
               : 'bg-surface-600'}"
             aria-label="Toggle round-ups"
@@ -235,19 +240,20 @@
 
         <!-- Round To Amount -->
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-surface-300" for="roundTo">
+          <p id="roundTo-label" class="mb-1.5 block text-sm font-medium text-surface-300">
             Round up to nearest
-          </label>
-          <div class="grid grid-cols-3 gap-2">
+          </p>
+          <div class="grid grid-cols-3 gap-2" role="group" aria-labelledby="roundTo-label">
             {#each [1, 5, 10] as value}
               <button
                 type="button"
                 onclick={() => (roundTo = value)}
+                aria-pressed={roundTo === value}
                 class="rounded-lg border px-3 py-2 text-center text-sm transition {roundTo === value
                   ? 'border-primary-500 bg-primary-600/10 text-primary-400'
                   : 'border-surface-700 bg-surface-800 text-surface-300 hover:border-surface-600'}"
               >
-                ${value}.00
+                {fmt(value)}
               </button>
             {/each}
           </div>
@@ -256,20 +262,21 @@
 
         <!-- Multiplier -->
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-surface-300" for="multiplier">
+          <p id="multiplier-label" class="mb-1.5 block text-sm font-medium text-surface-300">
             Multiplier
-          </label>
-          <div class="grid grid-cols-3 gap-2">
+          </p>
+          <div class="grid grid-cols-3 gap-2" role="group" aria-labelledby="multiplier-label">
             {#each [1, 2, 3] as value}
               <button
                 type="button"
                 onclick={() => (multiplier = value)}
+                aria-pressed={multiplier === value}
                 class="rounded-lg border px-3 py-2 text-center text-sm transition {multiplier ===
                 value
                   ? 'border-primary-500 bg-primary-600/10 text-primary-400'
                   : 'border-surface-700 bg-surface-800 text-surface-300 hover:border-surface-600'}"
               >
-                {value}x
+                {value}×
               </button>
             {/each}
           </div>
@@ -285,10 +292,11 @@
             Save to Goal
           </label>
           <select
+            autocomplete="off"
             id="savingsGoalId"
             name="savingsGoalId"
             bind:value={savingsGoalId}
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="">No specific goal</option>
             {#each savingsGoals as goal (goal.id)}
@@ -303,10 +311,11 @@
             Watch Account
           </label>
           <select
+            autocomplete="off"
             id="accountId"
             name="accountId"
             bind:value={accountId}
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="">All accounts</option>
             {#each spendingAccounts as acct (acct.id)}
@@ -326,13 +335,14 @@
           <div class="relative">
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-surface-500">$</span>
             <input
+              autocomplete="off"
               id="maxDailyRoundUp"
               name="maxDailyRoundUp"
               type="number"
               min="1"
               step="1"
               bind:value={maxDailyRoundUp}
-              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-sm text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-sm text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
           <p class="mt-1 text-xs text-surface-500">
@@ -346,6 +356,7 @@
           <div class="mt-2 flex items-center gap-2 text-sm">
             <span class="text-surface-300">{fmt(exampleOriginal)} purchase</span>
             <svg
+              aria-hidden="true"
               class="h-4 w-4 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -356,6 +367,7 @@
             </svg>
             <span class="text-surface-300">rounded to {fmt(exampleRounded)}</span>
             <svg
+              aria-hidden="true"
               class="h-4 w-4 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -406,8 +418,13 @@
           <div class="space-y-2">
             {#each pending as roundUp (roundUp.transactionId)}
               <div class="flex items-center justify-between rounded-lg bg-surface-800/50 p-3">
-                <div>
-                  <p class="text-sm font-medium text-white">{roundUp.transactionName}</p>
+                <div class="min-w-0">
+                  <p
+                    class="truncate text-sm font-medium text-white"
+                    title={roundUp.transactionName}
+                  >
+                    {roundUp.transactionName}
+                  </p>
                   <p class="text-xs text-surface-500">{roundUp.transactionDate}</p>
                 </div>
                 <div class="text-right">
@@ -422,6 +439,7 @@
         {:else}
           <div class="py-8 text-center">
             <svg
+              aria-hidden="true"
               class="mx-auto h-10 w-10 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -470,7 +488,7 @@
             <div>
               <p class="text-sm font-medium text-white">We round it up</p>
               <p class="text-xs text-surface-500">
-                To the nearest ${roundTo} = ${exampleRounded.toFixed(2)}
+                To the nearest {formatCurrencyWhole(roundTo)} = {fmt(exampleRounded)}
               </p>
             </div>
           </div>

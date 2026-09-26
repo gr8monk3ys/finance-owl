@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { formatPercent as fmtPercent } from '$lib/utils/format';
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
@@ -7,7 +9,9 @@
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
   // Tab state
-  let activeTab = $state<'holdings' | 'transactions' | 'watchlist'>('holdings');
+  let activeTab = $state<'holdings' | 'transactions' | 'watchlist'>(
+    readParam('tab', 'holdings', ['holdings', 'transactions', 'watchlist']),
+  );
 
   // Modal states
   let showAddHolding = $state(false);
@@ -21,7 +25,7 @@
   let selectedHolding = $state<any>(null);
   let selectedChartSymbol = $state('');
   let selectedChartName = $state('');
-  let chartPeriod = $state(30);
+  let chartPeriod = $state(Number(readParam('period', '30', ['7', '30', '90', '365'])));
   let chartData = $state<Array<[number, number]>>([]);
   let chartLoading = $state(false);
   let deleteHoldingId = $state('');
@@ -35,8 +39,14 @@
   let watchlistName = $state('');
 
   // Sorting
-  let sortField = $state<string>('value');
-  let sortDir = $state<'asc' | 'desc'>('desc');
+  let sortField = $state<string>(readParam('sort', 'value'));
+  let sortDir = $state<'asc' | 'desc'>(readParam('dir', 'desc', ['asc', 'desc']));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'holdings'));
+  $effect(() => syncParam('period', String(chartPeriod), '30'));
+  $effect(() => syncParam('sort', sortField, 'value'));
+  $effect(() => syncParam('dir', sortDir, 'desc'));
 
   // Refresh loading state
   let refreshing = $state(false);
@@ -90,7 +100,7 @@
 
   // Allocation chart data
   const allocationLabels = $derived(
-    (portfolio?.allocation || []).map((a: any) => `${a.symbol} (${a.percentage.toFixed(1)}%)`),
+    (portfolio?.allocation || []).map((a: any) => `${a.symbol} (${fmtPercent(a.percentage, 1)})`),
   );
   const allocationData = $derived((portfolio?.allocation || []).map((a: any) => a.value));
   const allocationColors = $derived(
@@ -144,8 +154,7 @@
 
   function formatPercent(value: number | null | undefined): string {
     if (value == null) return '--';
-    const sign = value >= 0 ? '+' : '';
-    return `${sign}${value.toFixed(2)}%`;
+    return fmtPercent(value, 2, { signed: true });
   }
 
   function formatQuantity(value: number): string {
@@ -331,6 +340,7 @@
         <Button type="submit" variant="secondary" size="sm" loading={refreshing}>
           {#if !refreshing}
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -349,6 +359,7 @@
       </form>
       <Button size="sm" onclick={() => (showAddHolding = true)}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -419,7 +430,7 @@
             <div class="flex items-center gap-1.5">
               <span class="h-3 w-3 rounded-full" style="background-color: {allocationColors[i]}"
               ></span>
-              <span class="text-xs text-surface-300">
+              <span translate="no" class="text-xs text-surface-300">
                 {item.symbol} - {formatCurrency(item.value)}
               </span>
             </div>
@@ -440,8 +451,10 @@
                   {item.symbol.slice(0, 3)}
                 </div>
                 <div>
-                  <p class="text-sm font-medium text-white">{item.symbol}</p>
-                  <p class="text-xs text-surface-400">{item.percentage.toFixed(1)}% of portfolio</p>
+                  <p translate="no" class="text-sm font-medium text-white">{item.symbol}</p>
+                  <p class="text-xs text-surface-400">
+                    {fmtPercent(item.percentage, 1)} of portfolio
+                  </p>
                 </div>
               </div>
               <p class="text-sm font-medium text-white">{formatCurrency(item.value)}</p>
@@ -537,7 +550,7 @@
                         {holding.symbol.slice(0, 3)}
                       </div>
                       <div>
-                        <p class="font-medium text-white">{holding.symbol}</p>
+                        <p translate="no" class="font-medium text-white">{holding.symbol}</p>
                         <p class="text-xs text-surface-400">{holding.name}</p>
                       </div>
                     </div>
@@ -573,18 +586,20 @@
                         ></div>
                       </div>
                       <span class="text-xs text-surface-400">
-                        {portfolioPercent.toFixed(1)}%
+                        {fmtPercent(portfolioPercent, 1)}
                       </span>
                     </div>
                   </td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-1">
                       <button
+                        aria-label="Record transaction"
                         class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                         title="Record transaction"
                         onclick={() => openRecordTx(holding.id)}
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -595,11 +610,13 @@
                         </svg>
                       </button>
                       <button
+                        aria-label="Edit holding"
                         class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                         title="Edit holding"
                         onclick={() => openEditHolding(holding)}
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -614,11 +631,13 @@
                         </svg>
                       </button>
                       <button
+                        aria-label="Delete holding"
                         class="rounded p-1 text-surface-400 hover:bg-red-500/10 hover:text-red-400"
                         title="Delete holding"
                         onclick={() => openDeleteConfirm(holding.id)}
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -650,18 +669,20 @@
               : 0}
           <Card>
             <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
                   class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-600 text-sm font-bold text-white"
                 >
                   {holding.symbol.slice(0, 3)}
                 </div>
-                <div>
-                  <p class="font-medium text-white">{holding.symbol}</p>
-                  <p class="text-xs text-surface-400">{holding.name}</p>
+                <div class="min-w-0">
+                  <p translate="no" class="font-medium text-white">{holding.symbol}</p>
+                  <p class="truncate text-xs text-surface-400" title={holding.name}>
+                    {holding.name}
+                  </p>
                 </div>
               </div>
-              <div class="text-right">
+              <div class="shrink-0 text-right">
                 <p class="font-medium text-white">
                   {formatCurrency(holding.currentValue ?? holding.totalCost)}
                 </p>
@@ -687,7 +708,7 @@
               </div>
               <div>
                 <p class="text-xs text-surface-500">Portfolio</p>
-                <p class="text-sm text-surface-300">{portfolioPercent.toFixed(1)}%</p>
+                <p class="text-sm text-surface-300">{fmtPercent(portfolioPercent, 1)}</p>
               </div>
             </div>
             <div class="mt-3 flex gap-2 border-t border-surface-700 pt-3">
@@ -714,6 +735,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -750,13 +772,23 @@
         <div class="divide-y divide-surface-700">
           {#each data.transactions as tx}
             {@const holding = (data.holdings || []).find((h: any) => h.id === tx.holdingId)}
-            <div class="flex items-center justify-between px-6 py-4">
-              <div class="flex items-center gap-4">
-                <span class="rounded-full px-2.5 py-1 text-xs font-medium {txTypeColor(tx.type)}">
+            <div
+              class="[content-visibility:auto] [contain-intrinsic-size:auto_4.5rem] flex items-center justify-between px-6 py-4"
+            >
+              <div class="flex min-w-0 items-center gap-4">
+                <span
+                  class="shrink-0 rounded-full px-2.5 py-1 text-xs font-medium {txTypeColor(
+                    tx.type,
+                  )}"
+                >
                   {txTypeLabel(tx.type)}
                 </span>
-                <div>
-                  <p class="text-sm font-medium text-white">
+                <div class="min-w-0">
+                  <p
+                    translate="no"
+                    class="truncate text-sm font-medium text-white"
+                    title={holding ? `${holding.symbol} - ${holding.name}` : 'Unknown'}
+                  >
                     {holding ? `${holding.symbol} - ${holding.name}` : 'Unknown'}
                   </p>
                   <p class="text-xs text-surface-400">
@@ -769,7 +801,7 @@
                   </p>
                 </div>
               </div>
-              <div class="text-right">
+              <div class="shrink-0 text-right">
                 <p
                   class="text-sm font-medium {tx.type === 'sell' ? 'text-green-400' : 'text-white'}"
                 >
@@ -777,8 +809,8 @@
                 </p>
                 <p class="text-xs text-surface-400">{formatDate(tx.date)}</p>
                 {#if tx.txHash}
-                  <p class="mt-0.5 text-xs text-surface-500" title={tx.txHash}>
-                    TX: {tx.txHash.slice(0, 8)}...
+                  <p translate="no" class="mt-0.5 text-xs text-surface-500" title={tx.txHash}>
+                    TX: {tx.txHash.slice(0, 8)}…
                   </p>
                 {/if}
               </div>
@@ -790,6 +822,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-12 w-12 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -817,6 +850,7 @@
       <h3 class="text-lg font-semibold text-white">Watchlist</h3>
       <Button size="sm" onclick={() => (showAddWatchlist = true)}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -834,25 +868,27 @@
         {#each data.watchlist as item}
           <Card>
             <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
                   class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-600 text-sm font-bold text-white"
                 >
                   {item.symbol.slice(0, 3)}
                 </div>
-                <div>
-                  <p class="font-medium text-white">{item.symbol}</p>
-                  <p class="text-xs text-surface-400">{item.name}</p>
+                <div class="min-w-0">
+                  <p translate="no" class="font-medium text-white">{item.symbol}</p>
+                  <p class="truncate text-xs text-surface-400" title={item.name}>{item.name}</p>
                 </div>
               </div>
               <form method="POST" action="?/removeFromWatchlist" use:enhance>
                 <input type="hidden" name="id" value={item.id} />
                 <button
+                  aria-label="Remove from watchlist"
                   type="submit"
                   class="rounded p-1 text-surface-400 hover:bg-red-500/10 hover:text-red-400"
                   title="Remove from watchlist"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -891,6 +927,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-12 w-12 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -939,18 +976,19 @@
             Search Coin
           </label>
           <input
+            autocomplete="off"
             id="coinSearch"
             type="text"
             bind:value={addCoinSearch}
-            placeholder="Search by name or symbol..."
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            placeholder="Search by name or symbol…"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <div class="max-h-48 overflow-y-auto rounded-lg border border-surface-700">
           {#each filteredCoins as coin}
             <button
               type="button"
-              class="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-surface-700"
+              class="[content-visibility:auto] [contain-intrinsic-size:auto_2.75rem] flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-surface-700"
               onclick={() => {
                 selectedCoin = coin;
                 addCoinSearch = '';
@@ -961,9 +999,9 @@
               >
                 {coin.symbol.slice(0, 2)}
               </div>
-              <div>
-                <p class="text-sm font-medium text-white">{coin.name}</p>
-                <p class="text-xs text-surface-400">{coin.symbol}</p>
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-white" title={coin.name}>{coin.name}</p>
+                <p translate="no" class="text-xs text-surface-400">{coin.symbol}</p>
               </div>
             </button>
           {/each}
@@ -976,15 +1014,17 @@
         <div
           class="flex items-center justify-between rounded-lg border border-surface-700 bg-surface-700/50 px-4 py-3"
         >
-          <div class="flex items-center gap-3">
+          <div class="flex min-w-0 items-center gap-3">
             <div
               class="flex h-8 w-8 items-center justify-center rounded-full bg-surface-600 text-xs font-bold text-white"
             >
               {selectedCoin.symbol.slice(0, 2)}
             </div>
-            <div>
-              <p class="text-sm font-medium text-white">{selectedCoin.name}</p>
-              <p class="text-xs text-surface-400">{selectedCoin.symbol}</p>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-medium text-white" title={selectedCoin.name}>
+                {selectedCoin.name}
+              </p>
+              <p translate="no" class="text-xs text-surface-400">{selectedCoin.symbol}</p>
             </div>
           </div>
           <button
@@ -1000,24 +1040,26 @@
         <input type="hidden" name="name" value={selectedCoin.name} />
 
         <Input
+          autocomplete="off"
           id="quantity"
           name="quantity"
           label="Quantity"
           type="number"
           step="any"
           min="0"
-          placeholder="0.00"
+          placeholder="0.00…"
           required
         />
 
         <Input
+          autocomplete="off"
           id="averageCostBasis"
           name="averageCostBasis"
           label="Average Cost Basis (USD per unit)"
           type="number"
           step="any"
           min="0"
-          placeholder="0.00"
+          placeholder="0.00…"
           required
         />
 
@@ -1026,9 +1068,10 @@
             Exchange
           </label>
           <select
+            autocomplete="off"
             id="exchange"
             name="exchange"
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="manual">Manual Entry</option>
             <option value="coinbase">Coinbase</option>
@@ -1038,13 +1081,21 @@
         </div>
 
         <Input
+          autocomplete="off"
+          spellcheck={false}
           id="walletAddress"
           name="walletAddress"
           label="Wallet Address (optional)"
-          placeholder="0x..."
+          placeholder="0x…"
         />
 
-        <Input id="notes" name="notes" label="Notes (optional)" placeholder="Any notes..." />
+        <Input
+          autocomplete="off"
+          id="notes"
+          name="notes"
+          label="Notes (optional)"
+          placeholder="Any notes…"
+        />
       {/if}
 
       {#if form && 'error' in form && form.error}
@@ -1085,13 +1136,16 @@
           >
             {selectedHolding.symbol.slice(0, 3)}
           </div>
-          <div>
-            <p class="text-sm font-medium text-white">{selectedHolding.symbol}</p>
-            <p class="text-xs text-surface-400">{selectedHolding.name}</p>
+          <div class="min-w-0">
+            <p translate="no" class="text-sm font-medium text-white">{selectedHolding.symbol}</p>
+            <p class="truncate text-xs text-surface-400" title={selectedHolding.name}>
+              {selectedHolding.name}
+            </p>
           </div>
         </div>
 
         <Input
+          autocomplete="off"
           id="editQuantity"
           name="quantity"
           label="Quantity"
@@ -1102,6 +1156,7 @@
         />
 
         <Input
+          autocomplete="off"
           id="editCostBasis"
           name="averageCostBasis"
           label="Average Cost Basis (USD)"
@@ -1116,9 +1171,10 @@
             Exchange
           </label>
           <select
+            autocomplete="off"
             id="editExchange"
             name="exchange"
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             value={selectedHolding.exchange || 'manual'}
           >
             <option value="manual">Manual Entry</option>
@@ -1129,6 +1185,7 @@
         </div>
 
         <Input
+          autocomplete="off"
           id="editNotes"
           name="notes"
           label="Notes (optional)"
@@ -1175,15 +1232,16 @@
       <div>
         <label for="txHolding" class="block text-sm font-medium text-surface-300"> Holding </label>
         <select
+          autocomplete="off"
           id="txHolding"
           name="holdingId"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           value={txHoldingId}
           required
         >
-          <option value="">Select a holding...</option>
+          <option value="">Select a holding…</option>
           {#each data.holdings || [] as holding}
-            <option value={holding.id}>
+            <option translate="no" value={holding.id}>
               {holding.symbol} - {holding.name}
             </option>
           {/each}
@@ -1193,9 +1251,10 @@
       <div>
         <label for="txType" class="block text-sm font-medium text-surface-300">Type</label>
         <select
+          autocomplete="off"
           id="txType"
           name="type"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           required
         >
           <option value="buy">Buy</option>
@@ -1207,47 +1266,51 @@
       </div>
 
       <Input
+        autocomplete="off"
         id="txQuantity"
         name="quantity"
         label="Quantity"
         type="number"
         step="any"
         min="0"
-        placeholder="0.00"
+        placeholder="0.00…"
         required
       />
 
       <Input
+        autocomplete="off"
         id="txPrice"
         name="pricePerUnit"
         label="Price Per Unit (USD)"
         type="number"
         step="any"
         min="0"
-        placeholder="0.00"
+        placeholder="0.00…"
         required
       />
 
       <Input
+        autocomplete="off"
         id="txFee"
         name="fee"
         label="Fee (USD, optional)"
         type="number"
         step="any"
         min="0"
-        placeholder="0.00"
+        placeholder="0.00…"
       />
 
-      <Input id="txDate" name="date" label="Date" type="date" />
+      <Input autocomplete="off" id="txDate" name="date" label="Date" type="date" />
 
       <div>
         <label for="txExchange" class="block text-sm font-medium text-surface-300">
           Exchange (optional)
         </label>
         <select
+          autocomplete="off"
           id="txExchange"
           name="exchange"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="">Same as holding</option>
           <option value="coinbase">Coinbase</option>
@@ -1257,9 +1320,16 @@
         </select>
       </div>
 
-      <Input id="txHash" name="txHash" label="Transaction Hash (optional)" placeholder="0x..." />
+      <Input
+        autocomplete="off"
+        spellcheck={false}
+        id="txHash"
+        name="txHash"
+        label="Transaction Hash (optional)"
+        placeholder="0x…"
+      />
 
-      <Input id="txNotes" name="notes" label="Notes (optional)" />
+      <Input autocomplete="off" id="txNotes" name="notes" label="Notes (optional)" />
 
       {#if form && 'error' in form && form.error}
         <p class="text-sm text-red-400">{form.error}</p>
@@ -1291,11 +1361,12 @@
           Search Coin
         </label>
         <input
+          autocomplete="off"
           id="watchlistSearch"
           type="text"
           bind:value={addCoinSearch}
-          placeholder="Search by name or symbol..."
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          placeholder="Search by name or symbol…"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -1306,7 +1377,7 @@
         {#each filteredCoins as coin}
           <button
             type="submit"
-            class="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-surface-700"
+            class="[content-visibility:auto] [contain-intrinsic-size:auto_2.75rem] flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-surface-700"
             onclick={() => {
               watchlistSymbol = coin.symbol;
               watchlistName = coin.name;
@@ -1317,9 +1388,9 @@
             >
               {coin.symbol.slice(0, 2)}
             </div>
-            <div>
-              <p class="text-sm font-medium text-white">{coin.name}</p>
-              <p class="text-xs text-surface-400">{coin.symbol}</p>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-medium text-white" title={coin.name}>{coin.name}</p>
+              <p translate="no" class="text-xs text-surface-400">{coin.symbol}</p>
             </div>
           </button>
         {/each}
@@ -1394,7 +1465,7 @@
     {:else}
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <p class="text-sm text-surface-400">
-          Price history unavailable. CoinGecko may be rate-limiting requests.
+          Price history unavailable. CoinGecko may be rate-limiting requests; try again in a minute.
         </p>
       </div>
     {/if}

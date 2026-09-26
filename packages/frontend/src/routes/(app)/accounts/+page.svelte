@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -73,7 +74,7 @@
         triggerSync(itemId);
       }
     } else {
-      error = 'Failed to link account';
+      error = 'Couldn’t link the account. Try again, or add it manually.';
     }
   }
 
@@ -95,10 +96,10 @@
         syncResult = result?.data?.syncResult ?? null;
         invalidateAll();
       } else {
-        error = 'Transaction sync failed';
+        error = 'Couldn’t sync transactions. Check your connection and try again.';
       }
     } catch {
-      error = 'Transaction sync failed';
+      error = 'Couldn’t sync transactions. Check your connection and try again.';
     } finally {
       syncing = null;
     }
@@ -187,16 +188,17 @@
 
   {#if error}
     <div
+      role="alert"
       class="flex items-center justify-between rounded-lg bg-red-900/50 p-3 text-sm text-red-300"
     >
-      {error}
+      <span class="min-w-0 break-words">{error}</span>
       <button onclick={() => (error = '')} class="text-red-200 hover:text-white">Dismiss</button>
     </div>
   {/if}
 
   {#if linking}
     <div class="flex items-center gap-3 rounded-lg bg-primary-900/30 p-3 text-sm text-primary-300">
-      <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+      <svg aria-hidden="true" class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
         <path
           class="opacity-75"
@@ -204,13 +206,13 @@
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
         />
       </svg>
-      Linking account... Exchanging token and fetching account details.
+      Linking account… Exchanging token and fetching account details.
     </div>
   {/if}
 
   {#if syncing}
     <div class="flex items-center gap-3 rounded-lg bg-blue-900/30 p-3 text-sm text-blue-300">
-      <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+      <svg aria-hidden="true" class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
         <path
           class="opacity-75"
@@ -218,7 +220,7 @@
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
         />
       </svg>
-      Syncing transactions...
+      Syncing transactions…
     </div>
   {/if}
 
@@ -267,7 +269,7 @@
       <div class="divide-y divide-surface-700">
         {#each data.plaidItems as item}
           <div class="flex items-center justify-between px-6 py-3">
-            <div class="flex items-center gap-3">
+            <div class="flex min-w-0 items-center gap-3">
               <div
                 class="h-2 w-2 rounded-full {item.status === 'active'
                   ? 'bg-green-400'
@@ -275,8 +277,11 @@
                     ? 'bg-yellow-400'
                     : 'bg-red-400'}"
               ></div>
-              <div>
-                <p class="font-medium text-white">
+              <div class="min-w-0">
+                <p
+                  class="truncate font-medium text-white"
+                  title={item.institutionName || 'Unknown Institution'}
+                >
                   {item.institutionName || 'Unknown Institution'}
                 </p>
                 <p class="text-xs {statusColor(item.status)}">
@@ -305,10 +310,15 @@
                   onclick={() => triggerSync(item.id)}
                   disabled={syncing === item.id}
                 >
-                  {syncing === item.id ? 'Syncing...' : 'Sync'}
+                  {syncing === item.id ? 'Syncing…' : 'Sync'}
                 </Button>
               {/if}
-              <form method="POST" action="?/unlink" use:enhance>
+              <form
+                use:confirmSubmit={'Unlink this account from Finance Owl?'}
+                method="POST"
+                action="?/unlink"
+                use:enhance
+              >
                 <input type="hidden" name="plaidItemId" value={item.id} />
                 <Button type="submit" variant="ghost" size="sm">Unlink</Button>
               </form>
@@ -337,6 +347,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -367,13 +378,15 @@
     {#each groupByInstitution(data.accounts) as group}
       <Card padding="none">
         <div class="border-b border-surface-700 px-6 py-4">
-          <h3 class="font-semibold text-white">{group.institution}</h3>
+          <h3 class="truncate font-semibold text-white" title={group.institution}>
+            {group.institution}
+          </h3>
         </div>
         <div class="divide-y divide-surface-700">
           {#each group.accounts as account}
             <div class="flex items-center justify-between px-6 py-4">
-              <div>
-                <p class="font-medium text-white">
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={account.name}>
                   {account.name}
                   {#if account.mask}
                     <span class="text-surface-500">...{account.mask}</span>
@@ -419,7 +432,9 @@
       </form>
       {#each data.plaidItems as item}
         <div class="flex items-center gap-2">
-          <span class="text-xs text-surface-400">{item.institutionName}:</span>
+          <span class="min-w-0 truncate text-xs text-surface-400" title={item.institutionName}>
+            {item.institutionName}:
+          </span>
           <Button
             variant="ghost"
             size="sm"
@@ -429,6 +444,8 @@
             Sync Transactions
           </Button>
         </div>
+      {:else}
+        <p class="text-xs text-surface-500">No linked institutions to sync yet.</p>
       {/each}
     </div>
   </details>
@@ -450,22 +467,24 @@
     <div>
       <label for="name" class="block text-sm font-medium text-surface-300">Account Name</label>
       <input
+        autocomplete="off"
         id="name"
         name="name"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="e.g., Chase Checking"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="e.g., Chase Checking…"
       />
     </div>
 
     <div>
       <label for="type" class="block text-sm font-medium text-surface-300">Account Type</label>
       <select
+        autocomplete="off"
         id="type"
         name="type"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
         <option value="checking">Checking</option>
         <option value="savings">Savings</option>
@@ -482,11 +501,12 @@
         >Institution (optional)</label
       >
       <input
+        autocomplete="off"
         id="institutionName"
         name="institutionName"
         type="text"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="e.g., Chase"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="e.g., Chase…"
       />
     </div>
 
@@ -494,12 +514,13 @@
       <label for="balance" class="block text-sm font-medium text-surface-300">Current Balance</label
       >
       <input
+        autocomplete="off"
         id="balance"
         name="balance"
         type="number"
         step="0.01"
         value="0"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       />
     </div>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -13,7 +14,12 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let viewMode = $state<'timeline' | 'list' | 'calendar'>('timeline');
+  let viewMode = $state<'timeline' | 'list' | 'calendar'>(
+    readParam('view', 'timeline', ['timeline', 'list', 'calendar']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('view', viewMode, 'timeline'));
   let reminderDays = $state(3);
 
   $effect(() => {
@@ -152,6 +158,7 @@
             onclick={() => (viewMode = mode.id)}
           >
             <svg
+              aria-hidden="true"
               class="mr-1 inline-block h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -172,7 +179,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Summary strip -->
@@ -201,7 +208,7 @@
       {#if nextBill}
         {@const days = daysUntil(nextBill.expectedDate)}
         <p class="mt-1 text-xl font-bold text-white">{fmt(nextBill.estimatedAmount)}</p>
-        <p class="mt-1 text-xs text-surface-500">
+        <p class="mt-1 break-words text-xs text-surface-500">
           {nextBill.merchantName || nextBill.name}
           {#if days === 0}
             - <span class="text-amber-400">today</span>
@@ -226,6 +233,7 @@
           class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-amber-600/20"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-amber-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -239,17 +247,20 @@
             />
           </svg>
         </div>
-        <div class="flex-1">
+        <div class="min-w-0 flex-1">
           <p class="font-medium text-amber-400">
             {reminderBills.length} bill{reminderBills.length !== 1 ? 's' : ''} due within {reminderDays}
             days
           </p>
-          <p class="text-sm text-surface-400">
+          <p class="break-words text-sm text-surface-400">
             Total: {fmt(reminderBills.reduce((s: number, b: any) => s + b.estimatedAmount, 0))}
             - {reminderBills.map((b: any) => b.merchantName || b.name).join(', ')}
           </p>
         </div>
         <select
+          autocomplete="off"
+          name="reminder-days"
+          aria-label="Reminder lead time"
           bind:value={reminderDays}
           class="rounded-lg border border-surface-600 bg-surface-800 px-2 py-1 text-xs text-white"
         >
@@ -275,7 +286,12 @@
       <Card>
         <div class="flex items-center gap-2">
           <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600/20">
-            <svg class="h-4 w-4 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+            <svg
+              aria-hidden="true"
+              class="h-4 w-4 text-red-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
               <path
                 fill-rule="evenodd"
                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -293,12 +309,17 @@
         <div class="mt-3 space-y-2">
           {#each overdueBills as bill}
             <div class="flex items-center justify-between rounded-lg bg-red-950/30 p-3">
-              <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-600/20">
+              <div class="flex min-w-0 items-center gap-3">
+                <div
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-600/20"
+                >
                   <span class="text-sm font-bold text-red-400">!</span>
                 </div>
-                <div>
-                  <p class="text-sm font-medium text-white">
+                <div class="min-w-0">
+                  <p
+                    class="truncate text-sm font-medium text-white"
+                    title={bill.merchantName || bill.name}
+                  >
                     {bill.merchantName || bill.name}
                   </p>
                   <p class="text-xs text-red-400">
@@ -330,7 +351,7 @@
       <div class="space-y-4">
         {#each timelineWeeks as week, wi}
           <div
-            class="transform transition-all duration-300"
+            class="transform transition duration-300"
             style="animation: slideInUp 0.3s ease-out {wi * 0.1}s both"
           >
             <Card>
@@ -354,15 +375,18 @@
                     ></div>
 
                     <div class="flex items-center justify-between rounded-lg bg-surface-800/50 p-3">
-                      <div class="flex items-center gap-3">
+                      <div class="flex min-w-0 items-center gap-3">
                         {#if bill.categoryColor}
                           <span
-                            class="h-2.5 w-2.5 rounded-full"
+                            class="h-2.5 w-2.5 shrink-0 rounded-full"
                             style="background-color: {bill.categoryColor}"
                           ></span>
                         {/if}
-                        <div>
-                          <p class="text-sm font-medium text-white">
+                        <div class="min-w-0">
+                          <p
+                            class="truncate text-sm font-medium text-white"
+                            title={bill.merchantName || bill.name}
+                          >
                             {bill.merchantName || bill.name}
                           </p>
                           <p class="text-xs text-surface-500">
@@ -387,11 +411,13 @@
                           <form method="POST" action="?/markPaid" use:enhance>
                             <input type="hidden" name="id" value={bill.id} />
                             <button
+                              aria-label="Mark as paid"
                               type="submit"
                               class="rounded p-1 text-surface-400 transition hover:bg-surface-700 hover:text-emerald-400"
                               title="Mark as paid"
                             >
                               <svg
+                                aria-hidden="true"
                                 class="h-4 w-4"
                                 fill="none"
                                 viewBox="0 0 24 24"
@@ -420,6 +446,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-8 text-center">
           <svg
+            aria-hidden="true"
             class="h-12 w-12 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -434,7 +461,7 @@
           </svg>
           <p class="mt-3 text-surface-300">No upcoming bills</p>
           <a href="/subscriptions" class="mt-1 text-sm text-emerald-400 hover:text-emerald-300">
-            Manage subscriptions
+            Manage Subscriptions
           </a>
         </div>
       </Card>
@@ -446,7 +473,12 @@
     {#if overdueBills.length > 0}
       <Card>
         <div class="flex items-center gap-2">
-          <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+          <svg
+            aria-hidden="true"
+            class="h-5 w-5 text-red-400"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
             <path
               fill-rule="evenodd"
               d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -460,15 +492,18 @@
         <div class="mt-3 divide-y divide-surface-700">
           {#each overdueBills as bill}
             <div class="flex items-center justify-between py-3">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 {#if bill.categoryColor}
                   <span
-                    class="h-2.5 w-2.5 rounded-full"
+                    class="h-2.5 w-2.5 shrink-0 rounded-full"
                     style="background-color: {bill.categoryColor}"
                   ></span>
                 {/if}
-                <div>
-                  <p class="text-sm font-medium text-white">
+                <div class="min-w-0">
+                  <p
+                    class="truncate text-sm font-medium text-white"
+                    title={bill.merchantName || bill.name}
+                  >
                     {bill.merchantName || bill.name}
                   </p>
                   <p class="text-xs text-red-400">
@@ -503,15 +538,18 @@
           {#each futureBills as bill}
             {@const days = daysUntil(bill.expectedDate)}
             <div class="flex items-center justify-between py-3">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 {#if bill.categoryColor}
                   <span
-                    class="h-2.5 w-2.5 rounded-full"
+                    class="h-2.5 w-2.5 shrink-0 rounded-full"
                     style="background-color: {bill.categoryColor}"
                   ></span>
                 {/if}
-                <div>
-                  <p class="text-sm font-medium text-white">
+                <div class="min-w-0">
+                  <p
+                    class="truncate text-sm font-medium text-white"
+                    title={bill.merchantName || bill.name}
+                  >
                     {bill.merchantName || bill.name}
                   </p>
                   <p class="text-xs text-surface-500">
@@ -536,11 +574,13 @@
                   <form method="POST" action="?/markPaid" use:enhance>
                     <input type="hidden" name="id" value={bill.id} />
                     <button
+                      aria-label="Mark as paid"
                       type="submit"
                       class="rounded p-1 text-surface-400 transition hover:bg-surface-700 hover:text-emerald-400"
                       title="Mark as paid"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -561,6 +601,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-8 text-center">
           <svg
+            aria-hidden="true"
             class="h-12 w-12 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -575,7 +616,7 @@
           </svg>
           <p class="mt-3 text-surface-300">No upcoming bills</p>
           <a href="/subscriptions" class="mt-1 text-sm text-emerald-400 hover:text-emerald-300">
-            Manage subscriptions
+            Manage Subscriptions
           </a>
         </div>
       </Card>
@@ -593,15 +634,18 @@
         <div class="mt-3 divide-y divide-surface-700">
           {#each data.subscriptions.slice(0, 10) as sub}
             <div class="flex items-center justify-between py-3">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 {#if sub.categoryColor}
                   <span
-                    class="h-2.5 w-2.5 rounded-full"
+                    class="h-2.5 w-2.5 shrink-0 rounded-full"
                     style="background-color: {sub.categoryColor}"
                   ></span>
                 {/if}
-                <div>
-                  <p class="text-sm font-medium text-white">
+                <div class="min-w-0">
+                  <p
+                    class="truncate text-sm font-medium text-white"
+                    title={sub.merchantName || sub.name}
+                  >
                     {sub.merchantName || sub.name}
                   </p>
                   <p class="text-xs text-surface-500">

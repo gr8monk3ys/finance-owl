@@ -73,6 +73,7 @@
             style="background-color: {calc.color}20"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6"
               style="color: {calc.color}"
               fill="none"
@@ -95,6 +96,7 @@
         >
           Open calculator
           <svg
+            aria-hidden="true"
             class="ml-1 h-3 w-3"
             fill="none"
             viewBox="0 0 24 24"

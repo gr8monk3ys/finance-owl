@@ -1,12 +1,16 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Badge } from '$components/ui';
-  import { getAllPlans, type PlanTier } from '@finance-owl/shared';
+  import { getAllPlans, type PlanTier, formatCurrency } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
-  let billingInterval = $state<'month' | 'year'>('month');
+  let billingInterval = $state<'month' | 'year'>(readParam('billing', 'month', ['month', 'year']));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('billing', billingInterval, 'month'));
   let checkoutLoading = $state<string | null>(null);
 
   const currentPlanName = $derived(data.features?.plan || 'free');
@@ -58,7 +62,7 @@
   function getPrice(plan: PlanDisplay): string {
     if (plan.name === 'free') return '$0';
     const price = billingInterval === 'month' ? plan.monthlyPrice : plan.yearlyPrice;
-    return `$${price.toFixed(2)}`;
+    return formatCurrency(price);
   }
 
   function getPeriod(plan: PlanDisplay): string {
@@ -119,11 +123,11 @@
 <div class="mx-auto max-w-6xl space-y-12 pb-12">
   <!-- Header -->
   <div class="text-center">
-    <h1
+    <h2
       class="bg-gradient-to-r from-emerald-400 via-primary-400 to-emerald-300 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl"
     >
-      Simple, transparent pricing
-    </h1>
+      Simple, Transparent Pricing
+    </h2>
     <p class="mx-auto mt-4 max-w-2xl text-lg text-surface-400">
       Start free, upgrade when you need more, and choose monthly or yearly billing on paid plans.
     </p>
@@ -131,6 +135,7 @@
 
   {#if form?.error}
     <div
+      role="alert"
       class="mx-auto max-w-md rounded-lg bg-red-900/50 px-4 py-3 text-center text-sm text-red-300"
     >
       {form.error}
@@ -140,7 +145,7 @@
   <!-- Billing Toggle -->
   <div class="flex items-center justify-center gap-3">
     <button
-      class="rounded-lg px-4 py-2 text-sm font-medium transition-all {billingInterval === 'month'
+      class="rounded-lg px-4 py-2 text-sm font-medium transition-colors {billingInterval === 'month'
         ? 'bg-surface-700 text-white shadow-lg shadow-black/20'
         : 'text-surface-400 hover:text-surface-200'}"
       onclick={() => (billingInterval = 'month')}
@@ -148,7 +153,7 @@
       Monthly
     </button>
     <button
-      class="relative rounded-lg px-4 py-2 text-sm font-medium transition-all {billingInterval ===
+      class="relative rounded-lg px-4 py-2 text-sm font-medium transition-colors {billingInterval ===
       'year'
         ? 'bg-surface-700 text-white shadow-lg shadow-black/20'
         : 'text-surface-400 hover:text-surface-200'}"
@@ -167,7 +172,7 @@
   <div class="grid gap-6 sm:grid-cols-3">
     {#each planDisplays as plan}
       <div
-        class="relative flex flex-col overflow-hidden rounded-2xl border bg-gradient-to-b transition-all duration-300 {plan.highlighted
+        class="relative flex flex-col overflow-hidden rounded-2xl border bg-gradient-to-b transition-colors duration-300 {plan.highlighted
           ? 'border-emerald-500/50 shadow-xl shadow-emerald-900/20 scale-[1.02]'
           : 'border-surface-700/50 hover:border-surface-600'} {plan.gradient}"
       >
@@ -194,6 +199,7 @@
               >
                 {#if plan.name === 'free'}
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 {plan.iconColor}"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -208,6 +214,7 @@
                   </svg>
                 {:else if plan.name === 'pro'}
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 {plan.iconColor}"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -222,6 +229,7 @@
                   </svg>
                 {:else}
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 {plan.iconColor}"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -263,6 +271,7 @@
             {#each plan.features as feature}
               <li class="flex items-start gap-3 text-sm text-surface-300">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-4 w-4 flex-shrink-0 {plan.highlighted
                     ? 'text-emerald-400'
                     : plan.name === 'premium'
@@ -344,7 +353,7 @@
 
   <!-- Feature Comparison Table -->
   <Card>
-    <h2 class="text-2xl font-bold text-white">Compare all features</h2>
+    <h2 class="text-2xl font-bold text-white">Compare All Features</h2>
     <p class="mt-1 text-sm text-surface-400">See exactly what you get with each plan.</p>
 
     <div class="mt-6 overflow-x-auto">
@@ -367,6 +376,7 @@
                   {#if typeof val === 'boolean'}
                     {#if val}
                       <svg
+                        aria-hidden="true"
                         class="mx-auto h-5 w-5 {tier === 'pro'
                           ? 'text-emerald-400'
                           : tier === 'premium'
@@ -383,6 +393,7 @@
                       </svg>
                     {:else}
                       <svg
+                        aria-hidden="true"
                         class="mx-auto h-5 w-5 text-surface-600"
                         viewBox="0 0 20 20"
                         fill="currentColor"
@@ -450,7 +461,7 @@
         </h3>
         <p class="mt-2 text-sm text-surface-400">
           Yearly plans save you approximately 17% compared to monthly billing. You're billed once
-          per year instead of twelve times.
+          per year instead of 12 times.
         </p>
       </div>
       <div>

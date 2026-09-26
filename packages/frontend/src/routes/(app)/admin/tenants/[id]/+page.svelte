@@ -54,10 +54,10 @@
         saveMessage = 'Branding saved successfully';
       } else {
         const err = await res.json();
-        saveMessage = `Error: ${err.message || 'Failed to save'}`;
+        saveMessage = `Error: ${err.message || 'Couldn’t save. Check your connection and try again.'}`;
       }
     } catch {
-      saveMessage = 'Error: Failed to save branding';
+      saveMessage = 'Error: Couldn’t save branding. Check your connection and try again.';
     }
     saving = false;
   }
@@ -81,10 +81,10 @@
         saveMessage = 'Settings saved successfully';
       } else {
         const err = await res.json();
-        saveMessage = `Error: ${err.message || 'Failed to save'}`;
+        saveMessage = `Error: ${err.message || 'Couldn’t save. Check your connection and try again.'}`;
       }
     } catch {
-      saveMessage = 'Error: Failed to save settings';
+      saveMessage = 'Error: Couldn’t save settings. Check your connection and try again.';
     }
     saving = false;
   }
@@ -109,13 +109,24 @@
       href="/admin/tenants"
       class="rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition-colors duration-150"
     >
-      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
-    <div>
-      <h1 class="text-2xl font-bold text-white">{data.tenant.name}</h1>
-      <p class="text-sm text-surface-400">{data.tenant.slug}.financeowl.com</p>
+    <div class="min-w-0">
+      <h1 class="truncate text-2xl font-bold text-white" title={data.tenant.name}>
+        {data.tenant.name}
+      </h1>
+      <p class="truncate text-sm text-surface-400" title="{data.tenant.slug}.financeowl.com">
+        {data.tenant.slug}.financeowl.com
+      </p>
     </div>
     <span
       class="ml-auto inline-flex items-center rounded-md border px-2 py-1 text-xs font-medium capitalize
@@ -131,7 +142,8 @@
 
   {#if saveMessage}
     <div
-      class="rounded-lg border px-4 py-3 text-sm
+      role="status"
+      class="rounded-lg border px-4 py-3 text-sm break-words
 			{saveMessage.startsWith('Error')
         ? 'border-red-400/20 bg-red-400/10 text-red-400'
         : 'border-emerald-400/20 bg-emerald-400/10 text-emerald-400'}"
@@ -150,11 +162,13 @@
             >Tenant Name</label
           >
           <input
+            autocomplete="off"
+            name="tenant-name"
             id="tenant-name"
             type="text"
             bind:value={tenantName}
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 
@@ -163,6 +177,9 @@
             >Slug (read-only)</label
           >
           <input
+            autocomplete="off"
+            spellcheck={false}
+            name="slug"
             id="slug"
             type="text"
             value={data.tenant.slug}
@@ -177,12 +194,15 @@
             >Custom Domain</label
           >
           <input
+            autocomplete="off"
+            spellcheck={false}
+            name="custom-domain"
             id="custom-domain"
             type="text"
             bind:value={customDomain}
-            placeholder="app.acme.com"
+            placeholder="app.acme.com…"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 
@@ -190,10 +210,12 @@
           <div>
             <label for="plan" class="block text-sm font-medium text-surface-300 mb-1.5">Plan</label>
             <select
+              autocomplete="off"
+              name="plan"
               id="plan"
               bind:value={plan}
               class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-								focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+								focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             >
               <option value="free">Free</option>
               <option value="pro">Pro</option>
@@ -205,12 +227,14 @@
               >Max Users</label
             >
             <input
+              autocomplete="off"
+              name="max-users"
               id="max-users"
               type="number"
               bind:value={maxUsers}
               min="1"
               class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-								focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+								focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
             />
           </div>
         </div>
@@ -221,7 +245,7 @@
           class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white
 						hover:bg-primary-500 disabled:opacity-50 transition-colors duration-150"
         >
-          {saving ? 'Saving...' : 'Save Settings'}
+          {saving ? 'Saving…' : 'Save Settings'}
         </button>
       </div>
     </div>
@@ -235,12 +259,14 @@
             >App Name</label
           >
           <input
+            autocomplete="off"
+            name="app-name"
             id="app-name"
             type="text"
             bind:value={appName}
-            placeholder="Finance Owl"
+            placeholder="Finance Owl…"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 
@@ -251,16 +277,20 @@
             >
             <div class="flex items-center gap-2">
               <input
+                name="primary-color"
                 id="primary-color"
                 type="color"
                 bind:value={primaryColor}
                 class="h-9 w-12 cursor-pointer rounded border border-surface-600/50 bg-transparent"
               />
               <input
+                autocomplete="off"
+                name="primary-color"
+                aria-label="Primary color hex value"
                 type="text"
                 bind:value={primaryColor}
                 class="flex-1 rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white font-mono
-									focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+									focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
               />
             </div>
           </div>
@@ -270,16 +300,20 @@
             >
             <div class="flex items-center gap-2">
               <input
+                name="accent-color"
                 id="accent-color"
                 type="color"
                 bind:value={accentColor}
                 class="h-9 w-12 cursor-pointer rounded border border-surface-600/50 bg-transparent"
               />
               <input
+                autocomplete="off"
+                name="accent-color"
+                aria-label="Accent color hex value"
                 type="text"
                 bind:value={accentColor}
                 class="flex-1 rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white font-mono
-									focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+									focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
               />
             </div>
           </div>
@@ -290,12 +324,15 @@
             >Logo URL</label
           >
           <input
+            autocomplete="off"
+            spellcheck={false}
+            name="logo-url"
             id="logo-url"
             type="url"
             bind:value={logoUrl}
-            placeholder="https://example.com/logo.svg"
+            placeholder="https://example.com/logo.svg…"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 
@@ -304,12 +341,15 @@
             >Favicon URL</label
           >
           <input
+            autocomplete="off"
+            spellcheck={false}
+            name="favicon-url"
             id="favicon-url"
             type="url"
             bind:value={faviconUrl}
-            placeholder="https://example.com/favicon.ico"
+            placeholder="https://example.com/favicon.ico…"
             class="w-full rounded-lg border border-surface-600/50 bg-surface-700/50 px-3 py-2 text-sm text-white
-							placeholder:text-surface-500 focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+							placeholder:text-surface-500 focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
 
@@ -318,7 +358,13 @@
           <p class="text-xs font-medium uppercase tracking-wider text-surface-500 mb-3">Preview</p>
           <div class="flex items-center gap-3">
             {#if logoUrl}
-              <img src={logoUrl} alt="Logo preview" class="h-8 w-8 rounded-lg object-contain" />
+              <img
+                width="32"
+                height="32"
+                src={logoUrl}
+                alt="Logo preview"
+                class="h-8 w-8 rounded-lg object-contain"
+              />
             {:else}
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white"
@@ -327,7 +373,11 @@
                 {appName.charAt(0)}
               </div>
             {/if}
-            <span class="text-lg font-bold text-white">{appName}</span>
+            <span
+              translate="no"
+              class="min-w-0 truncate text-lg font-bold text-white"
+              title={appName}>{appName}</span
+            >
           </div>
           <div class="mt-3 flex gap-2">
             <div class="h-6 w-20 rounded" style="background-color: {primaryColor}"></div>
@@ -341,7 +391,7 @@
           class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white
 						hover:bg-primary-500 disabled:opacity-50 transition-colors duration-150"
         >
-          {saving ? 'Saving...' : 'Save Branding'}
+          {saving ? 'Saving…' : 'Save Branding'}
         </button>
       </div>
     </div>
@@ -367,8 +417,12 @@
               {member.userName?.charAt(0).toUpperCase() ?? '?'}
             </div>
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-white truncate">{member.userName}</p>
-              <p class="text-xs text-surface-500 truncate">{member.userEmail}</p>
+              <p class="text-sm font-medium text-white truncate" title={member.userName}>
+                {member.userName}
+              </p>
+              <p class="text-xs text-surface-500 truncate" title={member.userEmail}>
+                {member.userEmail}
+              </p>
             </div>
             <span
               class="inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-medium capitalize {getRoleColor(

@@ -266,6 +266,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -291,6 +292,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -318,6 +320,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-blue-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -343,6 +346,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-purple-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -373,7 +377,7 @@
       {#each [{ step: 1, label: 'Select Bill' }, { step: 2, label: 'Set Target' }, { step: 3, label: 'View Strategy' }, { step: 4, label: 'Track Outcome' }] as item}
         <button
           type="button"
-          class="flex flex-1 items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition {wizardStep ===
+          class="flex flex-1 items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition hover:bg-surface-800/60 {wizardStep ===
           item.step
             ? 'border-primary-500 text-primary-400'
             : wizardStep > item.step
@@ -393,6 +397,7 @@
           >
             {#if wizardStep > item.step}
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -436,6 +441,7 @@
               }}
             >
               <svg
+                aria-hidden="true"
                 class="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -471,8 +477,8 @@
                     : 'border-surface-700 bg-surface-800 hover:border-surface-600'}"
                   onclick={() => (selectedProvider = p.name)}
                 >
-                  <div>
-                    <p class="text-sm font-medium text-white">{p.name}</p>
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-medium text-white" title={p.name}>{p.name}</p>
                     <div class="mt-1 flex items-center gap-2">
                       <span
                         class="inline-flex rounded-full px-1.5 py-0.5 text-xs font-medium {difficultyBadge(
@@ -496,10 +502,13 @@
           {:else}
             <div class="rounded-lg border border-surface-700 bg-surface-800 p-4">
               <input
+                autocomplete="off"
+                name="selected-provider"
+                aria-label="Provider name"
                 type="text"
-                placeholder="Enter provider name..."
+                placeholder="Enter provider name…"
                 bind:value={selectedProvider}
-                class="w-full rounded-lg border border-surface-700 bg-surface-900 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="w-full rounded-lg border border-surface-700 bg-surface-900 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               />
               <p class="mt-2 text-xs text-surface-500">
                 No pre-configured providers for this category. Enter your provider name above.
@@ -534,13 +543,15 @@
           <div class="relative">
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
             <input
+              autocomplete="off"
+              name="wizCurrentAmount"
               id="wizCurrentAmount"
               type="number"
               step="0.01"
               min="0"
               bind:value={currentAmount}
-              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-              placeholder="e.g. 120.00"
+              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+              placeholder="e.g. 120.00…"
             />
           </div>
         </div>
@@ -552,13 +563,15 @@
           <div class="relative">
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
             <input
+              autocomplete="off"
+              name="wizTargetAmount"
               id="wizTargetAmount"
               type="number"
               step="0.01"
               min="0"
               bind:value={targetAmount}
-              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-              placeholder="e.g. 85.00"
+              class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+              placeholder="e.g. 85.00…"
             />
           </div>
           {#if currentAmount > 0}
@@ -586,6 +599,7 @@
             </div>
             <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-600/20">
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-green-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -619,6 +633,7 @@
               onclick={() => (selectedMethod = method)}
             >
               <svg
+                aria-hidden="true"
                 class="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -668,8 +683,8 @@
       <!-- Strategy Header -->
       <Card>
         <div class="flex items-start justify-between">
-          <div>
-            <h3 class="text-lg font-semibold text-white">
+          <div class="min-w-0">
+            <h3 class="break-words text-lg font-semibold text-white">
               Negotiation Strategy: {strategy.provider}
             </h3>
             <div class="mt-2 flex flex-wrap items-center gap-2">
@@ -708,11 +723,13 @@
         <div class="mt-4 grid gap-3 sm:grid-cols-3">
           <div class="rounded-lg bg-surface-900/50 p-3">
             <p class="text-xs text-surface-500">Best Time to Call</p>
-            <p class="mt-1 text-sm font-medium text-white">{strategy.bestTimeToCall}</p>
+            <p class="mt-1 break-words text-sm font-medium text-white">{strategy.bestTimeToCall}</p>
           </div>
           <div class="rounded-lg bg-surface-900/50 p-3">
             <p class="text-xs text-surface-500">Department</p>
-            <p class="mt-1 text-sm font-medium text-white">{strategy.departmentToAsk}</p>
+            <p class="mt-1 break-words text-sm font-medium text-white">
+              {strategy.departmentToAsk}
+            </p>
           </div>
           <div class="rounded-lg bg-surface-900/50 p-3">
             <p class="text-xs text-surface-500">Recommended Approach</p>
@@ -731,23 +748,25 @@
             <div class="rounded-lg border border-surface-700 bg-surface-900/30 p-4">
               <div class="mb-2 flex items-center gap-2">
                 <span
-                  class="flex h-7 w-7 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white"
+                  class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white"
                 >
                   {step.order}
                 </span>
-                <h5 class="font-semibold text-white">{step.title}</h5>
+                <h5 class="min-w-0 break-words font-semibold text-white">{step.title}</h5>
               </div>
-              <p class="mb-3 text-sm text-surface-400">{step.description}</p>
+              <p class="mb-3 break-words text-sm text-surface-400">{step.description}</p>
               {#if step.script}
                 <div class="relative rounded-lg bg-surface-800 p-3">
-                  <p class="pr-8 text-sm italic text-surface-300">{step.script}</p>
+                  <p class="break-words pr-8 text-sm italic text-surface-300">{step.script}</p>
                   <button
                     type="button"
                     class="absolute right-2 top-2 rounded p-1 text-surface-500 transition hover:bg-surface-700 hover:text-white"
                     onclick={() => copyToClipboard(step.script, i)}
+                    aria-label={copiedIndex === i ? 'Script copied' : 'Copy script'}
                   >
                     {#if copiedIndex === i}
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4 text-green-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -762,6 +781,7 @@
                       </svg>
                     {:else}
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -779,12 +799,14 @@
                 </div>
               {/if}
               {#if step.notes}
-                <p class="mt-2 text-xs text-surface-500">
+                <p class="mt-2 break-words text-xs text-surface-500">
                   <span class="font-medium text-surface-400">Tip:</span>
                   {step.notes}
                 </p>
               {/if}
             </div>
+          {:else}
+            <p class="text-sm text-surface-500">No script steps for this provider yet.</p>
           {/each}
         </div>
       </Card>
@@ -800,9 +822,10 @@
               onclick={() => copyToClipboard(phrase, 100 + i)}
             >
               <span class="mt-0.5 flex-shrink-0 text-xs font-bold text-primary-400">{i + 1}.</span>
-              <span class="flex-1 text-sm text-surface-300">{phrase}</span>
+              <span class="min-w-0 flex-1 break-words text-sm text-surface-300">{phrase}</span>
               {#if copiedIndex === 100 + i}
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 flex-shrink-0 text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -813,6 +836,7 @@
                 </svg>
               {:else}
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 flex-shrink-0 text-surface-600 transition group-hover:text-surface-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -827,6 +851,8 @@
                 </svg>
               {/if}
             </button>
+          {:else}
+            <p class="text-sm text-surface-500">No key phrases for this provider yet.</p>
           {/each}
         </div>
       </Card>
@@ -839,11 +865,13 @@
             {#each strategy.competitorOffers as offer}
               <div class="rounded-lg border border-surface-700 bg-surface-900/50 p-4">
                 <div class="flex items-center justify-between">
-                  <p class="font-medium text-white">{offer.competitor}</p>
+                  <p class="min-w-0 truncate font-medium text-white" title={offer.competitor}>
+                    {offer.competitor}
+                  </p>
                   <p class="text-sm font-bold text-primary-400">{offer.price}</p>
                 </div>
-                <p class="mt-1 text-xs text-surface-500">{offer.details}</p>
-                <p class="mt-2 text-xs italic text-surface-400">{offer.useAs}</p>
+                <p class="mt-1 break-words text-xs text-surface-500">{offer.details}</p>
+                <p class="mt-2 break-words text-xs italic text-surface-400">{offer.useAs}</p>
               </div>
             {/each}
           </div>
@@ -859,7 +887,7 @@
               <div class="flex gap-2 rounded-lg bg-surface-900/50 p-3">
                 <span class="mt-0.5 flex-shrink-0 text-xs font-bold text-primary-400">{i + 1}.</span
                 >
-                <p class="text-sm text-surface-300">{tip}</p>
+                <p class="min-w-0 break-words text-sm text-surface-300">{tip}</p>
               </div>
             {/each}
           </div>
@@ -928,20 +956,22 @@
           <div class="space-y-4">
             <div class="rounded-lg bg-surface-900/50 p-4">
               <p class="text-xs font-medium text-surface-500">Subject</p>
-              <p class="mt-1 text-sm font-medium text-white">{emailTemplate.subject}</p>
+              <p class="mt-1 break-words text-sm font-medium text-white">{emailTemplate.subject}</p>
             </div>
             <div class="rounded-lg bg-surface-900/50 p-4">
               <p class="text-xs font-medium text-surface-500">Body</p>
               <pre
-                class="mt-2 whitespace-pre-wrap text-sm text-surface-300">{emailTemplate.body}</pre>
+                class="mt-2 whitespace-pre-wrap break-words text-sm text-surface-300">{emailTemplate.body}</pre>
             </div>
             <div class="rounded-lg border border-surface-700 bg-surface-900/30 p-4">
               <p class="text-xs font-medium text-surface-500">
                 Follow-up Email (send after 5 business days)
               </p>
-              <p class="mt-2 text-xs text-surface-400">Subject: {emailTemplate.followUpSubject}</p>
+              <p class="mt-2 break-words text-xs text-surface-400">
+                Subject: {emailTemplate.followUpSubject}
+              </p>
               <pre
-                class="mt-2 whitespace-pre-wrap text-xs text-surface-400">{emailTemplate.followUpBody}</pre>
+                class="mt-2 whitespace-pre-wrap break-words text-xs text-surface-400">{emailTemplate.followUpBody}</pre>
             </div>
           </div>
         </Card>
@@ -949,7 +979,12 @@
     {:else}
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
-          <svg class="h-12 w-12 animate-spin text-primary-400" fill="none" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            class="h-12 w-12 animate-spin text-primary-400"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
             ></circle>
             <path
@@ -958,7 +993,7 @@
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          <p class="mt-4 text-surface-300">Generating your negotiation strategy...</p>
+          <p class="mt-4 text-surface-300">Generating your negotiation strategy…</p>
         </div>
       </Card>
     {/if}
@@ -977,9 +1012,11 @@
           {#each attempts as attempt}
             <div class="rounded-lg border border-surface-700 bg-surface-900/30 p-4">
               <div class="flex items-start justify-between">
-                <div>
+                <div class="min-w-0">
                   <div class="flex items-center gap-2">
-                    <p class="font-medium text-white">{attempt.provider}</p>
+                    <p class="min-w-0 truncate font-medium text-white" title={attempt.provider}>
+                      {attempt.provider}
+                    </p>
                     <span
                       class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {statusBadge(
                         attempt.status,
@@ -1014,7 +1051,7 @@
                 </div>
               </div>
               {#if attempt.notes}
-                <p class="mt-2 text-xs text-surface-500">{attempt.notes}</p>
+                <p class="mt-2 break-words text-xs text-surface-500">{attempt.notes}</p>
               {/if}
               {#if attempt.status !== 'succeeded' && attempt.status !== 'failed'}
                 <div class="mt-3 flex gap-2">
@@ -1036,6 +1073,7 @@
       {:else}
         <div class="py-8 text-center">
           <svg
+            aria-hidden="true"
             class="mx-auto h-12 w-12 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -1063,11 +1101,12 @@
         <div class="space-y-3">
           {#each succeededAttempts as attempt}
             <div class="flex items-center justify-between rounded-lg bg-green-500/5 p-4">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
-                  class="flex h-10 w-10 items-center justify-center rounded-full bg-green-600/20"
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-600/20"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-green-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -1081,8 +1120,10 @@
                     />
                   </svg>
                 </div>
-                <div>
-                  <p class="font-medium text-white">{attempt.provider}</p>
+                <div class="min-w-0">
+                  <p class="truncate font-medium text-white" title={attempt.provider}>
+                    {attempt.provider}
+                  </p>
                   <p class="text-xs text-surface-500">
                     {categoryLabel(attempt.billType)} - {formatDate(attempt.completedAt)}
                   </p>
@@ -1112,6 +1153,7 @@
         <div class="rounded-lg bg-surface-900/50 p-4">
           <div class="mb-2 flex items-center gap-2">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -1134,6 +1176,7 @@
         <div class="rounded-lg bg-surface-900/50 p-4">
           <div class="mb-2 flex items-center gap-2">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -1149,13 +1192,14 @@
             <h5 class="text-sm font-semibold text-white">Ask for Retention</h5>
           </div>
           <p class="text-sm text-surface-400">
-            Always ask for the "retention" or "loyalty" department. Regular customer service agents
+            Always ask for the “retention” or “loyalty” department. Regular customer service agents
             have limited discount authority. Retention teams are authorized to offer the best deals.
           </p>
         </div>
         <div class="rounded-lg bg-surface-900/50 p-4">
           <div class="mb-2 flex items-center gap-2">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-yellow-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -1171,13 +1215,14 @@
             <h5 class="text-sm font-semibold text-white">Be Prepared to Leave</h5>
           </div>
           <p class="text-sm text-surface-400">
-            The best offers often come from the "save" team when you confirm cancellation. Be
+            The best offers often come from the “save” team when you confirm cancellation. Be
             genuinely willing to switch providers for maximum leverage.
           </p>
         </div>
         <div class="rounded-lg bg-surface-900/50 p-4">
           <div class="mb-2 flex items-center gap-2">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-blue-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -1231,10 +1276,11 @@
           Outcome
         </label>
         <select
+          autocomplete="off"
           id="outcomeStatus"
           name="status"
           required
-          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="in_progress">Still In Progress</option>
           <option value="succeeded">Success - Got a Discount</option>
@@ -1250,12 +1296,13 @@
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="outcomeAmount"
             name="negotiatedAmount"
             type="number"
             step="0.01"
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            placeholder="Leave blank if not successful"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+            placeholder="Leave blank if not successful…"
           />
         </div>
       </div>
@@ -1265,11 +1312,12 @@
           Notes
         </label>
         <textarea
+          autocomplete="off"
           id="outcomeNotes"
           name="notes"
           rows="3"
-          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="Agent name, reference number, details about the offer..."></textarea>
+          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="Agent name, reference number, details about the offer…"></textarea>
       </div>
 
       <div class="flex justify-end gap-3 pt-2">

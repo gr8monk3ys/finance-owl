@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Spinner } from '$components/ui';
@@ -8,7 +10,12 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let activeTab = $state<'suggestions' | 'insights' | 'predictions' | 'patterns'>('suggestions');
+  let activeTab = $state<'suggestions' | 'insights' | 'predictions' | 'patterns'>(
+    readParam('tab', 'suggestions', ['suggestions', 'insights', 'predictions', 'patterns']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'suggestions'));
   let sensitivity = $state<'conservative' | 'moderate' | 'aggressive'>('moderate');
   let isAutoAdjusting = $state(false);
   let acceptedCategories = $state<Set<string>>(new Set());
@@ -31,7 +38,7 @@
   });
 
   function fmtPercent(value: number): string {
-    return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
+    return formatPercent(value, 1, { signed: true });
   }
 
   function getConfidenceColor(confidence: string | number): string {
@@ -170,7 +177,14 @@
         href="/budgets"
         class="inline-flex items-center gap-2 rounded-lg bg-surface-700 px-4 py-2 text-sm text-surface-200 hover:bg-surface-600 transition"
       >
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
         Back to Budgets
@@ -181,18 +195,21 @@
 
   <!-- Error banner -->
   {#if form?.error}
-    <div class="rounded-lg border border-red-700/50 bg-red-900/30 p-4 text-sm text-red-300">
+    <div
+      role="alert"
+      class="rounded-lg border border-red-700/50 bg-red-900/30 p-4 text-sm text-red-300"
+    >
       {form.error}
     </div>
   {/if}
 
   <!-- Adjustments result banner -->
   {#if form?.adjustments && form.adjustments.length > 0}
-    <div class="rounded-lg border border-emerald-700/50 bg-emerald-900/30 p-4">
+    <div role="status" class="rounded-lg border border-emerald-700/50 bg-emerald-900/30 p-4">
       <p class="text-sm font-medium text-emerald-300">Budgets adjusted successfully!</p>
       <ul class="mt-2 space-y-1">
         {#each form.adjustments as adj}
-          <li class="text-sm text-emerald-200">
+          <li class="break-words text-sm text-emerald-200">
             {adj.categoryName}: {fmt(adj.previousAmount)} &rarr; {fmt(adj.newAmount)}
             <span class="text-emerald-400">({fmtPercent(adj.changePercent)})</span>
           </li>
@@ -235,6 +252,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -259,9 +277,11 @@
           {@const accepted = acceptedCategories.has(suggestion.categoryId)}
           <Card class={accepted ? 'opacity-60' : ''}>
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div class="flex-1 space-y-2">
+              <div class="min-w-0 flex-1 space-y-2">
                 <div class="flex items-center gap-3">
-                  <h3 class="font-semibold text-white">{suggestion.categoryName}</h3>
+                  <h3 class="truncate font-semibold text-white" title={suggestion.categoryName}>
+                    {suggestion.categoryName}
+                  </h3>
                   <span
                     class="rounded-full px-2 py-0.5 text-xs font-medium {getConfidenceColor(
                       suggestion.confidence,
@@ -270,7 +290,7 @@
                     {suggestion.confidence} confidence
                   </span>
                 </div>
-                <p class="text-sm text-surface-400">{suggestion.reasoning}</p>
+                <p class="break-words text-sm text-surface-400">{suggestion.reasoning}</p>
                 <div class="flex flex-wrap gap-4 text-xs text-surface-500">
                   <span
                     >Avg: <span class="text-surface-300">{fmt(suggestion.averageSpending)}</span
@@ -320,6 +340,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -349,12 +370,15 @@
               >
                 {styles.icon}
               </div>
-              <div class="flex-1">
-                <h3 class="font-semibold text-white">{insight.title}</h3>
-                <p class="mt-1 text-sm text-surface-300">{insight.description}</p>
+              <div class="min-w-0 flex-1">
+                <h3 class="break-words font-semibold text-white">{insight.title}</h3>
+                <p class="mt-1 break-words text-sm text-surface-300">{insight.description}</p>
                 {#if insight.categoryName}
                   <div class="mt-2 flex items-center gap-3">
-                    <span class="rounded-full bg-surface-700 px-2 py-0.5 text-xs text-surface-300">
+                    <span
+                      class="truncate rounded-full bg-surface-700 px-2 py-0.5 text-xs text-surface-300"
+                      title={insight.categoryName}
+                    >
                       {insight.categoryName}
                     </span>
                     {#if insight.amount}
@@ -378,6 +402,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -413,8 +438,10 @@
         {#each data.predictions as prediction}
           <Card>
             <div class="flex items-start justify-between">
-              <div>
-                <h3 class="font-semibold text-white">{prediction.categoryName}</h3>
+              <div class="min-w-0">
+                <h3 class="truncate font-semibold text-white" title={prediction.categoryName}>
+                  {prediction.categoryName}
+                </h3>
                 <div class="mt-1 flex items-center gap-2">
                   <span class="text-lg font-bold text-primary-400">
                     {fmt(prediction.predictedAmount)}
@@ -439,14 +466,14 @@
               <div class="flex items-center justify-between text-xs text-surface-500">
                 <span>Confidence</span>
                 <span class={getConfidenceColor(prediction.confidence)}
-                  >{(prediction.confidence * 100).toFixed(0)}%</span
+                  >{formatPercent(prediction.confidence * 100)}</span
                 >
               </div>
               <div class="mt-1 h-1.5 overflow-hidden rounded-full bg-surface-700">
                 <div
                   class="{getConfidenceBg(
                     prediction.confidence,
-                  )} h-full rounded-full transition-all"
+                  )} h-full rounded-full transition-[width]"
                   style="width: {prediction.confidence * 100}%"
                 ></div>
               </div>
@@ -463,6 +490,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -554,6 +582,7 @@
                 class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-amber-900/30 text-amber-400"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -567,16 +596,18 @@
                   />
                 </svg>
               </div>
-              <div>
+              <div class="min-w-0">
                 <div class="flex items-center gap-2">
-                  <h3 class="font-semibold text-white">{pattern.categoryName}</h3>
+                  <h3 class="truncate font-semibold text-white" title={pattern.categoryName}>
+                    {pattern.categoryName}
+                  </h3>
                   <span
                     class="rounded-full bg-surface-700 px-2 py-0.5 text-xs text-amber-400 capitalize"
                   >
                     {pattern.pattern.replace(/_/g, ' ')}
                   </span>
                 </div>
-                <p class="mt-1 text-sm text-surface-300">{pattern.recommendation}</p>
+                <p class="mt-1 break-words text-sm text-surface-300">{pattern.recommendation}</p>
                 <div class="mt-2 flex items-center gap-2 text-xs text-surface-500">
                   <span
                     >Average increase: <span class="text-amber-400 font-medium"
@@ -602,7 +633,7 @@
 <!-- Auto-Adjust Modal -->
 {#if showAutoAdjustModal}
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+    class="fixed inset-0 z-50 flex items-center justify-center overscroll-contain bg-black/60 backdrop-blur-sm"
     role="dialog"
   >
     <div class="mx-4 w-full max-w-md rounded-2xl bg-surface-800 p-6 shadow-2xl">
@@ -637,7 +668,7 @@
               name="sensitivity"
               value="conservative"
               bind:group={sensitivity}
-              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
             />
             <div>
               <p class="text-sm font-medium text-white">Conservative</p>
@@ -656,7 +687,7 @@
               name="sensitivity"
               value="moderate"
               bind:group={sensitivity}
-              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
             />
             <div>
               <p class="text-sm font-medium text-white">Moderate</p>
@@ -675,7 +706,7 @@
               name="sensitivity"
               value="aggressive"
               bind:group={sensitivity}
-              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+              class="mt-0.5 h-4 w-4 border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
             />
             <div>
               <p class="text-sm font-medium text-white">Aggressive</p>
@@ -696,7 +727,7 @@
             Cancel
           </Button>
           <Button type="submit" loading={isAutoAdjusting}>
-            {isAutoAdjusting ? 'Adjusting...' : 'Apply Adjustments'}
+            {isAutoAdjusting ? 'Adjusting…' : 'Apply Adjustments'}
           </Button>
         </div>
       </form>
