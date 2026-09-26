@@ -63,7 +63,8 @@
     };
     script.onerror = () => {
       loading = false;
-      error = 'Failed to load Plaid Link SDK';
+      error =
+        'Couldn’t load Plaid Link. Check your connection or turn off content blockers, then try again.';
     };
     document.head.appendChild(script);
 
@@ -74,7 +75,7 @@
 
   function openPlaidLink() {
     if (!(window as any).Plaid) {
-      error = 'Plaid SDK not loaded yet';
+      error = 'Plaid Link is still loading. Wait a moment, then try again.';
       return;
     }
 
@@ -88,14 +89,17 @@
       },
       onExit: (err: any, metadata: any) => {
         if (err) {
-          error = err.display_message || err.error_message || 'Plaid Link error';
+          error =
+            err.display_message ||
+            err.error_message ||
+            'Plaid Link closed with an error. Try again.';
         }
         onExit?.(err, metadata);
       },
       onEvent: (eventName: string, _metadata: any) => {
         // Can be used for analytics/logging
         if (eventName === 'ERROR') {
-          error = 'An error occurred in Plaid Link';
+          error = 'Something went wrong in Plaid Link. Try again, or come back in a few minutes.';
         }
       },
     });
@@ -110,7 +114,10 @@
 </svelte:head>
 
 {#if error}
-  <div role="alert" class="mb-2 rounded-lg bg-red-900/50 px-3 py-2 text-sm text-red-300">
+  <div
+    role="alert"
+    class="mb-2 break-words rounded-lg bg-red-900/50 px-3 py-2 text-sm text-red-300"
+  >
     {error}
     <button
       onclick={() => {

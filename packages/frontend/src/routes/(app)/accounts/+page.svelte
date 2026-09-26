@@ -74,7 +74,7 @@
         triggerSync(itemId);
       }
     } else {
-      error = 'Failed to link account';
+      error = 'Couldn’t link the account. Try again, or add it manually.';
     }
   }
 
@@ -96,10 +96,10 @@
         syncResult = result?.data?.syncResult ?? null;
         invalidateAll();
       } else {
-        error = 'Transaction sync failed';
+        error = 'Couldn’t sync transactions. Check your connection and try again.';
       }
     } catch {
-      error = 'Transaction sync failed';
+      error = 'Couldn’t sync transactions. Check your connection and try again.';
     } finally {
       syncing = null;
     }
@@ -191,7 +191,7 @@
       role="alert"
       class="flex items-center justify-between rounded-lg bg-red-900/50 p-3 text-sm text-red-300"
     >
-      {error}
+      <span class="min-w-0 break-words">{error}</span>
       <button onclick={() => (error = '')} class="text-red-200 hover:text-white">Dismiss</button>
     </div>
   {/if}
@@ -269,7 +269,7 @@
       <div class="divide-y divide-surface-700">
         {#each data.plaidItems as item}
           <div class="flex items-center justify-between px-6 py-3">
-            <div class="flex items-center gap-3">
+            <div class="flex min-w-0 items-center gap-3">
               <div
                 class="h-2 w-2 rounded-full {item.status === 'active'
                   ? 'bg-green-400'
@@ -277,8 +277,11 @@
                     ? 'bg-yellow-400'
                     : 'bg-red-400'}"
               ></div>
-              <div>
-                <p class="font-medium text-white">
+              <div class="min-w-0">
+                <p
+                  class="truncate font-medium text-white"
+                  title={item.institutionName || 'Unknown Institution'}
+                >
                   {item.institutionName || 'Unknown Institution'}
                 </p>
                 <p class="text-xs {statusColor(item.status)}">
@@ -375,13 +378,15 @@
     {#each groupByInstitution(data.accounts) as group}
       <Card padding="none">
         <div class="border-b border-surface-700 px-6 py-4">
-          <h3 class="font-semibold text-white">{group.institution}</h3>
+          <h3 class="truncate font-semibold text-white" title={group.institution}>
+            {group.institution}
+          </h3>
         </div>
         <div class="divide-y divide-surface-700">
           {#each group.accounts as account}
             <div class="flex items-center justify-between px-6 py-4">
-              <div>
-                <p class="font-medium text-white">
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={account.name}>
                   {account.name}
                   {#if account.mask}
                     <span class="text-surface-500">...{account.mask}</span>
@@ -427,7 +432,9 @@
       </form>
       {#each data.plaidItems as item}
         <div class="flex items-center gap-2">
-          <span class="text-xs text-surface-400">{item.institutionName}:</span>
+          <span class="min-w-0 truncate text-xs text-surface-400" title={item.institutionName}>
+            {item.institutionName}:
+          </span>
           <Button
             variant="ghost"
             size="sm"
@@ -437,6 +444,8 @@
             Sync Transactions
           </Button>
         </div>
+      {:else}
+        <p class="text-xs text-surface-500">No linked institutions to sync yet.</p>
       {/each}
     </div>
   </details>

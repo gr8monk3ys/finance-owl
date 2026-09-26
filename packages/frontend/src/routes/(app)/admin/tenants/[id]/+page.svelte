@@ -54,10 +54,10 @@
         saveMessage = 'Branding saved successfully';
       } else {
         const err = await res.json();
-        saveMessage = `Error: ${err.message || 'Failed to save'}`;
+        saveMessage = `Error: ${err.message || 'Couldn’t save. Check your connection and try again.'}`;
       }
     } catch {
-      saveMessage = 'Error: Failed to save branding';
+      saveMessage = 'Error: Couldn’t save branding. Check your connection and try again.';
     }
     saving = false;
   }
@@ -81,10 +81,10 @@
         saveMessage = 'Settings saved successfully';
       } else {
         const err = await res.json();
-        saveMessage = `Error: ${err.message || 'Failed to save'}`;
+        saveMessage = `Error: ${err.message || 'Couldn’t save. Check your connection and try again.'}`;
       }
     } catch {
-      saveMessage = 'Error: Failed to save settings';
+      saveMessage = 'Error: Couldn’t save settings. Check your connection and try again.';
     }
     saving = false;
   }
@@ -120,9 +120,13 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
-    <div>
-      <h1 class="text-2xl font-bold text-white">{data.tenant.name}</h1>
-      <p class="text-sm text-surface-400">{data.tenant.slug}.financeowl.com</p>
+    <div class="min-w-0">
+      <h1 class="truncate text-2xl font-bold text-white" title={data.tenant.name}>
+        {data.tenant.name}
+      </h1>
+      <p class="truncate text-sm text-surface-400" title="{data.tenant.slug}.financeowl.com">
+        {data.tenant.slug}.financeowl.com
+      </p>
     </div>
     <span
       class="ml-auto inline-flex items-center rounded-md border px-2 py-1 text-xs font-medium capitalize
@@ -139,7 +143,7 @@
   {#if saveMessage}
     <div
       role="status"
-      class="rounded-lg border px-4 py-3 text-sm
+      class="rounded-lg border px-4 py-3 text-sm break-words
 			{saveMessage.startsWith('Error')
         ? 'border-red-400/20 bg-red-400/10 text-red-400'
         : 'border-emerald-400/20 bg-emerald-400/10 text-emerald-400'}"
@@ -369,7 +373,11 @@
                 {appName.charAt(0)}
               </div>
             {/if}
-            <span translate="no" class="text-lg font-bold text-white">{appName}</span>
+            <span
+              translate="no"
+              class="min-w-0 truncate text-lg font-bold text-white"
+              title={appName}>{appName}</span
+            >
           </div>
           <div class="mt-3 flex gap-2">
             <div class="h-6 w-20 rounded" style="background-color: {primaryColor}"></div>
@@ -409,8 +417,12 @@
               {member.userName?.charAt(0).toUpperCase() ?? '?'}
             </div>
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-white truncate">{member.userName}</p>
-              <p class="text-xs text-surface-500 truncate">{member.userEmail}</p>
+              <p class="text-sm font-medium text-white truncate" title={member.userName}>
+                {member.userName}
+              </p>
+              <p class="text-xs text-surface-500 truncate" title={member.userEmail}>
+                {member.userEmail}
+              </p>
             </div>
             <span
               class="inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-medium capitalize {getRoleColor(
