@@ -99,7 +99,14 @@
     href="/subscriptions"
     class="inline-flex items-center gap-1 text-sm text-surface-400 hover:text-white transition"
   >
-    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <svg
+      aria-hidden="true"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
       <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
     </svg>
     Back to Subscriptions
@@ -110,6 +117,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -131,7 +139,7 @@
   {:else}
     <!-- Header -->
     <div>
-      <h2 class="text-2xl font-bold text-white">
+      <h2 class="break-words text-2xl font-bold text-white">
         Cancel {data.subscription.merchantName || data.subscription.name}
       </h2>
       <p class="mt-1 text-surface-400">Follow the steps below to cancel your subscription</p>
@@ -139,7 +147,10 @@
 
     <!-- Error -->
     {#if form?.error}
-      <div class="rounded-lg bg-red-900/50 border border-red-800 p-4 text-sm text-red-300">
+      <div
+        role="alert"
+        class="rounded-lg bg-red-900/50 border border-red-800 p-4 text-sm text-red-300"
+      >
         {form.error}
       </div>
     {/if}
@@ -151,6 +162,7 @@
           <div class="flex items-center gap-3">
             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-900/30">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 text-red-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -160,8 +172,11 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <div>
-              <p class="font-semibold text-white">
+            <div class="min-w-0">
+              <p
+                class="truncate font-semibold text-white"
+                title={data.subscription.merchantName || data.subscription.name}
+              >
                 {data.subscription.merchantName || data.subscription.name}
               </p>
               <p class="text-xs text-surface-400">
@@ -198,7 +213,9 @@
             {#if data.subscription.categoryName}
               <div class="mt-2 flex justify-between text-sm">
                 <span class="text-surface-400">Category</span>
-                <span class="text-surface-300">{data.subscription.categoryName}</span>
+                <span class="truncate text-surface-300" title={data.subscription.categoryName}>
+                  {data.subscription.categoryName}
+                </span>
               </div>
             {/if}
           </div>
@@ -210,6 +227,7 @@
           <div class="flex items-center gap-3">
             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-900/30">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 text-green-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -259,6 +277,7 @@
                 >
                   {#if i < statusIndex}
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -269,6 +288,7 @@
                     </svg>
                   {:else if i === statusIndex && request.status === 'completed'}
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -318,6 +338,7 @@
               <div class="flex items-center gap-3 mb-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-900/30">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-blue-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -343,8 +364,9 @@
                   rel="noopener noreferrer"
                   class="mt-2 inline-flex items-center gap-1 text-xs text-primary-400 hover:text-primary-300"
                 >
-                  Go to cancellation page
+                  Go to Cancellation Page
                   <svg
+                    aria-hidden="true"
                     class="h-3 w-3"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -369,6 +391,7 @@
               <div class="flex items-center gap-3 mb-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-900/30">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-purple-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -405,6 +428,7 @@
               <div class="flex items-center gap-3 mb-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-900/30">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-amber-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -426,7 +450,7 @@
               {#if contactInfo?.email}
                 <a
                   href="mailto:{contactInfo.email}"
-                  class="mt-2 inline-flex items-center gap-1 text-xs text-primary-400 hover:text-primary-300"
+                  class="mt-2 inline-flex items-center gap-1 break-all text-xs text-primary-400 hover:text-primary-300"
                 >
                   {contactInfo.email}
                 </a>
@@ -441,6 +465,7 @@
               <div class="flex items-center gap-3 mb-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-900/30">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-teal-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -466,8 +491,9 @@
                   rel="noopener noreferrer"
                   class="mt-2 inline-flex items-center gap-1 text-xs text-primary-400 hover:text-primary-300"
                 >
-                  Open chat support
+                  Open Chat Support
                   <svg
+                    aria-hidden="true"
                     class="h-3 w-3"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -500,7 +526,9 @@
               >
                 {i + 1}
               </div>
-              <p class="text-sm text-surface-300 leading-relaxed pt-0.5">{step}</p>
+              <p class="min-w-0 break-words text-sm text-surface-300 leading-relaxed pt-0.5">
+                {step}
+              </p>
             </li>
           {/each}
         </ol>
@@ -526,12 +554,13 @@
               Reason for cancelling (optional)
             </label>
             <select
+              autocomplete="off"
               id="reason"
               name="reason"
               bind:value={reason}
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             >
-              <option value="">Select a reason...</option>
+              <option value="">Select a reason…</option>
               <option value="Too expensive">Too expensive</option>
               <option value="Not using it enough">Not using it enough</option>
               <option value="Found a better alternative">Found a better alternative</option>
@@ -547,6 +576,7 @@
           <div class="rounded-lg bg-amber-900/20 border border-amber-800/50 p-4">
             <div class="flex gap-3">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 flex-shrink-0 text-amber-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -570,9 +600,7 @@
           </div>
 
           <div class="flex justify-end gap-3 pt-2">
-            <a href="/subscriptions">
-              <Button variant="ghost" type="button">Keep Subscription</Button>
-            </a>
+            <Button href="/subscriptions" variant="ghost">Keep Subscription</Button>
             <Button type="submit" variant="danger">Request Cancellation</Button>
           </div>
         </form>
@@ -603,7 +631,7 @@
         </div>
 
         {#if request.notes}
-          <div class="mb-4 text-sm">
+          <div class="mb-4 break-words text-sm">
             <span class="text-surface-400">Notes:</span>
             <span class="ml-1 text-surface-300">{request.notes}</span>
           </div>
@@ -629,12 +657,13 @@
                     Add a note (optional)
                   </label>
                   <textarea
+                    autocomplete="off"
                     id="progressNotes"
                     name="notes"
                     rows="2"
                     bind:value={notes}
-                    placeholder="e.g., Called support, waiting on hold..."
-                    class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                    placeholder="e.g., Called support, waiting on hold…"
+                    class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                   ></textarea>
                 </div>
                 <Button type="submit" variant="secondary">Mark as In Progress</Button>
@@ -656,6 +685,7 @@
                 <div class="rounded-lg bg-green-900/20 border border-green-800/50 p-4 mb-3">
                   <div class="flex gap-3">
                     <svg
+                      aria-hidden="true"
                       class="h-5 w-5 flex-shrink-0 text-green-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -672,7 +702,8 @@
                       <p class="text-sm font-medium text-green-300">Confirm Cancellation</p>
                       <p class="mt-1 text-xs text-green-400/80">
                         Click below once you have successfully cancelled the subscription. This will
-                        mark the subscription as inactive in Finance Owl.
+                        mark the subscription as inactive in <span translate="no">Finance Owl</span
+                        >.
                       </p>
                     </div>
                   </div>
@@ -704,6 +735,7 @@
           <div class="rounded-lg bg-green-900/20 border border-green-800/50 p-4">
             <div class="flex gap-3">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 flex-shrink-0 text-green-400"
                 fill="none"
                 viewBox="0 0 24 24"

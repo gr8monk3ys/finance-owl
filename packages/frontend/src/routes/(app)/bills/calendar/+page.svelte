@@ -1,13 +1,17 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
-  import { goto, invalidateAll } from '$app/navigation';
+  import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt, formatDateWith, formatMonthYear } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let viewMode = $state<'month' | 'week'>('month');
+  let viewMode = $state<'month' | 'week'>(readParam('view', 'month', ['month', 'week']));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('view', viewMode, 'month'));
   let selectedDate = $state<string | null>(null);
   let showDayDetail = $state(false);
 
@@ -23,30 +27,21 @@
 
   const monthLabel = $derived(formatMonthYear(new Date(year, month - 1, 1)));
 
-  function prevMonth() {
-    let newMonth = month - 1;
-    let newYear = year;
-    if (newMonth < 1) {
-      newMonth = 12;
-      newYear--;
-    }
-    goto(`/bills/calendar?year=${newYear}&month=${newMonth}`);
+  // Month navigation is plain links, so it can be opened in a new tab.
+  function calendarHref(y: number, m: number): string {
+    const view = viewMode === 'month' ? '' : `&view=${viewMode}`;
+    return `/bills/calendar?year=${y}&month=${m}${view}`;
   }
-
-  function nextMonth() {
-    let newMonth = month + 1;
-    let newYear = year;
-    if (newMonth > 12) {
-      newMonth = 1;
-      newYear++;
-    }
-    goto(`/bills/calendar?year=${newYear}&month=${newMonth}`);
-  }
-
-  function goToToday() {
+  const prevMonthHref = $derived(
+    month === 1 ? calendarHref(year - 1, 12) : calendarHref(year, month - 1),
+  );
+  const nextMonthHref = $derived(
+    month === 12 ? calendarHref(year + 1, 1) : calendarHref(year, month + 1),
+  );
+  const todayHref = $derived.by(() => {
     const now = new Date();
-    goto(`/bills/calendar?year=${now.getFullYear()}&month=${now.getMonth() + 1}`);
-  }
+    return calendarHref(now.getFullYear(), now.getMonth() + 1);
+  });
 
   // Build the full calendar grid (6 weeks x 7 days)
   const calendarGrid = $derived.by(() => {
@@ -261,13 +256,13 @@
     <!-- Calendar navigation -->
     <div class="flex items-center justify-between border-b border-surface-700 px-4 py-3">
       <div class="flex items-center gap-2">
-        <button
+        <a
           aria-label="Previous month"
-          type="button"
+          href={prevMonthHref}
           class="rounded-lg p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-white"
-          onclick={prevMonth}
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -276,15 +271,15 @@
           >
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
-        </button>
+        </a>
         <h3 class="min-w-[180px] text-center text-lg font-semibold text-white">{monthLabel}</h3>
-        <button
+        <a
           aria-label="Next month"
-          type="button"
+          href={nextMonthHref}
           class="rounded-lg p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-white"
-          onclick={nextMonth}
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -293,14 +288,13 @@
           >
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
           </svg>
-        </button>
-        <button
-          type="button"
+        </a>
+        <a
+          href={todayHref}
           class="ml-2 rounded-md px-2.5 py-1 text-xs font-medium text-primary-400 transition hover:bg-surface-700"
-          onclick={goToToday}
         >
           Today
-        </button>
+        </a>
       </div>
 
       <!-- View toggle -->
@@ -367,7 +361,12 @@
                   title="{bill.name}: {fmt(bill.amount)} - {getBillLabel(bill)}"
                 >
                   {#if bill.isPaid}
-                    <svg class="h-2.5 w-2.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg
+                      aria-hidden="true"
+                      class="h-2.5 w-2.5 shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path
                         fill-rule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -375,7 +374,12 @@
                       />
                     </svg>
                   {:else if bill.isOverdue}
-                    <svg class="h-2.5 w-2.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg
+                      aria-hidden="true"
+                      class="h-2.5 w-2.5 shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path
                         fill-rule="evenodd"
                         d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -439,7 +443,7 @@
         >
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2">
-              <p class="truncate text-sm font-medium text-white">{bill.name}</p>
+              <p class="truncate text-sm font-medium text-white" title={bill.name}>{bill.name}</p>
               <span
                 class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium"
                 style="background-color: {getBillBgColor(bill)}; color: {getBillColor(bill)}"
@@ -448,12 +452,12 @@
               </span>
             </div>
             <div class="mt-1 flex items-center gap-2 text-xs text-surface-400">
-              <span>{bill.category}</span>
+              <span class="truncate" title={bill.category}>{bill.category}</span>
               <span>-</span>
               <span class="capitalize">{bill.frequency}</span>
               {#if bill.accountName}
                 <span>-</span>
-                <span>{bill.accountName}</span>
+                <span class="truncate" title={bill.accountName}>{bill.accountName}</span>
               {/if}
             </div>
           </div>
@@ -480,6 +484,7 @@
   {:else}
     <div class="py-8 text-center">
       <svg
+        aria-hidden="true"
         class="mx-auto h-12 w-12 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"

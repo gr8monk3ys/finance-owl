@@ -14,6 +14,7 @@
 </script>
 
 <svg
+  aria-hidden="true"
   class="animate-spin text-primary-500 {sizes[size]} {className}"
   viewBox="0 0 24 24"
   fill="none"

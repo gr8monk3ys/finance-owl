@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -7,10 +8,16 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let activeSection = $state<'unclaimed' | 'recommendations'>('unclaimed');
+  let activeSection = $state<'unclaimed' | 'recommendations'>(
+    readParam('section', 'unclaimed', ['unclaimed', 'recommendations']),
+  );
   let searchLoading = $state(false);
   let generateLoading = $state(false);
-  let filterType = $state<string>('all');
+  let filterType = $state<string>(readParam('type', 'all'));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('section', activeSection, 'unclaimed'));
+  $effect(() => syncParam('type', filterType, 'all'));
 
   $effect(() => {
     if (form?.success) {
@@ -126,7 +133,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Section Tabs -->
@@ -195,12 +204,13 @@
               First Name
             </label>
             <input
+              autocomplete="given-name"
               id="firstName"
               name="firstName"
               type="text"
               required
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-              placeholder="John"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+              placeholder="John…"
             />
           </div>
           <div>
@@ -208,23 +218,25 @@
               Last Name
             </label>
             <input
+              autocomplete="family-name"
               id="lastName"
               name="lastName"
               type="text"
               required
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-              placeholder="Doe"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+              placeholder="Doe…"
             />
           </div>
           <div>
             <label for="state" class="block text-sm font-medium text-surface-300"> State </label>
             <select
+              autocomplete="address-level1"
               id="state"
               name="state"
               required
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             >
-              <option value="">Select a state...</option>
+              <option value="">Select a state…</option>
               {#each data.states ?? [] as st}
                 <option value={st.abbreviation}>{st.name}</option>
               {/each}
@@ -245,7 +257,7 @@
           {#each foundResults as result}
             <Card>
               <div class="flex items-start justify-between gap-4">
-                <div class="flex-1">
+                <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-2">
                     <span
                       class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {statusColor(
@@ -258,7 +270,9 @@
                       {propertyTypeLabel(result.propertyType)}
                     </span>
                   </div>
-                  <p class="mt-1 font-medium text-white">{result.holderName}</p>
+                  <p class="mt-1 truncate font-medium text-white" title={result.holderName}>
+                    {result.holderName}
+                  </p>
                   <div class="mt-1 flex items-center gap-4 text-sm text-surface-400">
                     <span>{result.state}</span>
                     {#if result.reportedAmount}
@@ -314,8 +328,10 @@
                 >
                   {result.status}
                 </span>
-                <div class="flex-1">
-                  <p class="font-medium text-surface-300">{result.holderName}</p>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate font-medium text-surface-300" title={result.holderName}>
+                    {result.holderName}
+                  </p>
                   <div class="flex items-center gap-4 text-sm text-surface-500">
                     <span>{propertyTypeLabel(result.propertyType)}</span>
                     <span>{result.state}</span>
@@ -336,6 +352,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -435,11 +452,13 @@
               </div>
 
               <!-- Content -->
-              <div class="flex-1">
+              <div class="min-w-0 flex-1">
                 <div class="flex items-start justify-between">
-                  <div>
-                    <div class="flex items-center gap-2">
-                      <h4 class="font-semibold text-white">{rec.productName}</h4>
+                  <div class="min-w-0">
+                    <div class="flex min-w-0 items-center gap-2">
+                      <h4 class="truncate font-semibold text-white" title={rec.productName}>
+                        {rec.productName}
+                      </h4>
                       {#if rec.rewardType}
                         <span
                           class="inline-flex rounded-full bg-primary-900/50 px-2 py-0.5 text-xs font-medium text-primary-300"
@@ -448,7 +467,9 @@
                         </span>
                       {/if}
                     </div>
-                    <p class="text-sm text-surface-400">{rec.provider}</p>
+                    <p class="truncate text-sm text-surface-400" title={rec.provider}>
+                      {rec.provider}
+                    </p>
                     <span
                       class="mt-1 inline-flex rounded-full bg-surface-700 px-2 py-0.5 text-xs text-surface-400"
                     >
@@ -460,11 +481,13 @@
                   <form method="POST" action="?/dismissRecommendation" use:enhance>
                     <input type="hidden" name="id" value={rec.id} />
                     <button
+                      aria-label="Dismiss recommendation"
                       type="submit"
                       class="rounded-lg p-1 text-surface-500 transition hover:bg-surface-700 hover:text-surface-300"
                       title="Dismiss recommendation"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-5 w-5"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -481,7 +504,7 @@
                   </form>
                 </div>
 
-                <p class="mt-2 text-sm text-surface-300">{rec.description}</p>
+                <p class="mt-2 break-words text-sm text-surface-300">{rec.description}</p>
 
                 <!-- Key Features -->
                 <div class="mt-3 flex flex-wrap gap-3 text-sm">
@@ -511,14 +534,14 @@
                 <!-- Match Reason -->
                 <div class="mt-3 rounded-lg bg-surface-900/50 px-3 py-2">
                   <p class="text-xs font-medium text-surface-500">Why this matches you</p>
-                  <p class="mt-0.5 text-sm text-surface-300">{rec.matchReason}</p>
+                  <p class="mt-0.5 break-words text-sm text-surface-300">{rec.matchReason}</p>
                 </div>
 
                 <!-- Match Score Bar -->
                 <div class="mt-3">
                   <div class="h-1.5 w-full rounded-full bg-surface-700">
                     <div
-                      class="h-1.5 rounded-full transition-all {matchScoreBg(rec.matchScore)}"
+                      class="h-1.5 rounded-full transition-[width] {matchScoreBg(rec.matchScore)}"
                       style="width: {rec.matchScore}%"
                     ></div>
                   </div>
@@ -535,6 +558,7 @@
                     >
                       Learn More
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -559,6 +583,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"

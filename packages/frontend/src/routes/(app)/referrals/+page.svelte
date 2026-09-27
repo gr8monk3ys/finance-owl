@@ -56,7 +56,7 @@
     <div>
       <h2 class="text-2xl font-bold text-white">Referral Program</h2>
       <p class="mt-1 text-sm text-surface-400">
-        Invite friends and earn rewards when they join Finance Owl.
+        Invite friends and earn rewards when they join <span translate="no">Finance Owl</span>.
       </p>
     </div>
     <Button variant="secondary" onclick={() => (showApplyModal = true)}>Apply a Code</Button>
@@ -64,7 +64,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Referral Code Card -->
@@ -77,17 +79,18 @@
           Your Referral Code
         </p>
         {#if data.code?.code}
-          <p class="mt-2 font-mono text-3xl font-bold tracking-widest text-white">
+          <p translate="no" class="mt-2 font-mono text-3xl font-bold tracking-widest text-white">
             {data.code.code}
           </p>
         {:else}
-          <p class="mt-2 text-sm italic text-surface-500">Loading your code...</p>
+          <p class="mt-2 text-sm italic text-surface-500">Loading your code…</p>
         {/if}
       </div>
       <div class="mt-4 flex gap-2 sm:mt-0">
         <Button variant="secondary" onclick={copyReferralCode}>
           {#if copiedCode}
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -99,6 +102,7 @@
             Copied!
           {:else}
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -116,6 +120,7 @@
         </Button>
         <Button variant="ghost" onclick={shareViaEmail}>
           <svg
+            aria-hidden="true"
             class="mr-1.5 h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -160,6 +165,7 @@
     {#if data.referrals.length === 0}
       <div class="flex flex-col items-center py-8 text-center">
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -217,7 +223,7 @@
               >
                 {i + 1}
               </span>
-              <span class="font-mono text-sm text-surface-300">{entry.code}</span>
+              <span translate="no" class="font-mono text-sm text-surface-300">{entry.code}</span>
             </div>
             <div class="text-right">
               <p class="text-sm font-medium text-white">{entry.totalReferrals} referrals</p>
@@ -247,12 +253,14 @@
         Referral Code
       </label>
       <input
+        autocomplete="off"
+        spellcheck={false}
         id="referralCode"
         name="code"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 font-mono tracking-wider text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Enter referral code"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 font-mono tracking-wider text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Enter referral code…"
       />
       <p class="mt-1.5 text-xs text-surface-500">
         Enter a referral code from a friend to get started.

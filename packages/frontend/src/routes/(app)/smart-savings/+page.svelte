@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import { LineChart, BarChart } from '$components/charts';
   import type { PageData } from './$types';
-  import { formatCurrency as fmt } from '@finance-owl/shared';
+  import { formatCurrency as fmt, formatDate, formatCurrencyWhole } from '@finance-owl/shared';
 
   let { data } = $props<{ data: PageData }>();
 
@@ -13,7 +15,7 @@
   let analyzing = $state(false);
 
   function fmtPct(value: number): string {
-    return `${value.toFixed(1)}%`;
+    return formatPercent(value, 1);
   }
 
   const analysis = $derived(data.dashboard.analysis);
@@ -66,13 +68,13 @@
   function getRuleDescription(rule: any): string {
     switch (rule.ruleType) {
       case 'round_up':
-        return `Round up purchases to nearest $${rule.roundUpTo || 1}`;
+        return `Round up purchases to nearest ${formatCurrencyWhole(rule.roundUpTo || 1)}`;
       case 'percentage':
-        return `Save ${rule.amount || 0}% of every paycheck`;
+        return `Save ${formatPercent(rule.amount || 0)} of every paycheck`;
       case 'fixed':
         return `Save ${fmt(rule.amount || 0)} per month`;
       case 'surplus':
-        return `Save ${rule.amount || 50}% of monthly surplus`;
+        return `Save ${formatPercent(rule.amount || 50)} of monthly surplus`;
       default:
         return rule.name;
     }
@@ -149,6 +151,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -173,6 +176,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -197,6 +201,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-purple-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -265,7 +270,7 @@
         <div class="mt-3">
           <div class="h-2 w-full rounded-full bg-surface-700">
             <div
-              class="h-2 rounded-full transition-all {analysis.currentSavingsRate >=
+              class="h-2 rounded-full transition-[width] {analysis.currentSavingsRate >=
               analysis.recommendedSavingsRate
                 ? 'bg-green-500'
                 : 'bg-primary-500'}"
@@ -287,6 +292,7 @@
             class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary-600/20"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -316,6 +322,7 @@
     <Card>
       <div class="py-8 text-center">
         <svg
+          aria-hidden="true"
           class="mx-auto h-12 w-12 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"
@@ -366,7 +373,7 @@
         {#each rules as rule (rule.id)}
           <Card>
             <div class="flex items-start justify-between">
-              <div class="flex items-start gap-3">
+              <div class="flex min-w-0 items-start gap-3">
                 <div
                   class="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg {rule.isActive ===
                   1
@@ -374,6 +381,7 @@
                     : 'bg-surface-700'}"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 {rule.isActive === 1 ? 'text-primary-400' : 'text-surface-500'}"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -387,8 +395,13 @@
                     />
                   </svg>
                 </div>
-                <div>
-                  <p class="font-medium {rule.isActive === 1 ? 'text-white' : 'text-surface-500'}">
+                <div class="min-w-0">
+                  <p
+                    class="truncate font-medium {rule.isActive === 1
+                      ? 'text-white'
+                      : 'text-surface-500'}"
+                    title={rule.name}
+                  >
                     {rule.name}
                   </p>
                   <p class="mt-0.5 text-sm text-surface-400">
@@ -416,7 +429,8 @@
                   <input type="hidden" name="isActive" value={rule.isActive === 1 ? 0 : 1} />
                   <button
                     type="submit"
-                    class="relative h-6 w-11 rounded-full transition {rule.isActive === 1
+                    class="relative h-6 w-11 rounded-full transition hover:brightness-110 {rule.isActive ===
+                    1
                       ? 'bg-primary-600'
                       : 'bg-surface-600'}"
                     aria-label="Toggle rule"
@@ -432,6 +446,7 @@
 
                 <!-- Delete -->
                 <form
+                  use:confirmSubmit={'Delete this rule? This can’t be undone.'}
                   method="POST"
                   action="?/deleteRule"
                   use:enhance={() => {
@@ -447,7 +462,7 @@
                     class="rounded p-1 text-surface-500 hover:bg-surface-700 hover:text-red-400"
                     aria-label="Delete rule"
                   >
-                    <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                       <path
                         fill-rule="evenodd"
                         d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
@@ -518,6 +533,7 @@
           class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600/20 to-teal-600/20"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-emerald-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -579,7 +595,7 @@
           </div>
           <div class="mt-2 h-1.5 w-full rounded-full bg-surface-700">
             <div
-              class="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all"
+              class="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-[width]"
               style="width: {Math.min((analysis.currentSavingsRate / 20) * 100, 100)}%"
             ></div>
           </div>
@@ -598,6 +614,7 @@
         <div class="flex items-center gap-3 mb-4">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-amber-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -619,13 +636,15 @@
         <div class="space-y-3">
           {#each highSpendCategories as cat}
             <div class="flex items-center justify-between rounded-lg bg-surface-800/50 p-4">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
-                  class="h-3 w-3 rounded-full"
+                  class="h-3 w-3 shrink-0 rounded-full"
                   style="background-color: {cat.categoryColor}"
                 ></div>
-                <div>
-                  <p class="text-sm font-medium text-white">{cat.categoryName}</p>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium text-white" title={cat.categoryName}>
+                    {cat.categoryName}
+                  </p>
                   <p class="text-xs text-surface-400">
                     Your avg: {fmt(cat.monthlyAverage)}/mo. Typical: {fmt(cat.overallAverage)}/mo
                   </p>
@@ -667,13 +686,15 @@
         <div class="space-y-3">
           {#each reductions as category}
             <div class="flex items-center justify-between rounded-lg bg-surface-800/50 p-3">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
-                  class="h-3 w-3 rounded-full"
+                  class="h-3 w-3 shrink-0 rounded-full"
                   style="background-color: {category.categoryColor}"
                 ></div>
-                <div>
-                  <p class="text-sm font-medium text-white">{category.categoryName}</p>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium text-white" title={category.categoryName}>
+                    {category.categoryName}
+                  </p>
                   <p class="text-xs text-surface-500">
                     {fmt(category.monthlyAverage)}/mo avg vs {fmt(category.overallAverage)}/mo
                     overall
@@ -734,7 +755,7 @@
             {#each history.transfers as transfer}
               <tr class="border-b border-surface-700/50">
                 <td class="px-4 py-2 text-surface-300">
-                  {new Date(transfer.createdAt).toLocaleDateString()}
+                  {formatDate(transfer.createdAt)}
                 </td>
                 <td class="px-4 py-2 text-white">{transfer.ruleName || 'Deleted rule'}</td>
                 <td class="px-4 py-2 text-surface-400">
@@ -783,14 +804,13 @@
   >
     <!-- Rule Type Selection -->
     <div>
-      <label class="mb-2 block text-sm font-medium text-surface-300" for="ruleType">
-        Rule Type
-      </label>
-      <div class="grid grid-cols-2 gap-2">
+      <p id="ruleType-label" class="mb-2 block text-sm font-medium text-surface-300">Rule Type</p>
+      <div class="grid grid-cols-2 gap-2" role="group" aria-labelledby="ruleType-label">
         {#each [{ value: 'round_up', label: 'Round Up', desc: 'Round purchases up' }, { value: 'percentage', label: 'Percentage', desc: '% of income' }, { value: 'fixed', label: 'Fixed Amount', desc: 'Set monthly amount' }, { value: 'surplus', label: 'Surplus', desc: '% of monthly surplus' }] as option}
           <button
             type="button"
             onclick={() => (selectedRuleType = option.value)}
+            aria-pressed={selectedRuleType === option.value}
             class="rounded-lg border p-3 text-left transition {selectedRuleType === option.value
               ? 'border-primary-500 bg-primary-600/10'
               : 'border-surface-700 bg-surface-800 hover:border-surface-600'}"
@@ -813,12 +833,13 @@
     <div>
       <label class="mb-1 block text-sm font-medium text-surface-300" for="ruleName"> Name </label>
       <input
+        autocomplete="off"
         id="ruleName"
         name="name"
         type="text"
         required
-        class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="e.g., Coffee fund round-up"
+        class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="e.g., Coffee fund round-up…"
       />
     </div>
 
@@ -829,9 +850,10 @@
           Round up to nearest
         </label>
         <select
+          autocomplete="off"
           id="roundUpTo"
           name="roundUpTo"
-          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="1">$1.00</option>
           <option value="5">$5.00</option>
@@ -848,6 +870,7 @@
         </label>
         <div class="relative">
           <input
+            autocomplete="off"
             id="amount"
             name="amount"
             type="number"
@@ -856,7 +879,7 @@
             step="1"
             value="10"
             required
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 pr-8 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 pr-8 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
           <span class="absolute right-3 top-1/2 -translate-y-1/2 text-surface-500">%</span>
         </div>
@@ -870,6 +893,7 @@
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="amount"
             name="amount"
             type="number"
@@ -877,7 +901,7 @@
             step="1"
             value="200"
             required
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <p class="mt-1 text-xs text-surface-500">A fixed amount automatically saved each month</p>
@@ -889,6 +913,7 @@
         </label>
         <div class="relative">
           <input
+            autocomplete="off"
             id="amount"
             name="amount"
             type="number"
@@ -897,7 +922,7 @@
             step="1"
             value="50"
             required
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 pr-8 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 pr-8 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
           <span class="absolute right-3 top-1/2 -translate-y-1/2 text-surface-500">%</span>
         </div>

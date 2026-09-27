@@ -112,7 +112,7 @@
       </div>
       <div class="mt-1 h-2 rounded-full bg-surface-700">
         <div
-          class="h-2 rounded-full bg-primary-500 transition-all duration-500"
+          class="h-2 rounded-full bg-primary-500 transition-[width] duration-500"
           style="width: {progressPercent}%"
         ></div>
       </div>
@@ -160,6 +160,7 @@
     >
       <div class="relative flex-1">
         <svg
+          aria-hidden="true"
           class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"
@@ -173,10 +174,12 @@
           />
         </svg>
         <input
+          autocomplete="off"
+          aria-label="Search articles"
           type="text"
-          placeholder="Search articles..."
+          placeholder="Search articles…"
           bind:value={searchQuery}
-          class="w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-10 pr-4 text-sm text-white placeholder-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="w-full rounded-lg border border-surface-600 bg-surface-700 py-2 pl-10 pr-4 text-sm text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
       <Button type="submit" size="sm">Search</Button>
@@ -205,7 +208,7 @@
             goto('/learn');
           }}
         >
-          Clear filters
+          Clear Filters
         </button>
       {/if}
     </div>
@@ -238,6 +241,7 @@
                 : 'bg-surface-700'}"
             >
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 {activeTopic === topic.id ? 'text-primary-400' : 'text-surface-400'}"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -248,7 +252,7 @@
               </svg>
             </div>
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-white">{topic.name}</p>
+              <p class="truncate text-sm font-medium text-white" title={topic.name}>{topic.name}</p>
               <p class="text-xs text-surface-400">
                 {topic.articleCount} articles
               </p>
@@ -258,13 +262,15 @@
             <div class="mt-3">
               <div class="h-1 rounded-full bg-surface-700">
                 <div
-                  class="h-1 rounded-full bg-primary-500 transition-all"
+                  class="h-1 rounded-full bg-primary-500 transition-[width]"
                   style="width: {Math.round((topicArticlesRead / topic.articleCount) * 100)}%"
                 ></div>
               </div>
             </div>
           {/if}
         </button>
+      {:else}
+        <p class="text-sm text-surface-400">No topics available yet.</p>
       {/each}
     </div>
   </div>
@@ -290,11 +296,16 @@
                 </span>
                 <span class="text-xs text-surface-500">{article.readTimeMinutes} min</span>
               </div>
-              <svg class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+              <svg
+                aria-hidden="true"
+                class="h-4 w-4 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
             </div>
-            <h4 class="mt-2 text-sm font-medium text-white">{article.title}</h4>
+            <h4 class="mt-2 break-words text-sm font-medium text-white">{article.title}</h4>
           </a>
         {/each}
       </div>
@@ -338,12 +349,18 @@
               </div>
               <div class="flex items-center gap-1">
                 {#if isArticleBookmarked(article.slug)}
-                  <svg class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    aria-hidden="true"
+                    class="h-4 w-4 text-yellow-400"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                   </svg>
                 {/if}
                 {#if isArticleRead(article.slug)}
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-green-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -359,7 +376,9 @@
                 {/if}
               </div>
             </div>
-            <h4 class="mt-3 text-sm font-semibold text-white group-hover:text-primary-300">
+            <h4
+              class="mt-3 break-words text-sm font-semibold text-white group-hover:text-primary-300"
+            >
               {article.title}
             </h4>
             <p class="mt-2 line-clamp-2 text-xs text-surface-400">
@@ -379,6 +398,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-12 w-12 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -403,7 +423,7 @@
               goto('/learn');
             }}
           >
-            Clear filters
+            Clear Filters
           </Button>
         </div>
       </Card>

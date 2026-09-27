@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { formatPercent, formatDecimal } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { goto, invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -8,7 +10,12 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-  let activeTab = $state<'holdings' | 'allocation' | 'performance'>('holdings');
+  let activeTab = $state<'holdings' | 'allocation' | 'performance'>(
+    readParam('tab', 'holdings', ['holdings', 'allocation', 'performance']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'holdings'));
   let syncing = $state(false);
 
   $effect(() => {
@@ -28,8 +35,7 @@
   }
 
   function fmtPct(pct: number): string {
-    const sign = pct >= 0 ? '+' : '';
-    return `${sign}${pct.toFixed(2)}%`;
+    return formatPercent(pct, 2, { signed: true });
   }
 
   function gainLossColor(value: number): string {
@@ -90,42 +96,40 @@
       <p class="mt-1 text-sm text-surface-400">Track your portfolio performance and allocation</p>
     </div>
     <div class="flex gap-2">
-      <a href="/investments/fees">
-        <Button variant="secondary">
-          <svg
-            class="mr-1.5 h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          Fee Analyzer
-        </Button>
-      </a>
-      <a href="/investments/performance">
-        <Button variant="secondary">
-          <svg
-            class="mr-1.5 h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            />
-          </svg>
-          Detailed Performance
-        </Button>
-      </a>
+      <Button href="/investments/fees" variant="secondary">
+        <svg
+          aria-hidden="true"
+          class="mr-1.5 h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        Fee Analyzer
+      </Button>
+      <Button href="/investments/performance" variant="secondary">
+        <svg
+          aria-hidden="true"
+          class="mr-1.5 h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+          />
+        </svg>
+        Detailed Performance
+      </Button>
       <form
         method="POST"
         action="?/sync"
@@ -138,6 +142,7 @@
       >
         <Button type="submit" loading={syncing}>
           <svg
+            aria-hidden="true"
             class="mr-1.5 h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -158,7 +163,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Portfolio summary cards -->
@@ -167,6 +172,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -190,6 +196,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-700">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-surface-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -221,6 +228,7 @@
             : 'bg-red-600/20'}"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5 {data.summary.totalGainLoss >= 0 ? 'text-green-400' : 'text-red-400'}"
             fill="none"
             viewBox="0 0 24 24"
@@ -249,6 +257,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-purple-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -278,6 +287,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -325,14 +335,18 @@
       {#each data.holdings as accountGroup}
         <Card padding="none">
           <div class="border-b border-surface-700 px-6 py-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="font-semibold text-white">{accountGroup.accountName}</h3>
+            <div class="flex items-center justify-between gap-4">
+              <div class="min-w-0">
+                <h3 class="truncate font-semibold text-white" title={accountGroup.accountName}>
+                  {accountGroup.accountName}
+                </h3>
                 {#if accountGroup.institutionName}
-                  <p class="text-xs text-surface-500">{accountGroup.institutionName}</p>
+                  <p class="truncate text-xs text-surface-500" title={accountGroup.institutionName}>
+                    {accountGroup.institutionName}
+                  </p>
                 {/if}
               </div>
-              <div class="text-right">
+              <div class="shrink-0 text-right">
                 <p class="font-semibold text-white">{fmt(accountGroup.totalValue)}</p>
                 <p class="text-xs {gainLossColor(accountGroup.totalGainLoss)}">
                   {fmt(accountGroup.totalGainLoss)} ({fmtPct(accountGroup.totalGainLossPercent)})
@@ -364,7 +378,7 @@
                       <p class="text-xs text-surface-500">{holding.securityName}</p>
                     </td>
                     <td class="px-4 py-3 text-right text-sm text-surface-300">
-                      {holding.quantity.toFixed(4)}
+                      {formatDecimal(holding.quantity, 4)}
                     </td>
                     <td class="px-4 py-3 text-right text-sm text-surface-300">
                       {fmt(holding.costBasis)}
@@ -446,6 +460,7 @@
         {:else}
           <div class="flex flex-col items-center justify-center py-12 text-center">
             <svg
+              aria-hidden="true"
               class="h-12 w-12 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -492,7 +507,7 @@
                     ></span>
                     <span class="text-xs capitalize text-surface-300">{slice.type}</span>
                     <span class="ml-auto text-xs font-medium text-white">
-                      {slice.percentage.toFixed(1)}%
+                      {formatPercent(slice.percentage, 1)}
                     </span>
                   </div>
                 {/each}
@@ -513,13 +528,14 @@
                   <span class="text-sm capitalize text-surface-300">{slice.type}</span>
                   <div class="text-right">
                     <span class="text-sm font-medium text-white">{fmt(slice.value)}</span>
-                    <span class="ml-2 text-xs text-surface-400">{slice.percentage.toFixed(1)}%</span
+                    <span class="ml-2 text-xs text-surface-400"
+                      >{formatPercent(slice.percentage, 1)}</span
                     >
                   </div>
                 </div>
                 <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-700">
                   <div
-                    class="h-full rounded-full transition-all"
+                    class="h-full rounded-full transition-[width]"
                     style="width: {Math.min(
                       slice.percentage,
                       100,
@@ -527,6 +543,8 @@
                   ></div>
                 </div>
               </div>
+            {:else}
+              <p class="text-sm text-surface-500">No allocation data available</p>
             {/each}
           </div>
         </Card>
@@ -538,6 +556,7 @@
           <div class="mb-4 flex items-center gap-3">
             <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-600/20">
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 text-yellow-400"
                 fill="none"
                 viewBox="0 0 24 24"

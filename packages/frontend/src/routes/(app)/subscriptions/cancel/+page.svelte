@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import { invalidateAll, goto } from '$app/navigation';
   import { Card, Button, Modal, Spinner } from '$components/ui';
@@ -13,7 +14,10 @@
   let selectedProvider = $state<any>(null);
   let providerLookup = $state<any>(null);
   let cancellationReason = $state('');
-  let providerSearch = $state('');
+  let providerSearch = $state(readParam('q', ''));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('q', providerSearch, ''));
   let showEmailModal = $state(false);
   let showScriptModal = $state(false);
   let copiedEmail = $state(false);
@@ -178,7 +182,14 @@
     href="/subscriptions"
     class="inline-flex items-center gap-1 text-sm text-surface-400 hover:text-white transition"
   >
-    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <svg
+      aria-hidden="true"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
       <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
     </svg>
     Back to Subscriptions
@@ -194,7 +205,10 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 border border-red-800 p-4 text-sm text-red-300">
+    <div
+      role="alert"
+      class="rounded-lg bg-red-900/50 border border-red-800 p-4 text-sm text-red-300"
+    >
       {form.error}
     </div>
   {/if}
@@ -205,6 +219,7 @@
       <div class="flex items-center gap-4">
         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-900/30">
           <svg
+            aria-hidden="true"
             class="h-6 w-6 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -248,7 +263,9 @@
           onclick={() => {
             if (i < currentStep) goToStep(i);
           }}
-          class="flex items-center gap-2 {i <= currentStep ? 'text-white' : 'text-surface-500'}"
+          class="flex items-center gap-2 hover:text-white {i <= currentStep
+            ? 'text-white'
+            : 'text-surface-500'}"
           disabled={i > currentStep}
         >
           <div
@@ -261,6 +278,7 @@
           >
             {#if i < currentStep}
               <svg
+                aria-hidden="true"
                 class="h-3.5 w-3.5"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -294,16 +312,18 @@
                 onclick={() => selectSubscription(sub)}
                 class="flex w-full items-center justify-between rounded-lg border border-surface-700 p-4 text-left transition hover:border-primary-600/50 hover:bg-surface-700/50"
               >
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   {#if sub.categoryColor}
-                    <span class="h-3 w-3 rounded-full" style="background-color: {sub.categoryColor}"
+                    <span
+                      class="h-3 w-3 shrink-0 rounded-full"
+                      style="background-color: {sub.categoryColor}"
                     ></span>
                   {/if}
-                  <div>
-                    <p class="font-medium text-white">
+                  <div class="min-w-0">
+                    <p class="truncate font-medium text-white" title={sub.merchantName || sub.name}>
                       {sub.merchantName || sub.name}
                     </p>
-                    <p class="mt-0.5 text-xs text-surface-500">
+                    <p class="mt-0.5 truncate text-xs text-surface-500">
                       {getFrequencyLabel(sub.frequency)}
                       {#if sub.categoryName}
                         &middot; {sub.categoryName}
@@ -319,6 +339,7 @@
                     </p>
                   </div>
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -336,6 +357,7 @@
         <Card>
           <div class="flex flex-col items-center justify-center py-12 text-center">
             <svg
+              aria-hidden="true"
               class="h-16 w-16 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -363,10 +385,13 @@
           Look up cancellation info for any service, even if it is not in your subscriptions.
         </p>
         <input
+          autocomplete="off"
+          name="provider-search"
+          aria-label="Search providers"
           type="text"
-          placeholder="Search providers (Netflix, Spotify, Planet Fitness...)"
+          placeholder="Search providers (Netflix, Spotify, Planet Fitness…)…"
           bind:value={providerSearch}
-          class="mb-4 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mb-4 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
         <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {#each filteredProviders.slice(0, 12) as provider}
@@ -383,7 +408,9 @@
               }}
             >
               <div class="flex items-center justify-between">
-                <p class="text-sm font-medium text-white">{provider.name}</p>
+                <p class="min-w-0 truncate text-sm font-medium text-white" title={provider.name}>
+                  {provider.name}
+                </p>
                 <span
                   class="rounded-md border px-1.5 py-0.5 text-xs {getDifficultyColor(
                     provider.difficulty,
@@ -399,6 +426,7 @@
                   )}"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-2.5 w-2.5"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -417,6 +445,10 @@
                 </span>
               </div>
             </a>
+          {:else}
+            <p class="break-words text-sm text-surface-500 sm:col-span-2 lg:col-span-3">
+              No providers match “{providerSearch}”.
+            </p>
           {/each}
         </div>
         {#if filteredProviders.length > 12}
@@ -436,8 +468,11 @@
         <div class="grid gap-4 sm:grid-cols-2">
           <Card>
             <div class="flex items-center gap-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-900/30">
+              <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-900/30"
+              >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-red-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -447,8 +482,11 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
-              <div>
-                <p class="font-semibold text-white">
+              <div class="min-w-0">
+                <p
+                  class="truncate font-semibold text-white"
+                  title={selectedSubscription.merchantName || selectedSubscription.name}
+                >
                   {selectedSubscription.merchantName || selectedSubscription.name}
                 </p>
                 <p class="text-xs text-surface-400">
@@ -463,6 +501,7 @@
             <div class="flex items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-900/30">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -489,7 +528,12 @@
         <!-- Provider details -->
         <Card>
           <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-white">{selectedProvider.name}</h3>
+            <h3
+              class="min-w-0 truncate text-lg font-semibold text-white"
+              title={selectedProvider.name}
+            >
+              {selectedProvider.name}
+            </h3>
             <span
               class="rounded-md border px-2 py-1 text-xs font-medium {getDifficultyColor(
                 selectedProvider.difficulty,
@@ -512,6 +556,7 @@
                 )}"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -553,6 +598,7 @@
                 >
                   Open Cancellation Page
                   <svg
+                    aria-hidden="true"
                     class="h-3.5 w-3.5"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -573,6 +619,7 @@
                   class="inline-flex items-center gap-1.5 rounded-lg bg-surface-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-surface-600 transition"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-3.5 w-3.5"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -593,6 +640,7 @@
                 class="inline-flex items-center gap-1.5 rounded-lg bg-surface-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-surface-600 transition"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-3.5 w-3.5"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -613,6 +661,7 @@
                   class="inline-flex items-center gap-1.5 rounded-lg bg-surface-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-surface-600 transition"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-3.5 w-3.5"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -642,7 +691,9 @@
                   >
                     {i + 1}
                   </div>
-                  <p class="text-sm text-surface-300 leading-relaxed pt-0.5">{step}</p>
+                  <p class="min-w-0 break-words text-sm text-surface-300 leading-relaxed pt-0.5">
+                    {step}
+                  </p>
                 </li>
               {/each}
             </ol>
@@ -653,6 +704,7 @@
             <div class="rounded-lg bg-amber-900/20 border border-amber-800/50 p-4">
               <div class="flex items-start gap-3">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 flex-shrink-0 text-amber-400 mt-0.5"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -665,11 +717,11 @@
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <div>
+                <div class="min-w-0">
                   <p class="text-sm font-medium text-amber-300">Tips</p>
                   <ul class="mt-1.5 space-y-1">
                     {#each selectedProvider.tips as tip}
-                      <li class="text-xs text-amber-400/80">{tip}</li>
+                      <li class="break-words text-xs text-amber-400/80">{tip}</li>
                     {/each}
                   </ul>
                 </div>
@@ -690,6 +742,7 @@
         <Card>
           <div class="text-center py-8">
             <svg
+              aria-hidden="true"
               class="mx-auto h-12 w-12 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -730,6 +783,7 @@
         <div class="mb-4 rounded-lg bg-green-900/20 border border-green-800/50 p-4">
           <div class="flex gap-3">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 flex-shrink-0 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -742,13 +796,13 @@
                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <div>
+            <div class="min-w-0">
               <p class="text-sm font-medium text-green-300">
                 You will save {fmt(estimatedMonthlySaving)}/month ({fmt(
                   estimatedAnnualSaving,
                 )}/year)
               </p>
-              <p class="mt-1 text-xs text-green-400/80">
+              <p class="mt-1 break-words text-xs text-green-400/80">
                 By cancelling {selectedSubscription.merchantName || selectedSubscription.name}
               </p>
             </div>
@@ -772,12 +826,13 @@
               Reason for cancelling (optional)
             </label>
             <select
+              autocomplete="off"
               id="cancelReason"
               name="reason"
               bind:value={cancellationReason}
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             >
-              <option value="">Select a reason...</option>
+              <option value="">Select a reason…</option>
               <option value="Too expensive">Too expensive</option>
               <option value="Not using it enough">Not using it enough</option>
               <option value="Found a better alternative">Found a better alternative</option>
@@ -793,9 +848,7 @@
           <div class="flex justify-between pt-2">
             <Button variant="ghost" type="button" onclick={() => goToStep(1)}>Back</Button>
             <div class="flex gap-3">
-              <a href="/subscriptions">
-                <Button variant="secondary" type="button">Keep Subscription</Button>
-              </a>
+              <Button href="/subscriptions" variant="secondary">Keep Subscription</Button>
               <Button type="submit" variant="danger">Start Cancellation</Button>
             </div>
           </div>
@@ -810,6 +863,7 @@
       <div class="flex flex-col items-center justify-center py-8 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-900/30">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -830,9 +884,9 @@
         </p>
         {#if selectedSubscription}
           <div class="mt-4">
-            <a href="/subscriptions/cancel/{selectedSubscription.id}">
-              <Button>Track This Cancellation</Button>
-            </a>
+            <Button href="/subscriptions/cancel/{selectedSubscription.id}"
+              >Track This Cancellation</Button
+            >
           </div>
         {/if}
         <div class="mt-3">
@@ -861,7 +915,7 @@
             <div class="min-w-0 flex-1">
               <a
                 href="/subscriptions/cancel/{req.subscriptionId}"
-                class="text-sm font-medium text-white hover:text-primary-400 transition"
+                class="break-words text-sm font-medium text-white hover:text-primary-400 transition"
               >
                 {req.merchantName || req.subscriptionName || 'Unknown'}
               </a>
@@ -909,12 +963,12 @@
 >
   {#if selectedProvider}
     <div class="space-y-4">
-      <p class="text-sm text-surface-400">
+      <p class="break-words text-sm text-surface-400">
         Copy this email and send it to {selectedProvider.name} customer support to request cancellation.
       </p>
       <div class="rounded-lg border border-surface-600 bg-surface-900 p-4">
         <pre
-          class="whitespace-pre-wrap text-sm text-surface-300 font-mono leading-relaxed">{selectedProvider.emailTemplate ||
+          class="whitespace-pre-wrap break-words text-sm text-surface-300 font-mono leading-relaxed">{selectedProvider.emailTemplate ||
             `Subject: Subscription Cancellation Request - ${selectedProvider.name}
 
 Dear ${selectedProvider.name} Customer Support,
@@ -959,12 +1013,13 @@ Thank you,
 >
   {#if selectedProvider}
     <div class="space-y-4">
-      <p class="text-sm text-surface-400">
+      <p class="break-words text-sm text-surface-400">
         Use this script when calling {selectedProvider.name} to cancel your subscription.
       </p>
       {#if selectedProvider.phoneNumber}
         <div class="flex items-center gap-2 rounded-lg bg-surface-700 p-3">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -1003,31 +1058,31 @@ Thank you,
           </div>
           <div>
             <p class="font-semibold text-white">When asked why:</p>
-            <p class="italic">"I have decided to cancel. Please process my cancellation."</p>
+            <p class="italic">“I have decided to cancel. Please process my cancellation.”</p>
           </div>
           {#if selectedProvider.difficulty !== 'easy'}
             <div>
               <p class="font-semibold text-white">If offered a discount:</p>
               <p class="italic">
-                "I appreciate the offer, but I have made my decision and would like to proceed with
-                the cancellation."
+                “I appreciate the offer, but I have made my decision and would like to proceed with
+                the cancellation.”
               </p>
             </div>
             <div>
               <p class="font-semibold text-white">If offered a pause:</p>
-              <p class="italic">"Thank you, but I would prefer a full cancellation."</p>
+              <p class="italic">“Thank you, but I would prefer a full cancellation.”</p>
             </div>
           {/if}
           <div>
             <p class="font-semibold text-white">Confirm:</p>
             <p class="italic">
-              "Please confirm: my subscription is cancelled, no further charges will be made, and
-              please send a confirmation email to my address on file."
+              “Please confirm: my subscription is cancelled, no further charges will be made, and
+              please send a confirmation email to my address on file.”
             </p>
           </div>
           <div>
             <p class="font-semibold text-white">Get reference:</p>
-            <p class="italic">"Could I get a confirmation number for this cancellation?"</p>
+            <p class="italic">“Could I get a confirmation number for this cancellation?”</p>
           </div>
         </div>
       </div>

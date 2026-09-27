@@ -56,6 +56,75 @@ html {
   font-family: var(--fo-font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Dark-only UI: native scrollbars, inputs and date pickers render dark. */
+  color-scheme: dark;
+  /* Press feedback comes from hover/active styles, not the grey tap flash. */
+  -webkit-tap-highlight-color: transparent;
+  /* The landing and onboarding pages have fixed top bars; keep focused
+     elements and anchor targets from scrolling underneath them. */
+  scroll-padding-top: 5rem;
+}
+
+/* In the base layer so any bg-/text- utility on an element still wins. */
+@layer base {
+  /* No double-tap-to-zoom delay on controls. */
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  label,
+  summary,
+  [role='button'] {
+    touch-action: manipulation;
+  }
+
+  /* Native selects (and their option lists on Windows) get explicit colors
+     instead of inheriting the OS light theme. */
+  select,
+  select option {
+    background-color: var(--fo-surface-800);
+    color: var(--fo-surface-100);
+  }
+
+  /* Balanced lines instead of a one-word widow on wrapped headings. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-wrap: balance;
+  }
+
+  /* In-page anchors (legal-page contents, the skip link) land below the
+     sticky headers instead of under them. */
+  h1[id],
+  h2[id],
+  h3[id],
+  section[id],
+  main[id] {
+    scroll-margin-top: 5rem;
+  }
+
+  /* Figures in tables line up column by column. */
+  td,
+  th {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Honor reduced motion everywhere: entrance keyframes, skeletons, spinners
+   and hover transitions all collapse to their end state. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 body {
@@ -175,25 +244,10 @@ body {
   }
 }
 
+/* Opacity only, so the loop stays on the compositor. */
 .skeleton-pulse {
   animation: skeleton-pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  background: linear-gradient(
-    90deg,
-    var(--fo-surface-700) 25%,
-    var(--fo-surface-600) 50%,
-    var(--fo-surface-700) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.8s ease-in-out infinite;
-}
-
-@keyframes skeleton-shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
+  background-color: var(--fo-surface-700);
 }
 
 /* ── Toast Slide In/Out ──────────────────────────────────── */
@@ -230,11 +284,12 @@ body {
 /* ── Progress Bar Fill ───────────────────────────────────── */
 @keyframes progress-fill {
   from {
-    width: 0%;
+    transform: scaleX(0);
   }
 }
 
 .progress-fill {
+  transform-origin: left center;
   animation: progress-fill 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -243,16 +298,15 @@ body {
   from {
     opacity: 0;
     transform: scaleY(0);
-    transform-origin: bottom;
   }
   to {
     opacity: 1;
     transform: scaleY(1);
-    transform-origin: bottom;
   }
 }
 
 .chart-entry {
+  transform-origin: bottom;
   animation: chart-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 

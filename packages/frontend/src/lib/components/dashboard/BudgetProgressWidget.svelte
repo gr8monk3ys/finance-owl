@@ -23,24 +23,27 @@
 <Card class="h-full">
   <div class="flex items-center justify-between">
     <h3 class="text-sm font-medium text-surface-400">Budget Progress</h3>
-    <a href="/budgets" class="text-xs text-primary-400 hover:text-primary-300">View all</a>
+    <a href="/budgets" class="text-xs text-primary-400 hover:text-primary-300">View All</a>
   </div>
 
   {#if topBudgets.length > 0}
     <div class="mt-3 space-y-3">
       {#each topBudgets as budget}
         <div>
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-medium text-surface-300">
+          <div class="flex items-center justify-between gap-2">
+            <span
+              class="min-w-0 truncate text-xs font-medium text-surface-300"
+              title={budget.categoryName || 'Uncategorized'}
+            >
               {budget.categoryName || 'Uncategorized'}
             </span>
-            <span class="text-xs text-surface-400">
+            <span class="shrink-0 text-xs text-surface-400">
               {fmt(budget.spent)} / {fmt(budget.amount)}
             </span>
           </div>
           <div class="mt-1 h-2 w-full overflow-hidden rounded-full bg-surface-700">
             <div
-              class="h-full rounded-full transition-all duration-300"
+              class="h-full rounded-full transition-[width] duration-300"
               style="width: {Math.min(budget.percentUsed, 100)}%;
 								background-color: {budget.percentUsed > 100
                 ? '#ef4444'
@@ -60,6 +63,7 @@
   {:else}
     <div class="flex flex-col items-center justify-center py-6 text-center">
       <svg
+        aria-hidden="true"
         class="h-8 w-8 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"
@@ -73,7 +77,7 @@
         />
       </svg>
       <p class="mt-2 text-xs text-surface-500">
-        <a href="/budgets" class="text-primary-400 hover:text-primary-300">Set up budgets</a>
+        <a href="/budgets" class="text-primary-400 hover:text-primary-300">Set Up Budgets</a>
         to track spending
       </p>
     </div>

@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatCurrency as fmt } from '@finance-owl/shared';
+  import { formatCurrency as fmt, formatDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -108,7 +109,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   {#if data.score}
@@ -116,7 +117,7 @@
     <Card>
       <div class="flex flex-col items-center py-6">
         <div class="relative h-48 w-48">
-          <svg class="h-full w-full -rotate-90" viewBox="0 0 200 200">
+          <svg aria-hidden="true" class="h-full w-full -rotate-90" viewBox="0 0 200 200">
             <!-- Background circle -->
             <circle
               cx="100"
@@ -138,7 +139,7 @@
               stroke-linecap="round"
               stroke-dasharray={gaugeCircumference}
               stroke-dashoffset={gaugeDashOffset}
-              class="transition-all duration-1000"
+              class="transition-[stroke-dashoffset] duration-1000"
             />
           </svg>
           <div class="absolute inset-0 flex flex-col items-center justify-center">
@@ -149,7 +150,7 @@
           </div>
         </div>
         <p class="mt-3 text-xs text-surface-500">
-          Last calculated: {new Date(data.score.calculatedAt).toLocaleDateString()}
+          Last calculated: {formatDate(data.score.calculatedAt)}
         </p>
       </div>
     </Card>
@@ -165,7 +166,7 @@
             </p>
             <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-700">
               <div
-                class="h-full rounded-full transition-all"
+                class="h-full rounded-full transition-[width]"
                 style="width: {sub.value}%; background-color: {getScoreColor(sub.value)}"
               ></div>
             </div>
@@ -184,7 +185,7 @@
             <div class="flex flex-1 flex-col items-center gap-1">
               <span class="text-xs text-surface-500">{entry.overallScore}</span>
               <div
-                class="w-full rounded-t transition-all"
+                class="w-full rounded-t transition-[width]"
                 style="height: {barHeight}%; background-color: {getScoreColor(entry.overallScore)}"
               ></div>
             </div>
@@ -198,6 +199,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -233,7 +235,7 @@
           {@const progress = getProgressPercent(goal.currentValue, goal.targetValue)}
           <Card>
             <div class="flex items-start justify-between">
-              <div>
+              <div class="min-w-0">
                 <div class="flex items-center gap-2">
                   <span
                     class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium
@@ -246,7 +248,7 @@
                   {/if}
                 </div>
                 {#if goal.description}
-                  <p class="mt-1 text-sm text-surface-300">{goal.description}</p>
+                  <p class="mt-1 break-words text-sm text-surface-300">{goal.description}</p>
                 {/if}
               </div>
               <div class="text-right">
@@ -258,14 +260,14 @@
             <div class="mt-3">
               <div class="h-2 overflow-hidden rounded-full bg-surface-700">
                 <div
-                  class="h-full rounded-full transition-all {goal.isAchieved
+                  class="h-full rounded-full transition-[width] {goal.isAchieved
                     ? 'bg-green-500'
                     : 'bg-primary-500'}"
                   style="width: {progress}%"
                 ></div>
               </div>
               <p class="mt-1 text-right text-xs text-surface-500">
-                {progress.toFixed(0)}%
+                {formatPercent(progress)}
               </p>
             </div>
 
@@ -278,12 +280,14 @@
               >
                 <input type="hidden" name="id" value={goal.id} />
                 <input
+                  autocomplete="off"
+                  aria-label="Current progress value"
                   name="currentValue"
                   type="number"
                   step="0.01"
-                  placeholder="Update progress"
+                  placeholder="Update progress…"
                   required
-                  class="flex-1 rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="flex-1 rounded-lg border border-surface-600 bg-surface-700 px-3 py-1.5 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <Button type="submit" size="sm">Update</Button>
               </form>
@@ -312,10 +316,11 @@
         Category
       </label>
       <select
+        autocomplete="off"
         id="goalCategory"
         name="category"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
         <option value="savings">Savings</option>
         <option value="debt">Debt</option>
@@ -331,14 +336,15 @@
           Target Value
         </label>
         <input
+          autocomplete="off"
           id="goalTarget"
           name="targetValue"
           type="number"
           step="0.01"
           min="0"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="10000.00"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="10000.00…"
         />
       </div>
       <div>
@@ -346,13 +352,14 @@
           Current Value
         </label>
         <input
+          autocomplete="off"
           id="goalCurrent"
           name="currentValue"
           type="number"
           step="0.01"
           min="0"
           value="0"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
     </div>
@@ -362,11 +369,12 @@
         Description (optional)
       </label>
       <input
+        autocomplete="off"
         id="goalDescription"
         name="description"
         type="text"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Build 6 months emergency fund"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Build 6 months emergency fund…"
       />
     </div>
 

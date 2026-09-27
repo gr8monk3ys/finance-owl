@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatCurrencyWhole as fmt } from '@finance-owl/shared';
+  import { formatCurrencyWhole as fmt, formatNumber, formatDate } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -54,7 +55,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Portfolio Summary -->
@@ -88,6 +89,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -112,8 +114,13 @@
         <Card>
           <div class="flex items-start justify-between">
             <div class="min-w-0 flex-1">
-              <p class="truncate font-semibold text-white">{property.address}</p>
-              <p class="text-sm text-surface-400">
+              <p class="truncate font-semibold text-white" title={property.address}>
+                {property.address}
+              </p>
+              <p
+                class="truncate text-sm text-surface-400"
+                title="{property.city}, {property.state} {property.zipCode}"
+              >
                 {property.city}, {property.state}
                 {property.zipCode}
               </p>
@@ -141,7 +148,7 @@
             {#if property.squareFeet}
               <div>
                 <p class="text-lg font-semibold text-white">
-                  {property.squareFeet.toLocaleString()}
+                  {formatNumber(property.squareFeet)}
                 </p>
                 <p class="text-xs text-surface-500">Sq Ft</p>
               </div>
@@ -167,13 +174,18 @@
             {/if}
             {#if property.lastEstimateDate}
               <p class="text-xs text-surface-500">
-                Last estimated: {new Date(property.lastEstimateDate).toLocaleDateString()}
+                Last estimated: {formatDate(property.lastEstimateDate)}
               </p>
             {/if}
           </div>
 
           <div class="mt-4 flex justify-end border-t border-surface-700 pt-3">
-            <form method="POST" action="?/delete" use:enhance>
+            <form
+              use:confirmSubmit={'Remove this property? This can’t be undone.'}
+              method="POST"
+              action="?/delete"
+              use:enhance
+            >
               <input type="hidden" name="id" value={property.id} />
               <Button type="submit" variant="danger" size="sm">Remove</Button>
             </form>
@@ -199,12 +211,13 @@
     <div>
       <label for="address" class="block text-sm font-medium text-surface-300">Address</label>
       <input
+        autocomplete="off"
         id="address"
         name="address"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="123 Main St"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="123 Main St…"
       />
     </div>
 
@@ -212,33 +225,37 @@
       <div>
         <label for="city" class="block text-sm font-medium text-surface-300">City</label>
         <input
+          autocomplete="off"
           id="city"
           name="city"
           type="text"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
       <div>
         <label for="state" class="block text-sm font-medium text-surface-300">State</label>
         <input
+          autocomplete="off"
           id="state"
           name="state"
           type="text"
           required
           maxlength="2"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="CA"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="CA…"
         />
       </div>
       <div>
         <label for="zipCode" class="block text-sm font-medium text-surface-300">Zip</label>
         <input
+          autocomplete="off"
+          spellcheck={false}
           id="zipCode"
           name="zipCode"
           type="text"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
     </div>
@@ -248,9 +265,10 @@
         >Property Type</label
       >
       <select
+        autocomplete="off"
         id="propertyType"
         name="propertyType"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
         <option value="single_family">Single Family</option>
         <option value="condo">Condo</option>
@@ -264,32 +282,35 @@
       <div>
         <label for="bedrooms" class="block text-sm font-medium text-surface-300">Beds</label>
         <input
+          autocomplete="off"
           id="bedrooms"
           name="bedrooms"
           type="number"
           min="0"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
       <div>
         <label for="bathrooms" class="block text-sm font-medium text-surface-300">Baths</label>
         <input
+          autocomplete="off"
           id="bathrooms"
           name="bathrooms"
           type="number"
           min="0"
           step="0.5"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
       <div>
         <label for="squareFeet" class="block text-sm font-medium text-surface-300">Sq Ft</label>
         <input
+          autocomplete="off"
           id="squareFeet"
           name="squareFeet"
           type="number"
           min="0"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
     </div>
@@ -298,11 +319,12 @@
       <div>
         <label for="yearBuilt" class="block text-sm font-medium text-surface-300">Year Built</label>
         <input
+          autocomplete="off"
           id="yearBuilt"
           name="yearBuilt"
           type="number"
           min="1800"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
       <div>
@@ -310,10 +332,11 @@
           >Purchase Date</label
         >
         <input
+          autocomplete="off"
           id="purchaseDate"
           name="purchaseDate"
           type="date"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
     </div>
@@ -324,13 +347,14 @@
           >Purchase Price</label
         >
         <input
+          autocomplete="off"
           id="purchasePrice"
           name="purchasePrice"
           type="number"
           step="0.01"
           min="0"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="350000"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="350000…"
         />
       </div>
       <div>
@@ -338,13 +362,14 @@
           >Current Estimate</label
         >
         <input
+          autocomplete="off"
           id="currentEstimate"
           name="currentEstimate"
           type="number"
           step="0.01"
           min="0"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="400000"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="400000…"
         />
       </div>
     </div>
@@ -352,11 +377,12 @@
     <div>
       <label for="notes" class="block text-sm font-medium text-surface-300">Notes (optional)</label>
       <textarea
+        autocomplete="off"
         id="notes"
         name="notes"
         rows="2"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Any additional notes..."></textarea>
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Any additional notes…"></textarea>
     </div>
 
     <div class="flex justify-end gap-3 pt-2">

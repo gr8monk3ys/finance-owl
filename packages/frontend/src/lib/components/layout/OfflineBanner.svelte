@@ -8,6 +8,7 @@
     role="alert"
   >
     <svg
+      aria-hidden="true"
       class="h-4 w-4 shrink-0"
       viewBox="0 0 24 24"
       fill="none"

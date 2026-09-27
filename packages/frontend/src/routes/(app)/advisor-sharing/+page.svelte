@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -77,7 +78,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Active Shares -->
@@ -92,6 +95,7 @@
     {#if activeShares.length === 0}
       <div class="flex flex-col items-center py-8 text-center">
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -113,17 +117,23 @@
         {#each activeShares as share}
           <div class="rounded-lg border border-surface-700 bg-surface-800 p-4">
             <div class="flex items-start justify-between">
-              <div>
-                <p class="font-medium text-white">{share.advisorName}</p>
-                <p class="text-sm text-surface-400">{share.advisorEmail}</p>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={share.advisorName}>
+                  {share.advisorName}
+                </p>
+                <p class="truncate text-sm text-surface-400" title={share.advisorEmail}>
+                  {share.advisorEmail}
+                </p>
               </div>
               <div class="flex items-center gap-2">
                 <button
+                  aria-label="View access logs"
                   class="rounded-lg p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-white"
                   onclick={() => (viewingLogs = share)}
                   title="View access logs"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -137,14 +147,21 @@
                     />
                   </svg>
                 </button>
-                <form method="POST" action="?/revoke" use:enhance>
+                <form
+                  use:confirmSubmit={'Revoke this advisor’s access?'}
+                  method="POST"
+                  action="?/revoke"
+                  use:enhance
+                >
                   <input type="hidden" name="id" value={share.id} />
                   <button
+                    aria-label="Revoke access"
                     type="submit"
                     class="rounded-lg p-1.5 text-surface-400 transition hover:bg-red-900/30 hover:text-red-400"
                     title="Revoke access"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -201,9 +218,13 @@
         {#each inactiveShares as share}
           <div class="rounded-lg border border-surface-700 bg-surface-900/50 p-3 opacity-60">
             <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-surface-300">{share.advisorName}</p>
-                <p class="text-xs text-surface-500">{share.advisorEmail}</p>
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-surface-300" title={share.advisorName}>
+                  {share.advisorName}
+                </p>
+                <p class="truncate text-xs text-surface-500" title={share.advisorEmail}>
+                  {share.advisorEmail}
+                </p>
               </div>
               <span
                 class="rounded-full bg-red-500/20 px-2 py-0.5 text-xs text-red-300 border border-red-500/30"
@@ -235,12 +256,13 @@
         Advisor Name
       </label>
       <input
+        autocomplete="off"
         id="advisorName"
         name="advisorName"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Jane Smith"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Jane Smith…"
       />
     </div>
 
@@ -249,12 +271,14 @@
         Advisor Email
       </label>
       <input
+        autocomplete="off"
+        spellcheck={false}
         id="advisorEmail"
         name="advisorEmail"
         type="email"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="advisor@example.com"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="advisor@example.com…"
       />
     </div>
 
@@ -269,7 +293,7 @@
             <input
               type="checkbox"
               name="permission_{option.key}"
-              class="mt-0.5 h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+              class="mt-0.5 h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
             />
             <div>
               <p class="text-sm font-medium text-white">{option.label}</p>
@@ -285,10 +309,11 @@
         Expiration Date (optional)
       </label>
       <input
+        autocomplete="off"
         id="expiresAt"
         name="expiresAt"
         type="date"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       />
       <p class="mt-1.5 text-xs text-surface-500">
         Leave blank for no expiration. The advisor link will remain active until revoked.
@@ -310,8 +335,8 @@
     <div class="space-y-3">
       <div class="rounded-lg bg-surface-900 p-3">
         <p class="text-sm text-surface-400">Advisor</p>
-        <p class="font-medium text-white">{viewingLogs.advisorName}</p>
-        <p class="text-xs text-surface-500">{viewingLogs.advisorEmail}</p>
+        <p class="break-words font-medium text-white">{viewingLogs.advisorName}</p>
+        <p class="break-all text-xs text-surface-500">{viewingLogs.advisorEmail}</p>
       </div>
       <p class="text-sm text-surface-400">
         Access logs are tracked when the advisor views your shared portal.

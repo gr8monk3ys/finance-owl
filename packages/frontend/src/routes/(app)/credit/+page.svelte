@@ -2,7 +2,12 @@
   import { Card, Button, Modal, Input } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
-  import { formatDate, formatDateWith, formatMonthYearShort } from '@finance-owl/shared';
+  import {
+    formatDate,
+    formatDateWith,
+    formatMonthYearShort,
+    formatCurrencyWhole,
+  } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -281,6 +286,7 @@
     </div>
     <Button onclick={() => (showAddScore = true)} size="sm">
       <svg
+        aria-hidden="true"
         class="mr-1.5 h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -297,6 +303,7 @@
   {#if form && 'error' in form && form.error}
     <div class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300">
       <svg
+        aria-hidden="true"
         class="h-5 w-5 flex-shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -317,6 +324,7 @@
   <div class="rounded-lg border border-primary-500/20 bg-primary-500/5 px-4 py-3">
     <div class="flex items-start gap-3">
       <svg
+        aria-hidden="true"
         class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary-400"
         fill="none"
         viewBox="0 0 24 24"
@@ -351,7 +359,7 @@
 
           <!-- Gauge visualization -->
           <div class="relative">
-            <svg width="200" height="120" viewBox="0 0 200 120">
+            <svg aria-hidden="true" width="200" height="120" viewBox="0 0 200 120">
               <!-- Background arc -->
               <path
                 d="M 10 100 A 90 90 0 0 1 190 100"
@@ -426,6 +434,7 @@
         {:else}
           <div class="flex flex-col items-center justify-center py-12 text-center">
             <svg
+              aria-hidden="true"
               class="h-12 w-12 text-surface-600"
               fill="none"
               viewBox="0 0 24 24"
@@ -456,6 +465,7 @@
                   class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-surface-700"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-surface-300"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -482,7 +492,7 @@
                       {getStatusLabel(factor.status)}
                     </span>
                   </div>
-                  <p class="mt-1 text-sm text-surface-300">{factor.value}</p>
+                  <p class="mt-1 break-words text-sm text-surface-300">{factor.value}</p>
                   <div class="mt-2 flex items-center gap-2">
                     <span class="text-xs text-surface-500">
                       {getImpactLabel(factor.impact)}
@@ -511,6 +521,7 @@
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600/15">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -594,18 +605,20 @@
               {#each data.report.accounts.slice(0, 5) as account}
                 <div class="flex items-center justify-between px-6 py-3">
                   <div class="min-w-0 flex-1">
-                    <p class="text-sm font-medium text-white">{account.accountName}</p>
+                    <p class="truncate text-sm font-medium text-white" title={account.accountName}>
+                      {account.accountName}
+                    </p>
                     <p class="text-xs text-surface-400">
                       {account.accountType.replace('_', ' ')} &middot; Opened {account.openedDate}
                     </p>
                   </div>
                   <div class="text-right">
                     <p class="text-sm font-medium text-white">
-                      ${(account.balance || 0).toLocaleString()}
+                      {formatCurrencyWhole(account.balance || 0)}
                     </p>
                     {#if account.creditLimit}
                       <p class="text-xs text-surface-500">
-                        / ${account.creditLimit.toLocaleString()} limit
+                        / {formatCurrencyWhole(account.creditLimit)} limit
                       </p>
                     {/if}
                   </div>
@@ -637,6 +650,7 @@
       </div>
       <Button onclick={() => (showDispute = true)} size="sm" variant="secondary">
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -658,6 +672,7 @@
                 class="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-surface-700"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 text-surface-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -672,7 +687,7 @@
                 </svg>
               </div>
               <div class="min-w-0 flex-1">
-                <p class="text-sm text-white">{dispute.description}</p>
+                <p class="break-words text-sm text-white">{dispute.description}</p>
                 <p class="mt-1 text-xs text-surface-500">
                   {formatAlertDate(dispute.createdAt)}
                 </p>
@@ -685,6 +700,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-8 text-center">
           <svg
+            aria-hidden="true"
             class="h-10 w-10 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -726,6 +742,7 @@
               class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary-600/20"
             >
               <svg
+                aria-hidden="true"
                 class="h-5 w-5 text-primary-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -766,6 +783,7 @@
                         : 'bg-surface-700'}"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4
 									{alert.alertType === 'score_change'
                     ? 'text-blue-400'
@@ -803,7 +821,7 @@
                 </svg>
               </div>
               <div class="min-w-0 flex-1">
-                <p class="text-sm text-white">{alert.description}</p>
+                <p class="break-words text-sm text-white">{alert.description}</p>
                 {#if alert.previousValue && alert.newValue}
                   <p class="mt-0.5 text-xs text-surface-400">
                     {alert.previousValue} &rarr; {alert.newValue}
@@ -838,6 +856,7 @@
   <form method="POST" action="?/addScore" use:enhance>
     <div class="space-y-4">
       <Input
+        autocomplete="off"
         id="score"
         name="score"
         label="Credit Score"
@@ -851,10 +870,11 @@
       <div>
         <label for="source" class="block text-sm font-medium text-surface-300">Source</label>
         <select
+          autocomplete="off"
           id="source"
           name="source"
           bind:value={newSource}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="manual">Manual Entry</option>
           <option value="transunion">TransUnion</option>
@@ -866,10 +886,11 @@
       <div>
         <label for="scoreType" class="block text-sm font-medium text-surface-300">Score Type</label>
         <select
+          autocomplete="off"
           id="scoreType"
           name="scoreType"
           bind:value={newScoreType}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="vantage3">VantageScore 3.0</option>
           <option value="fico8">FICO 8</option>
@@ -886,10 +907,11 @@
           {#each [{ name: 'payment_history', label: 'Payment History', placeholder: 'e.g. 100%' }, { name: 'credit_utilization', label: 'Credit Utilization', placeholder: 'e.g. 25%' }, { name: 'credit_age', label: 'Credit Age', placeholder: 'e.g. 5 years' }, { name: 'total_accounts', label: 'Total Accounts', placeholder: 'e.g. 8' }, { name: 'hard_inquiries', label: 'Hard Inquiries', placeholder: 'e.g. 2' }, { name: 'derogatory_marks', label: 'Derogatory Marks', placeholder: 'e.g. 0' }] as factorField}
             <div class="grid grid-cols-2 gap-2">
               <Input
+                autocomplete="off"
                 id={`factor_${factorField.name}_value`}
                 name={`factor_${factorField.name}_value`}
                 label={factorField.label}
-                placeholder={factorField.placeholder}
+                placeholder={factorField.placeholder ? `${factorField.placeholder}…` : undefined}
               />
               <div>
                 <label
@@ -897,9 +919,10 @@
                   class="block text-sm font-medium text-surface-300">Status</label
                 >
                 <select
+                  autocomplete="off"
                   id={`factor_${factorField.name}_status`}
                   name={`factor_${factorField.name}_status`}
-                  class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 >
                   <option value="">-- Select --</option>
                   <option value="good">Good</option>
@@ -945,20 +968,22 @@
   >
     <div class="space-y-4">
       <Input
+        autocomplete="off"
         id="accountId"
         name="accountId"
         label="Account / Tradeline ID"
-        placeholder="Enter the account or tradeline ID to dispute"
+        placeholder="Enter the account or tradeline ID to dispute…"
         required
       />
 
       <div>
         <label for="reason" class="block text-sm font-medium text-surface-300">Reason</label>
         <select
+          autocomplete="off"
           id="reason"
           name="reason"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="">-- Select a reason --</option>
           <option value="not_mine">Not My Account</option>
@@ -974,12 +999,13 @@
           >Explanation</label
         >
         <textarea
+          autocomplete="off"
           id="explanation"
           name="explanation"
           required
           rows="4"
-          placeholder="Describe the inaccuracy in detail..."
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          placeholder="Describe the inaccuracy in detail…"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         ></textarea>
       </div>
 
@@ -1088,6 +1114,7 @@
             </div>
             <div class="text-center">
               <svg
+                aria-hidden="true"
                 class="h-6 w-6 text-surface-500"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -1158,6 +1185,7 @@
                       {getStatusLabel(affected.currentStatus)}
                     </span>
                     <svg
+                      aria-hidden="true"
                       class="h-3 w-3 text-surface-500"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -1185,7 +1213,7 @@
 
           <!-- Explanation -->
           <div class="rounded-lg border border-surface-700 bg-surface-700/30 p-4">
-            <p class="text-sm text-surface-300">{simulationResult.explanation}</p>
+            <p class="break-words text-sm text-surface-300">{simulationResult.explanation}</p>
           </div>
 
           <div class="flex justify-end pt-2">

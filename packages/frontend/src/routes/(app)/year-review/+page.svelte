@@ -1,9 +1,15 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { goto, invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
   import type { PageData, ActionData } from './$types';
-  import { formatCurrency as fmt, formatCurrencyCompact as fmtCompact } from '@finance-owl/shared';
+  import {
+    formatCurrency as fmt,
+    formatCurrencyCompact as fmtCompact,
+    formatNumber,
+    formatDateTime,
+  } from '@finance-owl/shared';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -69,6 +75,8 @@
           >
             {year}
           </button>
+        {:else}
+          <span class="px-3 py-1.5 text-sm text-surface-400">No years yet</span>
         {/each}
       </div>
 
@@ -90,7 +98,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   {#if data.review}
@@ -100,6 +108,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-600/20">
             <svg
+              aria-hidden="true"
               class="h-6 w-6 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -123,6 +132,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-600/20">
             <svg
+              aria-hidden="true"
               class="h-6 w-6 text-red-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -151,6 +161,7 @@
               : 'bg-red-600/20'}"
           >
             <svg
+              aria-hidden="true"
               class="h-6 w-6 {data.review.totalSaved >= 0 ? 'text-primary-400' : 'text-red-400'}"
               fill="none"
               viewBox="0 0 24 24"
@@ -182,16 +193,26 @@
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <Card>
         <p class="text-sm text-surface-400">Top Category</p>
-        <p class="mt-1 text-lg font-bold text-white">{data.review.topCategory ?? 'N/A'}</p>
+        <p
+          class="mt-1 truncate text-lg font-bold text-white"
+          title={data.review.topCategory ?? 'N/A'}
+        >
+          {data.review.topCategory ?? 'N/A'}
+        </p>
       </Card>
       <Card>
         <p class="text-sm text-surface-400">Top Merchant</p>
-        <p class="mt-1 text-lg font-bold text-white">{data.review.topMerchant ?? 'N/A'}</p>
+        <p
+          class="mt-1 truncate text-lg font-bold text-white"
+          title={data.review.topMerchant ?? 'N/A'}
+        >
+          {data.review.topMerchant ?? 'N/A'}
+        </p>
       </Card>
       <Card>
         <p class="text-sm text-surface-400">Transactions</p>
         <p class="mt-1 text-lg font-bold text-white">
-          {data.review.transactionCount.toLocaleString()}
+          {formatNumber(data.review.transactionCount)}
         </p>
         <p class="text-xs text-surface-500">
           Avg: {fmt(data.review.averageTransaction)}
@@ -201,7 +222,9 @@
         <p class="text-sm text-surface-400">Biggest Purchase</p>
         <p class="mt-1 text-lg font-bold text-white">{fmt(data.review.biggestPurchase)}</p>
         {#if data.review.biggestPurchaseDescription}
-          <p class="text-xs text-surface-500">{data.review.biggestPurchaseDescription}</p>
+          <p class="break-words text-xs text-surface-500">
+            {data.review.biggestPurchaseDescription}
+          </p>
         {/if}
       </Card>
     </div>
@@ -264,17 +287,19 @@
               data.review.totalSpending > 0 ? (cat.amount / data.review.totalSpending) * 100 : 0}
             <div>
               <div class="flex items-center justify-between">
-                <span class="text-sm text-surface-300">{cat.name}</span>
+                <span class="min-w-0 truncate text-sm text-surface-300" title={cat.name}
+                  >{cat.name}</span
+                >
                 <div class="text-right">
                   <span class="text-sm font-medium text-white">{fmt(cat.amount)}</span>
                   <span class="ml-2 text-xs text-surface-400">
-                    {catPercent.toFixed(1)}%
+                    {formatPercent(catPercent, 1)}
                   </span>
                 </div>
               </div>
               <div class="mt-1 h-2 overflow-hidden rounded-full bg-surface-700">
                 <div
-                  class="h-full rounded-full bg-primary-500 transition-all"
+                  class="h-full rounded-full bg-primary-500 transition-[width]"
                   style="width: {catPercent}%"
                 ></div>
               </div>
@@ -286,13 +311,14 @@
 
     <!-- Generation timestamp -->
     <p class="text-center text-xs text-surface-500">
-      Generated: {new Date(data.review.generatedAt).toLocaleString()}
+      Generated: {formatDateTime(data.review.generatedAt)}
     </p>
   {:else}
     <!-- Empty state -->
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"

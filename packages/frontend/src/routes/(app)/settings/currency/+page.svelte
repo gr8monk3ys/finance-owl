@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatDecimal } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import type { ActionData, PageData } from './$types';
@@ -28,9 +29,9 @@
   });
 
   function formatRate(rate: number): string {
-    if (rate >= 100) return rate.toFixed(2);
-    if (rate >= 1) return rate.toFixed(4);
-    return rate.toFixed(6);
+    if (rate >= 100) return formatDecimal(rate, 2);
+    if (rate >= 1) return formatDecimal(rate, 4);
+    return formatDecimal(rate, 6);
   }
 
   function getCurrencySymbol(code: string): string {
@@ -50,7 +51,14 @@
       class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-400 transition hover:bg-surface-700 hover:text-white"
       aria-label="Back to settings"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -58,19 +66,19 @@
   </div>
 
   {#if form?.success}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
       Currency preferences saved successfully.
     </div>
   {/if}
 
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
       {form.error}
     </div>
   {/if}
 
   {#if form?.refreshed}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
       Exchange rates refreshed successfully.
     </div>
   {/if}
@@ -101,10 +109,11 @@
             Currency
           </label>
           <select
+            autocomplete="off"
             id="defaultCurrency"
             name="defaultCurrency"
             bind:value={selectedCurrency}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             {#each data.supported as currency}
               <option value={currency.code}>
@@ -120,10 +129,11 @@
             Display Format
           </label>
           <select
+            autocomplete="off"
             id="displayFormat"
             name="displayFormat"
             bind:value={selectedFormat}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="symbol">Symbol ({getCurrencySymbol(selectedCurrency)}1,234.56)</option>
             <option value="code">Code (1,234.56 {selectedCurrency})</option>
@@ -159,6 +169,7 @@
         >
           <Button size="sm" type="submit" loading={refreshing}>
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"

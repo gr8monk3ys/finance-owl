@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Badge } from '$components/ui';
@@ -6,7 +7,10 @@
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
-  let billingInterval = $state<'month' | 'year'>('month');
+  let billingInterval = $state<'month' | 'year'>(readParam('billing', 'month', ['month', 'year']));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('billing', billingInterval, 'month'));
   let checkoutLoading = $state<string | null>(null);
   let portalLoading = $state(false);
   let cancelLoading = $state(false);
@@ -41,7 +45,7 @@
   function getPrice(plan: PlanDisplay): string {
     if (plan.name === 'free') return '$0';
     const price = billingInterval === 'month' ? plan.monthlyPrice : plan.yearlyPrice;
-    return `$${price.toFixed(2)}`;
+    return formatCurrency(price);
   }
 
   function getPeriod(plan: PlanDisplay): string {
@@ -54,7 +58,7 @@
     const monthlyCost = plan.monthlyPrice * 12;
     const savings = monthlyCost - plan.yearlyPrice;
     if (savings <= 0) return null;
-    return `Save $${savings.toFixed(2)}`;
+    return `Save ${formatCurrency(savings)}`;
   }
 
   function getPlanId(planName: string): string | undefined {
@@ -116,13 +120,13 @@
   {/if}
 
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+    <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
       {form.error}
     </div>
   {/if}
 
   {#if form?.success}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
       {form.success}
     </div>
   {/if}
@@ -208,11 +212,9 @@
           {/if}
         {/if}
         {#if currentPlanName === 'free' || currentPlanName === 'pro'}
-          <a href="/pricing">
-            <Button variant="primary" size="sm">
-              {currentPlanName === 'free' ? 'Upgrade' : 'Upgrade to Premium'}
-            </Button>
-          </a>
+          <Button href="/pricing" variant="primary" size="sm">
+            {currentPlanName === 'free' ? 'Upgrade' : 'Upgrade to Premium'}
+          </Button>
         {/if}
       </div>
     </div>
@@ -354,6 +356,7 @@
             {#each plan.features as feature}
               <li class="flex items-start gap-2 text-sm text-surface-300">
                 <svg
+                  aria-hidden="true"
                   class="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -501,6 +504,7 @@
                   {#if typeof val === 'boolean'}
                     {#if val}
                       <svg
+                        aria-hidden="true"
                         class="mx-auto h-5 w-5 {tier === 'pro'
                           ? 'text-emerald-400'
                           : tier === 'premium'
@@ -517,6 +521,7 @@
                       </svg>
                     {:else}
                       <svg
+                        aria-hidden="true"
                         class="mx-auto h-5 w-5 text-surface-600"
                         viewBox="0 0 20 20"
                         fill="currentColor"

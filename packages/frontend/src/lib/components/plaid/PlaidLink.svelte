@@ -63,7 +63,8 @@
     };
     script.onerror = () => {
       loading = false;
-      error = 'Failed to load Plaid Link SDK';
+      error =
+        'Couldn’t load Plaid Link. Check your connection or turn off content blockers, then try again.';
     };
     document.head.appendChild(script);
 
@@ -74,7 +75,7 @@
 
   function openPlaidLink() {
     if (!(window as any).Plaid) {
-      error = 'Plaid SDK not loaded yet';
+      error = 'Plaid Link is still loading. Wait a moment, then try again.';
       return;
     }
 
@@ -88,14 +89,17 @@
       },
       onExit: (err: any, metadata: any) => {
         if (err) {
-          error = err.display_message || err.error_message || 'Plaid Link error';
+          error =
+            err.display_message ||
+            err.error_message ||
+            'Plaid Link closed with an error. Try again.';
         }
         onExit?.(err, metadata);
       },
       onEvent: (eventName: string, _metadata: any) => {
         // Can be used for analytics/logging
         if (eventName === 'ERROR') {
-          error = 'An error occurred in Plaid Link';
+          error = 'Something went wrong in Plaid Link. Try again, or come back in a few minutes.';
         }
       },
     });
@@ -104,8 +108,16 @@
   }
 </script>
 
+<svelte:head>
+  <!-- Warm the connection before Link loads its script from Plaid's CDN. -->
+  <link rel="preconnect" href="https://cdn.plaid.com" />
+</svelte:head>
+
 {#if error}
-  <div class="mb-2 rounded-lg bg-red-900/50 px-3 py-2 text-sm text-red-300">
+  <div
+    role="alert"
+    class="mb-2 break-words rounded-lg bg-red-900/50 px-3 py-2 text-sm text-red-300"
+  >
     {error}
     <button
       onclick={() => {
@@ -115,7 +127,7 @@
       }}
       class="ml-2 text-red-200 underline hover:text-white"
     >
-      Try again
+      Try Again
     </button>
   </div>
 {/if}
@@ -127,7 +139,7 @@
     class="inline-flex items-center rounded-lg bg-primary-600 px-4 py-2.5 font-medium text-white transition hover:bg-primary-700 disabled:opacity-50 {buttonClass}"
   >
     {#if loading}
-      <svg class="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+      <svg aria-hidden="true" class="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
         <path
           class="opacity-75"
@@ -135,7 +147,7 @@
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
         />
       </svg>
-      Loading...
+      Loading…
     {:else}
       {buttonText}
     {/if}

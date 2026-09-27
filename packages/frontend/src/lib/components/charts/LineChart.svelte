@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatCurrency, formatCurrencyWhole } from '@finance-owl/shared';
   import { onMount } from 'svelte';
   import {
     Chart,
@@ -75,7 +76,7 @@
             grid: { color: '#1e293b' },
             ticks: {
               color: '#94a3b8',
-              callback: currency ? (value) => `$${Number(value).toLocaleString()}` : undefined,
+              callback: currency ? (value) => formatCurrencyWhole(Number(value)) : undefined,
             },
             border: { display: false },
           },
@@ -95,8 +96,7 @@
             padding: 10,
             callbacks: {
               label: currency
-                ? (context) =>
-                    `${context.dataset.label}: $${(context.parsed.y ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+                ? (context) => `${context.dataset.label}: ${formatCurrency(context.parsed.y ?? 0)}`
                 : undefined,
             },
           },

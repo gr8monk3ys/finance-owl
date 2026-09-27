@@ -52,6 +52,7 @@
       >
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-700">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 {action.color}"
             fill="none"
             viewBox="0 0 24 24"

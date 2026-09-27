@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatFileSize } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -172,7 +173,7 @@
 
   <!-- Error display -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-4 text-sm text-red-300">
+    <div role="alert" class="rounded-lg bg-red-900/50 p-4 text-sm text-red-300">
       {form.error}
     </div>
   {/if}
@@ -191,6 +192,7 @@
         >
           {#if currentStep > step}
             <svg
+              aria-hidden="true"
               class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -245,9 +247,16 @@
           ondragleave={handleDragLeave}
           ondrop={handleDrop}
           onclick={() => document.getElementById('fileInput')?.click()}
-          onkeydown={(e) => e.key === 'Enter' && document.getElementById('fileInput')?.click()}
+          onkeydown={(e) => {
+            if (e.target !== e.currentTarget) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              document.getElementById('fileInput')?.click();
+            }
+          }}
         >
           <input
+            aria-label="Statement file"
             id="fileInput"
             name="file"
             type="file"
@@ -257,9 +266,12 @@
           />
 
           {#if selectedFile}
-            <div class="flex items-center gap-3">
-              <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-600/20">
+            <div class="flex max-w-full items-center gap-3">
+              <div
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary-600/20"
+              >
                 <svg
+                  aria-hidden="true"
                   class="h-6 w-6 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -273,10 +285,16 @@
                   />
                 </svg>
               </div>
-              <div>
-                <p class="font-medium text-white">{selectedFile.name}</p>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={selectedFile.name}>
+                  {selectedFile.name}
+                </p>
                 <p class="text-sm text-surface-400">
-                  {getFileTypeLabel(selectedFile.name)} - {(selectedFile.size / 1024).toFixed(1)} KB
+                  {getFileTypeLabel(selectedFile.name)} - {formatFileSize(
+                    selectedFile.size,
+                    'kilobyte',
+                    1,
+                  )}
                 </p>
               </div>
               <button
@@ -291,6 +309,7 @@
                 }}
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -303,6 +322,7 @@
             </div>
           {:else}
             <svg
+              aria-hidden="true"
               class="h-12 w-12 text-surface-500"
               fill="none"
               viewBox="0 0 24 24"
@@ -325,7 +345,7 @@
         {#if selectedFile}
           <div class="mt-4 flex justify-end">
             <Button type="submit" loading={isLoading}>
-              {isLoading ? 'Parsing file...' : 'Upload & Parse'}
+              {isLoading ? 'Parsing File…' : 'Upload & Parse'}
             </Button>
           </div>
         {/if}
@@ -355,12 +375,14 @@
         <Card>
           <h3 class="mb-3 text-lg font-semibold text-white">Select Target Account</h3>
           <select
+            autocomplete="off"
+            aria-label="Target account"
             name="accountId"
             bind:value={selectedAccountId}
             required
-            class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
-            <option value="">Choose an account...</option>
+            <option value="">Choose an account…</option>
             {#each data.accounts as account}
               <option value={account.id}>
                 {account.name}
@@ -425,8 +447,9 @@
                     >Date Column</label
                   >
                   <select
+                    autocomplete="off"
                     id="col-date"
-                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none"
+                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.date}
                     onchange={(e) =>
                       updateMapping('date', parseInt((e.target as HTMLSelectElement).value))}
@@ -441,8 +464,9 @@
                     >Description Column</label
                   >
                   <select
+                    autocomplete="off"
                     id="col-description"
-                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none"
+                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.description}
                     onchange={(e) =>
                       updateMapping('description', parseInt((e.target as HTMLSelectElement).value))}
@@ -457,8 +481,9 @@
                     >Amount Column</label
                   >
                   <select
+                    autocomplete="off"
                     id="col-amount"
-                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none"
+                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.amount}
                     onchange={(e) =>
                       updateMapping('amount', parseInt((e.target as HTMLSelectElement).value))}
@@ -474,8 +499,9 @@
                     >Category Column</label
                   >
                   <select
+                    autocomplete="off"
                     id="col-category"
-                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none"
+                    class="w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none"
                     value={columnMapping.category ?? -1}
                     onchange={(e) => {
                       const val = parseInt((e.target as HTMLSelectElement).value);
@@ -527,6 +553,7 @@
             <div class="flex items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-900/50">
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -550,6 +577,7 @@
         <Card>
           <div class="flex items-center gap-3 text-sm text-surface-400">
             <svg
+              aria-hidden="true"
               class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
@@ -562,8 +590,8 @@
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span>
-              <strong class="text-surface-300">{uploadResult.fileName}</strong> -
+            <span class="min-w-0">
+              <strong class="break-all text-surface-300">{uploadResult.fileName}</strong> -
               {uploadResult.transactions.length} transaction{uploadResult.transactions.length !== 1
                 ? 's'
                 : ''} found
@@ -582,7 +610,7 @@
             Back
           </Button>
           <Button type="submit" loading={isLoading} disabled={!selectedAccountId}>
-            {isLoading ? 'Generating preview...' : 'Preview Import'}
+            {isLoading ? 'Generating Preview…' : 'Preview Import'}
           </Button>
         </div>
       </div>
@@ -623,10 +651,11 @@
             <h3 class="text-lg font-semibold text-white">Transactions to Import</h3>
             <label class="flex items-center gap-2 text-sm text-surface-300">
               <input
+                name="select-all-rows"
                 type="checkbox"
                 checked={selectAll}
                 onchange={toggleAll}
-                class="rounded border-surface-500 bg-surface-700 text-primary-600 focus:ring-primary-500"
+                class="rounded border-surface-500 bg-surface-700 text-primary-600 focus-visible:ring-primary-500"
               />
               Select all
             </label>
@@ -652,25 +681,27 @@
           <div class="divide-y divide-surface-700">
             {#each previewRows as row, idx}
               <div
-                class="grid grid-cols-12 items-center gap-4 px-6 py-2.5 transition
+                class="[content-visibility:auto] [contain-intrinsic-size:auto_2.75rem] grid grid-cols-12 items-center gap-4 px-6 py-2.5 transition
 								{row.isDuplicate ? 'bg-yellow-900/10' : ''}
 								{!row.selected ? 'opacity-50' : ''}"
               >
                 <div class="col-span-1">
                   <input
+                    name="include-row"
+                    aria-label={`Include row ${idx + 1}`}
                     type="checkbox"
                     checked={row.selected}
                     onchange={() => toggleRow(idx)}
-                    class="rounded border-surface-500 bg-surface-700 text-primary-600 focus:ring-primary-500"
+                    class="rounded border-surface-500 bg-surface-700 text-primary-600 focus-visible:ring-primary-500"
                   />
                 </div>
                 <div class="col-span-2 text-sm text-surface-300">
                   {formatDate(row.date)}
                 </div>
-                <div class="col-span-5">
-                  <p class="text-sm font-medium text-white">{row.name}</p>
+                <div class="col-span-5 min-w-0">
+                  <p class="truncate text-sm font-medium text-white" title={row.name}>{row.name}</p>
                   {#if row.memo}
-                    <p class="text-xs text-surface-500">{row.memo}</p>
+                    <p class="truncate text-xs text-surface-500" title={row.memo}>{row.memo}</p>
                   {/if}
                 </div>
                 <div class="col-span-2 text-right">
@@ -696,6 +727,8 @@
                   {/if}
                 </div>
               </div>
+            {:else}
+              <p class="px-6 py-4 text-sm text-surface-400">No transactions found in this file.</p>
             {/each}
           </div>
         </div>
@@ -737,7 +770,7 @@
           {/if}
           <Button type="submit" loading={isLoading} disabled={selectedCount === 0}>
             {isLoading
-              ? 'Importing...'
+              ? 'Importing…'
               : `Import ${selectedCount} Transaction${selectedCount !== 1 ? 's' : ''}`}
           </Button>
         </form>
@@ -753,6 +786,7 @@
       <div class="flex flex-col items-center py-8 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-900/50">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -808,10 +842,15 @@
       <Card padding="none">
         <div class="divide-y divide-surface-700">
           {#each data.history as entry}
-            <div class="flex items-center justify-between px-6 py-3">
-              <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-700">
+            <div
+              class="[content-visibility:auto] [contain-intrinsic-size:auto_4rem] flex items-center justify-between px-6 py-3"
+            >
+              <div class="flex min-w-0 items-center gap-3">
+                <div
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-700"
+                >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 text-surface-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -825,9 +864,11 @@
                     />
                   </svg>
                 </div>
-                <div>
-                  <p class="font-medium text-white">{entry.fileName}</p>
-                  <p class="text-xs text-surface-400">
+                <div class="min-w-0">
+                  <p class="truncate font-medium text-white" title={entry.fileName}>
+                    {entry.fileName}
+                  </p>
+                  <p class="break-words text-xs text-surface-400">
                     {entry.fileType.toUpperCase()} -
                     {entry.accountName || 'Unknown account'} -
                     {formatImportDate(entry.importedAt)}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { Card } from '$components/ui';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
@@ -29,7 +30,7 @@
 <Card class="h-full">
   <div class="flex items-center justify-between">
     <h3 class="text-sm font-medium text-surface-400">Savings Goals</h3>
-    <a href="/savings" class="text-xs text-primary-400 hover:text-primary-300">View all</a>
+    <a href="/savings" class="text-xs text-primary-400 hover:text-primary-300">View All</a>
   </div>
 
   {#if activeGoals.length > 0}
@@ -37,16 +38,16 @@
       {#each activeGoals as goal}
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-xs font-medium text-surface-300">
+            <span class="min-w-0 truncate text-xs font-medium text-surface-300" title={goal.name}>
               {goal.icon ? goal.icon + ' ' : ''}{goal.name}
             </span>
             <span class="text-xs text-surface-400">
-              {pct(goal).toFixed(0)}%
+              {formatPercent(pct(goal))}
             </span>
           </div>
           <div class="mt-1 h-2 w-full overflow-hidden rounded-full bg-surface-700">
             <div
-              class="h-full rounded-full transition-all duration-300"
+              class="h-full rounded-full transition-[width] duration-300"
               style="width: {pct(goal)}%; background-color: {goal.color || '#8b5cf6'}"
             ></div>
           </div>
@@ -59,6 +60,7 @@
   {:else}
     <div class="flex flex-col items-center justify-center py-6 text-center">
       <svg
+        aria-hidden="true"
         class="h-8 w-8 text-surface-600"
         fill="none"
         viewBox="0 0 24 24"
@@ -72,7 +74,7 @@
         />
       </svg>
       <p class="mt-2 text-xs text-surface-400">
-        <a href="/savings" class="text-primary-400 hover:text-primary-300">Create a savings goal</a>
+        <a href="/savings" class="text-primary-400 hover:text-primary-300">Create a Savings Goal</a>
       </p>
     </div>
   {/if}

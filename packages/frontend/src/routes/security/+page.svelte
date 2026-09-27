@@ -54,6 +54,7 @@
       <div class="flex items-center gap-3">
         <a href="/" class="text-surface-400 transition hover:text-white" aria-label="Back to home">
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -86,7 +87,7 @@
           {#each sections as section}
             <button
               onclick={() => scrollToSection(section.id)}
-              class="block w-full rounded-lg px-3 py-1.5 text-left text-sm transition-all duration-150
+              class="block w-full rounded-lg px-3 py-1.5 text-left text-sm transition-colors duration-150
 								{activeSection === section.id
                 ? 'bg-primary-600/15 text-primary-400 font-medium'
                 : 'text-surface-400 hover:bg-surface-800 hover:text-surface-200'}"
@@ -109,6 +110,7 @@
                 class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary-600/20 text-primary-400"
               >
                 <svg
+                  aria-hidden="true"
                   class="h-7 w-7"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -123,12 +125,13 @@
                 </svg>
               </div>
               <div>
-                <h2 class="text-xl font-bold text-white">Your security is our top priority</h2>
+                <h2 class="text-xl font-bold text-white">Your Security Is Our Top Priority</h2>
                 <p class="mt-2 text-sm leading-relaxed text-surface-300">
-                  Finance Owl is built around least-privilege access, encrypted connections in
-                  production, and straightforward controls for account security. When you connect
-                  external accounts through a supported provider, those credentials are handled in
-                  that provider flow rather than stored directly by Finance Owl.
+                  <span translate="no">Finance Owl</span> is built around least-privilege access,
+                  encrypted connections in production, and straightforward controls for account
+                  security. When you connect external accounts through a supported provider, those
+                  credentials are handled in that provider flow rather than stored directly by
+                  <span translate="no">Finance Owl</span>.
                 </p>
               </div>
             </div>
@@ -145,6 +148,7 @@
                   >
                     {#if item.icon === 'lock'}
                       <svg
+                        aria-hidden="true"
                         class="h-6 w-6"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -157,6 +161,7 @@
                       </svg>
                     {:else if item.icon === 'eye'}
                       <svg
+                        aria-hidden="true"
                         class="h-6 w-6"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -176,6 +181,7 @@
                       </svg>
                     {:else}
                       <svg
+                        aria-hidden="true"
                         class="h-6 w-6"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -222,9 +228,10 @@
               <div class="rounded-xl border border-surface-700/50 bg-surface-800 p-5">
                 <h3 class="text-base font-medium text-white">Password Security</h3>
                 <p class="mt-2 text-sm leading-relaxed text-surface-300">
-                  Passwords are hashed with bcrypt and never stored in plain text. Finance Owl also
-                  supports two-factor authentication (TOTP) and passkeys (WebAuthn/FIDO2) for
-                  accounts that want stronger protection.
+                  Passwords are hashed with bcrypt and never stored in plain text. <span
+                    translate="no">Finance Owl</span
+                  > also supports two-factor authentication (TOTP) and passkeys (WebAuthn/FIDO2) for accounts
+                  that want stronger protection.
                 </p>
               </div>
             </div>
@@ -239,6 +246,7 @@
                   class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -254,11 +262,12 @@
                 </div>
                 <div class="flex-1">
                   <h3 class="text-base font-semibold text-white">
-                    How linked account access works
+                    How Linked Account Access Works
                   </h3>
                   <ul class="mt-3 space-y-3">
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-blue-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -271,11 +280,14 @@
                         /></svg
                       >
                       <strong class="font-medium text-white">Provider-hosted authentication:</strong
-                      > When bank linking is enabled, sign-in happens through the connected provider flow
-                      rather than storing your banking credentials directly in Finance Owl.
+                      >
+                      When bank linking is enabled, sign-in happens through the connected provider flow
+                      rather than storing your banking credentials directly in
+                      <span translate="no">Finance Owl</span>.
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-blue-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -294,6 +306,7 @@
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-blue-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -311,6 +324,7 @@
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-blue-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -355,6 +369,7 @@
                     class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20 text-primary-400"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -388,6 +403,7 @@
                 <ul class="mt-3 space-y-2">
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -404,6 +420,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -421,6 +438,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -432,9 +450,9 @@
                         d="M5 13l4 4L19 7"
                       /></svg
                     >
-                    <strong class="font-medium text-white">Payments:</strong> If paid plans are enabled,
-                    card collection should be handled by the configured payment processor rather than
-                    stored directly by Finance Owl.
+                    <strong class="font-medium text-white">Payments:</strong> If paid plans are
+                    enabled, card collection should be handled by the configured payment processor
+                    rather than stored directly by <span translate="no">Finance Owl</span>.
                   </li>
                 </ul>
               </div>
@@ -468,6 +486,7 @@
                   <ul class="mt-2 space-y-1.5">
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -483,6 +502,7 @@
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -498,6 +518,7 @@
                     </li>
                     <li class="flex items-start gap-2 text-sm text-surface-300">
                       <svg
+                        aria-hidden="true"
                         class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -535,6 +556,7 @@
               <div class="mt-4 space-y-2">
                 <p class="flex items-center gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -546,13 +568,15 @@
                       d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
                     /></svg
                   >
-                  <a href={publicMailto.security} class="text-primary-400 hover:text-primary-300"
+                  <a
+                    href={publicMailto.security}
+                    class="min-w-0 break-all text-primary-400 hover:text-primary-300"
                     >{publicSite.securityEmail}</a
                   >
                 </p>
               </div>
               <p class="mt-3 text-xs text-surface-500">
-                For urgent security incidents, include "URGENT" in the subject line for priority
+                For urgent security incidents, include “URGENT” in the subject line for priority
                 handling.
               </p>
             </div>

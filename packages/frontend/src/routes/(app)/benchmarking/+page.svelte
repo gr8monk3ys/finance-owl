@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button } from '$components/ui';
@@ -14,7 +15,7 @@
   });
 
   function fmtPercent(value: number): string {
-    return `${value.toFixed(1)}%`;
+    return formatPercent(value, 1);
   }
 
   function statusColor(status: string): string {
@@ -71,7 +72,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Profile Setup -->
@@ -98,10 +99,11 @@
               >Age Range</label
             >
             <select
+              autocomplete="off"
               id="ageRange"
               name="ageRange"
               required
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             >
               <option value="18-24">18 - 24</option>
               <option value="25-34">25 - 34</option>
@@ -116,10 +118,11 @@
               >Income Range</label
             >
             <select
+              autocomplete="off"
               id="incomeRange"
               name="incomeRange"
               required
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             >
               <option value="under_25k">Under $25k</option>
               <option value="25k_50k">$25k - $50k</option>
@@ -135,11 +138,12 @@
           <div>
             <label for="region" class="block text-sm font-medium text-surface-300">Region</label>
             <input
+              autocomplete="off"
               id="region"
               name="region"
               type="text"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-              placeholder="e.g. Northeast, Midwest"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+              placeholder="e.g. Northeast, Midwest…"
             />
           </div>
           <div>
@@ -147,13 +151,14 @@
               >Household Size</label
             >
             <input
+              autocomplete="off"
               id="householdSize"
               name="householdSize"
               type="number"
               min="1"
               max="10"
               value="1"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
         </div>
@@ -163,7 +168,7 @@
             id="isOptedIn"
             name="isOptedIn"
             type="checkbox"
-            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+            class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
           />
           <label for="isOptedIn" class="text-sm text-surface-300">
             Opt in to contribute anonymized data to improve benchmarks
@@ -181,10 +186,10 @@
     <!-- Profile Summary -->
     <Card>
       <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <div>
+        <div class="flex min-w-0 items-center gap-4">
+          <div class="min-w-0">
             <p class="text-sm text-surface-400">Your Cohort</p>
-            <p class="text-white">
+            <p class="break-words text-white">
               Age {data.profile.ageRange} &middot; {incomeRangeLabel(data.profile.incomeRange)}
               {#if data.profile.region}
                 &middot; {data.profile.region}

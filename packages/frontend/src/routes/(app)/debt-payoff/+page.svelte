@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -18,14 +21,18 @@
   let selectedStrategy = $state('avalanche');
   let extraPayment = $state(200);
   let showPayoffResults = $state(false);
-  let expandedSchedule = $state<string | null>(null);
+  let expandedSchedule = $state<string | null>(readParam('schedule', '') || null);
 
   // Get plan/comparison from form action result
   let payoffPlan = $derived(form?.plan ?? null);
   let strategyComparison = $derived(form?.comparison ?? null);
 
   // Active tab: 'debts' or 'strategy'
-  let activeTab = $state<'debts' | 'strategy'>('debts');
+  let activeTab = $state<'debts' | 'strategy'>(readParam('tab', 'debts', ['debts', 'strategy']));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('schedule', expandedSchedule, null));
+  $effect(() => syncParam('tab', activeTab, 'debts'));
 
   $effect(() => {
     if (form?.success && !form?.plan && !form?.payments) {
@@ -60,7 +67,7 @@
   ];
 
   function fmtPct(rate: number): string {
-    return rate.toFixed(2) + '%';
+    return formatPercent(rate, 2);
   }
 
   function getDebtTypeLabel(type: string): string {
@@ -163,7 +170,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Summary Cards -->
@@ -223,6 +230,7 @@
       <Card>
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <svg
+            aria-hidden="true"
             class="h-16 w-16 text-surface-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -246,10 +254,10 @@
         {#each data.debts as debt}
           <Card>
             <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
-                <div>
+              <div class="flex min-w-0 items-center gap-3">
+                <div class="min-w-0">
                   <div class="flex items-center gap-2">
-                    <p class="font-medium text-white">{debt.name}</p>
+                    <p class="truncate font-medium text-white" title={debt.name}>{debt.name}</p>
                     <span
                       class="rounded-full px-2 py-0.5 text-xs font-medium {getDebtTypeColor(
                         debt.type,
@@ -266,17 +274,21 @@
                     {/if}
                   </div>
                   {#if debt.lender}
-                    <p class="text-xs text-surface-500">{debt.lender}</p>
+                    <p class="truncate text-xs text-surface-500" title={debt.lender}>
+                      {debt.lender}
+                    </p>
                   {/if}
                 </div>
               </div>
               <div class="flex items-center gap-1">
                 <button
+                  aria-label="Record payment"
                   class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                   onclick={() => (payingDebt = debt)}
                   title="Record payment"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -303,11 +315,13 @@
                 >
                   <input type="hidden" name="debtId" value={debt.id} />
                   <button
+                    aria-label="View payments"
                     type="submit"
                     class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                     title="View payments"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -323,11 +337,13 @@
                   </button>
                 </form>
                 <button
+                  aria-label="Edit debt"
                   class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                   onclick={() => (editingDebt = debt)}
                   title="Edit debt"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -370,12 +386,12 @@
                     )}
                   </span>
                   <span class="text-xs font-semibold text-primary-400">
-                    {debt.progress.toFixed(0)}%
+                    {formatPercent(debt.progress)}
                   </span>
                 </div>
                 <div class="mt-1 h-2 overflow-hidden rounded-full bg-surface-700">
                   <div
-                    class="{getProgressColor(debt.progress)} h-full rounded-full transition-all"
+                    class="{getProgressColor(debt.progress)} h-full rounded-full transition-[width]"
                     style="width: {Math.min(debt.progress, 100)}%"
                   ></div>
                 </div>
@@ -394,7 +410,7 @@
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <p class="text-lg text-surface-300">Add debts first</p>
           <p class="mt-1 text-sm text-surface-500">
-            You need at least one active debt to build a payoff strategy.
+            You need at least 1 active debt to build a payoff strategy.
           </p>
         </div>
       </Card>
@@ -574,14 +590,16 @@
                       : 0}
                   <div>
                     <div class="flex items-center justify-between text-sm">
-                      <span class="text-white">{schedule.debtName}</span>
+                      <span class="truncate text-white" title={schedule.debtName}
+                        >{schedule.debtName}</span
+                      >
                       <span class="text-surface-400">
                         {getMonthsText(schedule.payoffMonth)}
                       </span>
                     </div>
                     <div class="mt-1 h-4 overflow-hidden rounded-full bg-surface-700">
                       <div
-                        class="h-full rounded-full transition-all"
+                        class="h-full rounded-full transition-[width]"
                         style="width: {widthPct}%; background-color: {chartColors[
                           i % chartColors.length
                         ]}"
@@ -605,7 +623,7 @@
                     {#if idx % Math.max(1, Math.floor(timeline.length / 60)) === 0}
                       {@const heightPct = maxBalance > 0 ? (point.total / maxBalance) * 100 : 0}
                       <div
-                        class="flex-1 rounded-t bg-gradient-to-t from-red-500/60 to-primary-500/60 transition-all hover:opacity-80"
+                        class="flex-1 rounded-t bg-gradient-to-t from-red-500/60 to-primary-500/60 transition-[width] hover:opacity-80"
                         style="height: {heightPct}%"
                         title="Month {point.month}: {fmt(point.total)} remaining"
                       ></div>
@@ -635,13 +653,15 @@
                         (expandedSchedule =
                           expandedSchedule === schedule.debtId ? null : schedule.debtId)}
                     >
-                      <div class="flex items-center gap-3">
+                      <div class="flex min-w-0 items-center gap-3">
                         <div
                           class="h-3 w-3 rounded-full"
                           style="background-color: {chartColors[i % chartColors.length]}"
                         ></div>
-                        <div>
-                          <p class="font-medium text-white">{schedule.debtName}</p>
+                        <div class="min-w-0">
+                          <p class="truncate font-medium text-white" title={schedule.debtName}>
+                            {schedule.debtName}
+                          </p>
                           <p class="text-xs text-surface-500">
                             {fmt(schedule.startingBalance)} at {fmtPct(schedule.interestRate)} -- Payoff
                             in {getMonthsText(schedule.payoffMonth)}
@@ -649,6 +669,7 @@
                         </div>
                       </div>
                       <svg
+                        aria-hidden="true"
                         class="h-5 w-5 text-surface-400 transition-transform {expandedSchedule ===
                         schedule.debtId
                           ? 'rotate-180'
@@ -738,22 +759,24 @@
     <div>
       <label for="debtName" class="block text-sm font-medium text-surface-300">Debt Name</label>
       <input
+        autocomplete="off"
         id="debtName"
         name="name"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Chase Sapphire Card"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Chase Sapphire Card…"
       />
     </div>
 
     <div>
       <label for="debtType" class="block text-sm font-medium text-surface-300">Type</label>
       <select
+        autocomplete="off"
         id="debtType"
         name="type"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
         {#each debtTypes as dt}
           <option value={dt.value}>{dt.label}</option>
@@ -767,14 +790,15 @@
           >Current Balance</label
         >
         <input
+          autocomplete="off"
           id="debtBalance"
           name="currentBalance"
           type="number"
           step="0.01"
           min="0"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="5000.00"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="5000.00…"
         />
       </div>
       <div>
@@ -782,6 +806,7 @@
           >Interest Rate (APR %)</label
         >
         <input
+          autocomplete="off"
           id="debtRate"
           name="interestRate"
           type="number"
@@ -789,8 +814,8 @@
           min="0"
           max="100"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="19.99"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="19.99…"
         />
       </div>
     </div>
@@ -801,14 +826,15 @@
           >Minimum Payment</label
         >
         <input
+          autocomplete="off"
           id="debtMinPayment"
           name="minimumPayment"
           type="number"
           step="0.01"
           min="0"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="150.00"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="150.00…"
         />
       </div>
       <div>
@@ -816,13 +842,14 @@
           >Original Balance (optional)</label
         >
         <input
+          autocomplete="off"
           id="debtOrigBalance"
           name="originalBalance"
           type="number"
           step="0.01"
           min="0"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="10000.00"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="10000.00…"
         />
       </div>
     </div>
@@ -833,11 +860,12 @@
           >Lender (optional)</label
         >
         <input
+          autocomplete="off"
           id="debtLender"
           name="lender"
           type="text"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="Chase"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="Chase…"
         />
       </div>
       <div>
@@ -845,13 +873,14 @@
           >Due Day (optional)</label
         >
         <input
+          autocomplete="off"
           id="debtDueDay"
           name="dueDay"
           type="number"
           min="1"
           max="31"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="15"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="15…"
         />
       </div>
     </div>
@@ -883,22 +912,24 @@
           >Debt Name</label
         >
         <input
+          autocomplete="off"
           id="editDebtName"
           name="name"
           type="text"
           required
           value={editingDebt.name}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
       <div>
         <label for="editDebtType" class="block text-sm font-medium text-surface-300">Type</label>
         <select
+          autocomplete="off"
           id="editDebtType"
           name="type"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           {#each debtTypes as dt}
             <option value={dt.value} selected={editingDebt.type === dt.value}>{dt.label}</option>
@@ -912,6 +943,7 @@
             >Current Balance</label
           >
           <input
+            autocomplete="off"
             id="editDebtBalance"
             name="currentBalance"
             type="number"
@@ -919,7 +951,7 @@
             min="0"
             required
             value={editingDebt.currentBalance}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <div>
@@ -927,6 +959,7 @@
             >Interest Rate (APR %)</label
           >
           <input
+            autocomplete="off"
             id="editDebtRate"
             name="interestRate"
             type="number"
@@ -935,7 +968,7 @@
             max="100"
             required
             value={editingDebt.interestRate}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
       </div>
@@ -946,6 +979,7 @@
             >Minimum Payment</label
           >
           <input
+            autocomplete="off"
             id="editDebtMinPayment"
             name="minimumPayment"
             type="number"
@@ -953,7 +987,7 @@
             min="0"
             required
             value={editingDebt.minimumPayment}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <div>
@@ -961,11 +995,12 @@
             >Lender</label
           >
           <input
+            autocomplete="off"
             id="editDebtLender"
             name="lender"
             type="text"
             value={editingDebt.lender || ''}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
       </div>
@@ -977,6 +1012,7 @@
     </form>
 
     <form
+      use:confirmSubmit={'Delete this debt? This can’t be undone.'}
       method="POST"
       action="?/deleteDebt"
       use:enhance
@@ -993,7 +1029,7 @@
   {#if payingDebt}
     <div class="mb-4 rounded-lg bg-surface-900 p-3">
       <p class="text-sm text-surface-400">Paying toward</p>
-      <p class="font-medium text-white">{payingDebt.name}</p>
+      <p class="break-words font-medium text-white">{payingDebt.name}</p>
       <p class="text-xs text-surface-500">
         Balance: {fmt(payingDebt.currentBalance)} -- Min. payment: {fmt(
           payingDebt.minimumPayment,
@@ -1016,6 +1052,7 @@
       <div>
         <label for="paymentAmount" class="block text-sm font-medium text-surface-300">Amount</label>
         <input
+          autocomplete="off"
           id="paymentAmount"
           name="amount"
           type="number"
@@ -1023,7 +1060,7 @@
           min="0.01"
           required
           value={payingDebt.minimumPayment}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -1032,10 +1069,11 @@
           >Date (optional)</label
         >
         <input
+          autocomplete="off"
           id="paymentDate"
           name="date"
           type="date"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -1044,7 +1082,7 @@
           id="paymentIsExtra"
           name="isExtra"
           type="checkbox"
-          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
         />
         <label for="paymentIsExtra" class="text-sm text-surface-300">
           Extra payment (beyond minimum)
@@ -1056,11 +1094,12 @@
           >Notes (optional)</label
         >
         <input
+          autocomplete="off"
           id="paymentNotes"
           name="notes"
           type="text"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="Monthly payment"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="Monthly payment…"
         />
       </div>
 
@@ -1102,7 +1141,7 @@
       <div class="max-h-72 space-y-2 overflow-y-auto">
         {#each paymentHistory as payment}
           <div class="flex items-center justify-between rounded-lg bg-surface-900 px-3 py-2">
-            <div>
+            <div class="min-w-0">
               <p class="text-sm font-medium text-white">
                 {fmt(payment.amount)}
                 {#if payment.isExtra}
@@ -1113,7 +1152,7 @@
                   </span>
                 {/if}
               </p>
-              <p class="text-xs text-surface-500">
+              <p class="break-words text-xs text-surface-500">
                 {fmtDate(payment.date)}
                 {#if payment.notes}
                   -- {payment.notes}

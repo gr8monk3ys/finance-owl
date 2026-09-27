@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { guardUnsavedForms } from '$lib/utils/unsaved-changes';
   import { page } from '$app/stores';
   import { enhance } from '$app/forms';
   import { onMount } from 'svelte';
@@ -13,6 +14,8 @@
   let mobileMenuOpen = $state(false);
 
   // Initialize tenant branding from server data (graceful - works without tenant)
+  guardUnsavedForms();
+
   onMount(() => {
     initTenantBranding(data.tenant ?? null);
   });
@@ -88,7 +91,7 @@
   href="#main-content"
   class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-primary-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
 >
-  Skip to main content
+  Skip to Main Content
 </a>
 
 <div class="flex min-h-screen bg-surface-900">
@@ -111,14 +114,21 @@
   >
     <!-- Logo -->
     <div class="flex h-16 items-center justify-between border-b border-surface-700/50 px-5">
-      <a href="/dashboard" class="flex items-center gap-2.5 group">
+      <a href="/dashboard" class="flex min-w-0 items-center gap-2.5 group">
         {#if currentLogo}
-          <img src={currentLogo} alt={currentAppName} class="h-8 w-8 rounded-lg object-contain" />
+          <img
+            src={currentLogo}
+            alt={currentAppName}
+            width="32"
+            height="32"
+            class="h-8 w-8 rounded-lg object-contain"
+          />
         {:else}
           <div
-            class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/20 border border-primary-500/30 transition-all duration-200 group-hover:bg-primary-600/30 group-hover:border-primary-500/50"
+            class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/20 border border-primary-500/30 transition-colors duration-200 group-hover:bg-primary-600/30 group-hover:border-primary-500/50"
           >
             <svg
+              aria-hidden="true"
               class="h-4.5 w-4.5 text-primary-400"
               viewBox="0 0 24 24"
               fill="none"
@@ -133,14 +143,18 @@
             </svg>
           </div>
         {/if}
-        <span class="text-lg font-bold text-white tracking-tight">{currentAppName}</span>
+        <span
+          translate="no"
+          class="truncate text-lg font-bold text-white tracking-tight"
+          title={currentAppName}>{currentAppName}</span
+        >
       </a>
       <button
-        class="rounded-lg p-1.5 text-surface-400 hover:bg-surface-700/60 hover:text-white transition-all duration-150 lg:hidden"
+        class="rounded-lg p-1.5 text-surface-400 hover:bg-surface-700/60 hover:text-white transition-colors duration-150 lg:hidden"
         onclick={closeMobileMenu}
         aria-label="Close menu"
       >
-        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path
             d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
           />
@@ -150,7 +164,7 @@
 
     <!-- Navigation -->
     <nav
-      class="overflow-y-auto px-3 py-3 space-y-1"
+      class="overflow-y-auto overscroll-contain px-3 py-3 space-y-1"
       style="max-height: calc(100vh - 4rem - 5.5rem);"
     >
       {#each groups as group}
@@ -167,7 +181,7 @@
             href={item.href}
             aria-current={active ? 'page' : undefined}
             class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium
-							transition-all duration-150
+							transition-colors duration-150
 							{active
               ? 'text-white bg-primary-600/15'
               : 'text-surface-400 hover:bg-surface-700/50 hover:text-surface-200'}"
@@ -187,6 +201,7 @@
             >
               {#if item.icon === 'home'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -201,6 +216,7 @@
                 </svg>
               {:else if item.icon === 'wallet'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -215,6 +231,7 @@
                 </svg>
               {:else if item.icon === 'list'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -229,6 +246,7 @@
                 </svg>
               {:else if item.icon === 'target'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -243,6 +261,7 @@
                 </svg>
               {:else if item.icon === 'inbox'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -257,6 +276,7 @@
                 </svg>
               {:else if item.icon === 'calendar'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -272,6 +292,7 @@
                 </svg>
               {:else if item.icon === 'repeat'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -284,6 +305,7 @@
                 </svg>
               {:else if item.icon === 'trending-up'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -296,6 +318,7 @@
                 </svg>
               {:else if item.icon === 'bar-chart'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -311,6 +334,7 @@
                 </svg>
               {:else if item.icon === 'users'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -325,6 +349,7 @@
                 </svg>
               {:else if item.icon === 'piggy-bank'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -343,6 +368,7 @@
                 </svg>
               {:else if item.icon === 'shield'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -357,6 +383,7 @@
                 </svg>
               {:else if item.icon === 'lock'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -369,6 +396,7 @@
                 </svg>
               {:else if item.icon === 'zap'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -379,6 +407,7 @@
                 </svg>
               {:else if item.icon === 'flag'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -394,6 +423,7 @@
                 </svg>
               {:else if item.icon === 'sparkles'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -408,6 +438,7 @@
                 </svg>
               {:else if item.icon === 'book'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -420,6 +451,7 @@
                 </svg>
               {:else if item.icon === 'receipt'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -434,6 +466,7 @@
                 </svg>
               {:else}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -472,8 +505,12 @@
           {data.user?.name?.charAt(0).toUpperCase() ?? '?'}
         </div>
         <div class="flex-1 min-w-0">
-          <p class="truncate text-sm font-medium text-white leading-tight">{data.user?.name}</p>
-          <p class="truncate text-xs text-surface-400 leading-tight">{data.user?.email}</p>
+          <p class="truncate text-sm font-medium text-white leading-tight" title={data.user?.name}>
+            {data.user?.name}
+          </p>
+          <p class="truncate text-xs text-surface-400 leading-tight" title={data.user?.email}>
+            {data.user?.email}
+          </p>
         </div>
       </div>
       <form
@@ -488,10 +525,11 @@
         <button
           type="submit"
           class="w-full flex items-center gap-2 rounded-lg px-4 py-1.5 text-left text-sm text-surface-400
-						transition-all duration-150
+						transition-colors duration-150
 						hover:bg-surface-700/50 hover:text-surface-200"
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4"
             viewBox="0 0 24 24"
             fill="none"
@@ -504,7 +542,7 @@
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
             />
           </svg>
-          Sign out
+          Sign Out
         </button>
       </form>
     </div>
@@ -519,18 +557,27 @@
     >
       <!-- Mobile menu button -->
       <button
-        class="rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition-all duration-150 lg:hidden"
+        class="rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition-colors duration-150 lg:hidden"
         onclick={openMobileMenu}
         aria-label="Open menu"
       >
-        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg
+          aria-hidden="true"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
 
       <!-- Page title / breadcrumb -->
       <div class="flex items-center gap-2 min-w-0">
-        <h1 class="text-lg font-semibold text-white truncate">{getPageTitle()}</h1>
+        <h1 class="text-lg font-semibold text-white truncate" title={getPageTitle()}>
+          {getPageTitle()}
+        </h1>
       </div>
 
       <div class="flex-1"></div>
@@ -540,10 +587,11 @@
         <!-- Notifications placeholder -->
         <a
           href="/settings/notifications"
-          class="relative rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70"
+          class="relative rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70"
           aria-label="Notification settings"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             viewBox="0 0 24 24"
             fill="none"
@@ -569,7 +617,7 @@
 						bg-gradient-to-br from-primary-500 to-primary-700
 						text-xs font-semibold text-white
 						ring-2 ring-surface-700/50
-						hover:ring-primary-500/30 transition-all duration-150 focus-visible:outline-none focus-visible:ring-primary-400"
+						hover:ring-primary-500/30 transition duration-150 focus-visible:outline-none focus-visible:ring-primary-400"
           title={data.user?.name ?? 'User'}
           aria-label="Open settings"
         >
@@ -579,7 +627,11 @@
     </header>
 
     <!-- Page content -->
-    <main id="main-content" tabindex="-1" class="flex-1 overflow-auto p-4 pb-20 lg:p-6 lg:pb-6">
+    <main
+      id="main-content"
+      tabindex="-1"
+      class="flex-1 overflow-auto p-4 pb-20 tabular-nums lg:p-6 lg:pb-6"
+    >
       <PullToRefresh />
       {@render children()}
     </main>

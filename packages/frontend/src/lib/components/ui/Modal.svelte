@@ -53,7 +53,7 @@
   <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
   <div
     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4
-			modal-backdrop-enter"
+			overscroll-contain modal-backdrop-enter"
     style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"
     role="dialog"
     tabindex="-1"
@@ -64,21 +64,21 @@
   >
     <div
       class="w-full rounded-t-2xl sm:rounded-xl bg-surface-800 border border-surface-700/50
-				shadow-2xl shadow-black/40
+				shadow-2xl shadow-black/40 pb-[env(safe-area-inset-bottom)] sm:pb-0
 				modal-slide-up sm:modal-content-enter
 				{sizes[size]}"
     >
       {#if title}
         <div class="flex items-center justify-between border-b border-surface-700/50 px-6 py-4">
-          <h2 class="text-lg font-semibold text-white">{title}</h2>
+          <h2 class="min-w-0 truncate text-lg font-semibold text-white" {title}>{title}</h2>
           <button
             onclick={onclose}
-            class="rounded-lg p-1.5 text-surface-400 transition-all duration-150
+            class="rounded-lg p-1.5 text-surface-400 transition duration-150
 							hover:bg-surface-700 hover:text-white
-							focus:outline-none focus:ring-2 focus:ring-primary-500/40"
+							focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40"
             aria-label="Close dialog"
           >
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
               />
@@ -86,7 +86,7 @@
           </button>
         </div>
       {/if}
-      <div class="p-6 {size === 'full' ? 'overflow-auto flex-1' : ''}">
+      <div class="p-6 {size === 'full' ? 'overflow-auto overscroll-contain flex-1' : ''}">
         {@render children()}
       </div>
       {#if footer}

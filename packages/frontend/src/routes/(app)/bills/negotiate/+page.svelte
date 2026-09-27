@@ -185,6 +185,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -210,6 +211,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-yellow-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -237,6 +239,7 @@
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600/20">
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -268,6 +271,7 @@
             : 'bg-surface-700'}"
         >
           <svg
+            aria-hidden="true"
             class="h-5 w-5 {expiring.length > 0 ? 'text-red-400' : 'text-surface-400'}"
             fill="none"
             viewBox="0 0 24 24"
@@ -297,6 +301,7 @@
     <Card class="border border-red-500/30">
       <div class="mb-3 flex items-center gap-2">
         <svg
+          aria-hidden="true"
           class="h-5 w-5 text-red-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -314,9 +319,9 @@
       <div class="space-y-2">
         {#each expiring as neg}
           <div class="flex items-center justify-between rounded-lg bg-surface-900/50 px-4 py-3">
-            <div>
-              <p class="font-medium text-white">{neg.billName}</p>
-              <p class="text-sm text-surface-400">
+            <div class="min-w-0">
+              <p class="truncate font-medium text-white" title={neg.billName}>{neg.billName}</p>
+              <p class="break-words text-sm text-surface-400">
                 {neg.provider} - Expires {formatDate(neg.expirationDate)}
                 <span class="text-red-400">
                   ({daysUntil(neg.expirationDate)} days left)
@@ -386,9 +391,12 @@
         {#each analysisResults as bill}
           <div class="rounded-lg border border-surface-700 bg-surface-900/50 p-4">
             <div class="mb-3 flex items-start justify-between">
-              <div class="flex items-center gap-2">
-                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-700">
+              <div class="flex min-w-0 items-center gap-2">
+                <div
+                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-700"
+                >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-300"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -402,8 +410,10 @@
                     />
                   </svg>
                 </div>
-                <div>
-                  <p class="font-medium text-white">{bill.billName}</p>
+                <div class="min-w-0">
+                  <p class="truncate font-medium text-white" title={bill.billName}>
+                    {bill.billName}
+                  </p>
                   <span
                     class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {categoryBadge(
                       bill.category,
@@ -440,6 +450,7 @@
     {:else}
       <div class="py-6 text-center">
         <svg
+          aria-hidden="true"
           class="mx-auto h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -453,7 +464,7 @@
           />
         </svg>
         <p class="mt-3 text-surface-300">
-          Click "Analyze My Bills" to scan your recurring transactions for negotiation opportunities
+          Click “Analyze My Bills” to scan your recurring transactions for negotiation opportunities
         </p>
       </div>
     {/if}
@@ -596,9 +607,12 @@
       <div class="space-y-3">
         {#each successfulNegotiations as neg}
           <div class="flex items-center justify-between rounded-lg bg-surface-900/50 px-4 py-3">
-            <div class="flex items-center gap-3">
-              <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-600/20">
+            <div class="flex min-w-0 items-center gap-3">
+              <div
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-600/20"
+              >
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -608,8 +622,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
               </div>
-              <div>
-                <p class="font-medium text-white">{neg.billName}</p>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={neg.billName}>{neg.billName}</p>
                 <p class="text-xs text-surface-500">
                   {formatDate(neg.negotiationDate ?? neg.createdAt)}
                   {#if neg.expirationDate}
@@ -653,8 +667,11 @@
 
       <div class="rounded-lg bg-surface-900/50 p-4">
         <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-700">
+          <div
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-700"
+          >
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-surface-300"
               fill="none"
               viewBox="0 0 24 24"
@@ -668,8 +685,10 @@
               />
             </svg>
           </div>
-          <div>
-            <p class="font-medium text-white">{selectedBill.billName}</p>
+          <div class="min-w-0">
+            <p class="truncate font-medium text-white" title={selectedBill.billName}>
+              {selectedBill.billName}
+            </p>
             <span
               class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {categoryBadge(
                 selectedBill.category,
@@ -688,13 +707,14 @@
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="currentAmount"
             name="currentAmount"
             type="number"
             step="0.01"
             required
             value={selectedBill.currentAmount}
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
       </div>
@@ -706,6 +726,7 @@
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="targetAmount"
             name="targetAmount"
             type="number"
@@ -714,7 +735,7 @@
             value={Math.round(
               (selectedBill.currentAmount - selectedBill.estimatedSavingsMax) * 100,
             ) / 100}
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <p class="mt-1 text-xs text-surface-500">
@@ -729,11 +750,12 @@
           Notes (optional)
         </label>
         <textarea
+          autocomplete="off"
           id="notes"
           name="notes"
           rows="2"
-          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="Any details about your situation..."></textarea>
+          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="Any details about your situation…"></textarea>
       </div>
 
       <div class="flex justify-end gap-3 pt-2">
@@ -768,7 +790,7 @@
       <input type="hidden" name="negotiationId" value={selectedNegotiation.id} />
 
       <div class="rounded-lg bg-surface-900/50 p-3">
-        <p class="font-medium text-white">{selectedNegotiation.billName}</p>
+        <p class="break-words font-medium text-white">{selectedNegotiation.billName}</p>
         <p class="text-sm text-surface-400">
           Current: {fmt(selectedNegotiation.currentAmount)}/mo | Target: {fmt(
             selectedNegotiation.targetAmount,
@@ -781,10 +803,11 @@
           Result
         </label>
         <select
+          autocomplete="off"
           id="resultStatus"
           name="status"
           required
-          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           <option value="in_progress">In Progress</option>
           <option value="success">Success - Got a Discount</option>
@@ -800,12 +823,13 @@
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="negotiatedAmount"
             name="negotiatedAmount"
             type="number"
             step="0.01"
-            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-            placeholder="Leave blank if not successful"
+            class="w-full rounded-lg border border-surface-700 bg-surface-800 py-2 pl-7 pr-3 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+            placeholder="Leave blank if not successful…"
           />
         </div>
       </div>
@@ -815,10 +839,11 @@
           Promotional Rate Expires On (optional)
         </label>
         <input
+          autocomplete="off"
           id="expirationDate"
           name="expirationDate"
           type="date"
-          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
         <p class="mt-1 text-xs text-surface-500">
           We will remind you before the promotional rate expires
@@ -830,11 +855,12 @@
           Notes
         </label>
         <textarea
+          autocomplete="off"
           id="resultNotes"
           name="notes"
           rows="2"
-          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="Agent name, reference number, details..."></textarea>
+          class="w-full rounded-lg border border-surface-700 bg-surface-800 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="Agent name, reference number, details…"></textarea>
       </div>
 
       <div class="flex justify-end gap-3 pt-2">
@@ -861,8 +887,10 @@
       <!-- Provider & Contact Info -->
       <div class="rounded-lg bg-surface-900/50 p-4">
         <div class="flex items-center justify-between">
-          <div>
-            <h4 class="font-semibold text-white">{currentScript.provider}</h4>
+          <div class="min-w-0">
+            <h4 class="truncate font-semibold text-white" title={currentScript.provider}>
+              {currentScript.provider}
+            </h4>
             <span
               class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {categoryBadge(
                 currentScript.category,
@@ -993,13 +1021,15 @@
       <!-- Competitor Pricing -->
       {#if currentScript.competitorPricing?.length > 0}
         <div>
-          <h4 class="mb-2 font-semibold text-white">Competitor Pricing (for leverage)</h4>
+          <h4 class="mb-2 font-semibold text-white">Competitor Pricing (for Leverage)</h4>
           <div class="space-y-2">
             {#each currentScript.competitorPricing as comp}
               <div class="flex items-center justify-between rounded-lg bg-surface-900/50 px-3 py-2">
-                <div>
-                  <p class="text-sm font-medium text-white">{comp.competitor}</p>
-                  <p class="text-xs text-surface-500">{comp.details}</p>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium text-white" title={comp.competitor}>
+                    {comp.competitor}
+                  </p>
+                  <p class="break-words text-xs text-surface-500">{comp.details}</p>
                 </div>
                 <p class="text-sm font-medium text-primary-400">{comp.price}</p>
               </div>
@@ -1017,7 +1047,7 @@
               <div class="flex gap-2 rounded-lg bg-surface-900/50 p-3">
                 <span class="mt-0.5 flex-shrink-0 text-xs font-bold text-primary-400">{i + 1}.</span
                 >
-                <p class="text-sm text-surface-300">{tip}</p>
+                <p class="min-w-0 break-words text-sm text-surface-300">{tip}</p>
               </div>
             {/each}
           </div>

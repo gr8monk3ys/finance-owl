@@ -96,6 +96,7 @@
         {#if isOwner}
           <Button variant="ghost" size="sm" onclick={() => (showEditNameModal = true)}>
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -117,8 +118,12 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300">
+    <div
+      role="alert"
+      class="flex items-center gap-3 rounded-lg bg-red-900/50 p-4 text-sm text-red-300"
+    >
       <svg
+        aria-hidden="true"
         class="h-5 w-5 flex-shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -131,7 +136,7 @@
           d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-      {form.error}
+      <span class="min-w-0 break-words">{form.error}</span>
     </div>
   {/if}
 
@@ -142,6 +147,7 @@
         <div class="flex flex-col items-center justify-center py-8 text-center">
           <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600/20">
             <svg
+              aria-hidden="true"
               class="h-8 w-8 text-primary-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -170,6 +176,7 @@
         <div class="flex flex-col items-center justify-center py-8 text-center">
           <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-600/20">
             <svg
+              aria-hidden="true"
               class="h-8 w-8 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -202,6 +209,7 @@
         class="flex items-center gap-3 rounded-lg border border-surface-700 bg-surface-800/50 px-4 py-3"
       >
         <svg
+          aria-hidden="true"
           class="h-5 w-5 text-surface-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -214,7 +222,7 @@
             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
           />
         </svg>
-        <span class="text-sm text-surface-300">
+        <span class="min-w-0 break-words text-sm text-surface-300">
           You belong to {data.households.length} households. Viewing:
           <strong class="text-white">{data.household.name}</strong>
         </span>
@@ -228,9 +236,10 @@
         <!-- Household Card -->
         <Card>
           <div class="flex items-start justify-between">
-            <div class="flex items-center gap-4">
+            <div class="flex min-w-0 items-center gap-4">
               <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600/20">
                 <svg
+                  aria-hidden="true"
                   class="h-6 w-6 text-primary-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -244,8 +253,10 @@
                   />
                 </svg>
               </div>
-              <div>
-                <h3 class="text-lg font-semibold text-white">{data.household.name}</h3>
+              <div class="min-w-0">
+                <h3 class="truncate text-lg font-semibold text-white" title={data.household.name}>
+                  {data.household.name}
+                </h3>
                 <p class="mt-0.5 text-sm text-surface-400">
                   {memberCount} member{memberCount !== 1 ? 's' : ''}
                   {#if data.sharedAccounts.length > 0}
@@ -285,6 +296,7 @@
                   <Button variant="ghost" size="sm" onclick={copyInviteCode}>
                     {#if copiedCode}
                       <svg
+                        aria-hidden="true"
                         class="mr-1.5 h-4 w-4 text-green-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -296,6 +308,7 @@
                       Copied!
                     {:else}
                       <svg
+                        aria-hidden="true"
                         class="mr-1.5 h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -341,15 +354,19 @@
           <div class="mt-4 divide-y divide-surface-700">
             {#each data.household.members ?? [] as member}
               <div class="flex items-center justify-between py-3.5">
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <div
                     class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-600 text-sm font-semibold text-white"
                   >
                     {member.userName?.charAt(0).toUpperCase() ?? '?'}
                   </div>
-                  <div>
-                    <p class="font-medium text-white">{member.userName}</p>
-                    <p class="text-xs text-surface-400">{member.userEmail}</p>
+                  <div class="min-w-0">
+                    <p class="truncate font-medium text-white" title={member.userName}>
+                      {member.userName}
+                    </p>
+                    <p class="truncate text-xs text-surface-400" title={member.userEmail}>
+                      {member.userEmail}
+                    </p>
                   </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -363,11 +380,13 @@
                   {#if isOwner && member.role !== 'owner'}
                     <div class="flex items-center gap-1">
                       <button
+                        aria-label="Change role"
                         class="rounded-lg p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-white"
                         onclick={() => (editingMember = member)}
                         title="Change role"
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -382,11 +401,13 @@
                         </svg>
                       </button>
                       <button
+                        aria-label="Remove member"
                         class="rounded-lg p-1.5 text-surface-400 transition hover:bg-red-900/30 hover:text-red-400"
                         onclick={() => (confirmRemoveMember = member)}
                         title="Remove member"
                       >
                         <svg
+                          aria-hidden="true"
                           class="h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -404,6 +425,8 @@
                   {/if}
                 </div>
               </div>
+            {:else}
+              <p class="py-3.5 text-sm text-surface-400">No members yet.</p>
             {/each}
           </div>
         </Card>
@@ -418,6 +441,7 @@
             {#if unsavedAccounts.length > 0}
               <Button variant="ghost" size="sm" onclick={() => (showShareAccountModal = true)}>
                 <svg
+                  aria-hidden="true"
                   class="mr-1 h-4 w-4"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -434,6 +458,7 @@
           {#if data.sharedAccounts.length === 0}
             <div class="mt-4 flex flex-col items-center py-4 text-center">
               <svg
+                aria-hidden="true"
                 class="h-10 w-10 text-surface-600"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -468,8 +493,13 @@
                   class="flex items-center justify-between rounded-lg border border-surface-700 bg-surface-900/50 p-3"
                 >
                   <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-medium text-white">{sa.accountName}</p>
-                    <p class="mt-0.5 truncate text-xs text-surface-400">
+                    <p class="truncate text-sm font-medium text-white" title={sa.accountName}>
+                      {sa.accountName}
+                    </p>
+                    <p
+                      class="mt-0.5 truncate text-xs text-surface-400"
+                      title="{sa.institutionName ?? sa.accountType} -- shared by {sa.sharedByName}"
+                    >
                       {sa.institutionName ?? sa.accountType}
                       <span class="text-surface-500"> -- shared by {sa.sharedByName}</span>
                     </p>
@@ -478,11 +508,13 @@
                     <input type="hidden" name="householdId" value={data.household.id} />
                     <input type="hidden" name="accountId" value={sa.accountId} />
                     <button
+                      aria-label="Unshare account"
                       type="submit"
                       class="ml-2 rounded-lg p-1.5 text-surface-400 transition hover:bg-red-900/30 hover:text-red-400"
                       title="Unshare account"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -513,6 +545,7 @@
                 onclick={() => (confirmLeave = true)}
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-red-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -527,7 +560,7 @@
                 </svg>
                 <div>
                   <p class="text-sm font-medium text-red-400">Leave Household</p>
-                  <p class="text-xs text-surface-500">Remove yourself from this household</p>
+                  <p class="text-xs text-surface-500">Remove Yourself from This Household</p>
                 </div>
               </button>
             {:else}
@@ -536,6 +569,7 @@
                 onclick={() => (confirmDelete = true)}
               >
                 <svg
+                  aria-hidden="true"
                   class="h-5 w-5 text-red-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -580,12 +614,13 @@
         Household Name
       </label>
       <input
+        autocomplete="off"
         id="householdName"
         name="name"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="e.g., My Family"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="e.g., My Family…"
       />
       <p class="mt-1.5 text-xs text-surface-500">
         Choose a name that your household members will recognize.
@@ -618,12 +653,14 @@
         Invite Code
       </label>
       <input
+        autocomplete="off"
+        spellcheck={false}
         id="inviteCode"
         name="inviteCode"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 font-mono tracking-wider text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Enter invite code"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 font-mono tracking-wider text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Enter invite code…"
       />
       <p class="mt-1.5 text-xs text-surface-500">Ask the household owner for the invite code.</p>
     </div>
@@ -658,12 +695,13 @@
           Name
         </label>
         <input
+          autocomplete="off"
           id="editHouseholdName"
           name="name"
           type="text"
           required
           value={data.household.name}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -687,6 +725,7 @@
     {#if unsavedAccounts.length === 0}
       <div class="flex flex-col items-center py-4 text-center">
         <svg
+          aria-hidden="true"
           class="h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -721,10 +760,11 @@
             Select Account
           </label>
           <select
+            autocomplete="off"
             id="shareAccountId"
             name="accountId"
             required
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             {#each unsavedAccounts as account}
               <option value={account.id}>
@@ -762,9 +802,9 @@
         >
           {editingMember.userName?.charAt(0).toUpperCase() ?? '?'}
         </div>
-        <div>
-          <p class="font-medium text-white">{editingMember.userName}</p>
-          <p class="text-xs text-surface-400">{editingMember.userEmail}</p>
+        <div class="min-w-0">
+          <p class="break-words font-medium text-white">{editingMember.userName}</p>
+          <p class="break-all text-xs text-surface-400">{editingMember.userEmail}</p>
         </div>
       </div>
 
@@ -783,10 +823,11 @@
         <div>
           <label for="memberRole" class="block text-sm font-medium text-surface-300"> Role </label>
           <select
+            autocomplete="off"
             id="memberRole"
             name="role"
             required
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="editor" selected={editingMember.role === 'editor'}>Editor</option>
             <option value="viewer" selected={editingMember.role === 'viewer'}>Viewer</option>
@@ -819,6 +860,7 @@
     <div class="space-y-4">
       <div class="flex items-center gap-3 rounded-lg border border-red-700/30 bg-red-900/20 p-4">
         <svg
+          aria-hidden="true"
           class="h-6 w-6 flex-shrink-0 text-red-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -831,8 +873,8 @@
             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
           />
         </svg>
-        <div>
-          <p class="font-medium text-red-300">
+        <div class="min-w-0">
+          <p class="break-words font-medium text-red-300">
             Remove {confirmRemoveMember.userName} from the household?
           </p>
           <p class="mt-1 text-sm text-surface-400">
@@ -859,6 +901,7 @@
     <div class="space-y-4">
       <div class="flex items-center gap-3 rounded-lg border border-red-700/30 bg-red-900/20 p-4">
         <svg
+          aria-hidden="true"
           class="h-6 w-6 flex-shrink-0 text-red-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -871,8 +914,8 @@
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
           />
         </svg>
-        <div>
-          <p class="font-medium text-red-300">
+        <div class="min-w-0">
+          <p class="break-words font-medium text-red-300">
             Leave "{data.household.name}"?
           </p>
           <p class="mt-1 text-sm text-surface-400">
@@ -899,6 +942,7 @@
     <div class="space-y-4">
       <div class="flex items-center gap-3 rounded-lg border border-red-700/30 bg-red-900/20 p-4">
         <svg
+          aria-hidden="true"
           class="h-6 w-6 flex-shrink-0 text-red-400"
           fill="none"
           viewBox="0 0 24 24"
@@ -911,8 +955,8 @@
             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
           />
         </svg>
-        <div>
-          <p class="font-medium text-red-300">
+        <div class="min-w-0">
+          <p class="break-words font-medium text-red-300">
             Delete "{data.household.name}" permanently?
           </p>
           <p class="mt-1 text-sm text-surface-400">

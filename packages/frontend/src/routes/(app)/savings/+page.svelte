@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -112,7 +114,9 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="break-words rounded-lg bg-red-900/50 p-3 text-sm text-red-300">
+      {form.error}
+    </div>
   {/if}
 
   <!-- Summary -->
@@ -134,12 +138,14 @@
       <div class="mt-2">
         <div class="h-2 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="{getProgressColor(data.summary.savingsRate)} h-full rounded-full transition-all"
+            class="{getProgressColor(
+              data.summary.savingsRate,
+            )} h-full rounded-full transition-[width]"
             style="width: {Math.min(data.summary.savingsRate, 100)}%"
           ></div>
         </div>
         <p class="mt-1 text-xs {getProgressTextColor(data.summary.savingsRate)}">
-          {data.summary.savingsRate.toFixed(0)}% of target
+          {formatPercent(data.summary.savingsRate)} of target
         </p>
       </div>
     </Card>
@@ -150,6 +156,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -180,12 +187,13 @@
 
           <div class="pt-2">
             <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <div
                   class="flex h-10 w-10 items-center justify-center rounded-lg"
                   style="background-color: {goal.color || '#6366f1'}20"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5"
                     style="color: {goal.color || '#6366f1'}"
                     fill="none"
@@ -200,8 +208,8 @@
                     />
                   </svg>
                 </div>
-                <div>
-                  <p class="font-medium text-white">{goal.name}</p>
+                <div class="min-w-0">
+                  <p class="truncate font-medium text-white" title={goal.name}>{goal.name}</p>
                   {#if goal.deadline}
                     {@const daysText = getDaysRemaining(goal.deadline)}
                     <p
@@ -216,11 +224,13 @@
               </div>
               <div class="flex items-center gap-1">
                 <button
+                  aria-label="Add contribution"
                   class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                   onclick={() => (contributingGoal = goal)}
                   title="Add contribution"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -235,11 +245,13 @@
                   </svg>
                 </button>
                 <button
+                  aria-label="View details"
                   class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                   onclick={() => (viewingGoal = goal)}
                   title="View details"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -259,11 +271,13 @@
                   </svg>
                 </button>
                 <button
+                  aria-label="Edit goal"
                   class="rounded p-1 text-surface-400 hover:bg-surface-700 hover:text-white"
                   onclick={() => (editingGoal = goal)}
                   title="Edit goal"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -287,12 +301,12 @@
                   {fmt(goal.currentAmount)} of {fmt(goal.targetAmount)}
                 </span>
                 <span class="text-sm font-semibold {getProgressTextColor(goal.progress)}">
-                  {goal.progress.toFixed(0)}%
+                  {formatPercent(goal.progress)}
                 </span>
               </div>
               <div class="mt-1.5 h-2.5 overflow-hidden rounded-full bg-surface-700">
                 <div
-                  class="{getProgressColor(goal.progress)} h-full rounded-full transition-all"
+                  class="{getProgressColor(goal.progress)} h-full rounded-full transition-[width]"
                   style="width: {Math.min(goal.progress, 100)}%"
                 ></div>
               </div>
@@ -326,12 +340,13 @@
     <div>
       <label for="goalName" class="block text-sm font-medium text-surface-300">Goal Name</label>
       <input
+        autocomplete="off"
         id="goalName"
         name="name"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        placeholder="Emergency Fund"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+        placeholder="Emergency Fund…"
       />
     </div>
 
@@ -341,14 +356,15 @@
           >Target Amount</label
         >
         <input
+          autocomplete="off"
           id="goalTarget"
           name="targetAmount"
           type="number"
           step="0.01"
           min="0.01"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="10000.00"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="10000.00…"
         />
       </div>
       <div>
@@ -356,10 +372,11 @@
           >Deadline (optional)</label
         >
         <input
+          autocomplete="off"
           id="goalDeadline"
           name="deadline"
           type="date"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
     </div>
@@ -382,9 +399,10 @@
     <div>
       <label for="new-goal-icon" class="block text-sm font-medium text-surface-300">Icon</label>
       <select
+        autocomplete="off"
         id="new-goal-icon"
         name="icon"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
       >
         <option value="piggy-bank">Piggy Bank (default)</option>
         <option value="home">Home</option>
@@ -426,12 +444,13 @@
       <div>
         <label for="editName" class="block text-sm font-medium text-surface-300">Goal Name</label>
         <input
+          autocomplete="off"
           id="editName"
           name="name"
           type="text"
           required
           value={editingGoal.name}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -441,6 +460,7 @@
             >Target Amount</label
           >
           <input
+            autocomplete="off"
             id="editTarget"
             name="targetAmount"
             type="number"
@@ -448,7 +468,7 @@
             min="0.01"
             required
             value={editingGoal.targetAmount}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <div>
@@ -456,11 +476,12 @@
             >Deadline</label
           >
           <input
+            autocomplete="off"
             id="editDeadline"
             name="deadline"
             type="date"
             value={editingGoal.deadline || ''}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
       </div>
@@ -489,9 +510,10 @@
       <div>
         <label for="edit-goal-icon" class="block text-sm font-medium text-surface-300">Icon</label>
         <select
+          autocomplete="off"
           id="edit-goal-icon"
           name="icon"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         >
           {#each goalIcons as icon}
             <option value={icon} selected={editingGoal.icon === icon}>{icon}</option>
@@ -505,7 +527,13 @@
       </div>
     </form>
 
-    <form method="POST" action="?/delete" use:enhance class="mt-3 border-t border-surface-700 pt-3">
+    <form
+      use:confirmSubmit={'Delete this savings goal? This can’t be undone.'}
+      method="POST"
+      action="?/delete"
+      use:enhance
+      class="mt-3 border-t border-surface-700 pt-3"
+    >
       <input type="hidden" name="id" value={editingGoal.id} />
       <Button type="submit" variant="danger" size="sm">Delete Goal</Button>
     </form>
@@ -521,7 +549,7 @@
   {#if contributingGoal}
     <div class="mb-4 rounded-lg bg-surface-900 p-3">
       <p class="text-sm text-surface-400">Contributing to</p>
-      <p class="font-medium text-white">{contributingGoal.name}</p>
+      <p class="break-words font-medium text-white">{contributingGoal.name}</p>
       <p class="text-xs text-surface-500">
         {fmt(contributingGoal.currentAmount)} / {fmt(contributingGoal.targetAmount)}
         &mdash; {fmt(contributingGoal.targetAmount - contributingGoal.currentAmount)} remaining
@@ -543,14 +571,15 @@
       <div>
         <label for="contribAmount" class="block text-sm font-medium text-surface-300">Amount</label>
         <input
+          autocomplete="off"
           id="contribAmount"
           name="amount"
           type="number"
           step="0.01"
           min="0.01"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="100.00"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="100.00…"
         />
       </div>
 
@@ -559,10 +588,11 @@
           >Date (optional)</label
         >
         <input
+          autocomplete="off"
           id="contribDate"
           name="date"
           type="date"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -571,11 +601,12 @@
           >Note (optional)</label
         >
         <input
+          autocomplete="off"
           id="contribNote"
           name="note"
           type="text"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="Monthly deposit"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white placeholder-surface-500 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="Monthly deposit…"
         />
       </div>
 
@@ -607,7 +638,7 @@
           </div>
           <div class="text-right">
             <p class="text-2xl font-bold {getProgressTextColor(viewingGoal.progress)}">
-              {viewingGoal.progress.toFixed(1)}%
+              {formatPercent(viewingGoal.progress, 1)}
             </p>
             {#if viewingGoal.deadline}
               <p class="text-xs text-surface-500">{getDaysRemaining(viewingGoal.deadline)}</p>
@@ -616,7 +647,7 @@
         </div>
         <div class="mt-3 h-3 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="{getProgressColor(viewingGoal.progress)} h-full rounded-full transition-all"
+            class="{getProgressColor(viewingGoal.progress)} h-full rounded-full transition-[width]"
             style="width: {Math.min(viewingGoal.progress, 100)}%"
           ></div>
         </div>
@@ -654,9 +685,9 @@
           <div class="mt-2 max-h-64 space-y-2 overflow-y-auto">
             {#each viewingGoal.contributions as contribution}
               <div class="flex items-center justify-between rounded-lg bg-surface-900 px-3 py-2">
-                <div>
+                <div class="min-w-0">
                   <p class="text-sm font-medium text-white">{fmt(contribution.amount)}</p>
-                  <p class="text-xs text-surface-500">
+                  <p class="break-words text-xs text-surface-500">
                     {fmtDate(contribution.date)}
                     {#if contribution.note}
                       &mdash; {contribution.note}
@@ -664,6 +695,7 @@
                   </p>
                 </div>
                 <form
+                  use:confirmSubmit={'Remove this contribution?'}
                   method="POST"
                   action="?/removeContribution"
                   use:enhance={() => {
@@ -675,11 +707,13 @@
                   <input type="hidden" name="goalId" value={viewingGoal.id} />
                   <input type="hidden" name="contributionId" value={contribution.id} />
                   <button
+                    aria-label="Remove contribution"
                     type="submit"
                     class="rounded p-1 text-surface-500 hover:bg-surface-700 hover:text-red-400"
                     title="Remove contribution"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"

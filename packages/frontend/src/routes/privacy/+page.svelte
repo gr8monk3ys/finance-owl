@@ -59,6 +59,7 @@
       <div class="flex items-center gap-3">
         <a href="/" class="text-surface-400 transition hover:text-white" aria-label="Back to home">
           <svg
+            aria-hidden="true"
             class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
@@ -91,7 +92,7 @@
           {#each sections as section}
             <button
               onclick={() => scrollToSection(section.id)}
-              class="block w-full rounded-lg px-3 py-1.5 text-left text-sm transition-all duration-150
+              class="block w-full rounded-lg px-3 py-1.5 text-left text-sm transition-colors duration-150
 								{activeSection === section.id
                 ? 'bg-primary-600/15 text-primary-400 font-medium'
                 : 'text-surface-400 hover:bg-surface-800 hover:text-surface-200'}"
@@ -109,10 +110,10 @@
           <section id="overview">
             <h2 class="text-xl font-semibold text-white">Overview</h2>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
-              Finance Owl ("we," "us," or "our") is committed to protecting your privacy. This
-              Privacy Policy describes how we collect, use, disclose, and safeguard your information
-              when you use our personal finance management platform, including our website, mobile
-              applications, and related services (collectively, the "Service").
+              <span translate="no">Finance Owl</span> (“we,” “us,” or “our”) is committed to protecting
+              your privacy. This Privacy Policy describes how we collect, use, disclose, and safeguard
+              your information when you use our personal finance management platform, including our website,
+              mobile applications, and related services (collectively, the “Service”).
             </p>
             <p class="mt-3 text-sm leading-relaxed text-surface-300">
               By accessing or using the Service, you agree to this Privacy Policy. If you do not
@@ -130,6 +131,7 @@
                 <ul class="mt-3 space-y-2">
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -146,6 +148,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -161,6 +164,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -182,6 +186,7 @@
                 <ul class="mt-3 space-y-2">
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -198,6 +203,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -213,6 +219,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -228,6 +235,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -249,6 +257,7 @@
                 <ul class="mt-3 space-y-2">
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -264,6 +273,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -279,6 +289,7 @@
                   </li>
                   <li class="flex items-start gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -328,6 +339,7 @@
                     class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600/20 text-blue-400"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -342,14 +354,16 @@
                     </svg>
                   </div>
                   <div>
-                    <h3 class="text-base font-medium text-white">Connected account providers</h3>
+                    <h3 class="text-base font-medium text-white">Connected Account Providers</h3>
                     <p class="text-xs text-surface-400">Bank and card connectivity</p>
                   </div>
                 </div>
                 <p class="mt-3 text-sm leading-relaxed text-surface-300">
-                  When account linking is enabled, Finance Owl may rely on a provider such as Plaid
-                  to connect external accounts. Provider-specific authentication, security, and
-                  retention details are governed by that vendor's terms and policies. See <a
+                  When account linking is enabled, <span translate="no">Finance Owl</span> may rely
+                  on a provider such as Plaid to connect external accounts. Provider-specific
+                  authentication, security, and retention details are governed by that vendor's
+                  terms and policies. See
+                  <a
                     href="https://plaid.com/legal"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -365,6 +379,7 @@
                     class="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-600/20 text-violet-400"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -379,13 +394,16 @@
                     </svg>
                   </div>
                   <div>
-                    <h3 class="text-base font-medium text-white">Billing provider</h3>
+                    <h3 class="text-base font-medium text-white">Billing Provider</h3>
                     <p class="text-xs text-surface-400">Payment processing</p>
                   </div>
                 </div>
                 <p class="mt-3 text-sm leading-relaxed text-surface-300">
                   If you subscribe to a paid plan, billing is handled by the configured payment
-                  processor rather than storing full card details directly in Finance Owl. See <a
+                  processor rather than storing full card details directly in <span translate="no"
+                    >Finance Owl</span
+                  >. See
+                  <a
                     href="https://stripe.com/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -404,6 +422,7 @@
               <ul class="space-y-3">
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-accent-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -420,6 +439,7 @@
                 </li>
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-accent-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -437,6 +457,7 @@
                 </li>
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-accent-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -454,6 +475,7 @@
                 </li>
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-accent-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -512,6 +534,7 @@
               <ul class="mt-3 space-y-2">
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -524,6 +547,7 @@
                 </li>
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -536,6 +560,7 @@
                 </li>
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -548,6 +573,7 @@
                 </li>
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -573,6 +599,7 @@
               <ul class="mt-3 space-y-2">
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -585,6 +612,7 @@
                 </li>
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -597,6 +625,7 @@
                 </li>
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -609,6 +638,7 @@
                 </li>
                 <li class="flex items-start gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="mt-0.5 h-4 w-4 shrink-0 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -706,6 +736,7 @@
               <div class="mt-4 space-y-2">
                 <p class="flex items-center gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -723,6 +754,7 @@
                 </p>
                 <p class="flex items-center gap-2 text-sm text-surface-300">
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -743,6 +775,7 @@
                 {#if publicSite.companyAddress}
                   <p class="flex items-center gap-2 text-sm text-surface-300">
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 text-surface-500"
                       fill="none"
                       viewBox="0 0 24 24"

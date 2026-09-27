@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -81,6 +83,7 @@
     </div>
     <Button onclick={() => (showCreateModal = true)}>
       <svg
+        aria-hidden="true"
         class="mr-1.5 h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -96,9 +99,11 @@
   <!-- Error -->
   {#if form?.error}
     <div
+      role="alert"
       class="flex items-center gap-2 rounded-lg border border-red-800/50 bg-red-950/50 p-3 text-sm text-red-300"
     >
       <svg
+        aria-hidden="true"
         class="h-4 w-4 shrink-0"
         fill="none"
         viewBox="0 0 24 24"
@@ -124,6 +129,7 @@
       <div class="flex items-center gap-2">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500/10">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-primary-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -151,6 +157,7 @@
       <div class="flex items-center gap-2">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-blue-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -190,6 +197,7 @@
               : 'bg-red-500/10'}"
           >
             <svg
+              aria-hidden="true"
               class="h-4 w-4 {data.summary.totalRemaining >= 0
                 ? 'text-primary-400'
                 : 'text-red-400'}"
@@ -224,6 +232,7 @@
       <div class="flex items-center gap-2">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-500/10">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-accent-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -251,7 +260,7 @@
           <span
             class="text-xs {getBudgetProgressTextColor(data.summary.percentUsed)} font-semibold"
           >
-            {data.summary.percentUsed.toFixed(0)}% used
+            {formatPercent(data.summary.percentUsed)} used
           </span>
           <div class="flex gap-2 text-xs text-surface-500">
             {#if onTrackCount > 0}
@@ -280,6 +289,7 @@
       <div class="relative flex flex-col items-center justify-center py-16 text-center">
         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-700/50">
           <svg
+            aria-hidden="true"
             class="h-8 w-8 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -298,10 +308,11 @@
           Create budgets to track your spending by category and stay on top of your finances.
         </p>
         <button
-          class="mt-5 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-primary-900/30 transition-all hover:bg-primary-500 hover:shadow-xl hover:shadow-primary-900/40"
+          class="mt-5 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:shadow-xl hover:shadow-primary-900/40"
           onclick={() => (showCreateModal = true)}
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -319,11 +330,11 @@
       {#each data.budgets as budget}
         {@const status = getBudgetStatusBadge(budget.percentUsed)}
         <div
-          class="group relative overflow-hidden rounded-xl border border-surface-700/30 bg-surface-800 transition-all duration-200 hover:border-surface-600/50 hover:shadow-md hover:shadow-black/10"
+          class="group relative overflow-hidden rounded-xl border border-surface-700/30 bg-surface-800 transition duration-200 hover:border-surface-600/50 hover:shadow-md hover:shadow-black/10"
         >
           <div class="p-5">
             <div class="flex items-start justify-between gap-4">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <!-- Category icon -->
                 <div
                   class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold text-white/90"
@@ -332,9 +343,12 @@
                 >
                   {getBudgetCategoryIcon(budget.categoryName)}
                 </div>
-                <div>
+                <div class="min-w-0">
                   <div class="flex items-center gap-2">
-                    <p class="font-semibold text-white">
+                    <p
+                      class="truncate font-semibold text-white"
+                      title={budget.categoryName || 'Unknown Category'}
+                    >
                       {budget.categoryName || 'Unknown Category'}
                     </p>
                     <!-- Status badge -->
@@ -348,7 +362,7 @@
                 </div>
               </div>
               <button
-                class="rounded-lg border border-surface-700/50 px-2.5 py-1 text-xs text-surface-400 opacity-0 transition-all hover:border-surface-600 hover:bg-surface-750 hover:text-white group-hover:opacity-100"
+                class="rounded-lg border border-surface-700/50 px-2.5 py-1 text-xs text-surface-400 opacity-0 transition hover:border-surface-600 hover:bg-surface-750 hover:text-white group-hover:opacity-100"
                 onclick={() => (editingBudget = budget)}
               >
                 Edit
@@ -386,7 +400,7 @@
               <!-- Progress bar with gradient -->
               <div class="mt-2.5 h-3 overflow-hidden rounded-full bg-surface-700/60">
                 <div
-                  class="progress-fill h-full rounded-full transition-all duration-500"
+                  class="progress-fill h-full rounded-full transition-[width] duration-500"
                   style="width: {Math.min(budget.percentUsed, 100)}%;
 										background: {getBudgetProgressGradient(budget.percentUsed)}"
                 ></div>
@@ -395,11 +409,12 @@
               <!-- Bottom stats -->
               <div class="mt-2 flex items-center justify-between text-xs">
                 <span class="{getBudgetProgressTextColor(budget.percentUsed)} font-medium">
-                  {budget.percentUsed.toFixed(0)}% used
+                  {formatPercent(budget.percentUsed)} used
                 </span>
                 {#if budget.percentUsed >= 100}
                   <span class="flex items-center gap-1 text-red-400">
                     <svg
+                      aria-hidden="true"
                       class="h-3 w-3"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -440,11 +455,12 @@
       <label for="budgetCategory" class="block text-sm font-medium text-surface-300">Category</label
       >
       <select
+        autocomplete="off"
         id="budgetCategory"
         name="categoryId"
         required
         bind:value={createCategoryId}
-        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+        class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
       >
         <option value="" disabled>Select a category</option>
         {#each getBudgetCategoryTree(data.categories) as parent}
@@ -471,6 +487,7 @@
         <div class="relative mt-1">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="budgetAmount"
             name="amount"
             type="number"
@@ -478,19 +495,20 @@
             min="0"
             required
             bind:value={createAmount}
-            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
-            placeholder="500.00"
+            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
+            placeholder="500.00…"
           />
         </div>
       </div>
       <div>
         <label for="budgetPeriod" class="block text-sm font-medium text-surface-300">Period</label>
         <select
+          autocomplete="off"
           id="budgetPeriod"
           name="period"
           required
           bind:value={createPeriod}
-          class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+          class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
         >
           <option value="weekly">Weekly</option>
           <option value="biweekly">Biweekly</option>
@@ -515,7 +533,7 @@
         id="budgetRollover"
         name="rollover"
         type="checkbox"
-        class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+        class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
       />
       <label for="budgetRollover" class="text-sm text-surface-300">
         Roll over unused budget to next period
@@ -551,16 +569,18 @@
 
       <div class="flex items-center gap-3 rounded-lg bg-surface-750/50 p-3">
         <div
-          class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white/80"
+          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white/80"
           style="background: linear-gradient(135deg, {editingBudget.categoryColor ||
             '#64748b'}66, {editingBudget.categoryColor || '#64748b'}22)"
         >
           {getBudgetCategoryIcon(editingBudget.categoryName)}
         </div>
-        <div>
-          <p class="text-sm font-medium text-white">{editingBudget.categoryName}</p>
+        <div class="min-w-0">
+          <p class="truncate text-sm font-medium text-white" title={editingBudget.categoryName}>
+            {editingBudget.categoryName}
+          </p>
           <p class="text-xs text-surface-500">
-            Currently {editingBudget.percentUsed.toFixed(0)}% used ({fmt(editingBudget.spent)} spent)
+            Currently {formatPercent(editingBudget.percentUsed)} used ({fmt(editingBudget.spent)} spent)
           </p>
         </div>
       </div>
@@ -570,6 +590,7 @@
         <div class="relative mt-1">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-surface-500">$</span>
           <input
+            autocomplete="off"
             id="editAmount"
             name="amount"
             type="number"
@@ -577,7 +598,7 @@
             min="0"
             required
             value={editingBudget.amount}
-            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus:border-primary-500/50 focus:outline-none focus:ring-1 focus:ring-primary-500/30"
+            class="block w-full rounded-lg border border-surface-600/50 bg-surface-750 py-2.5 pl-7 pr-3 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
           />
         </div>
       </div>
@@ -588,7 +609,7 @@
           name="rollover"
           type="checkbox"
           checked={editingBudget.rollover}
-          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus:ring-primary-500"
+          class="h-4 w-4 rounded border-surface-600 bg-surface-700 text-primary-500 focus-visible:ring-primary-500"
         />
         <label for="editRollover" class="text-sm text-surface-300"> Roll over unused budget </label>
       </div>
@@ -600,6 +621,7 @@
     </form>
 
     <form
+      use:confirmSubmit={'Delete this budget? This can’t be undone.'}
       method="POST"
       action="?/delete"
       use:enhance

@@ -115,7 +115,14 @@
       href="/calculators"
       class="text-surface-400 hover:text-white transition"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -133,13 +140,15 @@
               >Home Price</label
             >
             <input
+              autocomplete="off"
+              name="homePrice"
               id="homePrice"
               type="number"
               bind:value={homePrice}
               oninput={onDownPaymentChange}
               min="0"
               step="1000"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -149,22 +158,26 @@
             >
             <div class="mt-1 flex gap-2">
               <input
+                autocomplete="off"
+                name="downPayment"
                 id="downPayment"
                 type="number"
                 bind:value={downPayment}
                 oninput={onDownPaymentChange}
                 min="0"
-                class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               />
               <div class="flex items-center gap-1">
                 <input
+                  autocomplete="off"
+                  name="down-payment-pct"
                   type="number"
                   bind:value={downPaymentPct}
                   oninput={onDownPaymentPctChange}
                   min="0"
                   max="100"
                   step="0.5"
-                  class="w-20 rounded-lg border border-surface-600 bg-surface-700 px-2 py-2 text-white text-right focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  class="w-20 rounded-lg border border-surface-600 bg-surface-700 px-2 py-2 text-white text-right focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
                 />
                 <span class="text-surface-400 text-sm">%</span>
               </div>
@@ -176,13 +189,15 @@
               >Interest Rate (%)</label
             >
             <input
+              autocomplete="off"
+              name="interestRate"
               id="interestRate"
               type="number"
               bind:value={interestRate}
               min="0"
               max="30"
               step="0.125"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -210,12 +225,14 @@
               >Annual Property Tax</label
             >
             <input
+              autocomplete="off"
+              name="propertyTax"
               id="propertyTax"
               type="number"
               bind:value={propertyTax}
               min="0"
               step="100"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -224,12 +241,14 @@
               >Annual Home Insurance</label
             >
             <input
+              autocomplete="off"
+              name="homeInsurance"
               id="homeInsurance"
               type="number"
               bind:value={homeInsurance}
               min="0"
               step="100"
-              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
             />
           </div>
 
@@ -240,12 +259,14 @@
                 <span class="text-xs text-surface-500">(down payment &lt; 20%)</span>
               </label>
               <input
+                autocomplete="off"
+                name="pmi"
                 id="pmi"
                 type="number"
                 bind:value={pmi}
                 min="0"
                 step="100"
-                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
               />
             </div>
           {/if}
@@ -268,7 +289,7 @@
         <div class="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
           <!-- Donut -->
           <div class="flex-shrink-0">
-            <svg width="160" height="160" viewBox="0 0 160 160">
+            <svg aria-hidden="true" width="160" height="160" viewBox="0 0 160 160">
               {#each donutSegments as seg}
                 <circle
                   cx="80"
@@ -326,11 +347,12 @@
       <!-- Amortization schedule -->
       <Card>
         <button
-          class="flex w-full items-center justify-between text-left"
+          class="flex w-full items-center justify-between text-left rounded-lg transition-colors hover:bg-surface-700/40"
           onclick={() => (showSchedule = !showSchedule)}
         >
           <h3 class="text-lg font-semibold text-white">Amortization Schedule</h3>
           <svg
+            aria-hidden="true"
             class="h-5 w-5 text-surface-400 transition-transform {showSchedule ? 'rotate-180' : ''}"
             fill="none"
             viewBox="0 0 24 24"

@@ -1,8 +1,12 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
   import { publicRoutes, publicMailto, publicSite } from '$lib/config/public';
   import { Card } from '$components/ui';
 
-  let searchQuery = $state('');
+  let searchQuery = $state(readParam('q', ''));
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('q', searchQuery, ''));
   let expandedItems = $state<Set<string>>(new Set());
 
   interface FaqItem {
@@ -310,7 +314,7 @@
 <div class="mx-auto max-w-4xl space-y-8">
   <!-- Page Header -->
   <div class="text-center">
-    <h1 class="text-2xl font-bold text-white sm:text-3xl">Help Center</h1>
+    <h2 class="text-2xl font-bold text-white sm:text-3xl">Help Center</h2>
     <p class="mt-2 text-surface-400">
       Find answers to common questions or reach out to our support team.
     </p>
@@ -319,7 +323,14 @@
   <!-- Search -->
   <div class="relative">
     <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-surface-400">
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -328,10 +339,13 @@
       </svg>
     </div>
     <input
+      autocomplete="off"
+      name="search-query"
+      aria-label="Search help topics"
       type="text"
       bind:value={searchQuery}
-      placeholder="Search for help topics..."
-      class="w-full rounded-xl border border-surface-600/80 bg-surface-800 py-3.5 pl-12 pr-4 text-white placeholder:text-surface-500 transition-all duration-200 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+      placeholder="Search for help topics…"
+      class="w-full rounded-xl border border-surface-600/80 bg-surface-800 py-3.5 pl-12 pr-4 text-white placeholder:text-surface-500 transition duration-200 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20"
     />
     {#if searchQuery.trim()}
       <div class="absolute right-4 top-1/2 -translate-y-1/2">
@@ -341,6 +355,7 @@
           aria-label="Clear search"
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -356,7 +371,7 @@
 
   <!-- Search results count -->
   {#if searchQuery.trim()}
-    <p class="text-sm text-surface-400">
+    <p class="break-words text-sm text-surface-400">
       {totalResults} result{totalResults !== 1 ? 's' : ''} found for "{searchQuery}"
     </p>
   {/if}
@@ -366,6 +381,7 @@
     <Card>
       <div class="py-8 text-center">
         <svg
+          aria-hidden="true"
           class="mx-auto h-12 w-12 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -378,7 +394,7 @@
             d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
           />
         </svg>
-        <h3 class="mt-4 text-lg font-medium text-white">No results found</h3>
+        <h3 class="mt-4 text-lg font-medium text-white">No Results Found</h3>
         <p class="mt-2 text-sm text-surface-400">
           Try different keywords, or <a
             href={publicRoutes.support}
@@ -396,6 +412,7 @@
             <div class="flex h-9 w-9 items-center justify-center rounded-lg {section.iconColor}">
               {#if section.icon === 'rocket'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -410,6 +427,7 @@
                 </svg>
               {:else if section.icon === 'link'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -424,6 +442,7 @@
                 </svg>
               {:else if section.icon === 'target'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -438,6 +457,7 @@
                 </svg>
               {:else if section.icon === 'repeat'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -450,6 +470,7 @@
                 </svg>
               {:else if section.icon === 'credit-card'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -464,6 +485,7 @@
                 </svg>
               {:else if section.icon === 'shield'}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -478,6 +500,7 @@
                 </svg>
               {:else}
                 <svg
+                  aria-hidden="true"
                   class="h-[18px] w-[18px]"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -515,6 +538,7 @@
                       {item.question}
                     </span>
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 shrink-0 text-surface-400 transition-transform duration-200
 												{expanded ? 'rotate-180' : ''}"
                       fill="none"
@@ -566,7 +590,9 @@
         class="rounded-2xl border border-surface-600 bg-surface-800 px-6 py-5 text-left transition hover:border-surface-500 hover:bg-surface-700"
       >
         <h3 class="text-sm font-semibold text-white">Email Support</h3>
-        <p class="mt-2 text-sm leading-relaxed text-surface-400">{publicSite.supportEmail}</p>
+        <p class="mt-2 break-all text-sm leading-relaxed text-surface-400">
+          {publicSite.supportEmail}
+        </p>
       </a>
     </div>
   </div>

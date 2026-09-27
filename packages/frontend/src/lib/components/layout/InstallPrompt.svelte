@@ -48,6 +48,7 @@
   >
     <div class="flex items-center gap-3">
       <svg
+        aria-hidden="true"
         class="h-5 w-5 shrink-0 text-primary-400"
         viewBox="0 0 24 24"
         fill="none"
@@ -60,7 +61,9 @@
           d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
         />
       </svg>
-      <span class="text-sm text-surface-200">Install Finance Owl for quick access</span>
+      <span class="text-sm text-surface-200"
+        >Install <span translate="no">Finance Owl</span> for quick access</span
+      >
     </div>
     <div class="flex items-center gap-2">
       <Button size="sm" onclick={install}>Install</Button>
@@ -69,7 +72,7 @@
         class="p-1 text-surface-400 transition hover:text-white"
         aria-label="Dismiss install prompt"
       >
-        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+        <svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
           <path
             d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
           />

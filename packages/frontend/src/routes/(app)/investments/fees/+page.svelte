@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent, formatDecimal } from '$lib/utils/format';
   import { Card } from '$components/ui';
   import { BarChart } from '$components/charts';
   import type { PageData } from './$types';
@@ -9,11 +10,11 @@
   // ---------- Formatters ----------
 
   function fmtPct(ratio: number): string {
-    return `${(ratio * 100).toFixed(2)}%`;
+    return formatPercent(ratio * 100, 2);
   }
 
   function fmtBps(ratio: number): string {
-    return `${(ratio * 10000).toFixed(1)} bps`;
+    return `${formatDecimal(ratio * 10000, 1)}\u00a0bps`;
   }
 
   // ---------- Expense ratio color coding ----------
@@ -106,7 +107,7 @@
       class="text-surface-400 transition hover:text-white"
       aria-label="Back to investments"
     >
-      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path
           fill-rule="evenodd"
           d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
@@ -127,6 +128,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -174,6 +176,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-red-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -205,6 +208,7 @@
             )}"
           >
             <svg
+              aria-hidden="true"
               class="h-5 w-5 {erColor(data.summary.weightedExpenseRatio)}"
               fill="none"
               viewBox="0 0 24 24"
@@ -235,6 +239,7 @@
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-600/20">
             <svg
+              aria-hidden="true"
               class="h-5 w-5 text-yellow-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -273,9 +278,11 @@
             {data.summary.feeScore}
           </span>
         </div>
-        <div>
+        <div class="min-w-0">
           <h3 class="text-lg font-semibold text-white">Your Fee Assessment</h3>
-          <p class="mt-1 text-sm text-surface-300">{data.summary.feeScoreDescription}</p>
+          <p class="mt-1 break-words text-sm text-surface-300">
+            {data.summary.feeScoreDescription}
+          </p>
           <div class="mt-3 flex gap-4 text-xs text-surface-500">
             <span
               >Portfolio: <span class="text-surface-300"
@@ -323,7 +330,7 @@
                   <p class="font-medium text-white">
                     {holding.tickerSymbol || '--'}
                   </p>
-                  <p class="text-xs text-surface-500">{holding.securityName}</p>
+                  <p class="break-words text-xs text-surface-500">{holding.securityName}</p>
                 </td>
                 <td class="px-4 py-3">
                   <span
@@ -429,6 +436,7 @@
         <div class="mt-4 rounded-lg border border-surface-700 bg-surface-800/50 p-4">
           <div class="flex items-start gap-3">
             <svg
+              aria-hidden="true"
               class="mt-0.5 h-5 w-5 shrink-0 text-yellow-400"
               fill="none"
               viewBox="0 0 24 24"
@@ -481,10 +489,10 @@
           {#each data.alternatives as alt}
             <div class="px-6 py-4">
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
+                <div class="flex min-w-0 items-center gap-4">
                   <!-- Current holding -->
                   <div class="min-w-[120px]">
-                    <p class="text-sm font-medium text-white">{alt.currentHolding}</p>
+                    <p class="break-words text-sm font-medium text-white">{alt.currentHolding}</p>
                     <p class="text-xs text-red-400">
                       ER: {fmtPct(alt.currentExpenseRatio)}
                     </p>
@@ -492,6 +500,7 @@
 
                   <!-- Arrow -->
                   <svg
+                    aria-hidden="true"
                     class="h-5 w-5 shrink-0 text-surface-500"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -510,7 +519,7 @@
                     <p class="text-sm font-medium text-green-400">
                       {alt.suggestedSymbol}
                     </p>
-                    <p class="text-xs text-surface-500">{alt.suggestedName}</p>
+                    <p class="break-words text-xs text-surface-500">{alt.suggestedName}</p>
                     <p class="text-xs text-green-400/70">
                       ER: {fmtPct(alt.suggestedExpenseRatio)}
                     </p>
@@ -538,8 +547,8 @@
         <div class="space-y-3">
           {#each data.fees.feesByCategory as cat}
             <div class="flex items-center justify-between rounded-lg bg-surface-700/50 px-4 py-3">
-              <div>
-                <p class="font-medium text-white">{cat.category}</p>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white" title={cat.category}>{cat.category}</p>
                 <p class="text-xs text-surface-400">
                   Avg ER: <span class={erColor(cat.avgExpenseRatio)}
                     >{fmtPct(cat.avgExpenseRatio)}</span

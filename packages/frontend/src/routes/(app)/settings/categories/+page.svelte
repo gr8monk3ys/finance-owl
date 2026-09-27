@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
   import { Button, Card, Input, Modal } from '$components/ui';
@@ -148,7 +149,14 @@
       class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-400 transition hover:bg-surface-700 hover:text-white"
       aria-label="Back to settings"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -162,20 +170,22 @@
 
   <!-- Global messages -->
   {#if form?.categorySuccess}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
       Category created successfully.
     </div>
   {/if}
   {#if form?.categoryUpdateSuccess}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
       Category updated successfully.
     </div>
   {/if}
   {#if form?.categoryDeleteSuccess}
-    <div class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">Category deleted.</div>
+    <div role="status" class="rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+      Category deleted.
+    </div>
   {/if}
   {#if form?.categoryError}
-    <div class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+    <div role="alert" class="rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
       {form.categoryError}
     </div>
   {/if}
@@ -186,6 +196,7 @@
       <h2 class="text-lg font-semibold text-white">Your Categories</h2>
       <Button size="sm" onclick={() => (showCreateModal = true)}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -204,9 +215,9 @@
         <div>
           <!-- Parent category row -->
           <div class="flex items-center justify-between px-6 py-3">
-            <div class="flex items-center gap-3">
+            <div class="flex min-w-0 items-center gap-3">
               <span
-                class="flex h-8 w-8 items-center justify-center rounded-lg text-sm"
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm"
                 style="background-color: {category.color || '#71717a'}20; color: {category.color ||
                   '#71717a'}"
               >
@@ -215,8 +226,10 @@
                   style="background-color: {category.color || '#71717a'}"
                 ></span>
               </span>
-              <div>
-                <p class="text-sm font-medium text-white">{category.name}</p>
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-white" title={category.name}>
+                  {category.name}
+                </p>
                 {#if category.icon}
                   <p class="text-xs text-surface-500">{category.icon}</p>
                 {/if}
@@ -255,8 +268,14 @@
                     Cancel
                   </Button>
                 {:else}
-                  <Button variant="ghost" size="sm" onclick={() => openEditModal(category)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onclick={() => openEditModal(category)}
+                    aria-label="Edit {category.name}"
+                  >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 text-surface-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -270,8 +289,14 @@
                       />
                     </svg>
                   </Button>
-                  <Button variant="ghost" size="sm" onclick={() => (deleteConfirmId = category.id)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onclick={() => (deleteConfirmId = category.id)}
+                    aria-label="Delete {category.name}"
+                  >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 text-surface-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -295,12 +320,14 @@
             <div class="ml-11 border-l border-surface-700/50">
               {#each children as child (child.id)}
                 <div class="flex items-center justify-between py-2 pl-4 pr-6">
-                  <div class="flex items-center gap-2">
+                  <div class="flex min-w-0 items-center gap-2">
                     <span
-                      class="h-2 w-2 rounded-full"
+                      class="h-2 w-2 shrink-0 rounded-full"
                       style="background-color: {child.color || category.color || '#71717a'}"
                     ></span>
-                    <span class="text-sm text-surface-300">{child.name}</span>
+                    <span class="truncate text-sm text-surface-300" title={child.name}
+                      >{child.name}</span
+                    >
                     {#if child.isSystem && !child.userId}
                       <span
                         class="rounded-full bg-surface-700 px-1.5 py-0.5 text-[10px] font-medium text-surface-400"
@@ -312,8 +339,14 @@
 
                   {#if child.userId && !child.isSystem}
                     <div class="flex items-center gap-1">
-                      <Button variant="ghost" size="sm" onclick={() => openEditModal(child)}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onclick={() => openEditModal(child)}
+                        aria-label="Edit {child.name}"
+                      >
                         <svg
+                          aria-hidden="true"
                           class="h-3.5 w-3.5 text-surface-500"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -328,6 +361,7 @@
                         </svg>
                       </Button>
                       <form
+                        use:confirmSubmit={'Delete this category? This can’t be undone.'}
                         method="POST"
                         action="?/deleteCategory"
                         use:enhance={() => {
@@ -337,8 +371,14 @@
                         }}
                       >
                         <input type="hidden" name="id" value={child.id} />
-                        <Button variant="ghost" size="sm" type="submit">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          type="submit"
+                          aria-label="Delete {child.name}"
+                        >
                           <svg
+                            aria-hidden="true"
                             class="h-3.5 w-3.5 text-surface-500"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -366,6 +406,7 @@
     {#if data.categories.length === 0}
       <div class="px-6 py-8 text-center">
         <svg
+          aria-hidden="true"
           class="mx-auto h-10 w-10 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"
@@ -402,10 +443,11 @@
     >
       <div class="space-y-4">
         <Input
+          autocomplete="off"
           id="categoryName"
           name="name"
           label="Name"
-          placeholder="e.g., Subscriptions"
+          placeholder="e.g., Subscriptions…"
           required
           bind:value={newCategoryName}
         />
@@ -454,10 +496,11 @@
             Parent Category (optional)
           </label>
           <select
+            autocomplete="off"
             id="parentId"
             name="parentId"
             bind:value={newCategoryParent}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="">None (top-level category)</option>
             {#each parentCategories as parent}
@@ -491,7 +534,14 @@
         <input type="hidden" name="id" value={editingCategory.id} />
 
         <div class="space-y-4">
-          <Input id="editCategoryName" name="name" label="Name" required bind:value={editName} />
+          <Input
+            autocomplete="off"
+            id="editCategoryName"
+            name="name"
+            label="Name"
+            required
+            bind:value={editName}
+          />
 
           <!-- Color Picker -->
           <div>
@@ -551,6 +601,7 @@
       </div>
       <Button size="sm" onclick={() => (showRuleModal = true)}>
         <svg
+          aria-hidden="true"
           class="mr-1.5 h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
@@ -564,17 +615,23 @@
     </div>
 
     {#if form?.ruleSuccess}
-      <div class="mx-6 mt-4 rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+      <div
+        role="status"
+        class="mx-6 mt-4 rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300"
+      >
         Rule created successfully.
       </div>
     {/if}
     {#if form?.ruleDeleteSuccess}
-      <div class="mx-6 mt-4 rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300">
+      <div
+        role="status"
+        class="mx-6 mt-4 rounded-lg bg-green-900/50 px-4 py-3 text-sm text-green-300"
+      >
         Rule deleted.
       </div>
     {/if}
     {#if form?.ruleError}
-      <div class="mx-6 mt-4 rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
+      <div role="alert" class="mx-6 mt-4 rounded-lg bg-red-900/50 px-4 py-3 text-sm text-red-300">
         {form.ruleError}
       </div>
     {/if}
@@ -582,6 +639,7 @@
     {#if data.rules.length === 0}
       <div class="px-6 py-8 text-center">
         <svg
+          aria-hidden="true"
           class="mx-auto h-10 w-10 text-surface-500"
           fill="none"
           viewBox="0 0 24 24"
@@ -603,18 +661,22 @@
       <div class="divide-y divide-surface-700/50">
         {#each data.rules as rule (rule.id)}
           <div class="flex items-center justify-between px-6 py-3">
-            <div class="flex items-center gap-3">
-              <div class="flex items-center gap-2">
+            <div class="flex min-w-0 items-center gap-3">
+              <div class="flex min-w-0 items-center gap-2">
                 <span
-                  class="h-2.5 w-2.5 rounded-full"
+                  class="h-2.5 w-2.5 shrink-0 rounded-full"
                   style="background-color: {getCategoryColor(rule.categoryId)}"
                 ></span>
-                <span class="text-sm font-medium text-white">
+                <span
+                  class="truncate text-sm font-medium text-white"
+                  title={getCategoryName(rule.categoryId)}
+                >
                   {getCategoryName(rule.categoryId)}
                 </span>
               </div>
               <svg
-                class="h-4 w-4 text-surface-500"
+                aria-hidden="true"
+                class="h-4 w-4 shrink-0 text-surface-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -626,13 +688,13 @@
                   d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
                 />
               </svg>
-              <div>
+              <div class="min-w-0">
                 <span
                   class="rounded-md bg-surface-700 px-2 py-0.5 text-xs font-medium text-surface-300"
                 >
                   {matchTypeLabels[rule.matchType] || rule.matchType}
                 </span>
-                <span class="ml-1.5 text-sm text-surface-300">
+                <span class="ml-1.5 break-all text-sm text-surface-300">
                   &ldquo;{rule.matchValue}&rdquo;
                 </span>
               </div>
@@ -663,8 +725,14 @@
                 </Button>
               </div>
             {:else}
-              <Button variant="ghost" size="sm" onclick={() => (deleteRuleConfirmId = rule.id)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onclick={() => (deleteRuleConfirmId = rule.id)}
+                aria-label="Delete rule for {rule.matchValue}"
+              >
                 <svg
+                  aria-hidden="true"
                   class="h-4 w-4 text-surface-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -705,11 +773,12 @@
             Assign to Category
           </label>
           <select
+            autocomplete="off"
             id="ruleCategoryId"
             name="categoryId"
             bind:value={newRuleCategoryId}
             required
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="" disabled>Select a category</option>
             {#each data.categories as cat}
@@ -726,11 +795,12 @@
             Match Type
           </label>
           <select
+            autocomplete="off"
             id="ruleMatchType"
             name="matchType"
             bind:value={newRuleMatchType}
             required
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-sm text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           >
             <option value="merchant">Merchant name contains</option>
             <option value="description">Description contains</option>
@@ -741,14 +811,15 @@
 
         <!-- Match Value -->
         <Input
+          autocomplete="off"
           id="ruleMatchValue"
           name="matchValue"
           label="Match Value"
           placeholder={newRuleMatchType === 'regex'
-            ? '^AMZN.*'
+            ? '^AMZN.*…'
             : newRuleMatchType === 'amount_range'
-              ? '50-200'
-              : 'Starbucks'}
+              ? '50-200…'
+              : 'Starbucks…'}
           required
           bind:value={newRuleMatchValue}
         />

@@ -37,7 +37,7 @@
 </script>
 
 <div
-  class="rounded-xl transition-all duration-200 ease-out
+  class="rounded-xl transition duration-200 ease-out
 		{variants[variant]}
 		{hover ? 'card-hover cursor-pointer hover:shadow-lg hover:shadow-black/20' : ''}
 		{className}"

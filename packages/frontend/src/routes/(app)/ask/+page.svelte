@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { formatDecimal } from '$lib/utils/format';
   import { Card, Button, Spinner } from '$components/ui';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
@@ -17,7 +19,12 @@
   let isAsking = $state(false);
   let isDetectingAnomalies = $state(false);
   let anomalies = $state<any[]>([]);
-  let activeTab = $state<'chat' | 'insights' | 'anomalies'>('chat');
+  let activeTab = $state<'chat' | 'insights' | 'anomalies'>(
+    readParam('tab', 'chat', ['chat', 'insights', 'anomalies']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('tab', activeTab, 'chat'));
   let chatContainer: HTMLDivElement | undefined = $state();
 
   const isAvailable = $derived(data.aiStatus?.available ?? false);
@@ -123,7 +130,7 @@
 <div class="space-y-6">
   <div class="flex items-center justify-between">
     <div>
-      <h2 class="text-2xl font-bold text-white">Ask Finance Owl</h2>
+      <h2 class="text-2xl font-bold text-white">Ask <span translate="no">Finance Owl</span></h2>
       <p class="mt-1 text-sm text-surface-400">Get AI-powered insights about your finances</p>
     </div>
     <div class="flex items-center gap-3">
@@ -133,7 +140,7 @@
         >
           <span class="relative flex h-2 w-2">
             <span
-              class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"
+              class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75 [animation-iteration-count:4]"
             ></span>
             <span class="relative inline-flex h-2 w-2 rounded-full bg-green-400"></span>
           </span>
@@ -159,6 +166,7 @@
       onclick={() => (activeTab = 'chat')}
     >
       <svg
+        aria-hidden="true"
         class="mr-1.5 inline h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -180,6 +188,7 @@
       onclick={() => (activeTab = 'insights')}
     >
       <svg
+        aria-hidden="true"
         class="mr-1.5 inline h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -206,6 +215,7 @@
       onclick={() => (activeTab = 'anomalies')}
     >
       <svg
+        aria-hidden="true"
         class="mr-1.5 inline h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
@@ -232,7 +242,13 @@
     <div class="flex flex-col" style="height: calc(100vh - 18rem);">
       <!-- Messages area -->
       <Card class="flex-1 overflow-hidden" padding="none">
-        <div bind:this={chatContainer} class="h-full overflow-y-auto p-4 space-y-4">
+        <div
+          bind:this={chatContainer}
+          class="h-full overflow-y-auto p-4 space-y-4"
+          role="log"
+          aria-live="polite"
+          aria-label="Conversation"
+        >
           {#if messages.length === 0}
             <div class="flex h-full flex-col items-center justify-center text-center px-4">
               {#if !isAvailable}
@@ -241,6 +257,7 @@
                   class="flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-500/15"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-8 w-8 text-yellow-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -278,6 +295,7 @@
                   class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600/20"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-8 w-8 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -322,6 +340,7 @@
                     class="mr-2 mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-primary-600/20"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-4 w-4 text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -341,14 +360,16 @@
                     ? 'bg-primary-600 text-white'
                     : 'bg-surface-700 text-surface-200'}"
                 >
-                  <p class="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+                  <p class="whitespace-pre-wrap break-words text-sm leading-relaxed">
+                    {message.content}
+                  </p>
 
                   {#if message.sources && message.sources.length > 0}
                     <div class="mt-3 border-t border-surface-600/50 pt-2">
                       <p class="text-xs font-medium text-surface-400">Sources:</p>
                       <ul class="mt-1 space-y-1">
                         {#each message.sources as source}
-                          <li class="text-xs text-surface-400">
+                          <li class="break-words text-xs text-surface-400">
                             <a
                               href="/transactions?search={encodeURIComponent(
                                 source.text.split(',')[0] || '',
@@ -372,6 +393,7 @@
                   class="mr-2 mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-primary-600/20"
                 >
                   <svg
+                    aria-hidden="true"
                     class="h-4 w-4 text-primary-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -387,7 +409,7 @@
                 </div>
                 <div class="flex items-center gap-2 rounded-xl bg-surface-700 px-4 py-3">
                   <Spinner size="sm" />
-                  <span class="text-sm text-surface-400">Thinking...</span>
+                  <span class="text-sm text-surface-400">Thinking…</span>
                 </div>
               </div>
             {/if}
@@ -401,6 +423,7 @@
           class="mt-2 flex items-center gap-2 rounded-lg bg-red-900/30 px-3 py-2 text-sm text-red-400"
         >
           <svg
+            aria-hidden="true"
             class="h-4 w-4 flex-shrink-0"
             fill="none"
             viewBox="0 0 24 24"
@@ -431,14 +454,16 @@
         class="mt-3 flex gap-3"
       >
         <input
+          autocomplete="off"
+          aria-label="Your question"
           type="text"
           name="question"
           bind:value={question}
           placeholder={isAvailable
-            ? 'Ask about your spending, budgets, or transactions...'
-            : 'AI is offline -- Ollama must be running'}
+            ? 'Ask about your spending, budgets, or transactions…'
+            : 'AI is offline. Start Ollama to ask questions…'}
           disabled={!isAvailable || isAsking}
-          class="flex-1 rounded-xl border border-surface-600 bg-surface-700 px-4 py-3 text-white placeholder-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50"
+          class="flex-1 rounded-xl border border-surface-600 bg-surface-700 px-4 py-3 text-white placeholder-surface-400 focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500 disabled:opacity-50"
         />
         <Button
           type="submit"
@@ -446,6 +471,7 @@
           loading={isAsking}
         >
           <svg
+            aria-hidden="true"
             class="mr-1.5 h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -472,6 +498,7 @@
           class="flex items-start gap-3 rounded-lg border border-yellow-500/20 bg-yellow-900/15 px-4 py-3"
         >
           <svg
+            aria-hidden="true"
             class="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -499,6 +526,7 @@
           <div class="flex flex-col items-center justify-center py-12 text-center">
             <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-700/50">
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-surface-500"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -529,10 +557,15 @@
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
-                  <h3 class="text-lg font-semibold text-white">{insight.title}</h3>
+                  <h3
+                    class="min-w-0 truncate text-lg font-semibold text-white"
+                    title={insight.title}
+                  >
+                    {insight.title}
+                  </h3>
                   {#if insight.type}
                     <span
-                      class="rounded-full border px-2 py-0.5 text-xs font-medium {getInsightTypeColor(
+                      class="shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium {getInsightTypeColor(
                         insight.type,
                       )}"
                     >
@@ -540,7 +573,9 @@
                     </span>
                   {/if}
                 </div>
-                <p class="mt-2 text-sm leading-relaxed text-surface-300">{insight.body}</p>
+                <p class="mt-2 break-words text-sm leading-relaxed text-surface-300">
+                  {insight.body}
+                </p>
               </div>
               <span class="flex-shrink-0 text-xs text-surface-500">
                 {formatTimeAgo(insight.createdAt)}
@@ -579,7 +614,7 @@
                   <div class="mt-2 flex flex-wrap gap-2">
                     {#each insight.data.topCategories as cat}
                       <span
-                        class="rounded-lg border border-surface-700 bg-surface-800 px-3 py-1.5 text-xs text-surface-300"
+                        class="max-w-full break-words rounded-lg border border-surface-700 bg-surface-800 px-3 py-1.5 text-xs text-surface-300"
                       >
                         {cat.name}:
                         <span class="font-medium text-white">{formatCurrency(cat.total)}</span>
@@ -620,6 +655,7 @@
             disabled={isDetectingAnomalies}
           >
             <svg
+              aria-hidden="true"
               class="mr-1.5 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -642,6 +678,7 @@
           <div class="flex flex-col items-center justify-center py-12 text-center">
             <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-600/15">
               <svg
+                aria-hidden="true"
                 class="h-8 w-8 text-green-400"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -657,7 +694,7 @@
             </div>
             <p class="mt-4 text-lg text-surface-300">No anomalies detected</p>
             <p class="mt-1 text-sm text-surface-500">
-              Click "Scan Now" to check for unusual transactions in the last 7 days.
+              Click “Scan Now” to check for unusual transactions in the last 7 days.
             </p>
           </div>
         </Card>
@@ -668,16 +705,22 @@
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2">
                   <span
-                    class="rounded-lg bg-red-900/40 px-2 py-0.5 text-xs font-semibold text-red-400 border border-red-500/25"
+                    class="shrink-0 rounded-lg bg-red-900/40 px-2 py-0.5 text-xs font-semibold text-red-400 border border-red-500/25"
                   >
-                    {Math.abs(anomaly.zScore).toFixed(1)}x std dev
+                    {formatDecimal(Math.abs(anomaly.zScore), 1)}× std dev
                   </span>
-                  <h3 class="font-semibold text-white">{anomaly.merchantName}</h3>
+                  <h3
+                    class="min-w-0 truncate font-semibold text-white"
+                    title={anomaly.merchantName}
+                  >
+                    {anomaly.merchantName}
+                  </h3>
                 </div>
-                <p class="mt-1.5 text-sm text-surface-400">{anomaly.reason}</p>
+                <p class="mt-1.5 break-words text-sm text-surface-400">{anomaly.reason}</p>
                 <div class="mt-3 flex flex-wrap gap-3 text-xs text-surface-500">
                   <span class="flex items-center gap-1">
                     <svg
+                      aria-hidden="true"
                       class="h-3.5 w-3.5"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -695,6 +738,7 @@
                   {#if anomaly.categoryName}
                     <span class="flex items-center gap-1">
                       <svg
+                        aria-hidden="true"
                         class="h-3.5 w-3.5"
                         fill="none"
                         viewBox="0 0 24 24"

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal } from '$components/ui';
@@ -66,7 +67,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Stats -->
@@ -98,6 +99,7 @@
     <Card>
       <div class="flex flex-col items-center justify-center py-12 text-center">
         <svg
+          aria-hidden="true"
           class="h-16 w-16 text-surface-600"
           fill="none"
           viewBox="0 0 24 24"
@@ -117,9 +119,11 @@
         {@const daysLeft = getDaysRemaining(challenge.endDate)}
         <Card>
           <div class="flex items-start justify-between">
-            <div>
+            <div class="min-w-0">
               <div class="flex items-center gap-2">
-                <h3 class="font-semibold text-white">{challenge.name}</h3>
+                <h3 class="truncate font-semibold text-white" title={challenge.name}>
+                  {challenge.name}
+                </h3>
                 <span
                   class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {getStatusColor(
                     challenge.status,
@@ -129,7 +133,7 @@
                 </span>
               </div>
               {#if challenge.description}
-                <p class="mt-1 text-sm text-surface-400">{challenge.description}</p>
+                <p class="mt-1 break-words text-sm text-surface-400">{challenge.description}</p>
               {/if}
             </div>
             <div class="flex items-center gap-3">
@@ -152,12 +156,12 @@
                 {fmt(challenge.currentAmount)} of {fmt(challenge.targetAmount)}
               </span>
               <span class="text-sm font-semibold text-primary-400">
-                {progress.toFixed(0)}%
+                {formatPercent(progress)}
               </span>
             </div>
             <div class="mt-1.5 h-3 overflow-hidden rounded-full bg-surface-700">
               <div
-                class="h-full rounded-full bg-primary-500 transition-all"
+                class="h-full rounded-full bg-primary-500 transition-[width]"
                 style="width: {progress}%"
               ></div>
             </div>
@@ -183,7 +187,7 @@
         {#each pastChallenges as challenge}
           <Card>
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <span
                   class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {getStatusColor(
                     challenge.status,
@@ -191,8 +195,10 @@
                 >
                   {challenge.status}
                 </span>
-                <div>
-                  <p class="font-medium text-white">{challenge.name}</p>
+                <div class="min-w-0">
+                  <p class="truncate font-medium text-white" title={challenge.name}>
+                    {challenge.name}
+                  </p>
                   <p class="text-xs text-surface-500">
                     {fmt(challenge.currentAmount)} saved
                     {#if challenge.streakDays > 0}
@@ -237,6 +243,10 @@
             </p>
           {/if}
         </button>
+      {:else}
+        <p class="text-sm text-surface-400">
+          No challenge templates are available right now. Reload the page to try again.
+        </p>
       {/each}
     </div>
   {:else}
@@ -255,11 +265,12 @@
       <div>
         <label for="challengeName" class="block text-sm font-medium text-surface-300"> Name </label>
         <input
+          autocomplete="off"
           id="challengeName"
           name="name"
           type="text"
           value={selectedTemplate.name}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -268,11 +279,12 @@
           Description
         </label>
         <input
+          autocomplete="off"
           id="challengeDescription"
           name="description"
           type="text"
           value={selectedTemplate.description}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
         />
       </div>
 
@@ -282,6 +294,7 @@
             Target Amount
           </label>
           <input
+            autocomplete="off"
             id="challengeTarget"
             name="targetAmount"
             type="number"
@@ -289,7 +302,7 @@
             min="0"
             value={selectedTemplate.targetAmount}
             required
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
       {/if}
@@ -319,21 +332,22 @@
     >
       <input type="hidden" name="challengeId" value={entryChallenge.id} />
 
-      <p class="text-sm text-surface-400">
+      <p class="break-words text-sm text-surface-400">
         Adding entry to <span class="font-medium text-white">{entryChallenge.name}</span>
       </p>
 
       <div>
         <label for="entryAmount" class="block text-sm font-medium text-surface-300"> Amount </label>
         <input
+          autocomplete="off"
           id="entryAmount"
           name="amount"
           type="number"
           step="0.01"
           min="0"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="25.00"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="25.00…"
         />
       </div>
 
@@ -342,11 +356,12 @@
           Note (optional)
         </label>
         <input
+          autocomplete="off"
           id="entryNote"
           name="note"
           type="text"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          placeholder="Week 3 savings"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
+          placeholder="Week 3 savings…"
         />
       </div>
 

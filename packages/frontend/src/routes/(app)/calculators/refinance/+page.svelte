@@ -53,7 +53,14 @@
       href="/calculators"
       class="text-surface-400 hover:text-white transition"
     >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg
+        aria-hidden="true"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </a>
@@ -77,11 +84,13 @@
             >Remaining Balance</label
           >
           <input
+            autocomplete="off"
+            name="currentBalance"
             id="currentBalance"
             type="number"
             bind:value={currentBalance}
             min="0"
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <div>
@@ -89,12 +98,14 @@
             >Current Rate (%)</label
           >
           <input
+            autocomplete="off"
+            name="currentRate"
             id="currentRate"
             type="number"
             bind:value={currentRate}
             min="0"
             step="0.125"
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <div>
@@ -102,11 +113,13 @@
             >Monthly Payment</label
           >
           <input
+            autocomplete="off"
+            name="currentMonthly"
             id="currentMonthly"
             type="number"
             bind:value={currentMonthlyPayment}
             min="0"
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <div>
@@ -114,12 +127,14 @@
             >Remaining Months</label
           >
           <input
+            autocomplete="off"
+            name="currentRemaining"
             id="currentRemaining"
             type="number"
             bind:value={currentRemainingMonths}
             min="1"
             max="600"
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
       </div>
@@ -140,12 +155,14 @@
             >New Rate (%)</label
           >
           <input
+            autocomplete="off"
+            name="newRate"
             id="newRate"
             type="number"
             bind:value={newRate}
             min="0"
             step="0.125"
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
         <div>
@@ -171,11 +188,13 @@
             >Closing Costs</label
           >
           <input
+            autocomplete="off"
+            name="closingCosts"
             id="closingCosts"
             type="number"
             bind:value={closingCosts}
             min="0"
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-primary-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500"
           />
         </div>
       </div>
@@ -252,7 +271,7 @@
         </div>
         <div class="h-4 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="h-full rounded-full bg-red-500/70 transition-all"
+            class="h-full rounded-full bg-red-500/70 transition-[width]"
             style="width: {maxCost > 0 ? (totalCostCurrent / maxCost) * 100 : 0}%"
           ></div>
         </div>
@@ -264,7 +283,7 @@
         </div>
         <div class="h-4 overflow-hidden rounded-full bg-surface-700">
           <div
-            class="h-full rounded-full bg-green-500/70 transition-all"
+            class="h-full rounded-full bg-green-500/70 transition-[width]"
             style="width: {maxCost > 0 ? (totalCostNew / maxCost) * 100 : 0}%"
           ></div>
         </div>

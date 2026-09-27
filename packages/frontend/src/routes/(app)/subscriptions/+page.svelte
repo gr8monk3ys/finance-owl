@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { formatPercent } from '$lib/utils/format';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { Card, Button, Modal, Badge } from '$components/ui';
@@ -9,11 +12,22 @@
 
   let showCreateModal = $state(false);
   let editingSubscription = $state<any>(null);
-  let viewMode = $state<'monthly' | 'annual'>('monthly');
-  let searchQuery = $state('');
-  let sortBy = $state<'amount' | 'name' | 'date' | 'category'>('amount');
-  let filterCategory = $state<string>('all');
-  let activeTab = $state<'subscriptions' | 'calendar' | 'insights'>('subscriptions');
+  let viewMode = $state<'monthly' | 'annual'>(readParam('view', 'monthly', ['monthly', 'annual']));
+  let searchQuery = $state(readParam('q', ''));
+  let sortBy = $state<'amount' | 'name' | 'date' | 'category'>(
+    readParam('sort', 'amount', ['amount', 'name', 'date', 'category']),
+  );
+  let filterCategory = $state<string>(readParam('category', 'all'));
+  let activeTab = $state<'subscriptions' | 'calendar' | 'insights'>(
+    readParam('tab', 'subscriptions', ['subscriptions', 'calendar', 'insights']),
+  );
+
+  // Keep the view deep-linkable (web-design-guidelines: URL reflects state).
+  $effect(() => syncParam('view', viewMode, 'monthly'));
+  $effect(() => syncParam('q', searchQuery, ''));
+  $effect(() => syncParam('sort', sortBy, 'amount'));
+  $effect(() => syncParam('category', filterCategory, 'all'));
+  $effect(() => syncParam('tab', activeTab, 'subscriptions'));
 
   $effect(() => {
     if (form?.success) {
@@ -268,7 +282,7 @@
 
   <!-- Error -->
   {#if form?.error}
-    <div class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
+    <div role="alert" class="rounded-lg bg-red-900/50 p-3 text-sm text-red-300">{form.error}</div>
   {/if}
 
   <!-- Summary cards -->
@@ -300,7 +314,9 @@
       <p class="mt-2 text-2xl font-bold text-white">{fmt(displayTotal)}</p>
       {#if monthChangePercent !== 0}
         <p class="mt-1 text-xs {monthChangePercent > 0 ? 'text-rose-400' : 'text-emerald-400'}">
-          {monthChangePercent > 0 ? '+' : ''}{monthChangePercent.toFixed(1)}% vs last period
+          {monthChangePercent > 0
+            ? formatPercent(monthChangePercent, 1, { signed: true })
+            : formatPercent(monthChangePercent, 1)} vs last period
         </p>
       {/if}
     </Card>
@@ -339,6 +355,7 @@
       <div class="flex items-center gap-2 mb-3">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-600/20">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-rose-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -357,11 +374,16 @@
       <div class="space-y-2">
         {#each data.priceChanges as change}
           <div class="flex items-center justify-between rounded-lg bg-surface-800/50 p-3">
-            <div>
-              <p class="text-sm font-medium text-white">{change.merchantName || change.name}</p>
+            <div class="min-w-0">
+              <p
+                class="truncate text-sm font-medium text-white"
+                title={change.merchantName || change.name}
+              >
+                {change.merchantName || change.name}
+              </p>
               <p class="text-xs text-surface-400">
                 {change.direction === 'increase' ? 'Price increased' : 'Price decreased'}
-                by {Math.abs(change.changePercent).toFixed(1)}%
+                by {formatPercent(Math.abs(change.changePercent), 1)}
               </p>
             </div>
             <div class="text-right">
@@ -377,7 +399,9 @@
                   ? 'text-rose-400'
                   : 'text-emerald-400'}"
               >
-                {change.direction === 'increase' ? '+' : ''}{change.changePercent.toFixed(1)}%
+                {formatPercent(change.changePercent, 1, {
+                  signed: change.direction === 'increase',
+                })}
               </p>
             </div>
           </div>
@@ -392,6 +416,7 @@
       <div class="flex items-center gap-2 mb-3">
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-600/20">
           <svg
+            aria-hidden="true"
             class="h-4 w-4 text-amber-400"
             fill="none"
             viewBox="0 0 24 24"
@@ -413,11 +438,15 @@
       <div class="space-y-3">
         {#each data.duplicates as group}
           <div class="rounded-lg bg-surface-800/50 p-3">
-            <p class="mb-2 text-sm font-medium text-white capitalize">{group.normalizedName}</p>
+            <p class="mb-2 break-words text-sm font-medium text-white capitalize">
+              {group.normalizedName}
+            </p>
             <div class="space-y-1">
               {#each group.subscriptions as sub}
                 <div class="flex items-center justify-between text-xs">
-                  <span class="text-surface-400">{sub.merchantName}</span>
+                  <span class="truncate text-surface-400" title={sub.merchantName}
+                    >{sub.merchantName}</span
+                  >
                   <span class="text-white">{fmt(sub.estimatedAmount)}/{sub.frequency}</span>
                 </div>
               {/each}
@@ -463,16 +492,17 @@
         <div class="space-y-2">
           {#each unconfirmedSubscriptions as sub, i}
             <div
-              class="transform transition-all duration-300"
+              class="transform transition duration-300"
               style="animation: slideInUp 0.3s ease-out {i * 0.05}s both"
             >
               <Card>
                 <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-3">
+                  <div class="flex min-w-0 items-center gap-3">
                     <div
                       class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-600/20"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-5 w-5 text-yellow-400"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -486,8 +516,11 @@
                         />
                       </svg>
                     </div>
-                    <div>
-                      <p class="font-medium text-white">
+                    <div class="min-w-0">
+                      <p
+                        class="truncate font-medium text-white"
+                        title={sub.merchantName || sub.name}
+                      >
                         {sub.merchantName || sub.name}
                       </p>
                       <div class="mt-0.5 flex items-center gap-2">
@@ -534,6 +567,7 @@
         <!-- Search -->
         <div class="relative flex-1">
           <svg
+            aria-hidden="true"
             class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -547,17 +581,23 @@
             />
           </svg>
           <input
+            autocomplete="off"
+            name="search-query"
+            aria-label="Search subscriptions"
             type="text"
-            placeholder="Search subscriptions..."
+            placeholder="Search subscriptions…"
             bind:value={searchQuery}
-            class="w-full rounded-lg border border-surface-600 bg-surface-800 py-2 pl-10 pr-3 text-sm text-white placeholder-surface-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            class="w-full rounded-lg border border-surface-600 bg-surface-800 py-2 pl-10 pr-3 text-sm text-white placeholder-surface-500 focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
           />
         </div>
 
         <!-- Sort -->
         <select
+          autocomplete="off"
+          name="sort-by"
+          aria-label="Sort subscriptions"
           bind:value={sortBy}
-          class="rounded-lg border border-surface-600 bg-surface-800 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
+          class="rounded-lg border border-surface-600 bg-surface-800 px-3 py-2 text-sm text-white focus-visible:border-emerald-500 focus-visible:outline-none"
         >
           <option value="amount">Sort by Amount</option>
           <option value="name">Sort by Name</option>
@@ -567,8 +607,11 @@
 
         <!-- Category filter -->
         <select
+          autocomplete="off"
+          name="filter-category"
+          aria-label="Filter by category"
           bind:value={filterCategory}
-          class="rounded-lg border border-surface-600 bg-surface-800 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
+          class="rounded-lg border border-surface-600 bg-surface-800 px-3 py-2 text-sm text-white focus-visible:border-emerald-500 focus-visible:outline-none"
         >
           <option value="all">All Categories</option>
           {#each uniqueCategories as cat}
@@ -583,18 +626,19 @@
       <div class="space-y-2">
         {#each filteredSubscriptions as sub, i}
           <div
-            class="transform transition-all duration-300"
+            class="transform transition duration-300"
             style="animation: slideInUp 0.3s ease-out {i * 0.03}s both"
           >
             <Card>
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <div
                     class="flex h-10 w-10 items-center justify-center rounded-lg {getCategoryBgColor(
                       sub.detectedCategory || 'other',
                     )}"
                   >
                     <svg
+                      aria-hidden="true"
                       class="h-5 w-5 {getCategoryColor(sub.detectedCategory || 'other')}"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -608,9 +652,12 @@
                       />
                     </svg>
                   </div>
-                  <div>
+                  <div class="min-w-0">
                     <div class="flex items-center gap-2">
-                      <p class="font-medium text-white">
+                      <p
+                        class="truncate font-medium text-white"
+                        title={sub.merchantName || sub.name}
+                      >
                         {sub.merchantName || sub.name}
                       </p>
                       {#if sub.isTrial}
@@ -629,7 +676,7 @@
                         {getFrequencyLabel(sub.frequency)}
                       </span>
                       {#if sub.categoryName}
-                        <span class="text-xs text-surface-500">
+                        <span class="truncate text-xs text-surface-500" title={sub.categoryName}>
                           {sub.categoryName}
                         </span>
                       {/if}
@@ -671,11 +718,13 @@
                   </div>
                   <div class="flex items-center gap-1">
                     <a
+                      aria-label="Cancel"
                       href="/subscriptions/cancel/{sub.id}"
                       class="rounded p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-rose-400"
                       title="Cancel"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -690,11 +739,13 @@
                       </svg>
                     </a>
                     <button
+                      aria-label="Edit"
                       class="rounded p-1.5 text-surface-400 transition hover:bg-surface-700 hover:text-white"
                       onclick={() => (editingSubscription = sub)}
                       title="Edit"
                     >
                       <svg
+                        aria-hidden="true"
                         class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -729,6 +780,7 @@
         <div class="flex flex-col items-center justify-center py-12 text-center">
           <div class="flex h-16 w-16 items-center justify-center rounded-full bg-surface-800">
             <svg
+              aria-hidden="true"
               class="h-8 w-8 text-surface-500"
               fill="none"
               viewBox="0 0 24 24"
@@ -744,7 +796,7 @@
           </div>
           <p class="mt-4 text-lg text-surface-300">No subscriptions yet</p>
           <p class="mt-1 text-sm text-surface-500">
-            Add subscriptions manually or click "Detect Subscriptions" to find recurring charges.
+            Add subscriptions manually or click “Detect Subscriptions” to find recurring charges.
           </p>
           <div class="mt-4 flex gap-3">
             <form method="POST" action="?/detect" use:enhance>
@@ -763,7 +815,7 @@
       <div class="space-y-2">
         {#each calendarDays as day, i}
           <div
-            class="transform transition-all duration-300"
+            class="transform transition duration-300"
             style="animation: slideInUp 0.3s ease-out {i * 0.05}s both"
           >
             <Card>
@@ -781,12 +833,17 @@
                     {formatDateWith(day.date, { month: 'short' })}
                   </span>
                 </div>
-                <div class="flex-1 space-y-1.5">
+                <div class="min-w-0 flex-1 space-y-1.5">
                   {#each day.bills as bill}
                     <div
                       class="flex items-center justify-between rounded-lg bg-surface-800/50 px-3 py-2"
                     >
-                      <span class="text-sm text-white">{bill.merchantName || bill.name}</span>
+                      <span
+                        class="truncate text-sm text-white"
+                        title={bill.merchantName || bill.name}
+                      >
+                        {bill.merchantName || bill.name}
+                      </span>
                       <span class="text-sm font-semibold text-white"
                         >{fmt(bill.estimatedAmount)}</span
                       >
@@ -838,13 +895,13 @@
           <div class="mt-4 space-y-2">
             {#each donutSegments as seg}
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
+                <div class="flex min-w-0 items-center gap-2">
                   <span class="h-3 w-3 rounded-full" style="background-color: {seg.color}"></span>
-                  <span class="text-sm text-surface-300">{seg.name}</span>
+                  <span class="truncate text-sm text-surface-300" title={seg.name}>{seg.name}</span>
                 </div>
                 <div class="text-right">
                   <span class="text-sm font-medium text-white">{fmt(seg.amount)}</span>
-                  <span class="ml-1 text-xs text-surface-500">({seg.pct.toFixed(0)}%)</span>
+                  <span class="ml-1 text-xs text-surface-500">({formatPercent(seg.pct)})</span>
                 </div>
               </div>
             {/each}
@@ -858,13 +915,13 @@
             {#each categoryBreakdown as cat}
               <div class="rounded-lg bg-surface-800/50 p-3">
                 <div class="flex items-center justify-between">
-                  <p class="text-sm font-medium text-white">{cat.name}</p>
+                  <p class="truncate text-sm font-medium text-white" title={cat.name}>{cat.name}</p>
                   <p class="text-sm font-semibold text-white">{fmt(cat.amount)}/mo</p>
                 </div>
                 <div class="mt-2 flex items-center gap-2">
                   <div class="h-1.5 flex-1 rounded-full bg-surface-700">
                     <div
-                      class="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all"
+                      class="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-[width]"
                       style="width: {totalCategoryAmount > 0
                         ? (cat.amount / totalCategoryAmount) * 100
                         : 0}%"
@@ -907,12 +964,13 @@
     <div>
       <label for="subName" class="block text-sm font-medium text-surface-300">Name</label>
       <input
+        autocomplete="off"
         id="subName"
         name="name"
         type="text"
         required
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-        placeholder="Netflix"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
+        placeholder="Netflix…"
       />
     </div>
 
@@ -921,11 +979,12 @@
         Merchant Name (optional)
       </label>
       <input
+        autocomplete="off"
         id="subMerchant"
         name="merchantName"
         type="text"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-        placeholder="Netflix Inc"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
+        placeholder="Netflix Inc…"
       />
     </div>
 
@@ -933,14 +992,15 @@
       <div>
         <label for="subAmount" class="block text-sm font-medium text-surface-300"> Amount </label>
         <input
+          autocomplete="off"
           id="subAmount"
           name="estimatedAmount"
           type="number"
           step="0.01"
           min="0"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-          placeholder="15.99"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
+          placeholder="15.99…"
         />
       </div>
       <div>
@@ -948,10 +1008,11 @@
           Frequency
         </label>
         <select
+          autocomplete="off"
           id="subFrequency"
           name="frequency"
           required
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         >
           <option value="weekly">Weekly</option>
           <option value="biweekly">Biweekly</option>
@@ -967,9 +1028,10 @@
         Category (optional)
       </label>
       <select
+        autocomplete="off"
         id="subCategory"
         name="categoryId"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
       >
         <option value="">None</option>
         {#each data.categories as cat}
@@ -983,10 +1045,11 @@
         Next Expected Date (optional)
       </label>
       <input
+        autocomplete="off"
         id="subNextDate"
         name="nextExpectedDate"
         type="date"
-        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
       />
     </div>
 
@@ -1021,12 +1084,13 @@
       <div>
         <label for="editSubName" class="block text-sm font-medium text-surface-300"> Name </label>
         <input
+          autocomplete="off"
           id="editSubName"
           name="name"
           type="text"
           required
           value={editingSubscription.merchantName || editingSubscription.name}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         />
       </div>
 
@@ -1036,6 +1100,7 @@
             Amount
           </label>
           <input
+            autocomplete="off"
             id="editSubAmount"
             name="estimatedAmount"
             type="number"
@@ -1043,7 +1108,7 @@
             min="0"
             required
             value={editingSubscription.estimatedAmount}
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
           />
         </div>
         <div>
@@ -1051,10 +1116,11 @@
             Frequency
           </label>
           <select
+            autocomplete="off"
             id="editSubFreq"
             name="frequency"
             required
-            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
           >
             {#each ['weekly', 'biweekly', 'monthly', 'quarterly', 'annual'] as freq}
               <option value={freq} selected={editingSubscription.frequency === freq}>
@@ -1070,9 +1136,10 @@
           Category
         </label>
         <select
+          autocomplete="off"
           id="editSubCategory"
           name="categoryId"
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         >
           <option value="">None</option>
           {#each data.categories as cat}
@@ -1088,11 +1155,12 @@
           Next Expected Date
         </label>
         <input
+          autocomplete="off"
           id="editSubDate"
           name="nextExpectedDate"
           type="date"
           value={editingSubscription.nextExpectedDate ?? ''}
-          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          class="mt-1 block w-full rounded-lg border border-surface-600 bg-surface-700 px-3 py-2 text-white focus-visible:border-emerald-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         />
       </div>
 
@@ -1104,7 +1172,13 @@
       </div>
     </form>
 
-    <form method="POST" action="?/delete" use:enhance class="mt-3 border-t border-surface-700 pt-3">
+    <form
+      use:confirmSubmit={'Delete this subscription? This can’t be undone.'}
+      method="POST"
+      action="?/delete"
+      use:enhance
+      class="mt-3 border-t border-surface-700 pt-3"
+    >
       <input type="hidden" name="id" value={editingSubscription.id} />
       <Button type="submit" variant="danger" size="sm">Delete Subscription</Button>
     </form>
