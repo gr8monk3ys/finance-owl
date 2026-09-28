@@ -95,6 +95,24 @@ class EnvironmentVariables {
   @IsString()
   OLLAMA_URL?: string;
 
+  // Optional laya-serve endpoint (github.com/NandhaKishorM/laya) that suggests a
+  // category for uncategorized manual and imported transactions.
+  @IsOptional()
+  @IsString()
+  LAYA_URL?: string;
+
+  @IsOptional()
+  @IsString()
+  LAYA_API_KEY?: string;
+
+  @IsOptional()
+  @IsString()
+  LAYA_CATEGORIZE_MIN_CONFIDENCE?: string;
+
+  @IsOptional()
+  @IsString()
+  LAYA_TIMEOUT_MS?: string;
+
   @IsOptional()
   @IsString()
   CHROMADB_URL?: string;
