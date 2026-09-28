@@ -1,8 +1,12 @@
-import { Injectable, Inject, Logger, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject, Logger, BadRequestException, Optional } from '@nestjs/common';
 import { eq, and, desc } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 import { importHistory } from './import.schema';
+import {
+  LayaCategorizerService,
+  type CategorySuggestion,
+} from '../categories/laya-categorizer.service';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -48,7 +52,10 @@ type OfxTag = 'DTPOSTED' | 'TRNAMT' | 'NAME' | 'MEMO' | 'FITID';
 export class ImportService {
   private readonly logger = new Logger(ImportService.name);
 
-  constructor(@Inject(DATABASE_TOKEN) private db: DrizzleDB) {}
+  constructor(
+    @Inject(DATABASE_TOKEN) private db: DrizzleDB,
+    @Optional() private readonly layaCategorizer?: LayaCategorizerService,
+  ) {}
 
   // ── CSV Parsing ─────────────────────────────────────────────────────────
 
@@ -548,6 +555,8 @@ export class ImportService {
     let importedCount = 0;
     let skippedCount = 0;
     let duplicateCount = 0;
+    // One laya question per distinct merchant/name per import, not per row.
+    const suggestions = new Map<string, CategorySuggestion | null>();
 
     for (const tx of transactions) {
       const key = `${tx.date}|${tx.amount}|${tx.name.toLowerCase().trim()}`;
@@ -562,6 +571,26 @@ export class ImportService {
       }
 
       try {
+        // Imported rows arrive uncategorized: ask laya (no-op unless LAYA_URL
+        // is set). Stored as source "ai" so a user correction is tracked.
+        // TODO: run the rule-based categorizer ahead of laya once it is implemented
+        let suggestion: CategorySuggestion | null = null;
+        if (this.layaCategorizer?.enabled) {
+          const cacheKey = (tx.merchantName || tx.name).toLowerCase().trim();
+          if (!suggestions.has(cacheKey)) {
+            suggestions.set(
+              cacheKey,
+              await this.layaCategorizer.suggest(userId, {
+                name: tx.name,
+                merchantName: tx.merchantName,
+                description: tx.memo,
+                amount: tx.amount,
+              }),
+            );
+          }
+          suggestion = suggestions.get(cacheKey) ?? null;
+        }
+
         const [inserted] = await this.db
           .insert(schema.transactions)
           .values({
@@ -575,10 +604,11 @@ export class ImportService {
             pending: false,
             isManual: true,
             notes: tx.fitId ? `Imported (FITID: ${tx.fitId})` : 'Imported',
+            ...(suggestion
+              ? { categoryId: suggestion.categoryId, categorizationSource: 'ai' }
+              : {}),
           })
           .returning();
-
-        // TODO: re-add auto-categorization when rule-based categorizer is implemented
 
         importedCount++;
         existingSet.add(key); // Prevent duplicates within the same import
