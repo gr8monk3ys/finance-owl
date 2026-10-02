@@ -3,7 +3,6 @@ import { CategoriesModule } from '../categories/categories.module';
 import { TransactionsService } from './transactions.service';
 import { TransactionSplitService } from './transaction-split.service';
 import { TransactionsController } from './transactions.controller';
-import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
   imports: [CategoriesModule],
