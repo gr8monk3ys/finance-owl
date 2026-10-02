@@ -118,7 +118,9 @@ describe('laya wiring', () => {
     const insertChain = mockQuery([{ id: 'txn-1' }]);
     // The initial insert is uncategorized; a laya match is applied via a
     // follow-up update, same as a rule-engine match would be.
-    const updateChain = mockQuery([{ id: 'txn-1', categoryId: 'cat-travel', categorizationSource: 'ai' }]);
+    const updateChain = mockQuery([
+      { id: 'txn-1', categoryId: 'cat-travel', categorizationSource: 'ai' },
+    ]);
     const db: any = {
       select: vi.fn().mockReturnValueOnce(mockQuery([{ id: 'acct-1' }])),
       insert: vi.fn().mockReturnValueOnce(insertChain),
