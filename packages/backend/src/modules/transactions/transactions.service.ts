@@ -8,6 +8,7 @@ import {
 import { eq, and, gte, lte, like, desc, sql, count, isNull, or } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
+import { AutoCategorizationService } from '../categories/auto-categorization.service';
 import * as schema from '../../database/schema';
 import { paginate } from '@finance-owl/shared';
 import { LayaCategorizerService } from '../categories/laya-categorizer.service';
@@ -31,6 +32,7 @@ export class TransactionsService {
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
 
     private readonly cacheService: CacheService,
+    private readonly autoCategorizationService: AutoCategorizationService,
     @Optional() private readonly layaCategorizer?: LayaCategorizerService,
   ) {}
 
@@ -239,14 +241,6 @@ export class TransactionsService {
       }
     }
 
-    // No category from the client: ask laya for a suggestion (no-op unless
-    // LAYA_URL is set). It is stored as source "ai", so a user correction is
-    // tracked like any other.
-    // TODO: run the rule-based categorizer ahead of laya once it is implemented
-    const suggestion = data.categoryId
-      ? null
-      : ((await this.layaCategorizer?.suggest(userId, data)) ?? null);
-
     const [transaction] = await this.db
       .insert(schema.transactions)
       .values({
@@ -256,17 +250,46 @@ export class TransactionsService {
         name: data.name,
         merchantName: data.merchantName,
         description: data.description,
-        categoryId: data.categoryId ?? suggestion?.categoryId,
+        categoryId: data.categoryId,
         date: data.date,
         pending: data.pending ?? false,
         notes: data.notes,
-        categorizationSource: data.categoryId ? 'manual' : suggestion ? 'ai' : null,
+        categorizationSource: data.categoryId ? 'manual' : null,
         isManual: true,
       })
       .returning();
 
+    let result = transaction;
+
+    if (!data.categoryId) {
+      // Rule-based engine first; laya (no-op unless LAYA_URL is set) only
+      // runs as a fallback when the engine finds nothing. Either way a user
+      // correction is tracked like any other.
+      const auto = await this.autoCategorizationService.categorize({
+        userId,
+        description: data.name,
+        merchantName: data.merchantName,
+      });
+
+      const suggestion = auto.categoryId
+        ? null
+        : ((await this.layaCategorizer?.suggest(userId, data)) ?? null);
+
+      const resolvedCategoryId = auto.categoryId ?? suggestion?.categoryId ?? null;
+      const resolvedSource = auto.categoryId ? auto.source : suggestion ? 'ai' : null;
+
+      if (resolvedCategoryId) {
+        const [recategorized] = await this.db
+          .update(schema.transactions)
+          .set({ categoryId: resolvedCategoryId, categorizationSource: resolvedSource })
+          .where(eq(schema.transactions.id, transaction.id))
+          .returning();
+        result = recategorized;
+      }
+    }
+
     await this.invalidateUserCaches(userId);
-    return transaction;
+    return result;
   }
 
   async update(
