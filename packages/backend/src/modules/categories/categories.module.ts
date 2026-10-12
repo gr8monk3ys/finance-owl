@@ -2,11 +2,18 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CategoriesController } from './categories.controller';
 import { LayaCategorizerService } from './laya-categorizer.service';
+import { CategorizationEngineService } from './categorization.service';
+import { AutoCategorizationService } from './auto-categorization.service';
 
 @Module({
-  providers: [CategoriesService, LayaCategorizerService],
+  providers: [
+    CategoriesService,
+    LayaCategorizerService,
+    CategorizationEngineService,
+    AutoCategorizationService,
+  ],
   controllers: [CategoriesController],
-  exports: [CategoriesService, LayaCategorizerService],
+  exports: [CategoriesService, LayaCategorizerService, AutoCategorizationService],
 })
 export class CategoriesModule implements OnModuleInit {
   constructor(private categoriesService: CategoriesService) {}

@@ -6,7 +6,7 @@ import { TransactionsService } from '../transactions/transactions.service';
 /** Chainable Drizzle stand-in: every builder method returns the chain; awaiting yields `data`. */
 function mockQuery(data: any) {
   const chain: any = {};
-  for (const m of ['select', 'from', 'where', 'orderBy', 'limit', 'values', 'returning']) {
+  for (const m of ['select', 'from', 'where', 'orderBy', 'limit', 'values', 'set', 'returning']) {
     chain[m] = vi.fn().mockReturnValue(chain);
   }
   chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
@@ -108,17 +108,29 @@ describe('LayaCategorizerService', () => {
 describe('laya wiring', () => {
   const suggestion = { categoryId: 'cat-travel', categoryName: 'Travel', confidence: 0.9 };
 
+  // The rule-based engine runs before laya and is expected to find nothing
+  // here, so laya's own fallback behaviour stays this describe block's focus.
+  function noRuleMatch() {
+    return { categorize: vi.fn().mockResolvedValue({ categoryId: null, source: null }) } as any;
+  }
+
   it('createManual stores a laya suggestion as source "ai" when no category is given', async () => {
     const insertChain = mockQuery([{ id: 'txn-1' }]);
+    // The initial insert is uncategorized; a laya match is applied via a
+    // follow-up update, same as a rule-engine match would be.
+    const updateChain = mockQuery([
+      { id: 'txn-1', categoryId: 'cat-travel', categorizationSource: 'ai' },
+    ]);
     const db: any = {
       select: vi.fn().mockReturnValueOnce(mockQuery([{ id: 'acct-1' }])),
       insert: vi.fn().mockReturnValueOnce(insertChain),
+      update: vi.fn().mockReturnValueOnce(updateChain),
     };
     const cache: any = { delPattern: vi.fn().mockResolvedValue(0), del: vi.fn() };
     const laya: any = { enabled: true, suggest: vi.fn().mockResolvedValue(suggestion) };
-    const service = new TransactionsService(db, cache, laya);
+    const service = new TransactionsService(db, cache, noRuleMatch(), laya);
 
-    await service.createManual('user-1', {
+    const result = await service.createManual('user-1', {
       accountId: 'acct-1',
       amount: 120,
       name: 'DELTA AIR LINES',
@@ -129,7 +141,10 @@ describe('laya wiring', () => {
       'user-1',
       expect.objectContaining({ name: 'DELTA AIR LINES' }),
     );
-    expect(insertChain.values).toHaveBeenCalledWith(
+    expect(updateChain.set).toHaveBeenCalledWith(
+      expect.objectContaining({ categoryId: 'cat-travel', categorizationSource: 'ai' }),
+    );
+    expect(result).toEqual(
       expect.objectContaining({ categoryId: 'cat-travel', categorizationSource: 'ai' }),
     );
   });
@@ -144,7 +159,7 @@ describe('laya wiring', () => {
     };
     const cache: any = { delPattern: vi.fn().mockResolvedValue(0), del: vi.fn() };
     const laya: any = { enabled: true, suggest: vi.fn() };
-    const service = new TransactionsService(db, cache, laya);
+    const service = new TransactionsService(db, cache, noRuleMatch(), laya);
 
     await service.createManual('user-1', {
       accountId: 'acct-1',
