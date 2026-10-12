@@ -41,11 +41,20 @@ jobs:
       # is no --prod equivalent, and no need for one here. image-size (metro,
       # via react-native) has no patched release at all, so both of its
       # advisories are ignored by GHSA id rather than left to fail the job.
+      #
+      # Two more with no patched release as of 2026-10-12, both reachable only
+      # through the mobile dev toolchain (expo CLI / react-native codegen),
+      # never from the deployed backend or frontend. Drop each ignore once a
+      # fixed version exists:
+      #   GHSA-vfj7-8cjw-p6xm  braces <=3.0.3 (latest), via micromatch
+      #   GHSA-86w9-cpqp-85rv  node-forge <=1.4.0 (latest), via @expo/cli
       - name: Run bun audit (high and above)
         run: >-
           bun audit --audit-level=high
           --ignore GHSA-w3rx-r6r6-pgpr
           --ignore GHSA-5p2g-fcmc-qvqq
+          --ignore GHSA-vfj7-8cjw-p6xm
+          --ignore GHSA-86w9-cpqp-85rv
 
       # Informational: everything, including low/moderate and the two above.
       - name: Run bun audit (full, informational)
