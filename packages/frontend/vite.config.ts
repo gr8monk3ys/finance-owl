@@ -8,13 +8,13 @@ async function getSentryPlugins(): Promise<PluginOption[]> {
     return [];
   }
   try {
-    const { sentrySvelteKit } = await import('@sentry/sveltekit');
+    // @sentry/sveltekit 11 moved the Vite plugin to its own entry point and
+    // flattened `sourceMapsUploadOptions` into the top-level build options.
+    const { sentrySvelteKit } = await import('@sentry/sveltekit/vite');
     const plugins = await sentrySvelteKit({
-      sourceMapsUploadOptions: {
-        org: process.env.SENTRY_ORG,
-        project: process.env.SENTRY_PROJECT_FRONTEND,
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-      },
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT_FRONTEND,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
       autoInstrument: {
         load: true,
         serverLoad: true,
