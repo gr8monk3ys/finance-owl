@@ -48,10 +48,10 @@ describe('ImportService', () => {
     };
 
     mockCategorizationService = {
-      categorize: vi.fn(),
+      categorize: vi.fn().mockResolvedValue({ categoryId: null, source: null }),
     };
 
-    service = new ImportService(mockDb);
+    service = new ImportService(mockDb, undefined, mockCategorizationService);
   });
 
   // ===========================================================================
@@ -917,6 +917,117 @@ DATA:OFXSGML
 
       // Should still succeed - categorization failure is non-fatal
       expect(result.importedCount).toBe(1);
+      expect(result.skippedCount).toBe(0);
+    });
+
+    it('should store the rule-based category with source "rule"', async () => {
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      const insertChain = mockQuery([{ id: 'txn-1' }]);
+      mockDb.insert.mockReturnValueOnce(insertChain);
+      mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
+
+      mockCategorizationService.categorize.mockResolvedValue({
+        categoryId: 'cat-coffee',
+        source: 'rule',
+      });
+
+      await service.executeImport(
+        mockUserId,
+        [{ date: '2026-01-15', name: 'STARBUCKS #123', amount: 4.5, merchantName: 'Starbucks' }],
+        mockAccountId,
+        baseOptions,
+        'test.csv',
+        'csv',
+      );
+
+      expect(mockCategorizationService.categorize).toHaveBeenCalledWith({
+        userId: mockUserId,
+        description: 'STARBUCKS #123',
+        merchantName: 'Starbucks',
+      });
+      expect(insertChain.values).toHaveBeenCalledWith(
+        expect.objectContaining({ categoryId: 'cat-coffee', categorizationSource: 'rule' }),
+      );
+    });
+
+    it('should not ask laya when the rule-based engine finds a category', async () => {
+      const laya: any = {
+        enabled: true,
+        suggest: vi.fn().mockResolvedValue({ categoryId: 'cat-ai', categoryName: 'AI' }),
+      };
+      service = new ImportService(mockDb, laya, mockCategorizationService);
+
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      const insertA = mockQuery([{ id: 'txn-1' }]);
+      const insertB = mockQuery([{ id: 'txn-2' }]);
+      mockDb.insert.mockReturnValueOnce(insertA).mockReturnValueOnce(insertB);
+      mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
+
+      // Rule engine knows "Netflix" but not the second row
+      mockCategorizationService.categorize.mockImplementation(async ({ description }: any) =>
+        description === 'NETFLIX.COM'
+          ? { categoryId: 'cat-streaming', source: 'rule' }
+          : { categoryId: null, source: null },
+      );
+
+      await service.executeImport(
+        mockUserId,
+        [
+          { date: '2026-01-15', name: 'NETFLIX.COM', amount: 15.99 },
+          { date: '2026-01-16', name: 'OBSCURE SHOP 42', amount: 30 },
+        ],
+        mockAccountId,
+        baseOptions,
+        'test.csv',
+        'csv',
+      );
+
+      expect(laya.suggest).toHaveBeenCalledTimes(1);
+      expect(laya.suggest).toHaveBeenCalledWith(
+        mockUserId,
+        expect.objectContaining({ name: 'OBSCURE SHOP 42' }),
+      );
+      expect(insertA.values).toHaveBeenCalledWith(
+        expect.objectContaining({ categoryId: 'cat-streaming', categorizationSource: 'rule' }),
+      );
+      expect(insertB.values).toHaveBeenCalledWith(
+        expect.objectContaining({ categoryId: 'cat-ai', categorizationSource: 'ai' }),
+      );
+    });
+
+    it('should run the rule-based engine once per distinct row text', async () => {
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: mockAccountId, userId: mockUserId }]));
+      mockDb.select.mockReturnValueOnce(mockQuery([]));
+      const insertA = mockQuery([{ id: 'txn-1' }]);
+      const insertB = mockQuery([{ id: 'txn-2' }]);
+      mockDb.insert.mockReturnValueOnce(insertA).mockReturnValueOnce(insertB);
+      mockDb.insert.mockReturnValueOnce(mockQuery(undefined));
+
+      mockCategorizationService.categorize.mockResolvedValue({
+        categoryId: 'cat-coffee',
+        source: 'rule',
+      });
+
+      await service.executeImport(
+        mockUserId,
+        [
+          { date: '2026-01-15', name: 'Starbucks', amount: 4.5 },
+          { date: '2026-01-16', name: 'STARBUCKS ', amount: 5.25 },
+        ],
+        mockAccountId,
+        baseOptions,
+        'test.csv',
+        'csv',
+      );
+
+      expect(mockCategorizationService.categorize).toHaveBeenCalledTimes(1);
+      for (const chain of [insertA, insertB]) {
+        expect(chain.values).toHaveBeenCalledWith(
+          expect.objectContaining({ categoryId: 'cat-coffee', categorizationSource: 'rule' }),
+        );
+      }
     });
 
     it('should set fitId in notes when provided', async () => {

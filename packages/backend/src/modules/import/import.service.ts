@@ -7,6 +7,7 @@ import {
   LayaCategorizerService,
   type CategorySuggestion,
 } from '../categories/laya-categorizer.service';
+import { AutoCategorizationService } from '../categories/auto-categorization.service';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -39,6 +40,12 @@ export interface ImportOptions {
   skipDuplicates: boolean;
 }
 
+/** The category an imported row is stored with, and which categorizer chose it. */
+interface ImportCategorization {
+  categoryId: string;
+  source: string;
+}
+
 /**
  * The OFX/QFX tags this service reads. Closed on purpose: the tag is
  * interpolated into a RegExp, so keeping it a union of literals means no
@@ -55,6 +62,7 @@ export class ImportService {
   constructor(
     @Inject(DATABASE_TOKEN) private db: DrizzleDB,
     @Optional() private readonly layaCategorizer?: LayaCategorizerService,
+    @Optional() private readonly autoCategorization?: AutoCategorizationService,
   ) {}
 
   // ── CSV Parsing ─────────────────────────────────────────────────────────
@@ -555,8 +563,10 @@ export class ImportService {
     let importedCount = 0;
     let skippedCount = 0;
     let duplicateCount = 0;
-    // One laya question per distinct merchant/name per import, not per row.
-    const suggestions = new Map<string, CategorySuggestion | null>();
+    // One lookup per distinct row text (rule engine) and one laya question per
+    // distinct merchant/name per import, not per row.
+    const ruleResults = new Map<string, ImportCategorization | null>();
+    const layaResults = new Map<string, ImportCategorization | null>();
 
     for (const tx of transactions) {
       const key = `${tx.date}|${tx.amount}|${tx.name.toLowerCase().trim()}`;
@@ -571,25 +581,10 @@ export class ImportService {
       }
 
       try {
-        // Imported rows arrive uncategorized: ask laya (no-op unless LAYA_URL
-        // is set). Stored as source "ai" so a user correction is tracked.
-        // TODO: run the rule-based categorizer ahead of laya once it is implemented
-        let suggestion: CategorySuggestion | null = null;
-        if (this.layaCategorizer?.enabled) {
-          const cacheKey = (tx.merchantName || tx.name).toLowerCase().trim();
-          if (!suggestions.has(cacheKey)) {
-            suggestions.set(
-              cacheKey,
-              await this.layaCategorizer.suggest(userId, {
-                name: tx.name,
-                merchantName: tx.merchantName,
-                description: tx.memo,
-                amount: tx.amount,
-              }),
-            );
-          }
-          suggestion = suggestions.get(cacheKey) ?? null;
-        }
+        // Imported rows arrive uncategorized: the rule-based engine runs
+        // first, and laya (no-op unless LAYA_URL is set) only as a fallback
+        // when the engine finds nothing -- the same order as a manual create.
+        const suggestion = await this.categorizeImported(userId, tx, ruleResults, layaResults);
 
         const [inserted] = await this.db
           .insert(schema.transactions)
@@ -605,7 +600,7 @@ export class ImportService {
             isManual: true,
             notes: tx.fitId ? `Imported (FITID: ${tx.fitId})` : 'Imported',
             ...(suggestion
-              ? { categoryId: suggestion.categoryId, categorizationSource: 'ai' }
+              ? { categoryId: suggestion.categoryId, categorizationSource: suggestion.source }
               : {}),
           })
           .returning();
@@ -637,6 +632,55 @@ export class ImportService {
       duplicateCount,
       totalRows: transactions.length,
     };
+  }
+
+  /**
+   * Rule-based engine first, laya as the fallback. A rule-engine failure is
+   * logged and treated as "no match" so one bad lookup never drops a row.
+   */
+  private async categorizeImported(
+    userId: string,
+    tx: ParsedTransaction,
+    ruleResults: Map<string, ImportCategorization | null>,
+    layaResults: Map<string, ImportCategorization | null>,
+  ): Promise<ImportCategorization | null> {
+    if (this.autoCategorization) {
+      const ruleKey = `${(tx.merchantName ?? '').toLowerCase().trim()}|${tx.name.toLowerCase().trim()}`;
+      if (!ruleResults.has(ruleKey)) {
+        let result: ImportCategorization | null = null;
+        try {
+          const auto = await this.autoCategorization.categorize({
+            userId,
+            description: tx.name,
+            merchantName: tx.merchantName,
+          });
+          if (auto.categoryId)
+            result = { categoryId: auto.categoryId, source: auto.source ?? 'rule' };
+        } catch (err) {
+          this.logger.warn(`Rule-based categorization failed for: ${tx.name}`, err);
+        }
+        ruleResults.set(ruleKey, result);
+      }
+      const ruleResult = ruleResults.get(ruleKey);
+      if (ruleResult) return ruleResult;
+    }
+
+    if (!this.layaCategorizer?.enabled) return null;
+
+    const layaKey = (tx.merchantName || tx.name).toLowerCase().trim();
+    if (!layaResults.has(layaKey)) {
+      const suggestion: CategorySuggestion | null = await this.layaCategorizer.suggest(userId, {
+        name: tx.name,
+        merchantName: tx.merchantName,
+        description: tx.memo,
+        amount: tx.amount,
+      });
+      layaResults.set(
+        layaKey,
+        suggestion ? { categoryId: suggestion.categoryId, source: 'ai' } : null,
+      );
+    }
+    return layaResults.get(layaKey) ?? null;
   }
 
   // ── Import History ────────────────────────────────────────────────────
