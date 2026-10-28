@@ -1,9 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { loginSchema, registerSchema, changePasswordSchema } from './auth';
 import { createAccountSchema, updateAccountSchema, accountTypeEnum } from './accounts';
-import { createTransactionSchema, transactionFilterSchema } from './transactions';
+import {
+  createTransactionSchema,
+  updateTransactionSchema,
+  transactionFilterSchema,
+} from './transactions';
 import { createCategorySchema } from './categories';
-import { createBudgetSchema, budgetPeriodEnum } from './budgets';
+import { createBudgetSchema, updateBudgetSchema, budgetPeriodEnum } from './budgets';
 import { paginationSchema, paginate } from './pagination';
 
 const UUID = '123e4567-e89b-12d3-a456-426614174000';
@@ -140,6 +144,10 @@ describe('updateAccountSchema', () => {
     expect(updateAccountSchema.safeParse({ name: 'Renamed' }).success).toBe(true);
     expect(updateAccountSchema.safeParse({}).success).toBe(true);
   });
+
+  it('does not fill omitted fields with create defaults', () => {
+    expect(updateAccountSchema.parse({ name: 'Renamed' })).toEqual({ name: 'Renamed' });
+  });
 });
 
 describe('accountTypeEnum', () => {
@@ -188,6 +196,12 @@ describe('createTransactionSchema', () => {
 
   it('rejects an empty name', () => {
     expect(createTransactionSchema.safeParse({ ...valid, name: '' }).success).toBe(false);
+  });
+});
+
+describe('updateTransactionSchema', () => {
+  it('does not fill omitted fields with create defaults', () => {
+    expect(updateTransactionSchema.parse({ name: 'Tea' })).toEqual({ name: 'Tea' });
   });
 });
 
@@ -256,6 +270,12 @@ describe('createBudgetSchema', () => {
 
   it('rejects an unknown period', () => {
     expect(createBudgetSchema.safeParse({ ...valid, period: 'weekly' }).success).toBe(false);
+  });
+});
+
+describe('updateBudgetSchema', () => {
+  it('does not fill omitted fields with create defaults', () => {
+    expect(updateBudgetSchema.parse({ amount: 250 })).toEqual({ amount: 250 });
   });
 });
 
