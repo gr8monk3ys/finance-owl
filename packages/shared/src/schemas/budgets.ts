@@ -2,15 +2,20 @@ import { z } from 'zod';
 
 export const budgetPeriodEnum = z.enum(['monthly', 'quarterly', 'yearly']);
 
-export const createBudgetSchema = z.object({
-  categoryId: z.string().uuid(),
+// Defaults live only on the create schema (see accounts.ts).
+const budgetFields = z.object({
+  categoryId: z.uuid(),
   amount: z.number().positive(),
   period: budgetPeriodEnum,
-  rollover: z.boolean().default(false),
+  rollover: z.boolean(),
   rolloverCap: z.number().positive().optional(),
 });
 
-export const updateBudgetSchema = createBudgetSchema.partial();
+export const createBudgetSchema = budgetFields.extend({
+  rollover: budgetFields.shape.rollover.default(false),
+});
+
+export const updateBudgetSchema = budgetFields.partial();
 
 export type BudgetPeriod = z.infer<typeof budgetPeriodEnum>;
 export type CreateBudgetInput = z.infer<typeof createBudgetSchema>;

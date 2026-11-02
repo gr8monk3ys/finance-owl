@@ -1,22 +1,27 @@
 import { z } from 'zod';
 
-export const createTransactionSchema = z.object({
-  accountId: z.string().uuid(),
+// Defaults live only on the create schema (see accounts.ts).
+const transactionFields = z.object({
+  accountId: z.uuid(),
   amount: z.number(),
   name: z.string().min(1).max(500),
   merchantName: z.string().max(255).optional(),
   description: z.string().max(1000).optional(),
-  categoryId: z.string().uuid().optional(),
+  categoryId: z.uuid().optional(),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  pending: z.boolean().default(false),
+  pending: z.boolean(),
   notes: z.string().max(2000).optional(),
 });
 
-export const updateTransactionSchema = createTransactionSchema.partial().omit({ accountId: true });
+export const createTransactionSchema = transactionFields.extend({
+  pending: transactionFields.shape.pending.default(false),
+});
+
+export const updateTransactionSchema = transactionFields.partial().omit({ accountId: true });
 
 export const transactionFilterSchema = z.object({
-  accountId: z.string().uuid().optional(),
-  categoryId: z.string().uuid().optional(),
+  accountId: z.uuid().optional(),
+  categoryId: z.uuid().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   minAmount: z.number().optional(),
