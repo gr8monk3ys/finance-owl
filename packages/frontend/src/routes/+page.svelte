@@ -121,7 +121,7 @@
       </a>
       <a
         href="/auth/register"
-        class="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:bg-emerald-500 hover:shadow-emerald-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+        class="rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:bg-emerald-700 hover:shadow-emerald-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
       >
         Get Started Free
       </a>
@@ -201,7 +201,7 @@
           >
           <a
             href="/auth/register"
-            class="mt-1 block rounded-lg bg-emerald-600 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-emerald-500"
+            class="mt-1 block rounded-lg bg-emerald-700 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
             >Get Started Free</a
           >
         </div>
@@ -270,7 +270,7 @@
       <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
         <a
           href="/auth/register"
-          class="group relative inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition duration-200 hover:bg-emerald-500 hover:shadow-2xl hover:shadow-emerald-900/50 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+          class="group relative inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition duration-200 hover:bg-emerald-700 hover:shadow-2xl hover:shadow-emerald-900/50 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
         >
           Get Started Free
           <svg
@@ -305,7 +305,7 @@
 
       <!-- Trust badges -->
       <div class="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-        <div class="flex items-center gap-2 text-sm text-gray-500">
+        <div class="flex items-center gap-2 text-sm text-gray-400">
           <svg
             aria-hidden="true"
             class="h-4 w-4 text-emerald-500/70"
@@ -322,7 +322,7 @@
           </svg>
           Bank-level encryption
         </div>
-        <div class="flex items-center gap-2 text-sm text-gray-500">
+        <div class="flex items-center gap-2 text-sm text-gray-400">
           <svg
             aria-hidden="true"
             class="h-4 w-4 text-emerald-500/70"
@@ -344,7 +344,7 @@
           </svg>
           Read-only access
         </div>
-        <div class="flex items-center gap-2 text-sm text-gray-500">
+        <div class="flex items-center gap-2 text-sm text-gray-400">
           <svg
             aria-hidden="true"
             class="h-4 w-4 text-emerald-500/70"
@@ -378,7 +378,7 @@
               <div class="h-3 w-3 rounded-full bg-yellow-500/60"></div>
               <div class="h-3 w-3 rounded-full bg-green-500/60"></div>
             </div>
-            <div class="ml-4 flex-1 rounded-lg bg-gray-800/80 px-3 py-1 text-xs text-gray-500">
+            <div class="ml-4 flex-1 rounded-lg bg-gray-800/80 px-3 py-1 text-xs text-gray-400">
               app.financeowl.com/dashboard
             </div>
           </div>
@@ -395,13 +395,13 @@
               </div>
               <!-- Monthly spend card -->
               <div class="rounded-xl border border-white/5 bg-gray-800/50 p-4">
-                <p class="text-xs text-gray-500">Monthly Spending</p>
+                <p class="text-xs text-gray-400">Monthly Spending</p>
                 <p class="mt-1 text-2xl font-bold text-white">$3,241</p>
                 <p class="mt-1 text-xs text-emerald-400">-8.2% vs last month</p>
               </div>
               <!-- Savings card -->
               <div class="rounded-xl border border-white/5 bg-gray-800/50 p-4">
-                <p class="text-xs text-gray-500">Saved This Month</p>
+                <p class="text-xs text-gray-400">Saved This Month</p>
                 <p class="mt-1 text-2xl font-bold text-emerald-400">$892</p>
                 <div class="mt-2 h-1.5 rounded-full bg-gray-700">
                   <div
@@ -465,7 +465,7 @@
           class="animate-on-scroll group rounded-2xl border border-white/5 bg-gray-900/50 p-6 transition-colors duration-300 hover:border-emerald-500/20 hover:bg-gray-900/80"
         >
           <div
-            class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 transition-colors group-hover:bg-emerald-500/15"
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 transition-colors group-hover:bg-emerald-600/15"
           >
             <svg
               aria-hidden="true"
@@ -803,7 +803,7 @@
           <p class="mt-2 text-sm text-gray-400">Perfect for getting started</p>
           <div class="mt-6">
             <span class="text-4xl font-bold text-white">{planPrice('free')}</span>
-            <span class="text-gray-500">/month</span>
+            <span class="text-gray-400">/month</span>
           </div>
           <ul class="mt-8 space-y-3">
             {#each ['Link up to 2 accounts', 'Basic budget tracking', 'Subscription detection', 'Monthly spending reports', 'Mobile app access'] as feature}
@@ -845,7 +845,7 @@
           <p class="mt-2 text-sm text-gray-400">For people who want the full toolkit</p>
           <div class="mt-6">
             <span class="text-4xl font-bold text-white">{planPrice('pro')}</span>
-            <span class="text-gray-500">/month</span>
+            <span class="text-gray-400">/month</span>
           </div>
           <ul class="mt-8 space-y-3">
             {#each ['Unlimited linked accounts', 'AI spending insights', 'Subscription tracking', 'Bill negotiation tools', 'Smart savings automation', 'Investment tracking', 'Priority support'] as feature}
@@ -866,7 +866,7 @@
           </ul>
           <a
             href="/auth/register"
-            class="mt-8 block rounded-xl bg-emerald-600 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-emerald-900/40 transition hover:bg-emerald-500"
+            class="mt-8 block rounded-xl bg-emerald-700 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-emerald-900/40 transition hover:bg-emerald-700"
           >
             Start with Pro
           </a>
@@ -878,7 +878,7 @@
           <p class="mt-2 text-sm text-gray-400">For households planning together</p>
           <div class="mt-6">
             <span class="text-4xl font-bold text-white">{planPrice('premium')}</span>
-            <span class="text-gray-500">/month</span>
+            <span class="text-gray-400">/month</span>
           </div>
           <ul class="mt-8 space-y-3">
             {#each ['Everything in Pro', 'Household sharing for up to 10 members', 'Shared budgets and goals', 'Advisor sharing', 'API access', 'Dedicated support'] as feature}
@@ -928,7 +928,7 @@
         <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href="/auth/register"
-            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition hover:bg-emerald-500 hover:shadow-2xl hover:-translate-y-0.5"
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition hover:bg-emerald-700 hover:shadow-2xl hover:-translate-y-0.5"
           >
             Get Started Free
             <svg
