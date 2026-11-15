@@ -27,7 +27,7 @@
 
   const variants: Record<string, string> = {
     primary:
-      'bg-primary-600 text-white hover:bg-primary-500 focus-visible:ring-primary-500/40 shadow-sm hover:shadow-md hover:shadow-primary-900/20 active:bg-primary-700',
+      'bg-primary-700 text-white hover:bg-primary-800 focus-visible:ring-primary-500/40 shadow-sm hover:shadow-md hover:shadow-primary-900/20 active:bg-primary-900',
     secondary:
       'bg-surface-700 text-surface-200 hover:bg-surface-600 focus-visible:ring-surface-500/40 border border-surface-600 hover:border-surface-500 active:bg-surface-700/80',
     danger:

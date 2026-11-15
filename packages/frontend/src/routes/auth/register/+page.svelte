@@ -107,7 +107,7 @@
           </svg>
           Continue with Google
           <span
-            class="rounded-full border border-surface-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-surface-500"
+            class="rounded-full border border-surface-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-surface-400"
             >Soon</span
           >
         </button>
@@ -125,19 +125,19 @@
           </svg>
           Continue with Apple
           <span
-            class="rounded-full border border-surface-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-surface-500"
+            class="rounded-full border border-surface-600 px-2 py-0.5 text-[10px] uppercase tracking-wide text-surface-400"
             >Soon</span
           >
         </button>
       </div>
-      <p class="mt-3 text-center text-xs text-surface-500">
+      <p class="mt-3 text-center text-xs text-surface-400">
         Google and Apple sign-up are not available yet. Create your account with email for now.
       </p>
 
       <!-- Divider -->
       <div class="my-6 flex items-center gap-3">
         <div class="h-px flex-1 bg-surface-700"></div>
-        <span class="text-xs text-surface-500">or continue with email</span>
+        <span class="text-xs text-surface-400">or continue with email</span>
         <div class="h-px flex-1 bg-surface-700"></div>
       </div>
 
@@ -265,7 +265,7 @@
         <button
           type="submit"
           disabled={loading}
-          class="relative flex w-full items-center justify-center rounded-xl bg-primary-600 px-4 py-3 font-semibold text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-500 hover:shadow-primary-900/50 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="relative flex w-full items-center justify-center rounded-xl bg-primary-700 px-4 py-3 font-semibold text-white shadow-lg shadow-primary-900/30 transition hover:bg-primary-800 hover:shadow-primary-900/50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {#if loading}
             <div
@@ -276,7 +276,7 @@
         </button>
 
         <!-- Terms -->
-        <p class="text-center text-xs leading-relaxed text-surface-500">
+        <p class="text-center text-xs leading-relaxed text-surface-400">
           By signing up, you agree to our
           <a
             href="/terms"

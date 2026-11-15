@@ -121,7 +121,7 @@
       </a>
       <a
         href="/auth/register"
-        class="rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:bg-emerald-700 hover:shadow-emerald-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+        class="rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:bg-emerald-800 hover:shadow-emerald-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
       >
         Get Started Free
       </a>
@@ -201,7 +201,7 @@
           >
           <a
             href="/auth/register"
-            class="mt-1 block rounded-lg bg-emerald-700 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+            class="mt-1 block rounded-lg bg-emerald-700 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-emerald-800"
             >Get Started Free</a
           >
         </div>
@@ -270,7 +270,7 @@
       <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
         <a
           href="/auth/register"
-          class="group relative inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition duration-200 hover:bg-emerald-700 hover:shadow-2xl hover:shadow-emerald-900/50 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+          class="group relative inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition duration-200 hover:bg-emerald-800 hover:shadow-2xl hover:shadow-emerald-900/50 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
         >
           Get Started Free
           <svg
@@ -866,7 +866,7 @@
           </ul>
           <a
             href="/auth/register"
-            class="mt-8 block rounded-xl bg-emerald-700 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-emerald-900/40 transition hover:bg-emerald-700"
+            class="mt-8 block rounded-xl bg-emerald-700 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-emerald-900/40 transition hover:bg-emerald-800"
           >
             Start with Pro
           </a>
@@ -928,7 +928,7 @@
         <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href="/auth/register"
-            class="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition hover:bg-emerald-700 hover:shadow-2xl hover:-translate-y-0.5"
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-900/40 transition hover:bg-emerald-800 hover:shadow-2xl hover:-translate-y-0.5"
           >
             Get Started Free
             <svg
