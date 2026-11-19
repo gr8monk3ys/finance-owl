@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
+import { PgDialect } from 'drizzle-orm/pg-core';
 import * as schema from '../../database/schema';
 import { HouseholdsService } from './households.service';
 
@@ -28,6 +29,13 @@ function mockQuery(data: any) {
   }
   chain.then = (resolve: any, reject?: any) => Promise.resolve(data).then(resolve, reject);
   return chain;
+}
+
+const dialect = new PgDialect();
+
+/** Bound parameters of the condition passed to `.where()`, so tests can see what a query filters on. */
+function whereParams(query: any): unknown[] {
+  return dialect.sqlToQuery(query.where.mock.calls[0][0]).params;
 }
 
 describe('HouseholdsService', () => {
@@ -290,13 +298,18 @@ describe('HouseholdsService', () => {
     });
 
     it('throws NotFoundException when the member is not in this household', async () => {
+      const memberLookup = mockQuery([]);
       mockDb.select
         .mockReturnValueOnce(mockQuery([membership(ownerId, 'owner')]))
-        .mockReturnValueOnce(mockQuery([]));
+        .mockReturnValueOnce(memberLookup);
 
       await expect(
         service.updateMemberRole(ownerId, householdId, 'm-elsewhere', 'editor'),
       ).rejects.toThrow('Member not found');
+      expect(whereParams(memberLookup)).toEqual(
+        expect.arrayContaining(['m-elsewhere', householdId]),
+      );
+      expect(mockDb.update).not.toHaveBeenCalled();
     });
   });
 
@@ -326,14 +339,16 @@ describe('HouseholdsService', () => {
       expect(mockDb.delete).not.toHaveBeenCalled();
     });
 
-    it('throws NotFoundException for an unknown member', async () => {
+    it('throws NotFoundException for a member not in this household', async () => {
+      const memberLookup = mockQuery([]);
       mockDb.select
         .mockReturnValueOnce(mockQuery([membership(ownerId, 'owner')]))
-        .mockReturnValueOnce(mockQuery([]));
+        .mockReturnValueOnce(memberLookup);
 
       await expect(service.removeMember(ownerId, householdId, 'm-missing')).rejects.toThrow(
         NotFoundException,
       );
+      expect(whereParams(memberLookup)).toEqual(expect.arrayContaining(['m-missing', householdId]));
       expect(mockDb.delete).not.toHaveBeenCalled();
     });
   });
@@ -376,13 +391,17 @@ describe('HouseholdsService', () => {
     });
 
     it("throws NotFoundException when sharing an account the user doesn't own", async () => {
+      const accountLookup = mockQuery([]);
       mockDb.select
         .mockReturnValueOnce(mockQuery([membership(editorId, 'editor')]))
-        .mockReturnValueOnce(mockQuery([]));
+        .mockReturnValueOnce(accountLookup);
 
       await expect(
         service.shareAccount(editorId, householdId, 'someone-elses-acct'),
       ).rejects.toThrow('Account not found');
+      expect(whereParams(accountLookup)).toEqual(
+        expect.arrayContaining(['someone-elses-acct', editorId]),
+      );
       expect(mockDb.insert).not.toHaveBeenCalled();
     });
 
