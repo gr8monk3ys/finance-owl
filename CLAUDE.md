@@ -43,9 +43,8 @@ GitHub Issues on `gr8monk3ys/finance-owl`, via the `gh` CLI. See `docs/agents/is
 
 ### Triage labels
 
-The five canonical roles, mapped to the labels this repo actually has. See `docs/agents/triage-labels.md`.
+The five canonical roles, label string equal to role name. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
-Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. Neither exists yet —
-they are created lazily, when a term or decision is first resolved. See `docs/agents/domain.md`.
+Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
