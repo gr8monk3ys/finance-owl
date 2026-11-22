@@ -1,3 +1,4 @@
+import { fromAny, fromPartial } from '@total-typescript/shoehorn';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -48,14 +49,14 @@ function createMockContext(overrides?: { ip?: string; className?: string; handle
     },
   };
 
-  const context = {
+  const context = fromPartial<ExecutionContext>({
     switchToHttp: () => ({
       getRequest: () => request,
       getResponse: () => response,
     }),
     getHandler: () => ({ name: overrides?.handlerName ?? 'testHandler' }),
     getClass: () => ({ name: overrides?.className ?? 'TestController' }),
-  } as unknown as ExecutionContext;
+  });
 
   return { context, responseHeaders };
 }
@@ -72,7 +73,7 @@ describe('RateLimitGuard', () => {
   beforeEach(() => {
     reflector = new Reflector();
     cacheService = createMockCacheService();
-    guard = new RateLimitGuard(reflector, cacheService as any);
+    guard = new RateLimitGuard(reflector, fromAny(cacheService));
   });
 
   // ---------- no decorator ----------

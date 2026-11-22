@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type Stripe from 'stripe';
@@ -181,7 +182,7 @@ describe('BillingService', () => {
     };
 
     stripe = createStripeFake();
-    service = new BillingService(mockDb, mockConfigService, stripe as unknown as Stripe);
+    service = new BillingService(mockDb, mockConfigService, fromAny(stripe));
   });
 
   // ---------------------------------------------------------------------------
@@ -520,7 +521,7 @@ describe('BillingService', () => {
       mockConfigService.get.mockImplementation((key: string, defaultValue?: string) =>
         key === 'STRIPE_PRICE_PREMIUM_YEARLY' ? undefined : defaultValue,
       );
-      service = new BillingService(mockDb, mockConfigService, stripe as unknown as Stripe);
+      service = new BillingService(mockDb, mockConfigService, fromAny(stripe));
 
       mockDb.select.mockReturnValueOnce(mockQuery([premiumPlan]));
 

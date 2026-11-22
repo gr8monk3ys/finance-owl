@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   NotFoundException,
@@ -81,9 +82,9 @@ function createService() {
   };
 
   const service = new PlaidService(
-    mockDb as any,
-    mockConfigService as any,
-    mockCryptoService as any,
+    fromAny(mockDb),
+    fromAny(mockConfigService),
+    fromAny(mockCryptoService),
   );
 
   // Replace the private Plaid client with our mock

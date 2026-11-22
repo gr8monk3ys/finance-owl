@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NotFoundException } from '@nestjs/common';
 import { PlaidSyncService } from './plaid-sync.service';
@@ -71,9 +72,9 @@ function createService() {
   };
 
   const service = new PlaidSyncService(
-    mockDb as any,
-    mockPlaidProvider as any,
-    mockCryptoService as any,
+    fromAny(mockDb),
+    fromAny(mockPlaidProvider),
+    fromAny(mockCryptoService),
   );
 
   return {

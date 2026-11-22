@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { DetectionService, type TransactionRecord } from './detection.service';
 import type { DrizzleDB } from '../../database/database.module';
@@ -7,11 +8,11 @@ describe('DetectionService', () => {
   let mockDb: DrizzleDB;
 
   beforeEach(() => {
-    mockDb = {
+    mockDb = fromAny({
       select: vi.fn(),
       insert: vi.fn(),
       update: vi.fn(),
-    } as any;
+    });
 
     service = new DetectionService(mockDb);
   });

@@ -18,6 +18,7 @@ import {
   type Transaction as PlaidTransaction,
 } from 'plaid';
 import { AxiosError } from 'axios';
+import { z } from 'zod';
 import { eq, and } from 'drizzle-orm';
 import { createHash } from 'crypto';
 import * as jose from 'jose';
@@ -49,19 +50,18 @@ export interface SyncStats {
   removed: number;
 }
 
-interface PlaidWebhookBody {
-  webhook_type: string;
-  webhook_code: string;
-  item_id: string;
-  error?: {
-    error_type: string;
-    error_code: string;
-    error_message: string;
-  };
-  new_transactions?: number;
-  removed_transactions?: string[];
-  consent_expiration_time?: string;
-}
+const plaidWebhookBodySchema = z.object({
+  webhook_type: z.string(),
+  webhook_code: z.string(),
+  item_id: z.string(),
+  error: z
+    .object({ error_type: z.string(), error_code: z.string(), error_message: z.string() })
+    .optional(),
+  new_transactions: z.number().optional(),
+  removed_transactions: z.array(z.string()).optional(),
+  consent_expiration_time: z.string().optional(),
+});
+type PlaidWebhookBody = z.infer<typeof plaidWebhookBodySchema>;
 
 /** Plaid API error shape (from AxiosError response data). */
 interface PlaidErrorData {
@@ -461,7 +461,7 @@ export class PlaidService {
       }
     }
 
-    const payload: PlaidWebhookBody = JSON.parse(body);
+    const payload: PlaidWebhookBody = plaidWebhookBodySchema.parse(JSON.parse(body));
 
     this.logger.log(
       `Webhook received: ${payload.webhook_type}/${payload.webhook_code} for item ${payload.item_id}`,

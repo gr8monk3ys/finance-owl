@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NotFoundException } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
@@ -65,7 +66,7 @@ describe('AccountsService', () => {
         .mockImplementation((_key: string, _ttl: number, factory: () => Promise<any>) => factory()),
     };
 
-    service = new AccountsService(mockDb, mockCacheService as any);
+    service = new AccountsService(mockDb, fromAny(mockCacheService));
   });
 
   // ---------------------------------------------------------------------------

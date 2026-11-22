@@ -9,7 +9,10 @@ import {
 import { eq, and, gte, lte, sql, desc, inArray, isNull, or } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
+import { z } from 'zod';
 import * as schema from '../../database/schema';
+
+const alertThresholdsSchema = z.array(z.number());
 
 // ── Constants ───────────────────────────────────────────────────────
 
@@ -330,7 +333,7 @@ export class BudgetsService {
       let thresholds: number[];
       try {
         thresholds = budget.alertThresholds
-          ? JSON.parse(budget.alertThresholds)
+          ? alertThresholdsSchema.parse(JSON.parse(budget.alertThresholds))
           : DEFAULT_ALERT_THRESHOLDS;
       } catch {
         thresholds = DEFAULT_ALERT_THRESHOLDS;
@@ -618,7 +621,7 @@ export class BudgetsService {
       let thresholds: number[];
       try {
         thresholds = budget.alertThresholds
-          ? JSON.parse(budget.alertThresholds)
+          ? alertThresholdsSchema.parse(JSON.parse(budget.alertThresholds))
           : DEFAULT_ALERT_THRESHOLDS;
       } catch {
         thresholds = DEFAULT_ALERT_THRESHOLDS;

@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NotFoundException } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
@@ -87,8 +88,8 @@ describe('TransactionsService', () => {
 
     service = new TransactionsService(
       mockDb,
-      mockCacheService as any,
-      mockCategorizationService as any,
+      fromAny(mockCacheService),
+      fromAny(mockCategorizationService),
     );
   });
 

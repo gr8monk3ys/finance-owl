@@ -1,3 +1,4 @@
+import { fromAny, fromPartial } from '@total-typescript/shoehorn';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type { ConfigService } from '@nestjs/config';
 import type { DiscoveryService } from '@nestjs/core';
@@ -34,21 +35,21 @@ function build(options: {
   providers?: unknown[];
   env?: Record<string, string>;
 }) {
-  const discovery = {
+  const discovery = fromPartial<DiscoveryService>({
     getProviders: () => (options.providers ?? []).map((instance) => ({ instance })),
-  } as unknown as DiscoveryService;
+  });
 
-  const config = {
+  const config = fromPartial<ConfigService>({
     get: (name: string) => options.env?.[name],
-  } as unknown as ConfigService;
+  });
 
   return new ScheduleRegistrar(
     discovery,
     config,
-    options.queues[QUEUES.TRANSACTION_SYNC] as unknown as Queue,
-    options.queues[QUEUES.SUBSCRIPTION_DETECT] as unknown as Queue,
-    options.queues[QUEUES.ALERTS] as unknown as Queue,
-    options.queues[QUEUES.BACKUP] as unknown as Queue,
+    fromAny(options.queues[QUEUES.TRANSACTION_SYNC]),
+    fromAny(options.queues[QUEUES.SUBSCRIPTION_DETECT]),
+    fromAny(options.queues[QUEUES.ALERTS]),
+    fromAny(options.queues[QUEUES.BACKUP]),
   );
 }
 

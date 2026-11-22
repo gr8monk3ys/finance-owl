@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NotFoundException } from '@nestjs/common';
 import { BankSyncService } from './bank-sync.service';
@@ -63,10 +64,10 @@ function createService() {
   };
 
   const service = new BankSyncService(
-    mockDb as any,
-    mockAggregatorFactory as any,
-    mockPlaidProvider as any,
-    mockCryptoService as any,
+    fromAny(mockDb),
+    fromAny(mockAggregatorFactory),
+    fromAny(mockPlaidProvider),
+    fromAny(mockCryptoService),
   );
 
   return {

@@ -96,6 +96,9 @@ jobs:
       - name: Lint all packages
         run: bun run lint
 
+      - name: Check module boundaries
+        run: bun run depcruise
+
   # ──────────────────────────────────────────────
   # Typecheck
   # ──────────────────────────────────────────────

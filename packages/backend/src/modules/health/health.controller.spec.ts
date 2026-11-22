@@ -1,3 +1,4 @@
+import { fromPartial } from '@total-typescript/shoehorn';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ConfigService } from '@nestjs/config';
 import { HealthController } from './health.controller';
@@ -9,14 +10,14 @@ import type { CacheService } from '../../common/cache';
 // ---------------------------------------------------------------------------
 
 function createMockDb(opts?: { shouldFail?: boolean }): DrizzleDB {
-  return {
+  return fromPartial<DrizzleDB>({
     execute: vi.fn().mockImplementation(() => {
       if (opts?.shouldFail) {
         return Promise.reject(new Error('Connection refused'));
       }
       return Promise.resolve([{ '?column?': 1 }]);
     }),
-  } as unknown as DrizzleDB;
+  });
 }
 
 function createMockConfig(overrides: Record<string, string | undefined> = {}): ConfigService {
@@ -26,16 +27,16 @@ function createMockConfig(overrides: Record<string, string | undefined> = {}): C
     ...overrides,
   };
 
-  return {
+  return fromPartial<ConfigService>({
     get: vi.fn((key: string) => store[key]),
-  } as unknown as ConfigService;
+  });
 }
 
 function createMockCacheService(opts?: {
   usingFallback?: boolean;
   pingFails?: boolean;
 }): CacheService {
-  return {
+  return fromPartial<CacheService>({
     isUsingFallback: vi.fn().mockReturnValue(opts?.usingFallback ?? true),
     ping: vi.fn().mockImplementation(() => {
       if (opts?.pingFails) {
@@ -43,7 +44,7 @@ function createMockCacheService(opts?: {
       }
       return Promise.resolve('PONG');
     }),
-  } as unknown as CacheService;
+  });
 }
 
 // ---------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { BudgetsService, type BudgetWithSpent } from './budgets.service';
 
@@ -59,7 +60,7 @@ describe('BudgetsService (periods, alerts, forecasts, households)', () => {
 
   beforeEach(() => {
     mockDb = { select: vi.fn(), insert: vi.fn() };
-    service = new BudgetsService(mockDb, { delPattern: vi.fn() } as any);
+    service = new BudgetsService(mockDb, fromAny({ delPattern: vi.fn() }));
   });
 
   afterEach(() => {
