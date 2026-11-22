@@ -315,8 +315,8 @@ describe('BudgetsService (periods, alerts, forecasts, households)', () => {
 
       const [only] = await service.forecastEndOfPeriod('user-1');
 
-      expect(only.dailyAllowance).toBe(0);
-      expect(only.status).toBe('on_track');
+      expect(only?.dailyAllowance).toBe(0);
+      expect(only?.status).toBe('on_track');
     });
   });
 
@@ -425,8 +425,8 @@ describe('BudgetsService (periods, alerts, forecasts, households)', () => {
           alertThresholds: [50, 75, 90, 100, 110], // unparseable JSON -> defaults
         });
         // 70 spent in 319 of 365 days projects to 80.09, inside the 100 limit
-        expect(food.projectedSpend).toBe(80.09);
-        expect(food.onTrack).toBe(true);
+        expect(food?.projectedSpend).toBe(80.09);
+        expect(food?.onTrack).toBe(true);
         expect(mockDb.select).toHaveBeenCalledTimes(9);
       });
     });

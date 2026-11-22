@@ -37,7 +37,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   return { credentials, sessions, totpEnabled, user: locals.user };
 };
 
-export const actions: Actions = {
+export const actions = {
   changePassword: async ({ request, locals }) => {
     const formData = await request.formData();
     const currentPassword = formData.get('currentPassword') as string;
@@ -154,4 +154,4 @@ export const actions: Actions = {
       return fail(400, { totpError: getErrorMessage(e) || 'Invalid verification code.' });
     }
   },
-};
+} satisfies Actions;

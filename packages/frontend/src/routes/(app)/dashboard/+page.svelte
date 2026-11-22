@@ -184,7 +184,10 @@
   function moveWidgetUp(index: number) {
     if (index <= 0) return;
     const updated = [...editWidgets];
-    [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+    const above = updated[index - 1];
+    const current = updated[index];
+    if (!above || !current) return;
+    [updated[index - 1], updated[index]] = [current, above];
     // Recalculate positions
     updated.forEach((w, i) => {
       w.position = { x: i % 3, y: Math.floor(i / 3), w: 1, h: 1 };
@@ -195,7 +198,10 @@
   function moveWidgetDown(index: number) {
     if (index >= editWidgets.length - 1) return;
     const updated = [...editWidgets];
-    [updated[index], updated[index + 1]] = [updated[index + 1], updated[index]];
+    const current = updated[index];
+    const below = updated[index + 1];
+    if (!current || !below) return;
+    [updated[index], updated[index + 1]] = [below, current];
     updated.forEach((w, i) => {
       w.position = { x: i % 3, y: Math.floor(i / 3), w: 1, h: 1 };
     });

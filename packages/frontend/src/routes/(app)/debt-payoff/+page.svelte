@@ -75,7 +75,7 @@
   }
 
   function getDebtTypeColor(type: string): string {
-    const colors: Record<string, string> = {
+    const colors: Record<string, string> & { other: string } = {
       credit_card: 'bg-red-500/20 text-red-400',
       student_loan: 'bg-blue-500/20 text-blue-400',
       auto_loan: 'bg-amber-500/20 text-amber-400',
@@ -615,7 +615,7 @@
               <h3 class="text-lg font-semibold text-white">Balance Over Time</h3>
               <p class="mt-1 text-sm text-surface-400">Projected balances month by month</p>
               {@const timeline = getTimelineData(payoffPlan.schedules)}
-              {@const maxBalance = timeline.length > 0 ? timeline[0].total : 1}
+              {@const maxBalance = timeline[0]?.total ?? 1}
               <div class="mt-4">
                 <!-- Simplified stacked area chart using bars -->
                 <div class="flex items-end gap-px" style="height: 200px">

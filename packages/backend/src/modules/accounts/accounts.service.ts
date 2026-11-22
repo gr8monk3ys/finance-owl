@@ -3,6 +3,7 @@ import { eq, and, sql } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
 import * as schema from '../../database/schema';
+import { firstRow } from '../../common/db/first-row';
 
 @Injectable()
 export class AccountsService {
@@ -51,18 +52,20 @@ export class AccountsService {
       currency?: string;
     },
   ) {
-    const [account] = await this.db
-      .insert(schema.accounts)
-      .values({
-        userId,
-        name: data.name,
-        type: data.type,
-        institutionName: data.institutionName ?? null,
-        currentBalance: data.balance ?? 0,
-        currency: data.currency ?? 'USD',
-        isManual: true,
-      })
-      .returning();
+    const account = firstRow(
+      await this.db
+        .insert(schema.accounts)
+        .values({
+          userId,
+          name: data.name,
+          type: data.type,
+          institutionName: data.institutionName ?? null,
+          currentBalance: data.balance ?? 0,
+          currency: data.currency ?? 'USD',
+          isManual: true,
+        })
+        .returning(),
+    );
 
     await this.invalidateAccountCaches(userId);
     return account;

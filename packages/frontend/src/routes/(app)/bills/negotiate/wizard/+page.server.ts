@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   getStrategy: async ({ request, locals }) => {
     const formData = await request.formData();
     const billType = formData.get('billType') as string;
@@ -138,4 +138,4 @@ export const actions: Actions = {
       return fail(500, { error: 'Failed to update negotiation attempt' });
     }
   },
-};
+} satisfies Actions;

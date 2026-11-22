@@ -73,7 +73,7 @@ describe('LayaCategorizerService', () => {
       categoryName: 'Food & Dining',
       confidence: 0.9,
     });
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0] ?? [];
     expect(url).toBe('http://laya.test:8000/v1/systemone');
     expect(init.headers.Authorization).toBe('Bearer secret');
     const body = JSON.parse(init.body) as {

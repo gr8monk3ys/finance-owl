@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   upload: async ({ request, locals, fetch: _fetch }) => {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
@@ -134,4 +134,4 @@ export const actions: Actions = {
       return fail(500, { error: message });
     }
   },
-};
+} satisfies Actions;

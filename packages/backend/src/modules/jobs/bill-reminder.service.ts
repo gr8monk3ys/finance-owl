@@ -10,6 +10,7 @@ import {
 } from '../notifications/notifications.service';
 import { EmailService } from '../email/email.service';
 import { planBillReminders, type PlannedBillReminder } from './bill-reminder-window';
+import { firstRow } from '../../common/db/first-row';
 
 /**
  * The single bill-reminder implementation.
@@ -90,31 +91,31 @@ export class BillReminderService {
       // Written here rather than through NotificationsService.createNotification
       // because the `data` payload is what makes same-day deduplication
       // possible, and that method has no parameter for it.
-      const [notification] = await this.db
-        .insert(schema.notifications)
-        .values({
-          userId,
-          type: NotificationType.BILL_REMINDER,
-          severity: severityFor(reminder.daysUntilDue),
-          title: `${reminder.billName} is due ${reminder.dueLabel}`,
-          body:
-            `Your ${reminder.frequency} payment of ${formatUsd(reminder.amount)} ` +
-            `for ${reminder.billName} is due ${reminder.dueLabel}.`,
-          actionUrl: '/bills',
-          data: JSON.stringify({
-            subscriptionId: reminder.subscriptionId,
-            billName: reminder.billName,
-            amount: reminder.amount,
-            dueDate: reminder.dueDate,
-            frequency: reminder.frequency,
-          }),
-        })
-        .returning();
+      const notification = firstRow(
+        await this.db
+          .insert(schema.notifications)
+          .values({
+            userId,
+            type: NotificationType.BILL_REMINDER,
+            severity: severityFor(reminder.daysUntilDue),
+            title: `${reminder.billName} is due ${reminder.dueLabel}`,
+            body:
+              `Your ${reminder.frequency} payment of ${formatUsd(reminder.amount)} ` +
+              `for ${reminder.billName} is due ${reminder.dueLabel}.`,
+            actionUrl: '/bills',
+            data: JSON.stringify({
+              subscriptionId: reminder.subscriptionId,
+              billName: reminder.billName,
+              amount: reminder.amount,
+              dueDate: reminder.dueDate,
+              frequency: reminder.frequency,
+            }),
+          })
+          .returning(),
+      );
 
       // Keep the SSE endpoint live: subscribers see the reminder without a reload.
-      if (notification) {
-        this.notifications.notificationStream$.next({ userId, notification });
-      }
+      this.notifications.notificationStream$.next({ userId, notification });
 
       if (reminder.sendEmail) {
         await this.emailService.sendBillReminder(userEmail, {

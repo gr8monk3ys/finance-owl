@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   updateProfile: async ({ request, locals }) => {
     const formData = await request.formData();
     const data: Record<string, number | string> = {};
@@ -117,4 +117,4 @@ export const actions: Actions = {
       return fail(500, { scenarioError: getErrorMessage(e) || 'Scenario comparison failed' });
     }
   },
-};
+} satisfies Actions;

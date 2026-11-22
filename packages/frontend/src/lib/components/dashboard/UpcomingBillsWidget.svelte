@@ -17,7 +17,7 @@
 
   let { bills }: Props = $props();
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = new Date().toISOString().slice(0, 10);
 
   function daysUntil(dateStr: string): number {
     const target = new Date(dateStr + 'T00:00:00');

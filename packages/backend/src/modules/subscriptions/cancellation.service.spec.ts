@@ -154,7 +154,7 @@ describe('CancellationService.requestCancellation', () => {
 
     const result = await service.requestCancellation('user_1', 'sub_1', 'too expensive');
 
-    const persisted = values.mock.calls[0][0];
+    const persisted = values.mock.calls[0]?.[0];
     expect(persisted.method).toBe('self_service');
     expect(persisted.reason).toBe('too expensive');
     expect(instructionsOf(persisted.cancellationInstructions).join(' ').toLowerCase()).toContain(
@@ -175,7 +175,7 @@ describe('CancellationService.requestCancellation', () => {
 
     await service.requestCancellation('user_1', 'sub_2');
 
-    const persisted = values.mock.calls[0][0];
+    const persisted = values.mock.calls[0]?.[0];
     expect(persisted.method).toBe('self_service');
     expect(instructionsOf(persisted.cancellationInstructions)[0]).toContain('Corner Bodega 44');
     expect(JSON.parse(persisted.providerContactInfo)).toEqual({

@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   return { categories, rules };
 };
 
-export const actions: Actions = {
+export const actions = {
   createCategory: async ({ request, locals }) => {
     const formData = await request.formData();
     const name = (formData.get('name') as string)?.trim();
@@ -147,4 +147,4 @@ export const actions: Actions = {
       return fail(500, { ruleError: getErrorMessage(e) || 'Failed to delete rule.' });
     }
   },
-};
+} satisfies Actions;

@@ -57,8 +57,8 @@ export class WeeklyDigestService {
     startDate.setDate(startDate.getDate() - 7);
     startDate.setHours(0, 0, 0, 0);
 
-    const startStr = startDate.toISOString().split('T')[0];
-    const endStr = endDate.toISOString().split('T')[0];
+    const startStr = startDate.toISOString().slice(0, 10);
+    const endStr = endDate.toISOString().slice(0, 10);
 
     // Aggregate weekly spending
     const digestData = await this.aggregateWeeklyData(userId, startStr, endStr);
@@ -134,8 +134,8 @@ export class WeeklyDigestService {
     const today = new Date();
     const nextWeek = new Date(today);
     nextWeek.setDate(nextWeek.getDate() + 7);
-    const todayStr = today.toISOString().split('T')[0];
-    const nextWeekStr = nextWeek.toISOString().split('T')[0];
+    const todayStr = today.toISOString().slice(0, 10);
+    const nextWeekStr = nextWeek.toISOString().slice(0, 10);
 
     const upcomingSubscriptions = await this.db
       .select({

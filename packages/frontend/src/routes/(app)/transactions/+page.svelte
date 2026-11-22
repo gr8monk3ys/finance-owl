@@ -50,14 +50,14 @@
   // Group transactions by date label
   const groupedTransactions = $derived.by(() => {
     const groups: Array<{ label: string; transactions: any[] }> = [];
-    let currentLabel = '';
+    let currentGroup: (typeof groups)[number] | undefined;
     for (const tx of data.transactions.data) {
       const label = getTransactionDateGroupLabel(tx.date);
-      if (label !== currentLabel) {
-        groups.push({ label, transactions: [] });
-        currentLabel = label;
+      if (currentGroup?.label !== label) {
+        currentGroup = { label, transactions: [] };
+        groups.push(currentGroup);
       }
-      groups[groups.length - 1].transactions.push(tx);
+      currentGroup.transactions.push(tx);
     }
     return groups;
   });
@@ -690,7 +690,7 @@
           name="date"
           type="date"
           required
-          value={new Date().toISOString().split('T')[0]}
+          value={new Date().toISOString().slice(0, 10)}
           class="mt-1 block w-full rounded-lg border border-surface-600/50 bg-surface-750 px-3 py-2.5 text-white transition-colors focus-visible:border-primary-500/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500/30"
         />
       </div>

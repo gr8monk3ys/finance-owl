@@ -49,7 +49,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   createProperty: async ({ request, locals }) => {
     const formData = await request.formData();
     const data: Record<string, string | number> = {
@@ -288,4 +288,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to estimate vehicle value' });
     }
   },
-};
+} satisfies Actions;

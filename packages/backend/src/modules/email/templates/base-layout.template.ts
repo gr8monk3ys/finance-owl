@@ -167,7 +167,7 @@ export function badge(
   text: string,
   variant: 'info' | 'warning' | 'danger' | 'success' = 'info',
 ): string {
-  const colors: Record<string, { bg: string; fg: string }> = {
+  const colors: Record<typeof variant, { bg: string; fg: string }> = {
     info: { bg: 'rgba(16,185,129,0.15)', fg: '#34d399' },
     warning: { bg: 'rgba(245,158,11,0.15)', fg: '#fbbf24' },
     danger: { bg: 'rgba(239,68,68,0.15)', fg: '#f87171' },

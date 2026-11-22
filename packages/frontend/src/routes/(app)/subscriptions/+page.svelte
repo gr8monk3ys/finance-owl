@@ -220,7 +220,7 @@
     for (let i = 0; i < 30; i++) {
       const d = new Date(today);
       d.setDate(d.getDate() + i);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = d.toISOString().slice(0, 10);
       const bills = data.upcoming.filter((b: any) => b.expectedDate === dateStr);
       days.push({ date: d, dateStr, bills, isToday: i === 0 });
     }

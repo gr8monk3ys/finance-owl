@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   search: async ({ request, locals }) => {
     const formData = await request.formData();
     const firstName = formData.get('firstName') as string;
@@ -91,4 +91,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to dismiss recommendation' });
     }
   },
-};
+} satisfies Actions;

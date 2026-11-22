@@ -81,7 +81,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   saveLayout: async ({ request, locals }) => {
     const formData = await request.formData();
     const widgets = formData.get('widgets');
@@ -113,4 +113,4 @@ export const actions: Actions = {
       return { success: false, error: 'Failed to reset layout' };
     }
   },
-};
+} satisfies Actions;

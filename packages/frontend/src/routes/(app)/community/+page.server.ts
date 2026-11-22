@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   createPost: async ({ request, locals }) => {
     const formData = await request.formData();
     const title = (formData.get('title') as string)?.trim();
@@ -112,4 +112,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to delete post' });
     }
   },
-};
+} satisfies Actions;

@@ -9,6 +9,7 @@ import {
 import { eq, and, inArray } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
+import { firstRow } from '../../common/db/first-row';
 
 export interface HouseholdWithMembers {
   id: string;
@@ -46,14 +47,16 @@ export class HouseholdsService {
   async create(userId: string, name: string) {
     const inviteCode = crypto.randomUUID().slice(0, 8);
 
-    const [household] = await this.db
-      .insert(schema.households)
-      .values({
-        name,
-        ownerId: userId,
-        inviteCode,
-      })
-      .returning();
+    const household = firstRow(
+      await this.db
+        .insert(schema.households)
+        .values({
+          name,
+          ownerId: userId,
+          inviteCode,
+        })
+        .returning(),
+    );
 
     // Add the owner as a member with 'owner' role
     await this.db.insert(schema.householdMembers).values({
@@ -258,14 +261,16 @@ export class HouseholdsService {
 
     if (existing) throw new ConflictException('Account already shared');
 
-    const [shared] = await this.db
-      .insert(schema.sharedAccounts)
-      .values({
-        householdId,
-        accountId,
-        sharedBy: userId,
-      })
-      .returning();
+    const shared = firstRow(
+      await this.db
+        .insert(schema.sharedAccounts)
+        .values({
+          householdId,
+          accountId,
+          sharedBy: userId,
+        })
+        .returning(),
+    );
 
     return shared;
   }

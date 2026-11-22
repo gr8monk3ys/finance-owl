@@ -2,6 +2,7 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { eq, and, isNull, or } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
+import { firstRow } from '../../common/db/first-row';
 
 @Injectable()
 export class CategoriesService {
@@ -40,16 +41,18 @@ export class CategoriesService {
     userId: string,
     data: { name: string; parentId?: string; icon?: string; color?: string },
   ) {
-    const [category] = await this.db
-      .insert(schema.categories)
-      .values({
-        userId,
-        name: data.name,
-        parentId: data.parentId,
-        icon: data.icon,
-        color: data.color,
-      })
-      .returning();
+    const category = firstRow(
+      await this.db
+        .insert(schema.categories)
+        .values({
+          userId,
+          name: data.name,
+          parentId: data.parentId,
+          icon: data.icon,
+          color: data.color,
+        })
+        .returning(),
+    );
 
     return category;
   }
@@ -101,16 +104,18 @@ export class CategoriesService {
     userId: string,
     data: { categoryId: string; matchType: string; matchValue: string; priority?: number },
   ) {
-    const [rule] = await this.db
-      .insert(schema.categorizationRules)
-      .values({
-        userId,
-        categoryId: data.categoryId,
-        matchType: data.matchType,
-        matchValue: data.matchValue,
-        priority: data.priority ?? 0,
-      })
-      .returning();
+    const rule = firstRow(
+      await this.db
+        .insert(schema.categorizationRules)
+        .values({
+          userId,
+          categoryId: data.categoryId,
+          matchType: data.matchType,
+          matchValue: data.matchValue,
+          priority: data.priority ?? 0,
+        })
+        .returning(),
+    );
 
     return rule;
   }
@@ -136,16 +141,18 @@ export class CategoriesService {
     const defaults = this.getDefaultCategories();
 
     for (const parent of defaults) {
-      const [parentRow] = await this.db
-        .insert(schema.categories)
-        .values({
-          name: parent.name,
-          icon: parent.icon,
-          color: parent.color,
-          isSystem: true,
-          sortOrder: parent.sortOrder,
-        })
-        .returning();
+      const parentRow = firstRow(
+        await this.db
+          .insert(schema.categories)
+          .values({
+            name: parent.name,
+            icon: parent.icon,
+            color: parent.color,
+            isSystem: true,
+            sortOrder: parent.sortOrder,
+          })
+          .returning(),
+      );
 
       for (const child of parent.children || []) {
         await this.db.insert(schema.categories).values({

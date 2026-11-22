@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   calculate: async ({ locals }) => {
     try {
       await api('/financial-health/score/calculate', {
@@ -78,4 +78,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to update goal' });
     }
   },
-};
+} satisfies Actions;

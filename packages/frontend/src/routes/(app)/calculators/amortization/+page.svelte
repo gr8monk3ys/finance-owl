@@ -76,7 +76,7 @@
       totalPaid: round(totalPaid),
       totalInterestPaid: round(totalInterestPaid),
       payoffMonths: month,
-      payoffDate: payoffDate.toISOString().split('T')[0],
+      payoffDate: payoffDate.toISOString().slice(0, 10),
       interestSaved: round(Math.max(0, totalInterestNoExtra - totalInterestPaid)),
       monthsSaved: termMonths - month,
     };

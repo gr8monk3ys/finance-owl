@@ -79,7 +79,7 @@ describe('SavingsGoalsService', () => {
       const result = await service.findAll(mockUserId);
 
       expect(result).toHaveLength(1);
-      expect(result[0].progress).toBe(50); // 2500/5000 * 100
+      expect(result[0]?.progress).toBe(50); // 2500/5000 * 100
     });
 
     it('should cap progress at 100% when currentAmount exceeds target', async () => {
@@ -88,7 +88,7 @@ describe('SavingsGoalsService', () => {
 
       const result = await service.findAll(mockUserId);
 
-      expect(result[0].progress).toBe(100);
+      expect(result[0]?.progress).toBe(100);
     });
 
     it('should handle zero targetAmount without division by zero', async () => {
@@ -97,7 +97,7 @@ describe('SavingsGoalsService', () => {
 
       const result = await service.findAll(mockUserId);
 
-      expect(result[0].progress).toBe(0);
+      expect(result[0]?.progress).toBe(0);
     });
 
     it('should return empty array when no goals exist', async () => {
@@ -118,9 +118,9 @@ describe('SavingsGoalsService', () => {
 
       const result = await service.findAll(mockUserId);
 
-      expect(result[0].progress).toBe(25);
-      expect(result[1].progress).toBe(100);
-      expect(result[2].progress).toBe(0);
+      expect(result[0]?.progress).toBe(25);
+      expect(result[1]?.progress).toBe(100);
+      expect(result[2]?.progress).toBe(0);
     });
   });
 
@@ -139,7 +139,7 @@ describe('SavingsGoalsService', () => {
       expect(result.id).toBe(mockGoalId);
       expect(result.progress).toBe(50);
       expect(result.contributions).toHaveLength(1);
-      expect(result.contributions[0].amount).toBe(500);
+      expect(result.contributions[0]?.amount).toBe(500);
     });
 
     it('should throw NotFoundException when goal not found', async () => {
@@ -217,7 +217,7 @@ describe('SavingsGoalsService', () => {
         targetAmount: 8000,
       });
 
-      expect(result.targetAmount).toBe(8000);
+      expect(result?.targetAmount).toBe(8000);
     });
 
     it('should throw NotFoundException for non-existent goal', async () => {

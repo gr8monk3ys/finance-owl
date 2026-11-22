@@ -3,6 +3,7 @@ import { eq, and, desc, sql } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
 import { frequencyDays, monthlyMultiplier } from './frequency';
+import { firstRow } from '../../common/db/first-row';
 
 export interface SubscriptionSummary {
   monthlyTotal: number;
@@ -157,20 +158,22 @@ export class SubscriptionsService {
       nextExpectedDate?: string;
     },
   ) {
-    const [subscription] = await this.db
-      .insert(schema.recurringTransactions)
-      .values({
-        userId,
-        name: data.name,
-        merchantName: data.merchantName ?? null,
-        estimatedAmount: data.estimatedAmount,
-        frequency: data.frequency,
-        categoryId: data.categoryId ?? null,
-        nextExpectedDate: data.nextExpectedDate ?? null,
-        isActive: true,
-        isConfirmed: true,
-      })
-      .returning();
+    const subscription = firstRow(
+      await this.db
+        .insert(schema.recurringTransactions)
+        .values({
+          userId,
+          name: data.name,
+          merchantName: data.merchantName ?? null,
+          estimatedAmount: data.estimatedAmount,
+          frequency: data.frequency,
+          categoryId: data.categoryId ?? null,
+          nextExpectedDate: data.nextExpectedDate ?? null,
+          isActive: true,
+          isConfirmed: true,
+        })
+        .returning(),
+    );
 
     return subscription;
   }
@@ -413,7 +416,7 @@ export class SubscriptionsService {
 
     // Collect dates within range
     while (current <= rangeEnd) {
-      dates.push(current.toISOString().split('T')[0]);
+      dates.push(current.toISOString().slice(0, 10));
       current.setDate(current.getDate() + intervalDays);
     }
 

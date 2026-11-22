@@ -230,7 +230,7 @@ describe('AccountsService', () => {
         name: 'Renamed',
       });
 
-      expect(result.name).toBe('Renamed');
+      expect(result?.name).toBe('Renamed');
       expect(mockDb.update).toHaveBeenCalled();
     });
 
@@ -244,7 +244,7 @@ describe('AccountsService', () => {
         isHidden: true,
       });
 
-      expect(result.isHidden).toBe(true);
+      expect(result?.isHidden).toBe(true);
     });
 
     it('should throw NotFoundException when updating non-existent account', async () => {

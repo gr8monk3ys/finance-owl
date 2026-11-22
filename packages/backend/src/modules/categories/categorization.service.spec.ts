@@ -225,8 +225,8 @@ describe('CategorizationEngineService', () => {
 
       const overrides = service.getUserOverrides(userId);
       expect(overrides).toHaveLength(1);
-      expect(overrides[0].category).toBe('Food & Drink');
-      expect(overrides[0].subcategory).toBe('Fast Food');
+      expect(overrides[0]?.category).toBe('Food & Drink');
+      expect(overrides[0]?.subcategory).toBe('Fast Food');
     });
 
     it('should replace existing override for same pattern', () => {
@@ -235,7 +235,7 @@ describe('CategorizationEngineService', () => {
 
       const overrides = service.getUserOverrides(userId);
       expect(overrides).toHaveLength(1);
-      expect(overrides[0].subcategory).toBe('Restaurants');
+      expect(overrides[0]?.subcategory).toBe('Restaurants');
     });
 
     it('should remove a user override', () => {
@@ -317,11 +317,11 @@ describe('CategorizationEngineService', () => {
       const results = service.categorizeBulk(transactions);
 
       expect(results).toHaveLength(5);
-      expect(results[0].category).toBe('Entertainment');
-      expect(results[1].category).toBe('Transportation');
-      expect(results[2].category).toBe('Food & Drink');
-      expect(results[3].category).toBe('Health & Medical');
-      expect(results[4].category).toBe('Uncategorized');
+      expect(results[0]?.category).toBe('Entertainment');
+      expect(results[1]?.category).toBe('Transportation');
+      expect(results[2]?.category).toBe('Food & Drink');
+      expect(results[3]?.category).toBe('Health & Medical');
+      expect(results[4]?.category).toBe('Uncategorized');
     });
 
     it('should apply user overrides in bulk mode', () => {
@@ -335,11 +335,11 @@ describe('CategorizationEngineService', () => {
 
       const results = service.categorizeBulk(transactions, userId);
 
-      expect(results[0].category).toBe('Utilities');
-      expect(results[0].subcategory).toBe('Internet');
-      expect(results[0].source).toBe('user_override');
-      expect(results[1].category).toBe('Entertainment');
-      expect(results[1].subcategory).toBe('Music');
+      expect(results[0]?.category).toBe('Utilities');
+      expect(results[0]?.subcategory).toBe('Internet');
+      expect(results[0]?.source).toBe('user_override');
+      expect(results[1]?.category).toBe('Entertainment');
+      expect(results[1]?.subcategory).toBe('Music');
     });
   });
 

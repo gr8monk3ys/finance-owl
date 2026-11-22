@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   saveProfile: async ({ request, locals }) => {
     const formData = await request.formData();
     const data = {
@@ -51,4 +51,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to save profile' });
     }
   },
-};
+} satisfies Actions;

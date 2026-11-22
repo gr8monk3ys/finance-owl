@@ -148,8 +148,8 @@ describe('BudgetsService', () => {
       const result = await service.findAll(mockUserId);
 
       expect(result).toHaveLength(1);
-      expect(result[0].rolloverAmount).toBe(200);
-      expect(result[0].remaining).toBe(600); // (1000 + 200) - 600
+      expect(result[0]?.rolloverAmount).toBe(200);
+      expect(result[0]?.remaining).toBe(600); // (1000 + 200) - 600
     });
   });
 

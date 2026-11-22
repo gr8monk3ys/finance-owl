@@ -89,8 +89,8 @@ export class BudgetAlertCheckerService {
   private async getSpentForBudget(budget: typeof schema.budgets.$inferSelect): Promise<number> {
     const now = new Date();
     const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const periodStartStr = periodStart.toISOString().split('T')[0];
-    const todayStr = now.toISOString().split('T')[0];
+    const periodStartStr = periodStart.toISOString().slice(0, 10);
+    const todayStr = now.toISOString().slice(0, 10);
 
     if (!budget.categoryId) {
       // Overall budget -- sum all transactions

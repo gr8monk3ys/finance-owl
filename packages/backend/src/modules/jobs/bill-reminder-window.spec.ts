@@ -80,8 +80,8 @@ describe('planBillReminders', () => {
     const planned = planBillReminders(prefs(), [bill({ nextExpectedDate: '2026-03-10' })], TODAY);
 
     expect(planned).toHaveLength(1);
-    expect(planned[0].daysUntilDue).toBe(0);
-    expect(planned[0].dueLabel).toBe('today');
+    expect(planned[0]?.daysUntilDue).toBe(0);
+    expect(planned[0]?.dueLabel).toBe('today');
   });
 
   it('excludes an overdue bill rather than nagging about a payment already made', () => {
@@ -112,14 +112,14 @@ describe('planBillReminders', () => {
   it('treats a missing preferences row as email opted in', () => {
     const planned = planBillReminders(null, [bill()], TODAY);
 
-    expect(planned[0].sendEmail).toBe(true);
+    expect(planned[0]?.sendEmail).toBe(true);
   });
 
   it('still raises the in-app reminder when email is switched off', () => {
     const planned = planBillReminders(prefs({ emailBillReminders: 0 }), [bill()], TODAY);
 
     expect(planned).toHaveLength(1);
-    expect(planned[0].sendEmail).toBe(false);
+    expect(planned[0]?.sendEmail).toBe(false);
   });
 
   it('reminds only on the due date when the window is zero', () => {
@@ -138,7 +138,7 @@ describe('planBillReminders', () => {
   it('falls back to the series name when there is no merchant', () => {
     const planned = planBillReminders(prefs(), [bill({ merchantName: null })], TODAY);
 
-    expect(planned[0].billName).toBe('Streaming Plan');
+    expect(planned[0]?.billName).toBe('Streaming Plan');
   });
 
   it('reads the calendar date from the clock, not the time of day', () => {
@@ -149,7 +149,7 @@ describe('planBillReminders', () => {
       lateAtNight,
     );
 
-    expect(planned[0].daysUntilDue).toBe(1);
+    expect(planned[0]?.daysUntilDue).toBe(1);
   });
 
   it('keeps every matching bill for a user, not just the first', () => {

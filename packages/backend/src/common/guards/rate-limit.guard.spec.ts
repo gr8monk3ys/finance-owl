@@ -268,7 +268,7 @@ describe('RateLimitGuard', () => {
     await guard.canActivate(context);
 
     expect(cacheService.set).toHaveBeenCalled();
-    const [key, value, ttl] = cacheService.set.mock.calls[0];
+    const [key, value, ttl] = cacheService.set.mock.calls[0] ?? [];
     expect(key).toContain('ratelimit:');
     expect(value).toHaveProperty('tokens');
     expect(value).toHaveProperty('lastRefill');

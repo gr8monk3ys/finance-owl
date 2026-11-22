@@ -16,9 +16,11 @@
   let { netWorth, netWorthHistory }: Props = $props();
 
   const trend = $derived.by(() => {
-    if (netWorthHistory.length < 2) return null;
-    const current = netWorthHistory[netWorthHistory.length - 1].netWorth;
-    const previous = netWorthHistory[netWorthHistory.length - 2].netWorth;
+    const latest = netWorthHistory.at(-1);
+    const prior = netWorthHistory.at(-2);
+    if (!latest || !prior) return null;
+    const current = latest.netWorth;
+    const previous = prior.netWorth;
     if (previous === 0) return null;
     const change = ((current - previous) / Math.abs(previous)) * 100;
     return { change, isPositive: change >= 0 };

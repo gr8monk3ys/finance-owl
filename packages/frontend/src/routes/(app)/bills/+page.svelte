@@ -32,7 +32,7 @@
     return formatDateWith(dateStr, { weekday: 'short', month: 'short', day: 'numeric' });
   }
 
-  const todayStr = $derived(new Date().toISOString().split('T')[0]);
+  const todayStr = $derived(new Date().toISOString().slice(0, 10));
 
   function daysUntil(dateStr: string): number {
     const target = new Date(dateStr + 'T00:00:00');
@@ -45,15 +45,15 @@
   const weekEndStr = $derived.by(() => {
     const d = new Date(now);
     d.setDate(d.getDate() + 7);
-    return d.toISOString().split('T')[0];
+    return d.toISOString().slice(0, 10);
   });
 
   const monthStartStr = $derived(
-    new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0],
+    new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10),
   );
 
   const monthEndStr = $derived(
-    new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0],
+    new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10),
   );
 
   const billsDueThisWeek = $derived(
@@ -113,8 +113,8 @@
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekEnd.getDate() + 6);
 
-      const startStr = weekStart.toISOString().split('T')[0];
-      const endStr = weekEnd.toISOString().split('T')[0];
+      const startStr = weekStart.toISOString().slice(0, 10);
+      const endStr = weekEnd.toISOString().slice(0, 10);
 
       const weekBills = futureBills.filter(
         (b: any) => b.expectedDate >= startStr && b.expectedDate <= endStr,

@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   link: async ({ locals }) => {
     try {
       const result = await api('/bank-sync/link-token', {
@@ -166,4 +166,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Sandbox test link failed' });
     }
   },
-};
+} satisfies Actions;

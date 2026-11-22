@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   return { dashboard: dashboard ?? { consents: [], exports: [], deletions: [] } };
 };
 
-export const actions: Actions = {
+export const actions = {
   updateConsent: async ({ request, locals }) => {
     const fd = await request.formData();
     const consentType = fd.get('consentType') as string;
@@ -49,4 +49,4 @@ export const actions: Actions = {
       return { error: getErrorMessage(e) };
     }
   },
-};
+} satisfies Actions;

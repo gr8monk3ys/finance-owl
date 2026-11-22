@@ -63,7 +63,7 @@
       days.push({
         day,
         isCurrentMonth: false,
-        dateStr: d.toISOString().split('T')[0],
+        dateStr: d.toISOString().slice(0, 10),
       });
     }
 
@@ -73,7 +73,7 @@
       days.push({
         day,
         isCurrentMonth: true,
-        dateStr: d.toISOString().split('T')[0],
+        dateStr: d.toISOString().slice(0, 10),
       });
     }
 
@@ -84,7 +84,7 @@
       days.push({
         day,
         isCurrentMonth: false,
-        dateStr: d.toISOString().split('T')[0],
+        dateStr: d.toISOString().slice(0, 10),
       });
     }
 
@@ -104,7 +104,7 @@
     return map;
   });
 
-  const todayStr = $derived(new Date().toISOString().split('T')[0]);
+  const todayStr = $derived(new Date().toISOString().slice(0, 10));
 
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -129,8 +129,8 @@
 
   // Monthly totals
   const monthBills = $derived.by(() => {
-    const monthStart = new Date(currentYear, currentMonth, 1).toISOString().split('T')[0];
-    const monthEnd = new Date(currentYear, currentMonth + 1, 0).toISOString().split('T')[0];
+    const monthStart = new Date(currentYear, currentMonth, 1).toISOString().slice(0, 10);
+    const monthEnd = new Date(currentYear, currentMonth + 1, 0).toISOString().slice(0, 10);
     return bills.filter((b) => b.expectedDate >= monthStart && b.expectedDate <= monthEnd);
   });
 

@@ -35,7 +35,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   checkout: async ({ request, locals }) => {
     const formData = await request.formData();
     const planId = formData.get('planId') as string;
@@ -102,4 +102,4 @@ export const actions: Actions = {
       return { error: getErrorMessage(e) || 'Failed to resume subscription' };
     }
   },
-};
+} satisfies Actions;

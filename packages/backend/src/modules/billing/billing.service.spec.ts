@@ -218,9 +218,9 @@ describe('BillingService', () => {
     it('getAllPlans returns all three plans in order', () => {
       const plans = getAllPlans();
       expect(plans).toHaveLength(3);
-      expect(plans[0].name).toBe('free');
-      expect(plans[1].name).toBe('pro');
-      expect(plans[2].name).toBe('premium');
+      expect(plans[0]?.name).toBe('free');
+      expect(plans[1]?.name).toBe('pro');
+      expect(plans[2]?.name).toBe('premium');
     });
 
     it('getPlanLimits returns correct limits per tier', () => {
@@ -344,8 +344,8 @@ describe('BillingService', () => {
       const result = await service.getPlans();
 
       expect(result).toHaveLength(2);
-      expect(Array.isArray(result[0].features)).toBe(true);
-      expect(result[0].features).toContain('basic_budgets');
+      expect(Array.isArray(result[0]?.features)).toBe(true);
+      expect(result[0]?.features).toContain('basic_budgets');
     });
 
     it('should seed default plans when none exist', async () => {

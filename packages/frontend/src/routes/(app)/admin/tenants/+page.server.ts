@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   suspendTenant: async ({ request, locals }) => {
     const formData = await request.formData();
     const tenantId = formData.get('tenantId') as string;
@@ -90,4 +90,4 @@ export const actions: Actions = {
       });
     }
   },
-};
+} satisfies Actions;

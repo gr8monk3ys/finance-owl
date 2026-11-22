@@ -151,7 +151,7 @@ export class NotificationTriggerService {
 
     // Send email if preference is enabled (default: enabled)
     if (!prefs || prefs.emailAnomalies) {
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().slice(0, 10);
       await this.sendEmailForUser(userId, (email) =>
         this.emailService!.sendAnomalyAlert(email, {
           merchantName: transaction?.name ?? 'Unknown Merchant',

@@ -81,7 +81,7 @@ function resolveCorsOrigin(): string | string[] {
   const corsOrigin = process.env.CORS_ORIGIN;
   if (corsOrigin) {
     const origins = corsOrigin.split(',').map((o) => o.trim());
-    return origins.length === 1 ? origins[0] : origins;
+    return origins.length === 1 ? corsOrigin.trim() : origins;
   }
   return process.env.FRONTEND_URL || 'http://localhost:3000';
 }

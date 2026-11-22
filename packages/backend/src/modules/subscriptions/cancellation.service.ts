@@ -5,6 +5,7 @@ import * as schema from '../../database/schema';
 import { cancellationRequests } from './cancellation.schema';
 import { cancellationInstructionsFor, type CancellationInstructions } from './cancellation-catalog';
 import { monthlyMultiplier } from './frequency';
+import { firstRow } from '../../common/db/first-row';
 
 /**
  * Cancellation progress plus the money it has saved. This used to be two
@@ -56,18 +57,20 @@ export class CancellationService {
       chatUrl: instructions.chatUrl,
     };
 
-    const [request] = await this.db
-      .insert(cancellationRequests)
-      .values({
-        userId,
-        subscriptionId,
-        status: 'pending',
-        method: instructions.methods[0] || 'self_service',
-        cancellationInstructions: JSON.stringify(instructions.steps),
-        providerContactInfo: JSON.stringify(contactInfo),
-        reason: reason || null,
-      })
-      .returning();
+    const request = firstRow(
+      await this.db
+        .insert(cancellationRequests)
+        .values({
+          userId,
+          subscriptionId,
+          status: 'pending',
+          method: instructions.methods[0] || 'self_service',
+          cancellationInstructions: JSON.stringify(instructions.steps),
+          providerContactInfo: JSON.stringify(contactInfo),
+          reason: reason || null,
+        })
+        .returning(),
+    );
 
     return {
       ...request,

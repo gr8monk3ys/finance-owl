@@ -23,7 +23,7 @@
       return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
     })(),
   );
-  let endDate = $state(new Date().toISOString().split('T')[0]);
+  let endDate = $state(new Date().toISOString().slice(0, 10));
   let groupBy = $state<string>('category');
 
   // CSV export state
@@ -35,36 +35,36 @@
     switch (preset) {
       case 'this-month':
         startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
-        endDate = now.toISOString().split('T')[0];
+        endDate = now.toISOString().slice(0, 10);
         break;
       case 'last-month': {
         const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
-        startDate = lastMonth.toISOString().split('T')[0];
-        endDate = lastMonthEnd.toISOString().split('T')[0];
+        startDate = lastMonth.toISOString().slice(0, 10);
+        endDate = lastMonthEnd.toISOString().slice(0, 10);
         break;
       }
       case 'last-3-months': {
         const threeAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-        startDate = threeAgo.toISOString().split('T')[0];
-        endDate = now.toISOString().split('T')[0];
+        startDate = threeAgo.toISOString().slice(0, 10);
+        endDate = now.toISOString().slice(0, 10);
         break;
       }
       case 'last-6-months': {
         const sixAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-        startDate = sixAgo.toISOString().split('T')[0];
-        endDate = now.toISOString().split('T')[0];
+        startDate = sixAgo.toISOString().slice(0, 10);
+        endDate = now.toISOString().slice(0, 10);
         break;
       }
       case 'last-year': {
         const yearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-        startDate = yearAgo.toISOString().split('T')[0];
-        endDate = now.toISOString().split('T')[0];
+        startDate = yearAgo.toISOString().slice(0, 10);
+        endDate = now.toISOString().slice(0, 10);
         break;
       }
       case 'ytd': {
         startDate = `${now.getFullYear()}-01-01`;
-        endDate = now.toISOString().split('T')[0];
+        endDate = now.toISOString().slice(0, 10);
         break;
       }
     }

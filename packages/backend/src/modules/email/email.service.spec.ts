@@ -96,7 +96,7 @@ describe('EmailService', () => {
     it('should auto-generate plain text from HTML when text is not provided', async () => {
       await service.sendEmail('user@example.com', 'Subject', '<p>Hello <strong>World</strong></p>');
 
-      const callArgs = mockSendMail.mock.calls[0][0];
+      const callArgs = mockSendMail.mock.calls[0]?.[0];
       expect(callArgs.text).toBeDefined();
       expect(callArgs.text).toContain('Hello');
       expect(callArgs.text).toContain('World');
@@ -239,7 +239,7 @@ describe('EmailService', () => {
       expect(result).toBe(true);
       expect(mockSendMail).toHaveBeenCalledOnce();
 
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toContain('Netflix');
       expect(args.subject).toContain('$15.99');
       expect(args.html).toContain('Netflix');
@@ -260,7 +260,7 @@ describe('EmailService', () => {
       });
 
       expect(result).toBe(true);
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toContain('Dining Out');
       expect(args.subject).toContain('90%');
       expect(args.html).toContain('Dining Out');
@@ -280,7 +280,7 @@ describe('EmailService', () => {
       });
 
       expect(result).toBe(true);
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toContain('Suspicious Store');
       expect(args.html).toContain('Suspicious Store');
       expect(args.html).toContain('flagged');
@@ -301,7 +301,7 @@ describe('EmailService', () => {
       });
 
       expect(result).toBe(true);
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toContain('Security Alert');
       expect(args.html).toContain('Chrome on macOS');
       expect(args.html).toContain('203.0.113.42');
@@ -325,7 +325,7 @@ describe('EmailService', () => {
       });
 
       expect(result).toBe(true);
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toContain('Weekly Summary');
       expect(args.html).toContain('Groceries');
       expect(args.html).toContain('Dining');
@@ -342,7 +342,7 @@ describe('EmailService', () => {
       });
 
       expect(result).toBe(true);
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toBe('Welcome to FinanceOwl!');
       expect(args.html).toContain('Alice');
       expect(args.html).toContain('Connect Your Accounts');
@@ -365,7 +365,7 @@ describe('EmailService', () => {
         dueDate: '2026-01-01',
       });
 
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.html).toContain('unsubscribe=all');
       expect(args.html).toContain('Manage notification preferences');
     });
@@ -377,7 +377,7 @@ describe('EmailService', () => {
         dueDate: '2026-01-01',
       });
 
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.html).toContain('#10b981');
       expect(args.html).toContain('FinanceOwl');
     });
@@ -385,7 +385,7 @@ describe('EmailService', () => {
     it('should have responsive max-width 600px wrapper', async () => {
       await service.sendWelcome('u@test.com', { userName: 'Bob' });
 
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.html).toContain('max-width:600px');
     });
 
@@ -397,7 +397,7 @@ describe('EmailService', () => {
         timestamp: new Date().toISOString(),
       });
 
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       // Should NOT have external stylesheets
       expect(args.html).not.toMatch(/<link[^>]+stylesheet/i);
       // Should have inline styles

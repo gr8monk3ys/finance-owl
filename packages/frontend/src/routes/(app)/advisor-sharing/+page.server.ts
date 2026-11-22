@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   create: async ({ request, locals }) => {
     const formData = await request.formData();
     const advisorEmail = (formData.get('advisorEmail') as string)?.trim();
@@ -59,4 +59,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to revoke share' });
     }
   },
-};
+} satisfies Actions;

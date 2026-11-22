@@ -25,6 +25,7 @@ import * as jose from 'jose';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CryptoService } from '../../common/crypto/crypto.service';
 import * as schema from '../../database/schema';
+import { firstRow } from '../../common/db/first-row';
 
 /**
  * Metadata received from Plaid Link after user completes the connection flow.
@@ -180,40 +181,44 @@ export class PlaidService {
       // Step 4: Encrypt token and store Plaid item
       const encryptedToken = this.cryptoService.encrypt(accessToken);
 
-      const [plaidItem] = await this.db
-        .insert(schema.plaidItems)
-        .values({
-          userId,
-          plaidItemId,
-          accessToken: encryptedToken,
-          institutionId,
-          institutionName,
-          status: 'active',
-        })
-        .returning();
+      const plaidItem = firstRow(
+        await this.db
+          .insert(schema.plaidItems)
+          .values({
+            userId,
+            plaidItemId,
+            accessToken: encryptedToken,
+            institutionId,
+            institutionName,
+            status: 'active',
+          })
+          .returning(),
+      );
 
       // Step 5: Upsert accounts
       const createdAccounts = [];
       for (const acct of accountsResponse.data.accounts) {
-        const [created] = await this.db
-          .insert(schema.accounts)
-          .values({
-            userId,
-            plaidItemId: plaidItem.id,
-            plaidAccountId: acct.account_id,
-            name: acct.official_name || acct.name,
-            officialName: acct.official_name ?? null,
-            type: this.mapAccountType(acct.type),
-            subtype: acct.subtype ?? null,
-            institutionName,
-            mask: acct.mask ?? null,
-            currentBalance: acct.balances.current ?? 0,
-            availableBalance: acct.balances.available ?? null,
-            creditLimit: acct.balances.limit ?? null,
-            currency: acct.balances.iso_currency_code ?? 'USD',
-            isManual: false,
-          })
-          .returning();
+        const created = firstRow(
+          await this.db
+            .insert(schema.accounts)
+            .values({
+              userId,
+              plaidItemId: plaidItem.id,
+              plaidAccountId: acct.account_id,
+              name: acct.official_name || acct.name,
+              officialName: acct.official_name ?? null,
+              type: this.mapAccountType(acct.type),
+              subtype: acct.subtype ?? null,
+              institutionName,
+              mask: acct.mask ?? null,
+              currentBalance: acct.balances.current ?? 0,
+              availableBalance: acct.balances.available ?? null,
+              creditLimit: acct.balances.limit ?? null,
+              currency: acct.balances.iso_currency_code ?? 'USD',
+              isManual: false,
+            })
+            .returning(),
+        );
         createdAccounts.push(created);
       }
 

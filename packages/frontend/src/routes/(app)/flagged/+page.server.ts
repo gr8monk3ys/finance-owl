@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   flag: async ({ request, locals }) => {
     const formData = await request.formData();
     const transactionId = formData.get('transactionId') as string;
@@ -77,4 +77,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to resolve flag' });
     }
   },
-};
+} satisfies Actions;

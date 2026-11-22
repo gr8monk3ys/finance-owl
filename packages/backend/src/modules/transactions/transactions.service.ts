@@ -12,6 +12,7 @@ import { AutoCategorizationService } from '../categories/auto-categorization.ser
 import * as schema from '../../database/schema';
 import { paginate } from '@finance-owl/shared';
 import { LayaCategorizerService } from '../categories/laya-categorizer.service';
+import { firstRow } from '../../common/db/first-row';
 
 interface TransactionFilters {
   accountId?: string;
@@ -84,10 +85,12 @@ export class TransactionsService {
       const searchPattern = `%${filters.search}%`;
       const searchCondition = sql`(${schema.transactions.name} LIKE ${searchPattern} OR ${schema.transactions.merchantName} LIKE ${searchPattern} OR ${schema.transactions.description} LIKE ${searchPattern})`;
 
-      const [totalResult] = await this.db
-        .select({ total: count() })
-        .from(schema.transactions)
-        .where(and(whereClause!, searchCondition));
+      const totalResult = firstRow(
+        await this.db
+          .select({ total: count() })
+          .from(schema.transactions)
+          .where(and(whereClause!, searchCondition)),
+      );
 
       const data = await this.db
         .select({
@@ -125,10 +128,9 @@ export class TransactionsService {
     }
 
     // No search — standard query
-    const [totalResult] = await this.db
-      .select({ total: count() })
-      .from(schema.transactions)
-      .where(whereClause);
+    const totalResult = firstRow(
+      await this.db.select({ total: count() }).from(schema.transactions).where(whereClause),
+    );
 
     const data = await this.db
       .select({
@@ -241,23 +243,25 @@ export class TransactionsService {
       }
     }
 
-    const [transaction] = await this.db
-      .insert(schema.transactions)
-      .values({
-        userId,
-        accountId: data.accountId,
-        amount: data.amount,
-        name: data.name,
-        merchantName: data.merchantName,
-        description: data.description,
-        categoryId: data.categoryId,
-        date: data.date,
-        pending: data.pending ?? false,
-        notes: data.notes,
-        categorizationSource: data.categoryId ? 'manual' : null,
-        isManual: true,
-      })
-      .returning();
+    const transaction = firstRow(
+      await this.db
+        .insert(schema.transactions)
+        .values({
+          userId,
+          accountId: data.accountId,
+          amount: data.amount,
+          name: data.name,
+          merchantName: data.merchantName,
+          description: data.description,
+          categoryId: data.categoryId,
+          date: data.date,
+          pending: data.pending ?? false,
+          notes: data.notes,
+          categorizationSource: data.categoryId ? 'manual' : null,
+          isManual: true,
+        })
+        .returning(),
+    );
 
     let result = transaction;
 
@@ -284,7 +288,7 @@ export class TransactionsService {
           .set({ categoryId: resolvedCategoryId, categorizationSource: resolvedSource })
           .where(eq(schema.transactions.id, transaction.id))
           .returning();
-        result = recategorized;
+        if (recategorized) result = recategorized;
       }
     }
 

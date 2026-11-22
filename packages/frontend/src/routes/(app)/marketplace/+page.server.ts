@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   trackClick: async ({ request, locals }) => {
     const formData = await request.formData();
     const productId = formData.get('productId') as string;
@@ -48,4 +48,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to track click' });
     }
   },
-};
+} satisfies Actions;

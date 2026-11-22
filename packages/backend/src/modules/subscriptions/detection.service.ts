@@ -650,7 +650,7 @@ export class DetectionService {
     if (name.includes('*')) {
       const parts = name.split('*');
       // Use the part after asterisk as it's usually more specific
-      name = parts[parts.length - 1].trim();
+      name = parts.at(-1)?.trim() ?? name;
     }
 
     // Apply stripping patterns
@@ -736,16 +736,17 @@ export class DetectionService {
     sortedTransactions: { date: string; amount: number }[],
     referenceDate?: Date,
   ): boolean {
-    if (sortedTransactions.length === 0) {
+    const [firstTransaction, secondTransaction] = sortedTransactions;
+    if (!firstTransaction) {
       return false;
     }
 
     const now = referenceDate ?? new Date();
 
     // Check for $0 or very cheap introductory charge followed by normal charges
-    const firstAmount = Math.abs(sortedTransactions[0].amount);
-    if (sortedTransactions.length >= 2) {
-      const secondAmount = Math.abs(sortedTransactions[1].amount);
+    const firstAmount = Math.abs(firstTransaction.amount);
+    if (secondTransaction) {
+      const secondAmount = Math.abs(secondTransaction.amount);
       if (firstAmount < 1.0 && secondAmount >= 1.0) {
         return true;
       }
@@ -760,7 +761,7 @@ export class DetectionService {
       return false;
     }
 
-    const firstChargeDate = this.parseTransactionDate(sortedTransactions[0].date);
+    const firstChargeDate = this.parseTransactionDate(firstTransaction.date);
     const daysSinceFirst = Math.round(
       (now.getTime() - firstChargeDate.getTime()) / (1000 * 60 * 60 * 24),
     );
@@ -838,9 +839,9 @@ export class DetectionService {
     const mid = Math.floor(sorted.length / 2);
 
     if (sorted.length % 2 === 0) {
-      return (sorted[mid - 1] + sorted[mid]) / 2;
+      return ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) / 2;
     }
-    return sorted[mid];
+    return sorted[mid] ?? 0;
   }
 
   standardDeviation(values: number[]): number {
@@ -857,8 +858,8 @@ export class DetectionService {
   iqr(values: number[]): { q1: number; q3: number; iqr: number } {
     const sorted = values.slice().sort((a, b) => a - b);
     const n = sorted.length;
-    const q1 = sorted[Math.floor(n * 0.25)];
-    const q3 = sorted[Math.floor(n * 0.75)];
+    const q1 = sorted[Math.floor(n * 0.25)] ?? 0;
+    const q3 = sorted[Math.floor(n * 0.75)] ?? 0;
     return { q1, q3, iqr: q3 - q1 };
   }
 
@@ -1022,25 +1023,26 @@ export class DetectionService {
    * - Price changes over time
    */
   clusterAmounts(transactions: { date: string; amount: number }[]): AmountCluster[] {
-    if (transactions.length === 0) return [];
-
-    const sorted = transactions.slice().sort((a, b) => Math.abs(a.amount) - Math.abs(b.amount));
+    const [first, ...rest] = transactions
+      .slice()
+      .sort((a, b) => Math.abs(a.amount) - Math.abs(b.amount));
+    if (!first) return [];
 
     const clusters: AmountCluster[] = [];
     let currentCluster: AmountCluster = {
-      centroid: Math.abs(sorted[0].amount),
-      amounts: [Math.abs(sorted[0].amount)],
-      transactions: [sorted[0]],
+      centroid: Math.abs(first.amount),
+      amounts: [Math.abs(first.amount)],
+      transactions: [first],
     };
 
-    for (let i = 1; i < sorted.length; i++) {
-      const amount = Math.abs(sorted[i].amount);
+    for (const transaction of rest) {
+      const amount = Math.abs(transaction.amount);
       const tolerance = currentCluster.centroid * AMOUNT_CLUSTER_TOLERANCE;
       const maxTolerance = Math.max(tolerance, 0.5); // Minimum $0.50 tolerance
 
       if (Math.abs(amount - currentCluster.centroid) <= maxTolerance) {
         currentCluster.amounts.push(amount);
-        currentCluster.transactions.push(sorted[i]);
+        currentCluster.transactions.push(transaction);
         // Update centroid
         currentCluster.centroid =
           currentCluster.amounts.reduce((s, a) => s + a, 0) / currentCluster.amounts.length;
@@ -1049,7 +1051,7 @@ export class DetectionService {
         currentCluster = {
           centroid: amount,
           amounts: [amount],
-          transactions: [sorted[i]],
+          transactions: [transaction],
         };
       }
     }
@@ -1074,12 +1076,19 @@ export class DetectionService {
         (a, b) =>
           this.parseTransactionDate(a.date).getTime() - this.parseTransactionDate(b.date).getTime(),
       );
+    const firstTransaction = sorted[0];
+    const lastTransaction = sorted.at(-1);
+    if (!firstTransaction || !lastTransaction) {
+      return null;
+    }
 
     // Calculate intervals between consecutive transactions (in days)
     const intervals: number[] = [];
-    for (let i = 1; i < sorted.length; i++) {
-      const prev = this.parseTransactionDate(sorted[i - 1].date).getTime();
-      const curr = this.parseTransactionDate(sorted[i].date).getTime();
+    for (const [i, transaction] of sorted.entries()) {
+      const previous = sorted[i - 1];
+      if (!previous) continue;
+      const prev = this.parseTransactionDate(previous.date).getTime();
+      const curr = this.parseTransactionDate(transaction.date).getTime();
       const diffDays = Math.round((curr - prev) / (1000 * 60 * 60 * 24));
       if (diffDays > 0) {
         intervals.push(diffDays);
@@ -1116,7 +1125,7 @@ export class DetectionService {
     }
 
     // Check for cancellation
-    const lastChargeDate = this.parseTransactionDate(sorted[sorted.length - 1].date);
+    const lastChargeDate = this.parseTransactionDate(lastTransaction.date);
     const isCancelled = this.detectCancellation(lastChargeDate, cycleDays, referenceDate);
 
     if (isCancelled) {
@@ -1130,8 +1139,8 @@ export class DetectionService {
         cancellation: {
           merchantName: group.merchantName,
           normalizedMerchantName: group.normalizedName,
-          lastAmount: Math.round(amounts[amounts.length - 1] * 100) / 100,
-          lastChargeDate: sorted[sorted.length - 1].date,
+          lastAmount: Math.round(Math.abs(lastTransaction.amount) * 100) / 100,
+          lastChargeDate: lastTransaction.date,
           frequency,
           daysSinceLastCharge,
           missedCycles: Math.floor(daysSinceLastCharge / cycleDays),
@@ -1191,8 +1200,8 @@ export class DetectionService {
         priceChange,
         annualCostProjection,
         occurrenceCount: sorted.length,
-        firstSeenDate: sorted[0].date,
-        lastSeenDate: sorted[sorted.length - 1].date,
+        firstSeenDate: firstTransaction.date,
+        lastSeenDate: lastTransaction.date,
         amountHistory: amounts,
       },
     };
@@ -1221,7 +1230,7 @@ export class DetectionService {
 
   private parseTransactionDate(value: string): Date {
     if (DATE_ONLY_PATTERN.test(value)) {
-      const [year, month, day] = value.split('-').map(Number);
+      const [year = NaN, month = NaN, day = NaN] = value.split('-').map(Number);
       return new Date(Date.UTC(year, month - 1, day));
     }
 
@@ -1229,7 +1238,7 @@ export class DetectionService {
   }
 
   private formatDateOnly(value: Date): string {
-    return value.toISOString().split('T')[0];
+    return value.toISOString().slice(0, 10);
   }
 
   // ─── Private: Persistence ─────────────────────────────────────────────────
@@ -1249,7 +1258,8 @@ export class DetectionService {
         )
         .limit(1);
 
-      if (existing.length > 0) {
+      const [existingRow] = existing;
+      if (existingRow) {
         await this.db
           .update(schema.recurringTransactions)
           .set({
@@ -1258,7 +1268,7 @@ export class DetectionService {
             nextExpectedDate: sub.nextExpectedDate,
             updatedAt: new Date(),
           })
-          .where(eq(schema.recurringTransactions.id, existing[0].id));
+          .where(eq(schema.recurringTransactions.id, existingRow.id));
       } else {
         await this.db.insert(schema.recurringTransactions).values({
           userId,

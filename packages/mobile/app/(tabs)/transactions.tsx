@@ -206,8 +206,9 @@ export default function TransactionsScreen() {
       ]);
       setAccountsList(accts);
       setCategoriesList(cats);
-      if (accts.length > 0) {
-        setAddAccountId(accts[0].id);
+      const [firstAccount] = accts;
+      if (firstAccount) {
+        setAddAccountId(firstAccount.id);
       }
     } catch {
       // silently handle

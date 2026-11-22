@@ -22,12 +22,12 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   saveProfile: async ({ request, locals }) => {
     const formData = await request.formData();
     const data = {
       currentScore: parseInt(formData.get('currentScore') as string, 10),
-      scoreDate: new Date().toISOString().split('T')[0],
+      scoreDate: new Date().toISOString().slice(0, 10),
       paymentHistory: parseFloat(formData.get('paymentHistory') as string),
       creditUtilization: parseFloat(formData.get('creditUtilization') as string),
       accountAge: parseInt(formData.get('accountAge') as string, 10),
@@ -77,4 +77,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to run simulation' });
     }
   },
-};
+} satisfies Actions;

@@ -49,7 +49,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   return { preferences };
 };
 
-export const actions: Actions = {
+export const actions = {
   save: async ({ request, locals }) => {
     const formData = await request.formData();
 
@@ -78,4 +78,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to save notification preferences' });
     }
   },
-};
+} satisfies Actions;

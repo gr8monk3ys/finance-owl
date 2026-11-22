@@ -32,7 +32,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   apply: async ({ request, locals }) => {
     const formData = await request.formData();
     const code = (formData.get('code') as string)?.trim();
@@ -52,4 +52,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to apply referral code' });
     }
   },
-};
+} satisfies Actions;
