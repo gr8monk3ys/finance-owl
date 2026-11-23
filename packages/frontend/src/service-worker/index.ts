@@ -1,14 +1,12 @@
-/// <reference types="@sveltejs/kit" />
-/// <reference no-default-lib="true"/>
-/// <reference lib="esnext" />
-/// <reference lib="webworker" />
-
-import { build, files, version } from '$service-worker';
-
-declare const self: ServiceWorkerGlobalScope;
+import { version } from '$app/env';
+import { assets, immutable } from '$app/manifest';
+import { self } from '$app/service-worker';
 
 const CACHE_NAME = `cache-${version}`;
-const ASSETS = [...build, ...files];
+// Manifest paths are relative to the base path, which is the service worker's scope.
+const ASSETS = [...immutable, ...assets].map(
+  ({ path }) => new URL(path, self.registration.scope).pathname,
+);
 
 const API_CACHE_NAME = `api-cache-${version}`;
 

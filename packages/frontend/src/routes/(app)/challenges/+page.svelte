@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { formatPercent } from '$lib/utils/format';
+  import { formatPercent } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button, Modal } from '$components/ui';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
@@ -14,7 +14,7 @@
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
       showCreateModal = false;
       selectedTemplate = null;
       entryChallenge = null;

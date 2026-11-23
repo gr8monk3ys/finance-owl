@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { publicMailto, publicSite } from '$lib/config/public';
+  import { publicMailto, publicSite } from '#lib/config/public.ts';
   import { onMount } from 'svelte';
 
   let activeSection = $state('');

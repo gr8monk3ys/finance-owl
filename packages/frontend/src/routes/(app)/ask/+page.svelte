@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
-  import { formatDecimal } from '$lib/utils/format';
-  import { Card, Button, Spinner } from '$components/ui';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
+  import { formatDecimal } from '#lib/utils/format.ts';
+  import { Card, Button, Spinner } from '#lib/components/ui/index.ts';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency, formatDate } from '@finance-owl/shared';

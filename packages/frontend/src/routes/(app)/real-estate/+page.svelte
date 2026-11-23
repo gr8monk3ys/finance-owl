@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button, Modal } from '$components/ui';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrencyWhole as fmt, formatNumber, formatDate } from '@finance-owl/shared';
 
@@ -12,7 +12,7 @@
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
       showAddModal = false;
     }
   });

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
-  import { Button } from '$components/ui';
+  import { browser } from '$app/env';
+  import { Button } from '#lib/components/ui/index.ts';
 
   interface BeforeInstallPromptEvent extends Event {
     prompt(): Promise<void>;

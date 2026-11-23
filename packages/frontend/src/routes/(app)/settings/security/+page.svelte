@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
+  import { refreshAll } from '$app/navigation';
   import type { ActionData, PageData } from './$types';
-  import { Button, Card, Input, Modal } from '$components/ui';
+  import { Button, Card, Input, Modal } from '#lib/components/ui/index.ts';
   import { formatDateWith } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -144,7 +144,7 @@
 
       if (!verifyRes.ok) throw new Error('Registration verification failed');
 
-      await invalidateAll();
+      await refreshAll();
     } catch (err: any) {
       if (err.name === 'NotAllowedError') {
         // User cancelled the WebAuthn dialog - do nothing

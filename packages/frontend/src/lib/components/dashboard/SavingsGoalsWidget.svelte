@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { formatPercent } from '$lib/utils/format';
-  import { Card } from '$components/ui';
+  import { formatPercent } from '#lib/utils/format.ts';
+  import { Card } from '#lib/components/ui/index.ts';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
   interface SavingsGoal {

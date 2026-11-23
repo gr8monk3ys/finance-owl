@@ -1,8 +1,8 @@
-import type { Handle } from '@sveltejs/kit';
+import type { Handle } from '@sveltejs/kit/hooks';
 import { redirect } from '@sveltejs/kit';
 import * as Sentry from '@sentry/sveltekit';
-import { API_URL } from '$lib/server/api';
-import { setAuthCookies, type AuthTokens } from '$lib/server/auth';
+import { API_URL } from '#lib/server/api.ts';
+import { setAuthCookies, type AuthTokens } from '#lib/server/auth.ts';
 
 // Initialize Sentry on the server side (optional - only if DSN is provided)
 const sentryDsn = process.env.PUBLIC_SENTRY_DSN;

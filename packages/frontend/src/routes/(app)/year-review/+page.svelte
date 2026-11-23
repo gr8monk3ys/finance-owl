@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { formatPercent } from '$lib/utils/format';
+  import { formatPercent } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { goto, invalidateAll } from '$app/navigation';
-  import { Card, Button } from '$components/ui';
+  import { goto, refreshAll } from '$app/navigation';
+  import { Card, Button } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
   import {
     formatCurrency as fmt,
@@ -18,7 +18,7 @@
   $effect(() => {
     if (form?.success) {
       generating = false;
-      invalidateAll();
+      refreshAll();
     }
     if (form?.error) {
       generating = false;
@@ -26,7 +26,7 @@
   });
 
   function selectYear(year: number) {
-    goto(`/year-review?year=${year}`, { invalidateAll: true });
+    goto(`/year-review?year=${year}`, { refreshAll: true });
   }
 
   const monthNames = [

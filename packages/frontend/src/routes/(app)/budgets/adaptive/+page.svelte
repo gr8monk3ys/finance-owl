@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
-  import { formatPercent } from '$lib/utils/format';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
+  import { formatPercent } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button, Spinner } from '$components/ui';
-  import { BarChart } from '$components/charts';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button, Spinner } from '#lib/components/ui/index.ts';
+  import { BarChart } from '#lib/components/charts/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrencyWhole as fmt } from '@finance-owl/shared';
 
@@ -23,7 +23,7 @@
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
       if (form.accepted) {
         acceptedCategories = new Set([...acceptedCategories, form.accepted]);
       }

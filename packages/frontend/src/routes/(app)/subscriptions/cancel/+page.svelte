@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll, goto } from '$app/navigation';
-  import { Card, Button, Modal, Spinner } from '$components/ui';
+  import { refreshAll, goto } from '$app/navigation';
+  import { Card, Button, Modal, Spinner } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt, formatDate, formatDateLong } from '@finance-owl/shared';
 
@@ -26,7 +26,7 @@
   $effect(() => {
     if (form?.success && form?.cancellationId) {
       currentStep = 3;
-      invalidateAll();
+      refreshAll();
     }
     if (form?.success && form?.providerResult) {
       providerLookup = form.providerResult;

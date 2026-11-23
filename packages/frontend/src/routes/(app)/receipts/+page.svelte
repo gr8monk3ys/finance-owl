@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { confirmSubmit } from '$lib/actions/confirm-submit';
-  import { formatFileSize } from '$lib/utils/format';
-  import { Card, Button, Modal, Input } from '$components/ui';
+  import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
+  import { formatFileSize } from '#lib/utils/format.ts';
+  import { Card, Button, Modal, Input } from '#lib/components/ui/index.ts';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as formatAmount, formatDate } from '@finance-owl/shared';

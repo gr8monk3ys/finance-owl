@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button } from '$components/ui';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt, formatDate as fmtDate } from '@finance-owl/shared';
 
@@ -21,7 +21,7 @@
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
       searchLoading = false;
       generateLoading = false;
     }

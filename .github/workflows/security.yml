@@ -47,20 +47,12 @@ jobs:
       # never from the deployed backend or frontend. Drop the ignore once a
       # fixed version exists:
       #   GHSA-vfj7-8cjw-p6xm  braces <=3.0.3 (latest), via micromatch
-      #
-      # Added 2026-11-19, revisit by 2026-12-31: patched only in @sveltejs/kit
-      # 3.1.1+ (no 2.x fix), and kit 3 is a breaking migration. The DoS is in
-      # remote-functions `form` parsing; the frontend has no *.remote.* files
-      # and doesn't import $app/server, so the path is unreachable. Drop the
-      # ignore with the kit 3 upgrade:
-      #   GHSA-3r8g-jcqq-3p5j  @sveltejs/kit <3.1.1, remote form parsing DoS
       - name: Run bun audit (high and above)
         run: >-
           bun audit --audit-level=high
           --ignore GHSA-w3rx-r6r6-pgpr
           --ignore GHSA-5p2g-fcmc-qvqq
           --ignore GHSA-vfj7-8cjw-p6xm
-          --ignore GHSA-3r8g-jcqq-3p5j
 
       # Informational: everything, including low/moderate and the two above.
       - name: Run bun audit (full, informational)

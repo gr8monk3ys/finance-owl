@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { api } from '$lib/server/api';
+import { api } from '#lib/server/api.ts';
 
 export const load: PageServerLoad = async ({ locals }) => {
   try {

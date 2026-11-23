@@ -1,6 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { api } from '$lib/server/api';
+import { api } from '#lib/server/api.ts';
 
 export const load: PageServerLoad = async ({ locals }) => {
   try {

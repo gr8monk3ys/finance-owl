@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card } from '$components/ui';
+  import { Card } from '#lib/components/ui/index.ts';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
   interface CategoryBreakdown {
@@ -24,7 +24,7 @@
 
   {#if categoryBreakdown.length > 0}
     <div class="mt-3">
-      {#await import('$lib/components/charts/DonutChart.svelte') then { default: DonutChart }}
+      {#await import('#lib/components/charts/DonutChart.svelte') then { default: DonutChart }}
         <DonutChart {labels} {data} {colors} height={140} />
       {/await}
     </div>

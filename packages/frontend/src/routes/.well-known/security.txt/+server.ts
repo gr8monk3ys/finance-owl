@@ -1,4 +1,4 @@
-import { publicLinks, publicSite } from '$lib/config/public';
+import { publicLinks, publicSite } from '#lib/config/public.ts';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {

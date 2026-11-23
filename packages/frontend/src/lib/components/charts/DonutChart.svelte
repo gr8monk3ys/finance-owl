@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatPercent } from '$lib/utils/format';
+  import { formatPercent } from '#lib/utils/format.ts';
   import { formatCurrency } from '@finance-owl/shared';
   import { onMount } from 'svelte';
   import { Chart, DoughnutController, ArcElement, Tooltip, Legend } from 'chart.js';

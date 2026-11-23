@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { formatDecimal } from '$lib/utils/format';
+  import { formatDecimal } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
+  import { refreshAll } from '$app/navigation';
   import type { ActionData, PageData } from './$types';
-  import { Button, Card } from '$components/ui';
+  import { Button, Card } from '#lib/components/ui/index.ts';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -21,10 +21,10 @@
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
     }
     if (form?.refreshed) {
-      invalidateAll();
+      refreshAll();
     }
   });
 

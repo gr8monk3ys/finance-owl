@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { isOnline } from '$stores/online';
+  import { isOnline } from '#lib/stores/online.ts';
 </script>
 
 {#if !$isOnline}

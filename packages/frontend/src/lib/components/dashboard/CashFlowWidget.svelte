@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card } from '$components/ui';
+  import { Card } from '#lib/components/ui/index.ts';
   import { formatCurrency as fmt, formatDateWith } from '@finance-owl/shared';
 
   interface MonthlyTrend {
@@ -49,7 +49,7 @@
     {/if}
 
     <div class="mt-3">
-      {#await import('$lib/components/charts/BarChart.svelte') then { default: BarChart }}
+      {#await import('#lib/components/charts/BarChart.svelte') then { default: BarChart }}
         <BarChart
           {labels}
           datasets={[

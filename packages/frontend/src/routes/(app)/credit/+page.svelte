@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card, Button, Modal, Input } from '$components/ui';
+  import { Card, Button, Modal, Input } from '#lib/components/ui/index.ts';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
   import {
@@ -415,7 +415,7 @@
         <h3 class="text-lg font-semibold text-white">Score History</h3>
         {#if data.history && data.history.length > 1}
           <div class="mt-4">
-            {#await import('$lib/components/charts/LineChart.svelte') then { default: LineChart }}
+            {#await import('#lib/components/charts/LineChart.svelte') then { default: LineChart }}
               <LineChart
                 labels={historyLabels}
                 datasets={[

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
-  import { formatPercent } from '$lib/utils/format';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
+  import { formatPercent } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { Card, Button } from '$components/ui';
-  import { BarChart, DonutChart, LineChart } from '$components/charts';
+  import { Card, Button } from '#lib/components/ui/index.ts';
+  import { BarChart, DonutChart, LineChart } from '#lib/components/charts/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 

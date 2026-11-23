@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
-  import { publicRoutes, publicMailto, publicSite } from '$lib/config/public';
-  import { Card } from '$components/ui';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
+  import { publicRoutes, publicMailto, publicSite } from '#lib/config/public.ts';
+  import { Card } from '#lib/components/ui/index.ts';
 
   let searchQuery = $state(readParam('q', ''));
 

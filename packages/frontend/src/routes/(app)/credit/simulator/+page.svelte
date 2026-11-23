@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
-  import { formatPercent } from '$lib/utils/format';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
+  import { formatPercent } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
+  import { refreshAll } from '$app/navigation';
   import type { ActionData, PageData } from './$types';
-  import { Button, Card, Modal } from '$components/ui';
+  import { Button, Card, Modal } from '#lib/components/ui/index.ts';
   import { formatDate, formatCurrencyWhole } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -24,10 +24,10 @@
   $effect(() => {
     if (form?.profileSaved) {
       showProfileModal = false;
-      invalidateAll();
+      refreshAll();
     }
     if (form?.simulationResult) {
-      invalidateAll();
+      refreshAll();
     }
   });
 

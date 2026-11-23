@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { API_URL } from '$lib/server/api';
-import { buildForwardedClientHeaders, setAuthCookies } from '$lib/server/auth';
+import { API_URL } from '#lib/server/api.ts';
+import { buildForwardedClientHeaders, setAuthCookies } from '#lib/server/auth.ts';
 
 export const load: PageServerLoad = async () => {
   try {

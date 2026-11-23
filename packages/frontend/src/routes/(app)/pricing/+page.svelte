@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
-  import { Button, Card, Badge } from '$components/ui';
+  import { Button, Card, Badge } from '#lib/components/ui/index.ts';
   import { getAllPlans, type PlanTier, formatCurrency } from '@finance-owl/shared';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();

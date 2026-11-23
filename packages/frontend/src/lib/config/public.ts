@@ -1,4 +1,13 @@
-import { env } from '$env/dynamic/public';
+import {
+  PUBLIC_SITE_URL,
+  PUBLIC_COMPANY_NAME,
+  PUBLIC_LEGAL_ENTITY_NAME,
+  PUBLIC_COMPANY_ADDRESS,
+  PUBLIC_SUPPORT_EMAIL,
+  PUBLIC_PRIVACY_EMAIL,
+  PUBLIC_LEGAL_EMAIL,
+  PUBLIC_SECURITY_EMAIL,
+} from '$app/env/public';
 
 function readValue(value: string | undefined, fallback = ''): string {
   const trimmed = value?.trim();
@@ -15,22 +24,22 @@ function normalizeUrl(value: string, fallback: string): string {
 }
 
 const siteUrl = normalizeUrl(
-  readValue(env.PUBLIC_SITE_URL, 'http://localhost:3000'),
+  readValue(PUBLIC_SITE_URL, 'http://localhost:3000'),
   'http://localhost:3000',
 );
 
 export const publicSite = Object.freeze({
-  appName: readValue(env.PUBLIC_COMPANY_NAME, 'Finance Owl'),
+  appName: readValue(PUBLIC_COMPANY_NAME, 'Finance Owl'),
   legalEntityName: readValue(
-    env.PUBLIC_LEGAL_ENTITY_NAME,
-    readValue(env.PUBLIC_COMPANY_NAME, 'Finance Owl'),
+    PUBLIC_LEGAL_ENTITY_NAME,
+    readValue(PUBLIC_COMPANY_NAME, 'Finance Owl'),
   ),
-  companyAddress: readValue(env.PUBLIC_COMPANY_ADDRESS),
+  companyAddress: readValue(PUBLIC_COMPANY_ADDRESS),
   siteUrl,
-  supportEmail: readValue(env.PUBLIC_SUPPORT_EMAIL, 'support@financeowl.com'),
-  privacyEmail: readValue(env.PUBLIC_PRIVACY_EMAIL, 'privacy@financeowl.com'),
-  legalEmail: readValue(env.PUBLIC_LEGAL_EMAIL, 'legal@financeowl.com'),
-  securityEmail: readValue(env.PUBLIC_SECURITY_EMAIL, 'security@financeowl.com'),
+  supportEmail: readValue(PUBLIC_SUPPORT_EMAIL, 'support@financeowl.com'),
+  privacyEmail: readValue(PUBLIC_PRIVACY_EMAIL, 'privacy@financeowl.com'),
+  legalEmail: readValue(PUBLIC_LEGAL_EMAIL, 'legal@financeowl.com'),
+  securityEmail: readValue(PUBLIC_SECURITY_EMAIL, 'security@financeowl.com'),
 });
 
 export const publicMailto = Object.freeze({

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
-  import { formatPercent, formatDecimal } from '$lib/utils/format';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
+  import { formatPercent, formatDecimal } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { goto, invalidateAll } from '$app/navigation';
-  import { Card, Button } from '$components/ui';
-  import { DonutChart, LineChart } from '$components/charts';
+  import { goto, refreshAll } from '$app/navigation';
+  import { Card, Button } from '#lib/components/ui/index.ts';
+  import { DonutChart, LineChart } from '#lib/components/charts/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt, formatDateShort } from '@finance-owl/shared';
 
@@ -21,7 +21,7 @@
   $effect(() => {
     if (form?.success) {
       syncing = false;
-      invalidateAll();
+      refreshAll();
     }
     if (form?.error) {
       syncing = false;
@@ -31,7 +31,7 @@
   const periods = ['1M', '3M', '6M', '1Y', 'YTD', 'ALL'] as const;
 
   function selectPeriod(period: string) {
-    goto(`/investments?period=${period}`, { invalidateAll: true });
+    goto(`/investments?period=${period}`, { refreshAll: true });
   }
 
   function fmtPct(pct: number): string {

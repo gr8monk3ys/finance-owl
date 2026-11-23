@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { formatPercent, formatDecimal } from '$lib/utils/format';
-  import { Card } from '$components/ui';
-  import { BarChart } from '$components/charts';
+  import { formatPercent, formatDecimal } from '#lib/utils/format.ts';
+  import { Card } from '#lib/components/ui/index.ts';
+  import { BarChart } from '#lib/components/charts/index.ts';
   import type { PageData } from './$types';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
