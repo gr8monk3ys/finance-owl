@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button, Modal } from '$components/ui';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
@@ -18,7 +18,7 @@
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
       showCreateModal = false;
       showJoinModal = false;
       showEditNameModal = false;

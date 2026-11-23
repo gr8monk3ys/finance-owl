@@ -1,3 +1,6 @@
+import adapterVercel from '@sveltejs/adapter-vercel';
+import adapterNode from '@sveltejs/adapter-node';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
@@ -28,8 +31,25 @@ async function getSentryPlugins(): Promise<PluginOption[]> {
 
 const sentryPlugins = await getSentryPlugins();
 
+/**
+ * Use adapter-vercel for Vercel deployments (pin runtime to a supported LTS).
+ * Use adapter-node for Docker/self-hosted deployments.
+ *
+ * Set ADAPTER=node to force adapter-node (e.g. in docker-compose).
+ */
+const useNodeAdapter = process.env.ADAPTER === 'node';
+
 export default defineConfig({
-  plugins: [tailwindcss(), ...sentryPlugins, sveltekit()],
+  plugins: [
+    tailwindcss(),
+    ...sentryPlugins,
+    sveltekit({
+      preprocess: vitePreprocess(),
+      adapter: useNodeAdapter
+        ? adapterNode({ out: 'build' })
+        : adapterVercel({ runtime: 'nodejs24.x' }),
+    }),
+  ],
   test: {
     include: ['src/**/*.{test,spec}.{js,ts}'],
     coverage: {

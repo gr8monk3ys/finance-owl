@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
-  import { formatPercent } from '$lib/utils/format';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
+  import { formatPercent } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { Card, Button, Modal, Input } from '$components/ui';
+  import { Card, Button, Modal, Input } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency, formatDate as fmtDate } from '@finance-owl/shared';
 

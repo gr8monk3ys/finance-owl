@@ -1,12 +1,12 @@
 import { untrack } from 'svelte';
 import { page } from '$app/state';
-import { replaceState } from '$app/navigation';
+import { goto } from '$app/navigation';
 
 /**
  * Deep-linkable view state. A page seeds a `$state` from `readParam`, then
  * mirrors it back with `syncParam` inside an `$effect`, so tabs, sort order
  * and client-side filters survive a reload and can be shared as a link.
- * `replaceState` updates the address bar without a navigation, so no load
+ * A shallow, replacing `goto` updates the address bar without a navigation, so no load
  * function re-runs and the history stack does not fill with every click.
  */
 
@@ -31,5 +31,5 @@ export function syncParam(key: string, value: string | null, fallback: string | 
   if (current === next) return;
   if (next === null) url.searchParams.delete(key);
   else url.searchParams.set(key, next);
-  untrack(() => replaceState(url, page.state));
+  untrack(() => goto(url, { shallow: true, replace: true, state: page.state }));
 }

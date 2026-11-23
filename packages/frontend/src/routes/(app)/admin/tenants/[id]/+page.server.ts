@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
-import { api } from '$lib/server/api';
+import { api } from '#lib/server/api.ts';
 import { error, redirect } from '@sveltejs/kit';
-import { getErrorStatus } from '$lib/server/error';
+import { getErrorStatus } from '#lib/server/error.ts';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   const accessToken = locals.accessToken;

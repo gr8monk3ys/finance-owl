@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button } from '$components/ui';
+  import { Button } from '#lib/components/ui/index.ts';
   import { formatCurrency as fmt, formatDateWith, formatMonthYear } from '@finance-owl/shared';
 
   interface Bill {

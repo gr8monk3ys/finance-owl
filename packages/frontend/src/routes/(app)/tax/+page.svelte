@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { confirmSubmit } from '$lib/actions/confirm-submit';
-  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll, goto } from '$app/navigation';
-  import { Card, Button, Modal } from '$components/ui';
+  import { refreshAll, goto } from '$app/navigation';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt, formatDate } from '@finance-owl/shared';
 
@@ -20,7 +20,7 @@
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
       showAddModal = false;
       editingDocument = null;
     }

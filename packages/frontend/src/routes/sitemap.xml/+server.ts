@@ -1,4 +1,4 @@
-import { publicSite } from '$lib/config/public';
+import { publicSite } from '#lib/config/public.ts';
 import type { RequestHandler } from './$types';
 
 const isLocal = (host: string) => host === 'localhost' || host === '127.0.0.1' || host === '[::1]';

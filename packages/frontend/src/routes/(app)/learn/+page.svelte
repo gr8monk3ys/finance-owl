@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card, Button } from '$components/ui';
+  import { Card, Button } from '#lib/components/ui/index.ts';
   import { goto } from '$app/navigation';
   import type { PageData } from './$types';
 

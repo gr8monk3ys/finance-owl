@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { publicRoutes, publicMailto } from '$lib/config/public';
-  import { page } from '$app/stores';
+  import { publicRoutes, publicMailto } from '#lib/config/public.ts';
+  import { page } from '$app/state';
 
-  const statusCode = $derived($page.status);
+  const statusCode = $derived(page.status);
   const errorMessage = $derived(
-    $page.error?.message ??
+    page.error?.message ??
       'Something went wrong. Try again, or contact support if it keeps happening.',
   );
 

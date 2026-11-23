@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { confirmSubmit } from '$lib/actions/confirm-submit';
-  import { formatPercent } from '$lib/utils/format';
+  import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
+  import { formatPercent } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button, Modal } from '$components/ui';
-  import { LineChart, BarChart } from '$components/charts';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
+  import { LineChart, BarChart } from '#lib/components/charts/index.ts';
   import type { PageData } from './$types';
   import { formatCurrency as fmt, formatDate, formatCurrencyWhole } from '@finance-owl/shared';
 
@@ -135,7 +135,7 @@
           return async ({ update }) => {
             analyzing = false;
             await update();
-            await invalidateAll();
+            await refreshAll();
           };
         }}
       >
@@ -349,7 +349,7 @@
             return async ({ update }) => {
               analyzing = false;
               await update();
-              await invalidateAll();
+              await refreshAll();
             };
           }}
         >
@@ -421,7 +421,7 @@
                   use:enhance={() => {
                     return async ({ update }) => {
                       await update();
-                      await invalidateAll();
+                      await refreshAll();
                     };
                   }}
                 >
@@ -452,7 +452,7 @@
                   use:enhance={() => {
                     return async ({ update }) => {
                       await update();
-                      await invalidateAll();
+                      await refreshAll();
                     };
                   }}
                 >
@@ -798,7 +798,7 @@
       return async ({ update }) => {
         showCreateModal = false;
         await update();
-        await invalidateAll();
+        await refreshAll();
       };
     }}
   >

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { formatPercent } from '$lib/utils/format';
+  import { formatPercent } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button } from '$components/ui';
-  import { LineChart, BarChart } from '$components/charts';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button } from '#lib/components/ui/index.ts';
+  import { LineChart, BarChart } from '#lib/components/charts/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrencyWhole as fmt } from '@finance-owl/shared';
 
@@ -28,7 +28,7 @@
   $effect(() => {
     if (form?.success) {
       loading = false;
-      invalidateAll();
+      refreshAll();
     }
     if (form?.feeAnalysis) {
       feeAnalysis = form.feeAnalysis;

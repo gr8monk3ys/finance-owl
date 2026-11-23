@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { formatPercent } from '$lib/utils/format';
-  import { Card } from '$components/ui';
+  import { formatPercent } from '#lib/utils/format.ts';
+  import { Card } from '#lib/components/ui/index.ts';
   import { formatCurrency as fmt, formatDateShort } from '@finance-owl/shared';
 
   interface Props {
@@ -74,7 +74,7 @@
 
     {#if netWorthHistory.length > 1}
       <div class="mt-3">
-        {#await import('$lib/components/charts/LineChart.svelte') then { default: LineChart }}
+        {#await import('#lib/components/charts/LineChart.svelte') then { default: LineChart }}
           <LineChart
             labels={netWorthHistory.slice(-7).map((h) => formatDateShort(h.date))}
             datasets={[

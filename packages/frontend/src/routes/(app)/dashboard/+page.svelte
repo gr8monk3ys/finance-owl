@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { formatPercent } from '$lib/utils/format';
-  import { Card, Button, Modal } from '$components/ui';
+  import { formatPercent } from '#lib/utils/format.ts';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
   import { enhance } from '$app/forms';
-  import NetWorthWidget from '$lib/components/dashboard/NetWorthWidget.svelte';
-  import SpendingCategoryWidget from '$lib/components/dashboard/SpendingCategoryWidget.svelte';
-  import BudgetProgressWidget from '$lib/components/dashboard/BudgetProgressWidget.svelte';
-  import RecentTransactionsWidget from '$lib/components/dashboard/RecentTransactionsWidget.svelte';
-  import AccountBalancesWidget from '$lib/components/dashboard/AccountBalancesWidget.svelte';
-  import UpcomingBillsWidget from '$lib/components/dashboard/UpcomingBillsWidget.svelte';
-  import SavingsGoalsWidget from '$lib/components/dashboard/SavingsGoalsWidget.svelte';
-  import CashFlowWidget from '$lib/components/dashboard/CashFlowWidget.svelte';
-  import CreditScoreWidget from '$lib/components/dashboard/CreditScoreWidget.svelte';
-  import QuickActionsWidget from '$lib/components/dashboard/QuickActionsWidget.svelte';
-  import SafeToSpendWidget from '$lib/components/dashboard/SafeToSpendWidget.svelte';
+  import NetWorthWidget from '#lib/components/dashboard/NetWorthWidget.svelte';
+  import SpendingCategoryWidget from '#lib/components/dashboard/SpendingCategoryWidget.svelte';
+  import BudgetProgressWidget from '#lib/components/dashboard/BudgetProgressWidget.svelte';
+  import RecentTransactionsWidget from '#lib/components/dashboard/RecentTransactionsWidget.svelte';
+  import AccountBalancesWidget from '#lib/components/dashboard/AccountBalancesWidget.svelte';
+  import UpcomingBillsWidget from '#lib/components/dashboard/UpcomingBillsWidget.svelte';
+  import SavingsGoalsWidget from '#lib/components/dashboard/SavingsGoalsWidget.svelte';
+  import CashFlowWidget from '#lib/components/dashboard/CashFlowWidget.svelte';
+  import CreditScoreWidget from '#lib/components/dashboard/CreditScoreWidget.svelte';
+  import QuickActionsWidget from '#lib/components/dashboard/QuickActionsWidget.svelte';
+  import SafeToSpendWidget from '#lib/components/dashboard/SafeToSpendWidget.svelte';
   import type { PageData } from './$types';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 

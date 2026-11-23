@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from './$types';
-import { api } from '$lib/server/api';
+import { api } from '#lib/server/api.ts';
 import { fail } from '@sveltejs/kit';
-import { getErrorMessage } from '$lib/server/error';
+import { getErrorMessage } from '#lib/server/error.ts';
 
 export const load: PageServerLoad = async ({ locals }) => {
   try {

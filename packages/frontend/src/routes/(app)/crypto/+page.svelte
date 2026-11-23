@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
-  import { formatPercent as fmtPercent } from '$lib/utils/format';
-  import { Card, Button, Modal, Input } from '$components/ui';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
+  import { formatPercent as fmtPercent } from '#lib/utils/format.ts';
+  import { Card, Button, Modal, Input } from '#lib/components/ui/index.ts';
   import { enhance } from '$app/forms';
   import type { PageData, ActionData } from './$types';
   import { formatDate, formatDateShort, formatMonthYearShort } from '@finance-owl/shared';
@@ -416,7 +416,7 @@
     <div class="grid gap-6 lg:grid-cols-2">
       <Card>
         <h3 class="mb-4 text-lg font-semibold text-white">Portfolio Allocation</h3>
-        {#await import('$lib/components/charts/DonutChart.svelte') then { default: DonutChart }}
+        {#await import('#lib/components/charts/DonutChart.svelte') then { default: DonutChart }}
           <DonutChart
             labels={allocationLabels}
             data={allocationData}
@@ -1443,12 +1443,12 @@
     <!-- Chart -->
     {#if chartLoading}
       <div class="flex items-center justify-center py-12">
-        {#await import('$lib/components/ui/Spinner.svelte') then { default: Spinner }}
+        {#await import('#lib/components/ui/Spinner.svelte') then { default: Spinner }}
           <Spinner />
         {/await}
       </div>
     {:else if priceChartData.length > 0}
-      {#await import('$lib/components/charts/LineChart.svelte') then { default: LineChart }}
+      {#await import('#lib/components/charts/LineChart.svelte') then { default: LineChart }}
         <LineChart
           labels={priceChartLabels}
           datasets={[

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { confirmSubmit } from '$lib/actions/confirm-submit';
-  import { browser } from '$app/environment';
+  import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
+  import { browser } from '$app/env';
   import { enhance } from '$app/forms';
-  import { goto, invalidateAll } from '$app/navigation';
-  import { navigating, page } from '$app/stores';
+  import { goto, refreshAll } from '$app/navigation';
+  import { navigating, page } from '$app/state';
   import { untrack } from 'svelte';
-  import { Card, Button, Modal } from '$components/ui';
-  import { getBudgetCategoryTree } from '$lib/utils/budgets';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
+  import { getBudgetCategoryTree } from '#lib/utils/budgets.ts';
   import { formatCurrency, formatNumber } from '@finance-owl/shared';
   import {
     buildTransactionSearchParams,
@@ -15,7 +15,7 @@
     getMerchantInitials,
     getTransactionDateGroupLabel,
     isIncomeTransaction,
-  } from '$lib/utils/transactions';
+  } from '#lib/utils/transactions.ts';
   import type { PageData, ActionData } from './$types';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
@@ -27,15 +27,16 @@
   let autoSearchPending = $state(false);
 
   // Filter state
-  let searchInput = $state($page.url.searchParams.get('search') || '');
-  let filterAccountId = $state($page.url.searchParams.get('accountId') || '');
-  let filterCategoryId = $state($page.url.searchParams.get('categoryId') || '');
-  let filterStartDate = $state($page.url.searchParams.get('startDate') || '');
-  let filterEndDate = $state($page.url.searchParams.get('endDate') || '');
+  let searchInput = $state(page.url.searchParams.get('search') || '');
+
+  let filterAccountId = $state(page.url.searchParams.get('accountId') || '');
+  let filterCategoryId = $state(page.url.searchParams.get('categoryId') || '');
+  let filterStartDate = $state(page.url.searchParams.get('startDate') || '');
+  let filterEndDate = $state(page.url.searchParams.get('endDate') || '');
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
       showCreateModal = false;
       showDetailModal = false;
     }
@@ -63,10 +64,10 @@
 
   function getAppliedFilters() {
     return {
-      accountId: $page.url.searchParams.get('accountId') || '',
-      categoryId: $page.url.searchParams.get('categoryId') || '',
-      startDate: $page.url.searchParams.get('startDate') || '',
-      endDate: $page.url.searchParams.get('endDate') || '',
+      accountId: page.url.searchParams.get('accountId') || '',
+      categoryId: page.url.searchParams.get('categoryId') || '',
+      startDate: page.url.searchParams.get('startDate') || '',
+      endDate: page.url.searchParams.get('endDate') || '',
     };
   }
 
@@ -95,13 +96,12 @@
     { replaceState = false } = {},
   ) {
     const href = buildTransactionsHref(filters);
-    const currentHref = `${$page.url.pathname}${$page.url.search}`;
+    const currentHref = `${page.url.pathname}${page.url.search}`;
     autoSearchPending = false;
     if (href === currentHref) return;
     void goto(href, {
-      keepFocus: true,
-      noScroll: true,
-      replaceState,
+      reset: false,
+      replace: replaceState,
     });
   }
 
@@ -139,11 +139,11 @@
 
   function goToPage(pageNum: number) {
     navigateToTransactions({
-      search: $page.url.searchParams.get('search') || '',
-      accountId: $page.url.searchParams.get('accountId') || '',
-      categoryId: $page.url.searchParams.get('categoryId') || '',
-      startDate: $page.url.searchParams.get('startDate') || '',
-      endDate: $page.url.searchParams.get('endDate') || '',
+      search: page.url.searchParams.get('search') || '',
+      accountId: page.url.searchParams.get('accountId') || '',
+      categoryId: page.url.searchParams.get('categoryId') || '',
+      startDate: page.url.searchParams.get('startDate') || '',
+      endDate: page.url.searchParams.get('endDate') || '',
       page: pageNum,
     });
   }
@@ -157,22 +157,24 @@
     !!filterAccountId || !!filterCategoryId || !!filterStartDate || !!filterEndDate,
   );
   const hasSearchQuery = $derived(!!searchInput.trim());
+
   const activeFilterCount = $derived(
     [filterAccountId, filterCategoryId, filterStartDate, filterEndDate].filter(Boolean).length,
   );
+
   const hasPendingFilterChanges = $derived(
-    filterAccountId !== ($page.url.searchParams.get('accountId') || '') ||
-      filterCategoryId !== ($page.url.searchParams.get('categoryId') || '') ||
-      filterStartDate !== ($page.url.searchParams.get('startDate') || '') ||
-      filterEndDate !== ($page.url.searchParams.get('endDate') || ''),
+    filterAccountId !== (page.url.searchParams.get('accountId') || '') ||
+      filterCategoryId !== (page.url.searchParams.get('categoryId') || '') ||
+      filterStartDate !== (page.url.searchParams.get('startDate') || '') ||
+      filterEndDate !== (page.url.searchParams.get('endDate') || ''),
   );
 
   $effect(() => {
-    const nextSearch = $page.url.searchParams.get('search') || '';
-    const nextAccountId = $page.url.searchParams.get('accountId') || '';
-    const nextCategoryId = $page.url.searchParams.get('categoryId') || '';
-    const nextStartDate = $page.url.searchParams.get('startDate') || '';
-    const nextEndDate = $page.url.searchParams.get('endDate') || '';
+    const nextSearch = page.url.searchParams.get('search') || '';
+    const nextAccountId = page.url.searchParams.get('accountId') || '';
+    const nextCategoryId = page.url.searchParams.get('categoryId') || '';
+    const nextStartDate = page.url.searchParams.get('startDate') || '';
+    const nextEndDate = page.url.searchParams.get('endDate') || '';
 
     if (untrack(() => searchInput) !== nextSearch) searchInput = nextSearch;
     if (untrack(() => filterAccountId) !== nextAccountId) filterAccountId = nextAccountId;
@@ -184,7 +186,7 @@
   $effect(() => {
     if (!browser) return;
 
-    const currentSearch = ($page.url.searchParams.get('search') || '').trim();
+    const currentSearch = (page.url.searchParams.get('search') || '').trim();
     const nextSearch = searchInput.trim();
 
     if (nextSearch === currentSearch) {
@@ -194,13 +196,10 @@
 
     autoSearchPending = true;
     const appliedFilters = getAppliedFilters();
+
     const timeout = window.setTimeout(() => {
       navigateToTransactions(
-        {
-          ...appliedFilters,
-          search: searchInput,
-          page: undefined,
-        },
+        { ...appliedFilters, search: searchInput, page: undefined },
         { replaceState: true },
       );
     }, 250);
@@ -212,9 +211,7 @@
   });
 </script>
 
-<svelte:head>
-  <title>Transactions - Finance Owl</title>
-</svelte:head>
+<svelte:head><title>Transactions - Finance Owl</title></svelte:head>
 
 <div class="page-enter space-y-6">
   <!-- Header -->
@@ -241,7 +238,7 @@
         stroke="currentColor"
         stroke-width="2"
       >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
       </svg>
       Add Transaction
     </Button>
@@ -323,7 +320,7 @@
           Filters.
         </p>
         <p class="break-words text-surface-400">
-          {#if autoSearchPending || $navigating}
+          {#if autoSearchPending || navigating.to}
             Updating…
           {:else if hasSearchQuery}
             Showing results for “{searchInput.trim()}”
@@ -368,7 +365,7 @@
               {#each getBudgetCategoryTree(data.categories) as parent}
                 <option value={parent.id}>{parent.name}</option>
                 {#each parent.children as child}
-                  <option value={child.id}>&nbsp;&nbsp;{child.name}</option>
+                  <option value={child.id}>{child.name}</option>
                 {/each}
               {/each}
             </select>
@@ -610,7 +607,7 @@
               stroke="currentColor"
               stroke-width="2"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
             </svg>
           </button>
           <span class="px-3 text-sm text-surface-400">
@@ -631,7 +628,7 @@
               stroke="currentColor"
               stroke-width="2"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
             </svg>
           </button>
         </div>
@@ -641,6 +638,7 @@
 </div>
 
 <!-- Create Transaction Modal -->
+
 <Modal open={showCreateModal} onclose={() => (showCreateModal = false)} title="Add Transaction">
   <form
     method="POST"
@@ -739,7 +737,7 @@
         {#each getBudgetCategoryTree(data.categories) as parent}
           <option value={parent.id}>{parent.name}</option>
           {#each parent.children as child}
-            <option value={child.id}>&nbsp;&nbsp;{child.name}</option>
+            <option value={child.id}>{child.name}</option>
           {/each}
         {/each}
       </select>
@@ -761,12 +759,14 @@
     <div class="flex justify-end gap-3 border-t border-surface-700/50 pt-4">
       <Button variant="ghost" type="button" onclick={() => (showCreateModal = false)}>Cancel</Button
       >
+
       <Button type="submit">Add Transaction</Button>
     </div>
   </form>
 </Modal>
 
 <!-- Transaction Detail Modal -->
+
 <Modal open={showDetailModal} onclose={() => (showDetailModal = false)} title="Transaction Details">
   {#if selectedTransaction}
     <div class="space-y-4">
@@ -852,7 +852,7 @@
             {#each getBudgetCategoryTree(data.categories) as parent}
               <option value={parent.id}>{parent.name}</option>
               {#each parent.children as child}
-                <option value={child.id}>&nbsp;&nbsp;{child.name}</option>
+                <option value={child.id}>{child.name}</option>
               {/each}
             {/each}
           </select>

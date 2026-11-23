@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { API_URL } from '$lib/server/api';
+import { API_URL } from '#lib/server/api.ts';
 
 export const actions: Actions = {
   default: async ({ cookies }) => {

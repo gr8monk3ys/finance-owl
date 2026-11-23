@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { formatPercent, formatDecimal } from '$lib/utils/format';
+  import { formatPercent, formatDecimal } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
   import { goto } from '$app/navigation';
-  import { Card, Button } from '$components/ui';
+  import { Card, Button } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 

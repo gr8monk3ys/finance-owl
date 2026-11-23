@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { formatFileSize } from '$lib/utils/format';
+  import { formatFileSize } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button } from '$components/ui';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
   import {
     formatCurrency as formatAmount,
@@ -752,7 +752,7 @@
             return async ({ update }) => {
               isLoading = false;
               await update();
-              invalidateAll();
+              refreshAll();
             };
           }}
         >

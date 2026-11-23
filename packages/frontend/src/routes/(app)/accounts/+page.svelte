@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button, Modal } from '$components/ui';
-  import PlaidLink from '$lib/components/plaid/PlaidLink.svelte';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
+  import PlaidLink from '#lib/components/plaid/PlaidLink.svelte';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency } from '@finance-owl/shared';
 
@@ -26,14 +26,14 @@
       updateLinkToken = form.updateLinkToken;
     }
     if (form?.success || form?.refreshSuccess) {
-      invalidateAll();
+      refreshAll();
       linkToken = null;
       updateLinkToken = null;
     }
     if (form?.syncSuccess && form?.syncResult) {
       syncResult = form.syncResult;
       syncing = null;
-      invalidateAll();
+      refreshAll();
     }
     if (form?.error) {
       error = form.error;
@@ -67,7 +67,7 @@
 
     if (res.ok) {
       const result = await res.json();
-      invalidateAll();
+      refreshAll();
       // The server action returns linkedPlaidItemId - extract and sync
       const itemId = result?.data?.linkedPlaidItemId ?? (typeof result === 'string' ? null : null);
       if (itemId) {
@@ -94,7 +94,7 @@
       if (res.ok) {
         const result = await res.json();
         syncResult = result?.data?.syncResult ?? null;
-        invalidateAll();
+        refreshAll();
       } else {
         error = 'Couldn’t sync transactions. Check your connection and try again.';
       }
@@ -335,7 +335,7 @@
       linkToken={updateLinkToken}
       onSuccess={() => {
         updateLinkToken = null;
-        invalidateAll();
+        refreshAll();
       }}
       onExit={() => (updateLinkToken = null)}
       buttonText="Re-authenticate"

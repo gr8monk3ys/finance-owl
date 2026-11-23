@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
-  import { Button, Card, Input, Modal } from '$components/ui';
+  import { Button, Card, Input, Modal } from '#lib/components/ui/index.ts';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 

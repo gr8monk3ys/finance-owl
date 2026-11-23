@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card } from '$components/ui';
+  import { Card } from '#lib/components/ui/index.ts';
   import { formatDate } from '@finance-owl/shared';
 
   interface CreditScore {

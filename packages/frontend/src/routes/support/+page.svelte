@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { publicMailto, publicRoutes, publicSite } from '$lib/config/public';
+  import { publicMailto, publicRoutes, publicSite } from '#lib/config/public.ts';
 
   const contactCards = [
     {

@@ -40,6 +40,7 @@ export function guardUnsavedForms(): void {
   });
 
   beforeNavigate((navigation) => {
+    if (navigation.shallow && navigation.type === 'goto') return;
     if (!hasUnsaved()) return;
     if (navigation.to?.url.pathname === navigation.from?.url.pathname) return;
     // Closing the tab or leaving the app: cancelling shows the browser's own prompt.

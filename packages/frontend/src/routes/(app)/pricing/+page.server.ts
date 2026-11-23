@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { api } from '$lib/server/api';
-import { getErrorMessage, getErrorStatus } from '$lib/server/error';
+import { api } from '#lib/server/api.ts';
+import { getErrorMessage, getErrorStatus } from '#lib/server/error.ts';
 
 export const load: PageServerLoad = async ({ locals }) => {
   try {
@@ -40,7 +40,7 @@ export const actions: Actions = {
       });
 
       if (result?.url) {
-        throw redirect(303, result.url);
+        throw redirect(303, result.url, { external: ['https://checkout.stripe.com'] });
       }
     } catch (e: unknown) {
       if (getErrorStatus(e) === 303) throw e;

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { confirmSubmit } from '$lib/actions/confirm-submit';
+  import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll, goto } from '$app/navigation';
-  import { page } from '$app/stores';
-  import { Card, Button, Modal } from '$components/ui';
+  import { refreshAll, goto } from '$app/navigation';
+  import { page } from '$app/state';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
@@ -14,7 +14,7 @@
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
       showNewPostModal = false;
       replyingToPost = null;
       confirmDeletePost = null;
@@ -76,7 +76,7 @@
   }
 
   function setCategory(cat: string) {
-    const url = new URL($page.url);
+    const url = new URL(page.url.href);
     if (cat) {
       url.searchParams.set('category', cat);
     } else {
@@ -270,6 +270,7 @@
 </div>
 
 <!-- New Post Modal -->
+
 <Modal open={showNewPostModal} onclose={() => (showNewPostModal = false)} title="New Post">
   <form
     method="POST"
@@ -334,15 +335,17 @@
     </label>
 
     <div class="flex justify-end gap-3 pt-2">
-      <Button variant="ghost" type="button" onclick={() => (showNewPostModal = false)}>
-        Cancel
-      </Button>
+      <Button variant="ghost" type="button" onclick={() => (showNewPostModal = false)}
+        >Cancel</Button
+      >
+
       <Button type="submit">Post</Button>
     </div>
   </form>
 </Modal>
 
 <!-- Reply Modal -->
+
 <Modal open={replyingToPost !== null} onclose={() => (replyingToPost = null)} title="Reply to Post">
   {#if replyingToPost}
     <div class="mb-4 rounded-lg bg-surface-900 p-3">
@@ -377,9 +380,9 @@
       </div>
 
       <div class="flex justify-end gap-3 pt-2">
-        <Button variant="ghost" type="button" onclick={() => (replyingToPost = null)}>
-          Cancel
-        </Button>
+        <Button variant="ghost" type="button" onclick={() => (replyingToPost = null)}>Cancel</Button
+        >
+
         <Button type="submit">Reply</Button>
       </div>
     </form>

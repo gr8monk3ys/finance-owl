@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { readParam, syncParam } from '$lib/utils/url-state';
+  import { readParam, syncParam } from '#lib/utils/url-state.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button } from '$components/ui';
-  import BillCalendar from '$lib/components/bills/BillCalendar.svelte';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button } from '#lib/components/ui/index.ts';
+  import BillCalendar from '#lib/components/bills/BillCalendar.svelte';
   import type { PageData, ActionData } from './$types';
   import {
     formatCurrency as fmt,
@@ -24,7 +24,7 @@
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
     }
   });
 

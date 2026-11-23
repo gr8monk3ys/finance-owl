@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button, Modal } from '$components/ui';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt, formatDate } from '@finance-owl/shared';
 
@@ -925,7 +925,7 @@
             use:enhance={() => {
               return async ({ update }) => {
                 await update();
-                await invalidateAll();
+                await refreshAll();
               };
             }}
           >
@@ -1265,7 +1265,7 @@
       use:enhance={() => {
         return async ({ update }) => {
           await update();
-          await invalidateAll();
+          await refreshAll();
         };
       }}
     >

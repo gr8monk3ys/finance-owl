@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { formatPercent, formatDecimal } from '$lib/utils/format';
+  import { formatPercent, formatDecimal } from '#lib/utils/format.ts';
   import { goto } from '$app/navigation';
-  import { Card, Button } from '$components/ui';
-  import { LineChart } from '$components/charts';
+  import { Card, Button } from '#lib/components/ui/index.ts';
+  import { LineChart } from '#lib/components/charts/index.ts';
   import type { PageData } from './$types';
   import { formatCurrency as fmt, formatDateShort } from '@finance-owl/shared';
 
@@ -21,7 +21,7 @@
   }
 
   function selectPeriod(period: string) {
-    goto(`/investments/performance?period=${period}`, { invalidateAll: true });
+    goto(`/investments/performance?period=${period}`, { refreshAll: true });
   }
 
   const chartLabels = $derived(

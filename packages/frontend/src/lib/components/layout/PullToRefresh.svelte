@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { invalidateAll } from '$app/navigation';
-  import { Spinner } from '$components/ui';
+  import { refreshAll } from '$app/navigation';
+  import { Spinner } from '#lib/components/ui/index.ts';
 
   const THRESHOLD = 60;
 
@@ -39,7 +39,7 @@
     if (pullDistance >= THRESHOLD) {
       refreshing = true;
       pullDistance = THRESHOLD;
-      await invalidateAll();
+      await refreshAll();
       refreshing = false;
     }
 

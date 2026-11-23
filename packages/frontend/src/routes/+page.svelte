@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { publicRoutes } from '$lib/config/public';
+  import { publicRoutes } from '#lib/config/public.ts';
   import { PLANS, formatCurrency, type PlanTier } from '@finance-owl/shared';
 
   // The marketing copy here is bespoke, but the prices are not: read them

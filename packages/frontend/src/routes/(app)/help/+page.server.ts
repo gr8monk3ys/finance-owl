@@ -1,6 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { api } from '$lib/server/api';
+import { api } from '#lib/server/api.ts';
 
 export const actions: Actions = {
   contact: async ({ request, locals }) => {

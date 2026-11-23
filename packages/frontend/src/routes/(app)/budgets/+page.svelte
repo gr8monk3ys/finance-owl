@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { confirmSubmit } from '$lib/actions/confirm-submit';
-  import { formatPercent } from '$lib/utils/format';
+  import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
+  import { formatPercent } from '#lib/utils/format.ts';
   import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { Card, Button, Modal } from '$components/ui';
+  import { refreshAll } from '$app/navigation';
+  import { Card, Button, Modal } from '#lib/components/ui/index.ts';
   import {
     getBudgetCategoryIcon,
     getBudgetCategoryTree,
     getBudgetProgressGradient,
     getBudgetProgressTextColor,
     getBudgetStatusBadge,
-  } from '$lib/utils/budgets';
+  } from '#lib/utils/budgets.ts';
   import type { PageData, ActionData } from './$types';
   import { formatCurrency as fmt, formatCurrencyWhole } from '@finance-owl/shared';
 
@@ -24,7 +24,7 @@
 
   $effect(() => {
     if (form?.success) {
-      invalidateAll();
+      refreshAll();
       showCreateModal = false;
       editingBudget = null;
       createCategoryId = '';

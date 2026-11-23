@@ -1,14 +1,14 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { Card, Button } from '$components/ui';
-  import { LineChart, BarChart } from '$components/charts';
+  import { Card, Button } from '#lib/components/ui/index.ts';
+  import { LineChart, BarChart } from '#lib/components/charts/index.ts';
   import type { PageData } from './$types';
   import { formatCurrency as fmt } from '@finance-owl/shared';
 
   let { data } = $props<{ data: PageData }>();
 
   function changePeriod(months: number) {
-    goto(`/forecast?months=${months}`, { invalidateAll: true });
+    goto(`/forecast?months=${months}`, { refreshAll: true });
   }
 
   // Chart data
