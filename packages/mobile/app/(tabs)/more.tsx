@@ -709,7 +709,6 @@ export default function MoreScreen() {
   const supportEmail = process.env.EXPO_PUBLIC_SUPPORT_EMAIL?.trim() || 'support@financeowl.com';
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
   const [showSecurity, setShowSecurity] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
 
   async function openUrl(url: string, title: string) {
     try {
@@ -818,13 +817,9 @@ export default function MoreScreen() {
       accentColor: colors.primary[400],
       onPress: () => setShowSecurity(true),
     },
-    {
-      title: 'Notifications',
-      subtitle: 'Email alerts and push notification settings',
-      icon: 'bell',
-      accentColor: '#fbbf24',
-      onPress: () => setShowNotifications(true),
-    },
+    // Notifications is hidden: the backend has no /notifications/preferences
+    // route (#197). NotificationsScreen above stays; restore this item (and
+    // mount the screen) once the route exists.
     {
       title: 'Billing',
       subtitle: 'Subscription plan and payment details',

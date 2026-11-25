@@ -64,7 +64,13 @@ describe('dashboard page server', () => {
       .mockResolvedValueOnce(new Response('no accounts', { status: 500 }))
       .mockResolvedValueOnce(new Response('no credit', { status: 500 }))
       .mockResolvedValueOnce(new Response('no layout', { status: 500 }))
-      .mockResolvedValueOnce(new Response('no safe-to-spend', { status: 500 }));
+      .mockResolvedValueOnce(new Response('no safe-to-spend', { status: 500 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ data: [{ id: 'txn_1', name: 'Coffee', amount: 4.5 }] }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+      );
 
     const data = (await load({
       locals: { accessToken: 'access-token' },
@@ -75,7 +81,9 @@ describe('dashboard page server', () => {
     expect(data.budgetSummary).toBeNull();
     expect(data.budgets).toEqual([]);
     expect(data.widgetLayout).toBeNull();
-    expect(mockApi).toHaveBeenCalledTimes(20);
+    expect(data.recentTransactions).toEqual([{ id: 'txn_1', name: 'Coffee', amount: 4.5 }]);
+    expect(String(mockApi.mock.calls[12][0])).toMatch(/\/api\/transactions\?limit=7$/);
+    expect(mockApi).toHaveBeenCalledTimes(21);
   });
 
   it('returns the empty dashboard shell when core requests fail', async () => {
@@ -86,6 +94,7 @@ describe('dashboard page server', () => {
     } as never)) as any;
 
     expect(data.dashboard.recentTransactions).toEqual([]);
+    expect(data.recentTransactions).toEqual([]);
     expect(data.netWorth).toEqual({ assets: 0, liabilities: 0, netWorth: 0, accountCount: 0 });
     expect(data.budgets).toEqual([]);
     expect(data.safeToSpend).toBeNull();

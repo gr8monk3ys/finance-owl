@@ -16,6 +16,7 @@ export const load: PageServerLoad = async ({ locals }) => {
       creditScore,
       widgetLayout,
       safeToSpend,
+      recentTransactions,
     ] = await Promise.all([
       api('/analytics/dashboard', { accessToken: locals.accessToken }).catch(() => ({
         currentMonthSpending: 0,
@@ -40,6 +41,11 @@ export const load: PageServerLoad = async ({ locals }) => {
       api('/credit/score', { accessToken: locals.accessToken }).catch(() => null),
       api('/dashboard/layout', { accessToken: locals.accessToken }).catch(() => null),
       api('/analytics/safe-to-spend', { accessToken: locals.accessToken }).catch(() => null),
+      // `/analytics/dashboard` no longer exists (#197), so recent activity comes
+      // straight from the live transactions list (newest first).
+      api('/transactions?limit=7', { accessToken: locals.accessToken })
+        .then((page) => page?.data ?? [])
+        .catch(() => []),
     ]);
 
     return {
@@ -55,6 +61,7 @@ export const load: PageServerLoad = async ({ locals }) => {
       creditScore,
       widgetLayout,
       safeToSpend,
+      recentTransactions,
     };
   } catch {
     return {
@@ -77,6 +84,7 @@ export const load: PageServerLoad = async ({ locals }) => {
       creditScore: null,
       widgetLayout: null,
       safeToSpend: null,
+      recentTransactions: [],
     };
   }
 };
