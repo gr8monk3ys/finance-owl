@@ -231,7 +231,8 @@ describe('ScheduleRegistrar', () => {
       },
     ]);
 
-    const [, , jobTemplate] = queues[QUEUES.TRANSACTION_SYNC].upsertJobScheduler.mock.calls[0];
+    const [, , jobTemplate] =
+      queues[QUEUES.TRANSACTION_SYNC].upsertJobScheduler.mock.calls[0] ?? [];
     expect(jobTemplate.data).toEqual({});
   });
 });
