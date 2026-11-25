@@ -39,7 +39,7 @@ export const actions: Actions = {
     const fd = await request.formData();
     const reason = fd.get('reason') as string;
     try {
-      await api('/privacy/deletion', {
+      await api('/account/delete', {
         method: 'POST',
         body: { reason },
         accessToken: locals.accessToken,
