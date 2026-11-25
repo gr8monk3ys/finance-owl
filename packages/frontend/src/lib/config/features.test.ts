@@ -43,6 +43,7 @@ describe('feature availability', () => {
     expect(isWidgetAvailable('credit-score')).toBe(false);
     expect(isWidgetAvailable('safe-to-spend')).toBe(false);
     expect(isWidgetAvailable('net-worth')).toBe(true);
+    expect(isWidgetAvailable('recent-transactions')).toBe(true);
     expect(isWidgetAvailable('upcoming-bills')).toBe(true);
     expect(isWidgetAvailable('quick-actions')).toBe(true);
   });

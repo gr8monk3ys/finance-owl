@@ -242,9 +242,7 @@
     return formatPercent(pct, 1, { signed: true });
   }
 
-  const hasData = $derived(
-    data.netWorth.accountCount > 0 || data.dashboard.recentTransactions.length > 0,
-  );
+  const hasData = $derived(data.netWorth.accountCount > 0 || data.recentTransactions.length > 0);
 </script>
 
 <svelte:head>
@@ -529,7 +527,7 @@
           {:else if widget.type === 'budget-progress'}
             <BudgetProgressWidget budgets={data.budgets} />
           {:else if widget.type === 'recent-transactions'}
-            <RecentTransactionsWidget transactions={data.dashboard.recentTransactions} />
+            <RecentTransactionsWidget transactions={data.recentTransactions} />
           {:else if widget.type === 'account-balances'}
             <AccountBalancesWidget accounts={data.accounts} />
           {:else if widget.type === 'upcoming-bills'}

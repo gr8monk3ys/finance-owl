@@ -45,7 +45,6 @@ const UNAVAILABLE_ROUTES = [
 const UNAVAILABLE_WIDGETS = new Set([
   'cash-flow',
   'credit-score',
-  'recent-transactions',
   'safe-to-spend',
   'spending-category',
 ]);
