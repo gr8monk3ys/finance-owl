@@ -1,6 +1,7 @@
 <script lang="ts">
   import { formatPercent } from '#lib/utils/format.ts';
   import { Card, Button, Modal } from '#lib/components/ui/index.ts';
+  import { isWidgetAvailable } from '#lib/config/features.ts';
   import { enhance } from '$app/forms';
   import NetWorthWidget from '#lib/components/dashboard/NetWorthWidget.svelte';
   import SpendingCategoryWidget from '#lib/components/dashboard/SpendingCategoryWidget.svelte';
@@ -61,7 +62,7 @@
   };
 
   // Default layout
-  const defaultWidgets = [
+  const allWidgets = [
     {
       id: 'net-worth',
       type: 'net-worth',
@@ -141,13 +142,16 @@
     },
   ];
 
-  type Widget = (typeof defaultWidgets)[number];
+  type Widget = (typeof allWidgets)[number];
+
+  // Widgets fed only by removed endpoints are hidden everywhere, saved layouts included.
+  const defaultWidgets = allWidgets.filter((w) => isWidgetAvailable(w.type));
 
   let widgets = $state<Widget[]>([...defaultWidgets]);
 
   $effect(() => {
     if (data.widgetLayout && Array.isArray(data.widgetLayout)) {
-      widgets = data.widgetLayout as Widget[];
+      widgets = (data.widgetLayout as Widget[]).filter((w) => isWidgetAvailable(w.type));
     }
   });
 

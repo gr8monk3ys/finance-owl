@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Card } from '#lib/components/ui/index.ts';
+  import { isRouteAvailable } from '#lib/config/features.ts';
 
-  const actions = [
+  const allActions = [
     {
       label: 'Add Transaction',
       href: '/transactions?action=add',
@@ -39,6 +40,7 @@
       color: 'text-cyan-400',
     },
   ];
+  const actions = allActions.filter((action) => isRouteAvailable(action.href));
 </script>
 
 <Card class="h-full">

@@ -9,6 +9,7 @@
   import PullToRefresh from '#lib/components/layout/PullToRefresh.svelte';
   import InstallPrompt from '#lib/components/layout/InstallPrompt.svelte';
   import { tenantBranding, initTenantBranding, appName } from '#lib/stores/tenant.ts';
+  import { isRouteAvailable } from '#lib/config/features.ts';
 
   let { data, children } = $props<{ data: LayoutData; children: any }>();
   let mobileMenuOpen = $state(false);
@@ -32,7 +33,7 @@
     group: 'main' | 'finance' | 'insights' | 'tools';
   }
 
-  const navItems: NavItem[] = [
+  const allNavItems: NavItem[] = [
     { href: '/dashboard', label: 'Dashboard', icon: 'home', group: 'main' },
     { href: '/accounts', label: 'Accounts', icon: 'wallet', group: 'main' },
     { href: '/transactions', label: 'Transactions', icon: 'list', group: 'main' },
@@ -54,6 +55,7 @@
     { href: '/receipts', label: 'Receipts', icon: 'receipt', group: 'tools' },
     { href: '/ask', label: 'Ask AI', icon: 'sparkles', group: 'tools' },
   ];
+  const navItems = allNavItems.filter((item) => isRouteAvailable(item.href));
 
   const groupLabels: Record<string, string> = {
     main: 'Overview',
@@ -62,7 +64,10 @@
     tools: 'Tools',
   };
 
-  const groups = ['main', 'finance', 'insights', 'tools'] as const;
+  // Skip groups whose items are all hidden, so no empty heading shows.
+  const groups = (['main', 'finance', 'insights', 'tools'] as const).filter((group) =>
+    navItems.some((item) => item.group === group),
+  );
 
   function isActive(href: string): boolean {
     const path = page.url.pathname;
@@ -572,30 +577,32 @@
       <!-- Header right actions -->
       <div class="flex items-center gap-2">
         <!-- Notifications placeholder -->
-        <a
-          href="/settings/notifications"
-          class="relative rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70"
-          aria-label="Notification settings"
-        >
-          <svg
-            aria-hidden="true"
-            class="h-5 w-5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
+        {#if isRouteAvailable('/settings/notifications')}
+          <a
+            href="/settings/notifications"
+            class="relative rounded-lg p-2 text-surface-400 hover:bg-surface-700/50 hover:text-white transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400/70"
+            aria-label="Notification settings"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-            />
-          </svg>
-          <!-- Notification dot -->
-          <span
-            class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary-400 ring-2 ring-surface-800"
-          ></span>
-        </a>
+            <svg
+              aria-hidden="true"
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
+            </svg>
+            <!-- Notification dot -->
+            <span
+              class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary-400 ring-2 ring-surface-800"
+            ></span>
+          </a>
+        {/if}
 
         <!-- User avatar in header -->
         <a

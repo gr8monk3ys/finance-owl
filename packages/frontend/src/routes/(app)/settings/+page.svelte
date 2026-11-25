@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import { Card } from '#lib/components/ui/index.ts';
+  import { isRouteAvailable } from '#lib/config/features.ts';
 
   let { data }: { data: PageData } = $props();
 
@@ -12,7 +13,7 @@
     iconColor: string;
   }
 
-  const settingsLinks: SettingsLink[] = [
+  const allSettingsLinks: SettingsLink[] = [
     {
       title: 'Security',
       description: 'Passkeys, two-factor authentication, password, and sessions',
@@ -49,6 +50,7 @@
       iconColor: 'text-cyan-400 bg-cyan-600/20',
     },
   ];
+  const settingsLinks = allSettingsLinks.filter((link) => isRouteAvailable(link.href));
 </script>
 
 <svelte:head>
