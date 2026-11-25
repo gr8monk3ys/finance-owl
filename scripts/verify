@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Fast gate that Claude Code runs before a session can finish: CI's format,
+# lint, typecheck and unit-test jobs. No Postgres, Redis, browser or build of the
+# apps; the full check before a PR also needs `test:integration` and `test:e2e`.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+bun install --frozen-lockfile
+bun run format:check
+bun run build --filter @finance-owl/shared
+bun run lint
+bun run typecheck
+bun run --filter @finance-owl/shared test
+bun run --filter @finance-owl/frontend test
+bun run --filter @finance-owl/backend test --coverage
