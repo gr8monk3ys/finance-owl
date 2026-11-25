@@ -78,9 +78,18 @@ test.describe('Dashboard — Sidebar navigation', () => {
     await expect(page).toHaveURL(/\/savings/);
   });
 
-  test('should navigate to Reports via sidebar', async ({ authenticatedPage: page }) => {
-    await sidebar(page).getByRole('link', { name: 'Reports', exact: true }).click();
-    await expect(page).toHaveURL(/\/reports/);
+  test('should navigate to Subscriptions via sidebar', async ({ authenticatedPage: page }) => {
+    await sidebar(page).getByRole('link', { name: 'Subscriptions', exact: true }).click();
+    await expect(page).toHaveURL(/\/subscriptions/);
+  });
+
+  test('should not link to features whose backend was removed', async ({
+    authenticatedPage: page,
+  }) => {
+    // See lib/config/features.ts (#197).
+    for (const name of ['Reports', 'Investments', 'Credit Score', 'Envelopes']) {
+      await expect(sidebar(page).getByRole('link', { name, exact: true })).toHaveCount(0);
+    }
   });
 
   test('should highlight the active nav item', async ({ authenticatedPage: page }) => {
