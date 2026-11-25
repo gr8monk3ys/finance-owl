@@ -2,9 +2,15 @@ import type { PageServerLoad, Actions } from './$types';
 import { api } from '#lib/server/api.ts';
 import { getErrorMessage } from '#lib/server/error.ts';
 
+const EMPTY_DASHBOARD = { consents: [], exports: [], deletions: [] };
+
 export const load: PageServerLoad = async ({ locals }) => {
-  const dashboard = await api('/privacy/dashboard', { accessToken: locals.accessToken });
-  return { dashboard: dashboard ?? { consents: [], exports: [], deletions: [] } };
+  // The backend privacy module was removed (#197), so this call 404s. Fall back
+  // to an empty dashboard so the page, and its delete-account form, still render.
+  const dashboard = await api('/privacy/dashboard', { accessToken: locals.accessToken }).catch(
+    () => null,
+  );
+  return { dashboard: dashboard ?? EMPTY_DASHBOARD };
 };
 
 export const actions: Actions = {
@@ -39,7 +45,7 @@ export const actions: Actions = {
     const fd = await request.formData();
     const reason = fd.get('reason') as string;
     try {
-      await api('/privacy/deletion', {
+      await api('/account/delete', {
         method: 'POST',
         body: { reason },
         accessToken: locals.accessToken,
