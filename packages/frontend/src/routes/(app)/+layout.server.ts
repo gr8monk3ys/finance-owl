@@ -1,25 +1,15 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-import { api } from '#lib/server/api.ts';
 
-export const load: LayoutServerLoad = async ({ locals, url }) => {
+export const load: LayoutServerLoad = async ({ locals }) => {
   if (!locals.user) {
     throw redirect(303, '/auth/login');
   }
 
-  // Resolve tenant branding from the current domain (optional, graceful fallback)
-  let tenant = null;
-  try {
-    const host = url.hostname;
-    if (host && host !== 'localhost') {
-      tenant = await api(`/tenants/resolve?domain=${encodeURIComponent(host)}`);
-    }
-  } catch {
-    // Tenant resolution is optional - continue in single-tenant mode
-  }
-
+  // The backend has no tenants module (#197), so there is no branding to
+  // resolve. `null` keeps the default Finance Owl branding.
   return {
     user: locals.user,
-    tenant,
+    tenant: null,
   };
 };
