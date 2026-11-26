@@ -662,7 +662,7 @@
           </div>
 
           <div class="mt-8 space-y-5">
-            {#each budgetCategories as category, i}
+            {#each budgetCategories as category}
               <div class="rounded-xl border border-surface-700/50 bg-surface-800/50 p-4">
                 <div class="flex items-center justify-between">
                   <span class="text-sm font-medium text-white">{category.name}</span>
@@ -677,7 +677,7 @@
                   min="0"
                   max={category.max}
                   step="25"
-                  bind:value={budgetCategories[i].amount}
+                  bind:value={category.amount}
                   class="mt-3 w-full accent-primary-500"
                 />
                 <div class="mt-1 flex justify-between text-xs text-surface-500">

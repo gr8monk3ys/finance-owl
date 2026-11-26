@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NotFoundException } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
@@ -87,8 +88,8 @@ describe('TransactionsService', () => {
 
     service = new TransactionsService(
       mockDb,
-      mockCacheService as any,
-      mockCategorizationService as any,
+      fromAny(mockCacheService),
+      fromAny(mockCategorizationService),
     );
   });
 
@@ -322,6 +323,37 @@ describe('TransactionsService', () => {
       });
       expect(mockDb.update).toHaveBeenCalled();
       expect(result).toEqual(recategorizedTx);
+    });
+
+    it('should return the inserted transaction when the recategorizing update matches no row', async () => {
+      const createData = {
+        accountId: 'account-1',
+        amount: 15.49,
+        name: 'Netflix',
+        merchantName: 'Netflix',
+        date: '2026-02-10',
+      };
+      const insertedTx = {
+        id: 'txn-new',
+        userId: mockUserId,
+        ...createData,
+        categoryId: null,
+        isManual: true,
+        pending: false,
+        categorizationSource: null,
+      };
+
+      mockDb.select.mockReturnValueOnce(mockQuery([{ id: 'account-1' }]));
+      mockDb.insert.mockReturnValueOnce(mockQuery([insertedTx]));
+      mockCategorizationService.categorize.mockResolvedValue({
+        categoryId: 'cat-streaming',
+        source: 'rule',
+      });
+      mockDb.update.mockReturnValueOnce(mockQuery([]));
+
+      const result = await service.createManual(mockUserId, createData);
+
+      expect(result).toEqual(insertedTx);
     });
 
     it('should default pending to false when not specified', async () => {

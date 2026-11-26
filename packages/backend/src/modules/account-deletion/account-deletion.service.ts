@@ -41,6 +41,7 @@ import {
   categorizationRules,
   categorizationCorrections,
 } from '../../database/schema/categories';
+import { firstRow } from '../../common/db/first-row';
 
 /** Grace period before actual deletion: 14 days. */
 const GRACE_PERIOD_MS = 14 * 24 * 60 * 60 * 1000;
@@ -90,15 +91,17 @@ export class AccountDeletionService {
 
     const scheduledAt = new Date(Date.now() + GRACE_PERIOD_MS).toISOString();
 
-    const [request] = await this.db
-      .insert(dataDeletionRequests)
-      .values({
-        userId,
-        reason,
-        status: 'pending',
-        scheduledAt,
-      })
-      .returning();
+    const request = firstRow(
+      await this.db
+        .insert(dataDeletionRequests)
+        .values({
+          userId,
+          reason,
+          status: 'pending',
+          scheduledAt,
+        })
+        .returning(),
+    );
 
     // Send confirmation email
     await this.emailService.sendEmail(

@@ -210,7 +210,7 @@ describe('HouseholdsService', () => {
 
       const result = await service.updateName(ownerId, householdId, 'New');
 
-      expect(result.name).toBe('New');
+      expect(result?.name).toBe('New');
       const set = update.set.mock.calls[0][0];
       expect(set.name).toBe('New');
       expect(Number.isNaN(Date.parse(set.updatedAt))).toBe(false);
@@ -282,7 +282,7 @@ describe('HouseholdsService', () => {
 
       const result = await service.updateMemberRole(ownerId, householdId, 'm-v', 'editor');
 
-      expect(result.role).toBe('editor');
+      expect(result?.role).toBe('editor');
       expect(update.set).toHaveBeenCalledWith({ role: 'editor' });
     });
 

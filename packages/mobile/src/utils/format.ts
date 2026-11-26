@@ -66,7 +66,8 @@ export function getDateGroupLabel(dateStr: string): string {
 export function getMerchantInitials(name: string): string {
   if (!name) return '?';
   const words = name.trim().split(/\s+/);
-  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  const [first, second] = words;
+  if (first && second) return (first.charAt(0) + second.charAt(0)).toUpperCase();
   return name.slice(0, 2).toUpperCase();
 }
 
@@ -99,5 +100,5 @@ export function getHashColor(name: string): string {
     '#3b82f6',
     '#6366f1',
   ];
-  return colors[Math.abs(hash) % colors.length];
+  return colors[Math.abs(hash) % colors.length] ?? '#64748b';
 }

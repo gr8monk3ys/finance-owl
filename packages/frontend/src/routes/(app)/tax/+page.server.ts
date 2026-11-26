@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   addDocument: async ({ request, locals }) => {
     const formData = await request.formData();
     const data = {
@@ -113,4 +113,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to generate summary' });
     }
   },
-};
+} satisfies Actions;

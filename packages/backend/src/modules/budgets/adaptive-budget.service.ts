@@ -163,9 +163,8 @@ export class AdaptiveBudgetService {
       // Group spending by calendar month
       const byCalendarMonth: Record<number, number[]> = {};
       for (const m of cat.months) {
-        const monthNum = parseInt(m.month.split('-')[1], 10);
-        if (!byCalendarMonth[monthNum]) byCalendarMonth[monthNum] = [];
-        byCalendarMonth[monthNum].push(m.total);
+        const monthNum = parseInt(m.month.split('-')[1] ?? '', 10);
+        (byCalendarMonth[monthNum] ??= []).push(m.total);
       }
 
       // Detect months that are significantly above average
@@ -323,7 +322,7 @@ export class AdaptiveBudgetService {
     // Current period spending
     const now = new Date();
     const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
-    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10);
 
     for (const budget of budgets) {
       if (!budget.categoryId) continue;
@@ -477,7 +476,7 @@ export class AdaptiveBudgetService {
       confidence = Math.round(confidence * 100) / 100;
 
       // Month-over-month change
-      const lastMonthTotal = totals.length > 0 ? totals[totals.length - 1] : 0;
+      const lastMonthTotal = totals.at(-1) ?? 0;
       const momChange =
         lastMonthTotal > 0 ? ((predicted - lastMonthTotal) / lastMonthTotal) * 100 : 0;
 
@@ -502,8 +501,8 @@ export class AdaptiveBudgetService {
   ): Promise<CategoryMonthlyData[]> {
     const now = new Date();
     const startDate = new Date(now.getFullYear(), now.getMonth() - months, 1);
-    const start = startDate.toISOString().split('T')[0];
-    const end = now.toISOString().split('T')[0];
+    const start = startDate.toISOString().slice(0, 10);
+    const end = now.toISOString().slice(0, 10);
 
     const rows = await this.db
       .select({
@@ -607,7 +606,9 @@ export class AdaptiveBudgetService {
     if (values.length === 0) return 0;
     const sorted = [...values].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
-    return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    return sorted.length % 2 !== 0
+      ? (sorted[mid] ?? 0)
+      : ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) / 2;
   }
 
   private standardDeviation(values: number[]): number {
@@ -622,9 +623,9 @@ export class AdaptiveBudgetService {
     // Linear weights: most recent gets highest weight
     let weightSum = 0;
     let valueSum = 0;
-    for (let i = 0; i < values.length; i++) {
+    for (const [i, value] of values.entries()) {
       const weight = i + 1;
-      valueSum += values[i] * weight;
+      valueSum += value * weight;
       weightSum += weight;
     }
     return valueSum / weightSum;
@@ -638,10 +639,10 @@ export class AdaptiveBudgetService {
       sumXY = 0,
       sumX2 = 0;
 
-    for (let i = 0; i < n; i++) {
+    for (const [i, value] of values.entries()) {
       sumX += i;
-      sumY += values[i];
-      sumXY += i * values[i];
+      sumY += value;
+      sumXY += i * value;
       sumX2 += i * i;
     }
 
@@ -664,10 +665,10 @@ export class AdaptiveBudgetService {
       sumXY = 0,
       sumX2 = 0;
 
-    for (let i = 0; i < n; i++) {
+    for (const [i, value] of values.entries()) {
       sumX += i;
-      sumY += values[i];
-      sumXY += i * values[i];
+      sumY += value;
+      sumXY += i * value;
       sumX2 += i * i;
     }
 

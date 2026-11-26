@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { count, eq } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
+import { firstRow } from '../../common/db/first-row';
 
 @Injectable()
 export class UsersService {
@@ -54,12 +55,13 @@ export class UsersService {
   }
 
   async create(data: { name: string; email: string; passwordHash: string }) {
-    const [user] = await this.db.insert(schema.users).values(data).returning({
-      id: schema.users.id,
-      email: schema.users.email,
-      name: schema.users.name,
-    });
-    return user;
+    return firstRow(
+      await this.db.insert(schema.users).values(data).returning({
+        id: schema.users.id,
+        email: schema.users.email,
+        name: schema.users.name,
+      }),
+    );
   }
 
   async updatePassword(userId: string, passwordHash: string) {

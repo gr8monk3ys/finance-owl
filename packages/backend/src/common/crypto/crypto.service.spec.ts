@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ConfigService } from '@nestjs/config';
 import { CryptoService } from './crypto.service';
@@ -9,9 +10,9 @@ describe('CryptoService', () => {
   const VALID_KEY = '0'.repeat(64); // Valid 64-char hex key
 
   beforeEach(() => {
-    configService = {
+    configService = fromAny({
       get: vi.fn(),
-    } as any;
+    });
     cryptoService = new CryptoService(configService);
   });
 

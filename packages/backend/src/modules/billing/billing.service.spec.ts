@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type Stripe from 'stripe';
@@ -181,7 +182,7 @@ describe('BillingService', () => {
     };
 
     stripe = createStripeFake();
-    service = new BillingService(mockDb, mockConfigService, stripe as unknown as Stripe);
+    service = new BillingService(mockDb, mockConfigService, fromAny(stripe));
   });
 
   // ---------------------------------------------------------------------------
@@ -217,9 +218,9 @@ describe('BillingService', () => {
     it('getAllPlans returns all three plans in order', () => {
       const plans = getAllPlans();
       expect(plans).toHaveLength(3);
-      expect(plans[0].name).toBe('free');
-      expect(plans[1].name).toBe('pro');
-      expect(plans[2].name).toBe('premium');
+      expect(plans[0]?.name).toBe('free');
+      expect(plans[1]?.name).toBe('pro');
+      expect(plans[2]?.name).toBe('premium');
     });
 
     it('getPlanLimits returns correct limits per tier', () => {
@@ -343,8 +344,8 @@ describe('BillingService', () => {
       const result = await service.getPlans();
 
       expect(result).toHaveLength(2);
-      expect(Array.isArray(result[0].features)).toBe(true);
-      expect(result[0].features).toContain('basic_budgets');
+      expect(Array.isArray(result[0]?.features)).toBe(true);
+      expect(result[0]?.features).toContain('basic_budgets');
     });
 
     it('should seed default plans when none exist', async () => {
@@ -520,7 +521,7 @@ describe('BillingService', () => {
       mockConfigService.get.mockImplementation((key: string, defaultValue?: string) =>
         key === 'STRIPE_PRICE_PREMIUM_YEARLY' ? undefined : defaultValue,
       );
-      service = new BillingService(mockDb, mockConfigService, stripe as unknown as Stripe);
+      service = new BillingService(mockDb, mockConfigService, fromAny(stripe));
 
       mockDb.select.mockReturnValueOnce(mockQuery([premiumPlan]));
 

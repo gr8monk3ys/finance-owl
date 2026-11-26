@@ -3,12 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { eq, and } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
+import { z } from 'zod';
 import * as schema from '../../database/schema';
 import type {
   RegistrationResponseJSON,
   AuthenticationResponseJSON,
   AuthenticatorTransportFuture,
 } from '@simplewebauthn/types';
+
+const transportsSchema = z.array(z.string());
 
 // SimpleWebAuthn is ESM-only -- use dynamic imports
 async function loadWebAuthn() {
@@ -48,7 +51,9 @@ export class WebAuthnService {
       attestationType: 'none',
       excludeCredentials: existingCreds.map((cred) => ({
         id: cred.id,
-        transports: cred.transports ? JSON.parse(cred.transports) : undefined,
+        transports: cred.transports
+          ? transportsSchema.parse(JSON.parse(cred.transports))
+          : undefined,
       })),
       authenticatorSelection: {
         residentKey: 'preferred',

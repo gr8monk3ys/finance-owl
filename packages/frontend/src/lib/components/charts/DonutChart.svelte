@@ -64,10 +64,11 @@
   });
 
   $effect(() => {
-    if (chart) {
+    const dataset = chart?.data.datasets[0];
+    if (chart && dataset) {
       chart.data.labels = labels;
-      chart.data.datasets[0].data = data;
-      chart.data.datasets[0].backgroundColor = colors;
+      dataset.data = data;
+      dataset.backgroundColor = colors;
       chart.update();
     }
   });

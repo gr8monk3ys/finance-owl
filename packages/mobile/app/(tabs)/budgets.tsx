@@ -51,7 +51,7 @@ function normalizeAmountInput(value: string): string {
     return '';
   }
 
-  const [whole, ...fractionParts] = sanitized.split('.');
+  const [whole = '', ...fractionParts] = sanitized.split('.');
   if (fractionParts.length === 0) {
     return whole;
   }

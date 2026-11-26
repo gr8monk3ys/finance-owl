@@ -412,8 +412,8 @@ describe('TransactionSplitService', () => {
 
       expect(result).toEqual(updatedSplitsWithCategories);
       expect(result).toHaveLength(2);
-      expect(result[0].amount).toBe(70);
-      expect(result[1].amount).toBe(30);
+      expect(result[0]?.amount).toBe(70);
+      expect(result[1]?.amount).toBe(30);
     });
 
     it('should throw NotFoundException when transaction does not exist', async () => {

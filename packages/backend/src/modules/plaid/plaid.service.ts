@@ -18,12 +18,14 @@ import {
   type Transaction as PlaidTransaction,
 } from 'plaid';
 import { AxiosError } from 'axios';
+import { z } from 'zod';
 import { eq, and } from 'drizzle-orm';
 import { createHash } from 'crypto';
 import * as jose from 'jose';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CryptoService } from '../../common/crypto/crypto.service';
 import * as schema from '../../database/schema';
+import { firstRow } from '../../common/db/first-row';
 
 /**
  * Metadata received from Plaid Link after user completes the connection flow.
@@ -49,19 +51,18 @@ export interface SyncStats {
   removed: number;
 }
 
-interface PlaidWebhookBody {
-  webhook_type: string;
-  webhook_code: string;
-  item_id: string;
-  error?: {
-    error_type: string;
-    error_code: string;
-    error_message: string;
-  };
-  new_transactions?: number;
-  removed_transactions?: string[];
-  consent_expiration_time?: string;
-}
+const plaidWebhookBodySchema = z.object({
+  webhook_type: z.string(),
+  webhook_code: z.string(),
+  item_id: z.string(),
+  error: z
+    .object({ error_type: z.string(), error_code: z.string(), error_message: z.string() })
+    .optional(),
+  new_transactions: z.number().optional(),
+  removed_transactions: z.array(z.string()).optional(),
+  consent_expiration_time: z.string().optional(),
+});
+type PlaidWebhookBody = z.infer<typeof plaidWebhookBodySchema>;
 
 /** Plaid API error shape (from AxiosError response data). */
 interface PlaidErrorData {
@@ -180,40 +181,44 @@ export class PlaidService {
       // Step 4: Encrypt token and store Plaid item
       const encryptedToken = this.cryptoService.encrypt(accessToken);
 
-      const [plaidItem] = await this.db
-        .insert(schema.plaidItems)
-        .values({
-          userId,
-          plaidItemId,
-          accessToken: encryptedToken,
-          institutionId,
-          institutionName,
-          status: 'active',
-        })
-        .returning();
+      const plaidItem = firstRow(
+        await this.db
+          .insert(schema.plaidItems)
+          .values({
+            userId,
+            plaidItemId,
+            accessToken: encryptedToken,
+            institutionId,
+            institutionName,
+            status: 'active',
+          })
+          .returning(),
+      );
 
       // Step 5: Upsert accounts
       const createdAccounts = [];
       for (const acct of accountsResponse.data.accounts) {
-        const [created] = await this.db
-          .insert(schema.accounts)
-          .values({
-            userId,
-            plaidItemId: plaidItem.id,
-            plaidAccountId: acct.account_id,
-            name: acct.official_name || acct.name,
-            officialName: acct.official_name ?? null,
-            type: this.mapAccountType(acct.type),
-            subtype: acct.subtype ?? null,
-            institutionName,
-            mask: acct.mask ?? null,
-            currentBalance: acct.balances.current ?? 0,
-            availableBalance: acct.balances.available ?? null,
-            creditLimit: acct.balances.limit ?? null,
-            currency: acct.balances.iso_currency_code ?? 'USD',
-            isManual: false,
-          })
-          .returning();
+        const created = firstRow(
+          await this.db
+            .insert(schema.accounts)
+            .values({
+              userId,
+              plaidItemId: plaidItem.id,
+              plaidAccountId: acct.account_id,
+              name: acct.official_name || acct.name,
+              officialName: acct.official_name ?? null,
+              type: this.mapAccountType(acct.type),
+              subtype: acct.subtype ?? null,
+              institutionName,
+              mask: acct.mask ?? null,
+              currentBalance: acct.balances.current ?? 0,
+              availableBalance: acct.balances.available ?? null,
+              creditLimit: acct.balances.limit ?? null,
+              currency: acct.balances.iso_currency_code ?? 'USD',
+              isManual: false,
+            })
+            .returning(),
+        );
         createdAccounts.push(created);
       }
 
@@ -461,7 +466,7 @@ export class PlaidService {
       }
     }
 
-    const payload: PlaidWebhookBody = JSON.parse(body);
+    const payload: PlaidWebhookBody = plaidWebhookBodySchema.parse(JSON.parse(body));
 
     this.logger.log(
       `Webhook received: ${payload.webhook_type}/${payload.webhook_code} for item ${payload.item_id}`,

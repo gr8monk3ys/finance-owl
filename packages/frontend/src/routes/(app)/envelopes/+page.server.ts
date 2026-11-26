@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   create: async ({ request, locals }) => {
     const formData = await request.formData();
     const data: Record<string, unknown> = {
@@ -165,4 +165,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to rollover envelopes' });
     }
   },
-};
+} satisfies Actions;

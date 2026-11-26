@@ -41,7 +41,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   requestCancellation: async ({ params, request, locals }) => {
     const formData = await request.formData();
     const reason = formData.get('reason') as string;
@@ -90,4 +90,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to confirm cancellation' });
     }
   },
-};
+} satisfies Actions;

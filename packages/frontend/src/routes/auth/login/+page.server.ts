@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   default: async ({ request, cookies, getClientAddress }) => {
     const data = await request.formData();
     const email = data.get('email') as string;
@@ -60,4 +60,4 @@ export const actions: Actions = {
 
     throw redirect(303, '/dashboard');
   },
-};
+} satisfies Actions;

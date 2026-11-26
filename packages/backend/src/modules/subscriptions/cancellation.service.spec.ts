@@ -1,3 +1,5 @@
+import { fromPartial } from '@total-typescript/shoehorn';
+import { z } from 'zod';
 import { describe, it, expect, vi } from 'vitest';
 import { CancellationService } from './cancellation.service';
 import type { DrizzleDB } from '../../database/database.module';
@@ -19,7 +21,7 @@ function serviceReturning(rows: StatsRow[]): CancellationService {
     where: () => chain,
     orderBy: () => Promise.resolve(rows),
   };
-  return new CancellationService({ select: () => chain } as unknown as DrizzleDB);
+  return new CancellationService(fromPartial<DrizzleDB>({ select: () => chain }));
 }
 
 const completed = (merchantName: string, estimatedAmount: number, frequency: string): StatsRow => ({
@@ -39,6 +41,8 @@ const pending = (): StatsRow => ({
   frequency: 'monthly',
   cancelledAt: null,
 });
+
+const instructionsOf = (json: string): string[] => z.array(z.string()).parse(JSON.parse(json));
 
 describe('CancellationService.getCancellationStats', () => {
   it('counts requests by state', async () => {
@@ -131,10 +135,10 @@ describe('CancellationService.requestCancellation', () => {
       where: () => selectChain,
       limit: () => Promise.resolve(subscription ? [subscription] : []),
     };
-    const db = {
+    const db = fromPartial<DrizzleDB>({
       select: () => selectChain,
       insert: () => ({ values }),
-    } as unknown as DrizzleDB;
+    });
 
     return { service: new CancellationService(db), values };
   }
@@ -150,10 +154,10 @@ describe('CancellationService.requestCancellation', () => {
 
     const result = await service.requestCancellation('user_1', 'sub_1', 'too expensive');
 
-    const persisted = values.mock.calls[0][0];
+    const persisted = values.mock.calls[0]?.[0];
     expect(persisted.method).toBe('self_service');
     expect(persisted.reason).toBe('too expensive');
-    expect(JSON.parse(persisted.cancellationInstructions).join(' ').toLowerCase()).toContain(
+    expect(instructionsOf(persisted.cancellationInstructions).join(' ').toLowerCase()).toContain(
       'peloton',
     );
     expect(JSON.parse(persisted.providerContactInfo)).toMatchObject({
@@ -171,9 +175,9 @@ describe('CancellationService.requestCancellation', () => {
 
     await service.requestCancellation('user_1', 'sub_2');
 
-    const persisted = values.mock.calls[0][0];
+    const persisted = values.mock.calls[0]?.[0];
     expect(persisted.method).toBe('self_service');
-    expect(JSON.parse(persisted.cancellationInstructions)[0]).toContain('Corner Bodega 44');
+    expect(instructionsOf(persisted.cancellationInstructions)[0]).toContain('Corner Bodega 44');
     expect(JSON.parse(persisted.providerContactInfo)).toEqual({
       phone: null,
       email: null,

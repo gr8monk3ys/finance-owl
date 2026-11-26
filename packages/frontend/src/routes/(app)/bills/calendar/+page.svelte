@@ -66,14 +66,14 @@
       calendarMap.set(calDay.date, calDay);
     }
 
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = new Date().toISOString().slice(0, 10);
 
     // Previous month padding
     const prevMonthLastDay = new Date(year, month - 1, 0).getDate();
     for (let i = startDayOfWeek - 1; i >= 0; i--) {
       const day = prevMonthLastDay - i;
       const d = new Date(year, month - 2, day);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = d.toISOString().slice(0, 10);
       days.push({
         day,
         isCurrentMonth: false,
@@ -88,7 +88,7 @@
     // Current month
     for (let day = 1; day <= daysInMonth; day++) {
       const d = new Date(year, month - 1, day);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = d.toISOString().slice(0, 10);
       const calDay = calendarMap.get(dateStr);
       days.push({
         day,
@@ -105,7 +105,7 @@
     const remaining = 42 - days.length;
     for (let day = 1; day <= remaining; day++) {
       const d = new Date(year, month, day);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = d.toISOString().slice(0, 10);
       days.push({
         day,
         isCurrentMonth: false,
@@ -122,7 +122,7 @@
 
   // Week view: get current week from calendar data
   const weekDays = $derived.by(() => {
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = new Date().toISOString().slice(0, 10);
     const today = new Date(todayStr + 'T00:00:00');
     const dayOfWeek = today.getDay();
     const weekStart = new Date(today);
@@ -132,7 +132,7 @@
     for (let i = 0; i < 7; i++) {
       const d = new Date(weekStart);
       d.setDate(d.getDate() + i);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = d.toISOString().slice(0, 10);
 
       // Find matching calendar day from grid
       const calDay = calendarGrid.find((cd) => cd.dateStr === dateStr);

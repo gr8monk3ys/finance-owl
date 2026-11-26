@@ -128,10 +128,11 @@ export class PlaidSyncService {
       .where(eq(schema.transactions.plaidTransactionId, tx.externalId))
       .limit(1);
 
-    if (existing.length > 0) {
+    const [existingTx] = existing;
+    if (existingTx) {
       // Update existing transaction, but preserve user-set category
       const preserveCategory =
-        existing[0].categorizationSource === 'user' || existing[0].categorizationSource === 'rule';
+        existingTx.categorizationSource === 'user' || existingTx.categorizationSource === 'rule';
 
       const updateData: Record<string, unknown> = {
         amount: tx.amount,
@@ -152,7 +153,7 @@ export class PlaidSyncService {
       await dbTx
         .update(schema.transactions)
         .set(updateData)
-        .where(eq(schema.transactions.id, existing[0].id));
+        .where(eq(schema.transactions.id, existingTx.id));
     } else {
       // Insert new transaction
       await dbTx.insert(schema.transactions).values({

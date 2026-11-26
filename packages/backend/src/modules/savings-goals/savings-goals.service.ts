@@ -2,6 +2,7 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { eq, and, sql, desc } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { savingsGoals, savingsContributions } from './savings-goals.schema';
+import { firstRow } from '../../common/db/first-row';
 
 @Injectable()
 export class SavingsGoalsService {
@@ -54,17 +55,19 @@ export class SavingsGoalsService {
       color?: string;
     },
   ) {
-    const [goal] = await this.db
-      .insert(savingsGoals)
-      .values({
-        userId,
-        name: data.name,
-        targetAmount: data.targetAmount,
-        deadline: data.deadline,
-        icon: data.icon,
-        color: data.color,
-      })
-      .returning();
+    const goal = firstRow(
+      await this.db
+        .insert(savingsGoals)
+        .values({
+          userId,
+          name: data.name,
+          targetAmount: data.targetAmount,
+          deadline: data.deadline,
+          icon: data.icon,
+          color: data.color,
+        })
+        .returning(),
+    );
 
     return goal;
   }
@@ -110,17 +113,19 @@ export class SavingsGoalsService {
   ) {
     const goal = await this.findById(userId, goalId);
 
-    const contributionDate = date || new Date().toISOString().split('T')[0];
+    const contributionDate = date || new Date().toISOString().slice(0, 10);
 
-    const [contribution] = await this.db
-      .insert(savingsContributions)
-      .values({
-        goalId,
-        amount,
-        note,
-        date: contributionDate,
-      })
-      .returning();
+    const contribution = firstRow(
+      await this.db
+        .insert(savingsContributions)
+        .values({
+          goalId,
+          amount,
+          note,
+          date: contributionDate,
+        })
+        .returning(),
+    );
 
     const newCurrentAmount = goal.currentAmount + amount;
     const isCompleted = newCurrentAmount >= goal.targetAmount;

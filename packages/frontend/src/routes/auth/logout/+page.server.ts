@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { API_URL } from '#lib/server/api.ts';
 
-export const actions: Actions = {
+export const actions = {
   default: async ({ cookies }) => {
     const refreshToken = cookies.get('refresh_token');
 
@@ -23,4 +23,4 @@ export const actions: Actions = {
 
     throw redirect(303, '/auth/login');
   },
-};
+} satisfies Actions;

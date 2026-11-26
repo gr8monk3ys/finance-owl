@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   markPaid: async ({ request, locals }) => {
     const formData = await request.formData();
     const id = formData.get('id') as string;
@@ -46,4 +46,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to mark bill as paid' });
     }
   },
-};
+} satisfies Actions;

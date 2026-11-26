@@ -8,6 +8,7 @@ import {
   type CategorySuggestion,
 } from '../categories/laya-categorizer.service';
 import { AutoCategorizationService } from '../categories/auto-categorization.service';
+import { firstRow } from '../../common/db/first-row';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -78,15 +79,14 @@ export class ImportService {
     transactions: ParsedTransaction[];
   } {
     const content = fileBuffer.toString('utf-8').trim();
-    const lines = content.split(/\r?\n/);
+    const [headerLine, ...dataLines] = content.split(/\r?\n/);
 
-    if (lines.length < 2) {
+    if (headerLine === undefined || dataLines.length === 0) {
       throw new BadRequestException('CSV file must have at least a header row and one data row');
     }
 
-    const headers = this.parseCSVLine(lines[0]);
-    const rows = lines
-      .slice(1)
+    const headers = this.parseCSVLine(headerLine);
+    const rows = dataLines
       .map((line) => this.parseCSVLine(line))
       .filter((row) => row.length > 0 && row.some((cell) => cell.trim()));
 
@@ -349,8 +349,12 @@ export class ImportService {
           amount,
         };
 
-        if (mapping.category !== undefined && mapping.category >= 0 && row[mapping.category]) {
-          tx.category = row[mapping.category].trim();
+        const categoryCell =
+          mapping.category !== undefined && mapping.category >= 0
+            ? row[mapping.category]
+            : undefined;
+        if (categoryCell) {
+          tx.category = categoryCell.trim();
         }
 
         transactions.push(tx);
@@ -386,6 +390,7 @@ export class ImportService {
 
     while ((match = stmtTrnRegex.exec(content)) !== null) {
       const block = match[1];
+      if (block === undefined) continue;
 
       const dtPosted = this.extractOFXTag(block, 'DTPOSTED');
       const trnAmt = this.extractOFXTag(block, 'TRNAMT');
@@ -423,6 +428,7 @@ export class ImportService {
 
     while ((match = stmtTrnRegex.exec(content)) !== null) {
       const block = match[1];
+      if (block === undefined) continue;
 
       const dtPosted = this.extractXMLTag(block, 'DTPOSTED');
       const trnAmt = this.extractXMLTag(block, 'TRNAMT');
@@ -456,7 +462,7 @@ export class ImportService {
     // nosemgrep: detect-non-literal-regexp
     const regex = new RegExp(`<${tag}>([^<\\r\\n]+)`, 'i');
     const match = regex.exec(block);
-    return match ? match[1].trim() : null;
+    return match?.[1]?.trim() ?? null;
   }
 
   private extractXMLTag(block: string, tag: OfxTag): string | null {
@@ -464,7 +470,7 @@ export class ImportService {
     // nosemgrep: detect-non-literal-regexp
     const regex = new RegExp(`<${tag}>([^<]*)</${tag}>`, 'i');
     const match = regex.exec(block);
-    return match ? match[1].trim() : null;
+    return match?.[1]?.trim() ?? null;
   }
 
   private parseOFXDate(dateStr: string): string | null {
@@ -586,24 +592,26 @@ export class ImportService {
         // when the engine finds nothing -- the same order as a manual create.
         const suggestion = await this.categorizeImported(userId, tx, ruleResults, layaResults);
 
-        const [inserted] = await this.db
-          .insert(schema.transactions)
-          .values({
-            userId,
-            accountId,
-            amount: tx.amount,
-            name: tx.name,
-            merchantName: tx.merchantName || null,
-            description: tx.memo || null,
-            date: tx.date,
-            pending: false,
-            isManual: true,
-            notes: tx.fitId ? `Imported (FITID: ${tx.fitId})` : 'Imported',
-            ...(suggestion
-              ? { categoryId: suggestion.categoryId, categorizationSource: suggestion.source }
-              : {}),
-          })
-          .returning();
+        const inserted = firstRow(
+          await this.db
+            .insert(schema.transactions)
+            .values({
+              userId,
+              accountId,
+              amount: tx.amount,
+              name: tx.name,
+              merchantName: tx.merchantName || null,
+              description: tx.memo || null,
+              date: tx.date,
+              pending: false,
+              isManual: true,
+              notes: tx.fitId ? `Imported (FITID: ${tx.fitId})` : 'Imported',
+              ...(suggestion
+                ? { categoryId: suggestion.categoryId, categorizationSource: suggestion.source }
+                : {}),
+            })
+            .returning(),
+        );
 
         importedCount++;
         existingSet.add(key); // Prevent duplicates within the same import
@@ -765,13 +773,13 @@ export class ImportService {
 
     // MM/DD/YYYY
     if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(cleaned)) {
-      const [m, d, y] = cleaned.split('/');
+      const [m = '', d = '', y] = cleaned.split('/');
       return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
     }
 
     // MM-DD-YYYY
     if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(cleaned)) {
-      const [m, d, y] = cleaned.split('-');
+      const [m = '', d = '', y] = cleaned.split('-');
       return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
     }
 
@@ -784,7 +792,7 @@ export class ImportService {
     try {
       const parsed = new Date(cleaned);
       if (!isNaN(parsed.getTime())) {
-        return parsed.toISOString().split('T')[0];
+        return parsed.toISOString().slice(0, 10);
       }
     } catch {
       // Fall through

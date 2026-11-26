@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NotFoundException } from '@nestjs/common';
 import { BudgetsService } from './budgets.service';
@@ -52,7 +53,7 @@ describe('BudgetsService', () => {
         .mockImplementation((_key: string, _ttl: number, factory: () => Promise<any>) => factory()),
     };
 
-    service = new BudgetsService(mockDb, mockCacheService as any);
+    service = new BudgetsService(mockDb, fromAny(mockCacheService));
   });
 
   describe('findAll', () => {
@@ -147,8 +148,8 @@ describe('BudgetsService', () => {
       const result = await service.findAll(mockUserId);
 
       expect(result).toHaveLength(1);
-      expect(result[0].rolloverAmount).toBe(200);
-      expect(result[0].remaining).toBe(600); // (1000 + 200) - 600
+      expect(result[0]?.rolloverAmount).toBe(200);
+      expect(result[0]?.remaining).toBe(600); // (1000 + 200) - 600
     });
   });
 

@@ -32,7 +32,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   markRead: async ({ locals, params }) => {
     try {
       await api(`/education/progress/${params.slug}`, {
@@ -60,4 +60,4 @@ export const actions: Actions = {
       });
     }
   },
-};
+} satisfies Actions;

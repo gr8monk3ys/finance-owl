@@ -13,14 +13,20 @@
     if (refreshing) return;
     if (window.scrollY !== 0) return;
 
-    startY = event.touches[0].clientY;
+    const touch = event.touches[0];
+    if (!touch) return;
+
+    startY = touch.clientY;
     pulling = true;
   }
 
   function handleTouchMove(event: TouchEvent): void {
     if (!pulling || refreshing) return;
 
-    const currentY = event.touches[0].clientY;
+    const touch = event.touches[0];
+    if (!touch) return;
+
+    const currentY = touch.clientY;
     const distance = currentY - startY;
 
     if (distance < 0) {

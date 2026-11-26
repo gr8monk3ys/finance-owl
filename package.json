@@ -17,10 +17,13 @@
     "test:integration": "turbo test:integration",
     "test:e2e": "turbo test:e2e",
     "format": "prettier --write \"**/*.{ts,tsx,svelte,json,md,css}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,svelte,json,md,css}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,svelte,json,md,css}\"",
+    "depcruise": "depcruise packages --config .dependency-cruiser.cjs",
+    "check": "bun run format:check && bun run lint && bun run typecheck && bun run test && bun run depcruise"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "dependency-cruiser": "^18.7.2",
     "eslint": "^10.9.1",
     "globals": "^17.4.0",
     "prettier": "^3.8.1",

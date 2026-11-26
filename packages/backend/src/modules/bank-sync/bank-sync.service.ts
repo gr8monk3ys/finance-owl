@@ -6,6 +6,7 @@ import { AggregatorFactory } from './aggregator.factory';
 import { PlaidProvider } from './plaid.provider';
 import type { AggregatorName } from './aggregator.interface';
 import * as schema from '../../database/schema';
+import { firstRow } from '../../common/db/first-row';
 
 @Injectable()
 export class BankSyncService {
@@ -55,39 +56,43 @@ export class BankSyncService {
 
     // Store the Plaid item (table is shared across providers; the provider
     // name is tracked so we know which aggregator to use on subsequent calls)
-    const [plaidItem] = await this.db
-      .insert(schema.plaidItems)
-      .values({
-        userId,
-        plaidItemId: result.itemId,
-        accessToken: encryptedToken,
-        institutionId: result.institutionId,
-        institutionName: result.institutionName,
-      })
-      .returning();
+    const plaidItem = firstRow(
+      await this.db
+        .insert(schema.plaidItems)
+        .values({
+          userId,
+          plaidItemId: result.itemId,
+          accessToken: encryptedToken,
+          institutionId: result.institutionId,
+          institutionName: result.institutionName,
+        })
+        .returning(),
+    );
 
     // Store linked accounts
     const createdAccounts = [];
     for (const acct of result.accounts) {
-      const [created] = await this.db
-        .insert(schema.accounts)
-        .values({
-          userId,
-          plaidItemId: plaidItem.id,
-          plaidAccountId: acct.externalId,
-          name: acct.officialName || acct.name,
-          officialName: acct.officialName,
-          type: acct.type,
-          subtype: acct.subtype,
-          institutionName: result.institutionName,
-          mask: acct.mask,
-          currentBalance: acct.currentBalance,
-          availableBalance: acct.availableBalance,
-          creditLimit: acct.creditLimit,
-          currency: acct.currency,
-          isManual: false,
-        })
-        .returning();
+      const created = firstRow(
+        await this.db
+          .insert(schema.accounts)
+          .values({
+            userId,
+            plaidItemId: plaidItem.id,
+            plaidAccountId: acct.externalId,
+            name: acct.officialName || acct.name,
+            officialName: acct.officialName,
+            type: acct.type,
+            subtype: acct.subtype,
+            institutionName: result.institutionName,
+            mask: acct.mask,
+            currentBalance: acct.currentBalance,
+            availableBalance: acct.availableBalance,
+            creditLimit: acct.creditLimit,
+            currency: acct.currency,
+            isManual: false,
+          })
+          .returning(),
+      );
       createdAccounts.push(created);
     }
 

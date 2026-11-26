@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   addEmail: async ({ request, locals }) => {
     const formData = await request.formData();
     const email = formData.get('email') as string;
@@ -149,4 +149,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to run check' });
     }
   },
-};
+} satisfies Actions;

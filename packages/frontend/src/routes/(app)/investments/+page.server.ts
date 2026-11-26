@@ -40,7 +40,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   sync: async ({ locals }) => {
     try {
       await api('/investments/sync', {
@@ -52,4 +52,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to trigger investment sync' });
     }
   },
-};
+} satisfies Actions;

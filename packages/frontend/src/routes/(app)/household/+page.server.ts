@@ -41,7 +41,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   create: async ({ request, locals }) => {
     const formData = await request.formData();
     const name = formData.get('name') as string;
@@ -213,4 +213,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to delete household' });
     }
   },
-};
+} satisfies Actions;

@@ -108,9 +108,9 @@ describe('ImportService', () => {
       expect(result.detectedFormat).toBe('mint');
       expect(result.transactions).toHaveLength(2);
       // Mint debit = positive (expense)
-      expect(result.transactions[0].amount).toBe(4.5);
+      expect(result.transactions[0]?.amount).toBe(4.5);
       // Mint credit = negative (income)
-      expect(result.transactions[1].amount).toBe(-2500.0);
+      expect(result.transactions[1]?.amount).toBe(-2500.0);
     });
 
     it('should detect YNAB CSV format', () => {
@@ -125,10 +125,10 @@ describe('ImportService', () => {
       expect(result.detectedFormat).toBe('ynab');
       expect(result.transactions).toHaveLength(2);
       // YNAB mapping picks Memo (index 4) as description since Math.max(payee=2, memo=4) = 4
-      expect(result.transactions[0].name).toBe('Morning latte');
+      expect(result.transactions[0]?.name).toBe('Morning latte');
       // YNAB: outflow - inflow
-      expect(result.transactions[0].amount).toBe(4.5);
-      expect(result.transactions[1].amount).toBe(-3000.0);
+      expect(result.transactions[0]?.amount).toBe(4.5);
+      expect(result.transactions[1]?.amount).toBe(-3000.0);
     });
 
     it('should detect bank debit/credit format', () => {
@@ -143,9 +143,9 @@ describe('ImportService', () => {
       expect(result.detectedFormat).toBe('bank_debit_credit');
       expect(result.transactions).toHaveLength(2);
       // Debit is positive
-      expect(result.transactions[0].amount).toBe(200.0);
+      expect(result.transactions[0]?.amount).toBe(200.0);
       // Credit is negative
-      expect(result.transactions[1].amount).toBe(-3500.0);
+      expect(result.transactions[1]?.amount).toBe(-3500.0);
     });
 
     it('should use a custom column mapping when provided', () => {
@@ -171,7 +171,7 @@ describe('ImportService', () => {
       const result = service.parseCSV(Buffer.from(csv));
 
       expect(result.transactions).toHaveLength(1);
-      expect(result.transactions[0].name).toBe('Smith, John - Payment');
+      expect(result.transactions[0]?.name).toBe('Smith, John - Payment');
     });
 
     it('should handle escaped double quotes in CSV fields', () => {
@@ -180,7 +180,7 @@ describe('ImportService', () => {
       const result = service.parseCSV(Buffer.from(csv));
 
       expect(result.transactions).toHaveLength(1);
-      expect(result.transactions[0].name).toBe('Payment "Ref #42"');
+      expect(result.transactions[0]?.name).toBe('Payment "Ref #42"');
     });
 
     it('should handle Windows-style CRLF line endings', () => {
@@ -199,7 +199,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].category).toBe('Food & Drink');
+      expect(result.transactions[0]?.category).toBe('Food & Drink');
     });
 
     it('should limit preview rows to 100', () => {
@@ -237,7 +237,7 @@ describe('ImportService', () => {
       const result = service.parseCSV(Buffer.from(csv));
 
       expect(result.transactions).toHaveLength(1);
-      expect(result.transactions[0].name).toBe('Lunch');
+      expect(result.transactions[0]?.name).toBe('Lunch');
     });
 
     it('should skip rows where amount is NaN', () => {
@@ -250,7 +250,7 @@ describe('ImportService', () => {
       const result = service.parseCSV(Buffer.from(csv));
 
       expect(result.transactions).toHaveLength(1);
-      expect(result.transactions[0].name).toBe('Lunch');
+      expect(result.transactions[0]?.name).toBe('Lunch');
     });
 
     it('should skip blank/empty rows', () => {
@@ -305,7 +305,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].date).toBe('2026-01-15');
+      expect(result.transactions[0]?.date).toBe('2026-01-15');
     });
 
     it('should parse MM-DD-YYYY dates', () => {
@@ -313,7 +313,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].date).toBe('2026-01-15');
+      expect(result.transactions[0]?.date).toBe('2026-01-15');
     });
 
     it('should parse YYYY/MM/DD dates', () => {
@@ -321,7 +321,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].date).toBe('2026-01-15');
+      expect(result.transactions[0]?.date).toBe('2026-01-15');
     });
 
     it('should preserve YYYY-MM-DD dates', () => {
@@ -329,7 +329,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].date).toBe('2026-01-15');
+      expect(result.transactions[0]?.date).toBe('2026-01-15');
     });
 
     it('should pad single-digit month and day in MM/DD/YYYY', () => {
@@ -337,7 +337,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].date).toBe('2026-01-05');
+      expect(result.transactions[0]?.date).toBe('2026-01-05');
     });
   });
 
@@ -350,7 +350,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(4.5);
+      expect(result.transactions[0]?.amount).toBe(4.5);
     });
 
     it('should strip commas from amounts', () => {
@@ -358,7 +358,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(1200.0);
+      expect(result.transactions[0]?.amount).toBe(1200.0);
     });
 
     it('should handle parenthetical negative notation', () => {
@@ -366,7 +366,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(-50.0);
+      expect(result.transactions[0]?.amount).toBe(-50.0);
     });
 
     it('should handle euro symbol in amounts', () => {
@@ -374,7 +374,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(4.5);
+      expect(result.transactions[0]?.amount).toBe(4.5);
     });
 
     it('should handle pound symbol in amounts', () => {
@@ -382,7 +382,7 @@ describe('ImportService', () => {
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(4.5);
+      expect(result.transactions[0]?.amount).toBe(4.5);
     });
   });
 
@@ -490,7 +490,7 @@ DATA:OFXSGML
       const result = service.parseOFX(Buffer.from(ofx));
 
       expect(result).toHaveLength(1);
-      expect(result[0].date).toBe('2026-01-15');
+      expect(result[0]?.date).toBe('2026-01-15');
     });
 
     it('should fall back to MEMO when NAME is missing', () => {
@@ -509,7 +509,7 @@ DATA:OFXSGML
       const result = service.parseOFX(Buffer.from(ofx));
 
       expect(result).toHaveLength(1);
-      expect(result[0].name).toBe('ATM WITHDRAWAL');
+      expect(result[0]?.name).toBe('ATM WITHDRAWAL');
     });
 
     it('should skip transactions with missing DTPOSTED', () => {
@@ -533,7 +533,7 @@ DATA:OFXSGML
       const result = service.parseOFX(Buffer.from(ofx));
 
       expect(result).toHaveLength(1);
-      expect(result[0].fitId).toBe('HAS_DATE');
+      expect(result[0]?.fitId).toBe('HAS_DATE');
     });
 
     it('should skip transactions with missing TRNAMT', () => {
@@ -651,8 +651,8 @@ DATA:OFXSGML
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(100.0); // debit
-      expect(result.transactions[1].amount).toBe(-50.0); // credit
+      expect(result.transactions[0]?.amount).toBe(100.0); // debit
+      expect(result.transactions[1]?.amount).toBe(-50.0); // credit
     });
 
     it('should use column index 0 for date when no date header found', () => {
@@ -682,10 +682,10 @@ DATA:OFXSGML
       const result = await service.previewImport(mockUserId, parsed, mockAccountId);
 
       expect(result).toHaveLength(2);
-      expect(result[0].isDuplicate).toBe(true);
-      expect(result[0].selected).toBe(false);
-      expect(result[1].isDuplicate).toBe(false);
-      expect(result[1].selected).toBe(true);
+      expect(result[0]?.isDuplicate).toBe(true);
+      expect(result[0]?.selected).toBe(false);
+      expect(result[1]?.isDuplicate).toBe(false);
+      expect(result[1]?.selected).toBe(true);
     });
 
     it('should use case-insensitive comparison for duplicate detection', async () => {
@@ -697,7 +697,7 @@ DATA:OFXSGML
 
       const result = await service.previewImport(mockUserId, parsed, mockAccountId);
 
-      expect(result[0].isDuplicate).toBe(true);
+      expect(result[0]?.isDuplicate).toBe(true);
     });
 
     it('should not flag transactions with different amounts as duplicates', async () => {
@@ -709,8 +709,8 @@ DATA:OFXSGML
 
       const result = await service.previewImport(mockUserId, parsed, mockAccountId);
 
-      expect(result[0].isDuplicate).toBe(false);
-      expect(result[0].selected).toBe(true);
+      expect(result[0]?.isDuplicate).toBe(false);
+      expect(result[0]?.selected).toBe(true);
     });
 
     it('should assign rowIndex to each preview row', async () => {
@@ -724,9 +724,9 @@ DATA:OFXSGML
 
       const result = await service.previewImport(mockUserId, parsed, mockAccountId);
 
-      expect(result[0].rowIndex).toBe(0);
-      expect(result[1].rowIndex).toBe(1);
-      expect(result[2].rowIndex).toBe(2);
+      expect(result[0]?.rowIndex).toBe(0);
+      expect(result[1]?.rowIndex).toBe(1);
+      expect(result[2]?.rowIndex).toBe(2);
     });
 
     it('should handle preview with no existing transactions', async () => {
@@ -736,8 +736,8 @@ DATA:OFXSGML
 
       const result = await service.previewImport(mockUserId, parsed, mockAccountId);
 
-      expect(result[0].isDuplicate).toBe(false);
-      expect(result[0].selected).toBe(true);
+      expect(result[0]?.isDuplicate).toBe(false);
+      expect(result[0]?.selected).toBe(true);
     });
   });
 
@@ -1372,7 +1372,7 @@ DATA:OFXSGML
       const result = service.parseCSV(Buffer.from(csv));
 
       expect(result.transactions).toHaveLength(1);
-      expect(result.transactions[0].amount).toBe(0);
+      expect(result.transactions[0]?.amount).toBe(0);
     });
 
     it('should handle negative amounts in generic CSV', () => {
@@ -1380,7 +1380,7 @@ DATA:OFXSGML
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].amount).toBe(-25.5);
+      expect(result.transactions[0]?.amount).toBe(-25.5);
     });
 
     it('should handle OFX with very short date (less than 8 chars) and skip', () => {
@@ -1406,7 +1406,7 @@ DATA:OFXSGML
 
       const result = service.parseCSV(Buffer.from(csv));
 
-      expect(result.transactions[0].name).toBe('Coffee Shop');
+      expect(result.transactions[0]?.name).toBe('Coffee Shop');
     });
 
     it('should handle UTF-8 encoded file content', () => {
@@ -1414,7 +1414,7 @@ DATA:OFXSGML
 
       const result = service.parseCSV(Buffer.from(csv, 'utf-8'));
 
-      expect(result.transactions[0].name).toBe('Caf\u00E9 au Lait');
+      expect(result.transactions[0]?.name).toBe('Caf\u00E9 au Lait');
     });
   });
 });

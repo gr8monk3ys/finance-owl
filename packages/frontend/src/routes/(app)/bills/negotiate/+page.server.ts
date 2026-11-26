@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   analyze: async ({ locals }) => {
     try {
       const analysis = await api('/bill-negotiation/analyze', {
@@ -110,4 +110,4 @@ export const actions: Actions = {
       return fail(500, { error: 'Failed to get negotiation script' });
     }
   },
-};
+} satisfies Actions;

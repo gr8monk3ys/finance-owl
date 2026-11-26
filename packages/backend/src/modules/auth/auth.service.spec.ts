@@ -204,10 +204,11 @@ describe('AuthService', () => {
         BadRequestException,
       );
 
-      const error = await service.login('test@example.com', 'correct-password').catch((e) => e);
-      expect(error.response).toEqual({
-        message: 'TOTP code required',
-        code: 'TOTP_REQUIRED',
+      await expect(service.login('test@example.com', 'correct-password')).rejects.toMatchObject({
+        response: {
+          message: 'TOTP code required',
+          code: 'TOTP_REQUIRED',
+        },
       });
 
       expect(mockSessionService.issue).not.toHaveBeenCalled();

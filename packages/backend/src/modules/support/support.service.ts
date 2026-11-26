@@ -2,6 +2,7 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { desc, eq } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { supportTickets } from './support.schema';
+import { firstRow } from '../../common/db/first-row';
 
 export interface CreateTicketDto {
   userId: string;
@@ -18,17 +19,19 @@ export class SupportService {
   constructor(@Inject(DATABASE_TOKEN) private db: DrizzleDB) {}
 
   async createTicket(dto: CreateTicketDto) {
-    const [ticket] = await this.db
-      .insert(supportTickets)
-      .values({
-        userId: dto.userId,
-        email: dto.email,
-        subject: dto.subject,
-        category: dto.category,
-        message: dto.message,
-        status: 'open',
-      })
-      .returning();
+    const ticket = firstRow(
+      await this.db
+        .insert(supportTickets)
+        .values({
+          userId: dto.userId,
+          email: dto.email,
+          subject: dto.subject,
+          category: dto.category,
+          message: dto.message,
+          status: 'open',
+        })
+        .returning(),
+    );
 
     this.logger.log(
       `Support ticket created: id=${ticket.id} user=${dto.userId} category=${dto.category}`,

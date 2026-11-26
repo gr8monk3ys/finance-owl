@@ -24,7 +24,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   addHolding: async ({ request, locals }) => {
     const formData = await request.formData();
     const data = {
@@ -190,4 +190,4 @@ export const actions: Actions = {
       });
     }
   },
-};
+} satisfies Actions;

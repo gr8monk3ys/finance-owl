@@ -15,7 +15,10 @@
     rectangular: 'rounded-lg',
   };
 
-  const defaultDimensions: Record<string, { width: string; height: string }> = {
+  const defaultDimensions: Record<
+    NonNullable<Props['variant']>,
+    { width: string; height: string }
+  > = {
     text: { width: '100%', height: '0.875rem' },
     circular: { width: '2.5rem', height: '2.5rem' },
     rectangular: { width: '100%', height: '8rem' },

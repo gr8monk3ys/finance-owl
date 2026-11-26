@@ -9,7 +9,11 @@ import {
 import { eq, and, gte, lte, sql, desc, inArray, isNull, or } from 'drizzle-orm';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import { CacheService } from '../../common/cache/cache.service';
+import { z } from 'zod';
 import * as schema from '../../database/schema';
+import { firstRow } from '../../common/db/first-row';
+
+const alertThresholdsSchema = z.array(z.number());
 
 // ── Constants ───────────────────────────────────────────────────────
 
@@ -174,23 +178,25 @@ export class BudgetsService {
 
     const thresholds = data.alertThresholds ?? DEFAULT_ALERT_THRESHOLDS;
 
-    const [budget] = await this.db
-      .insert(schema.budgets)
-      .values({
-        userId,
-        categoryId: budgetType === 'category' ? data.categoryId : null,
-        householdId: data.householdId ?? null,
-        name: data.name ?? null,
-        budgetType,
-        amount: data.amount,
-        period: normalizedPeriod,
-        rollover: data.rollover ?? false,
-        rolloverCap: data.rolloverCap ?? null,
-        isActive: true,
-        alertThresholds: JSON.stringify(thresholds),
-        startDate: data.startDate ?? null,
-      })
-      .returning();
+    const budget = firstRow(
+      await this.db
+        .insert(schema.budgets)
+        .values({
+          userId,
+          categoryId: budgetType === 'category' ? data.categoryId : null,
+          householdId: data.householdId ?? null,
+          name: data.name ?? null,
+          budgetType,
+          amount: data.amount,
+          period: normalizedPeriod,
+          rollover: data.rollover ?? false,
+          rolloverCap: data.rolloverCap ?? null,
+          isActive: true,
+          alertThresholds: JSON.stringify(thresholds),
+          startDate: data.startDate ?? null,
+        })
+        .returning(),
+    );
 
     await this.invalidateBudgetCaches(userId);
     return budget;
@@ -330,7 +336,7 @@ export class BudgetsService {
       let thresholds: number[];
       try {
         thresholds = budget.alertThresholds
-          ? JSON.parse(budget.alertThresholds)
+          ? alertThresholdsSchema.parse(JSON.parse(budget.alertThresholds))
           : DEFAULT_ALERT_THRESHOLDS;
       } catch {
         thresholds = DEFAULT_ALERT_THRESHOLDS;
@@ -501,14 +507,15 @@ export class BudgetsService {
         )
         .limit(1);
 
-      if (existing.length > 0) {
+      const [existingPeriod] = existing;
+      if (existingPeriod) {
         await this.db
           .update(schema.budgetPeriods)
           .set({
             rolloverAmount: rollover,
             spentAmount: spent,
           })
-          .where(eq(schema.budgetPeriods.id, existing[0].id));
+          .where(eq(schema.budgetPeriods.id, existingPeriod.id));
       } else {
         await this.db.insert(schema.budgetPeriods).values({
           budgetId: budget.id,
@@ -618,7 +625,7 @@ export class BudgetsService {
       let thresholds: number[];
       try {
         thresholds = budget.alertThresholds
-          ? JSON.parse(budget.alertThresholds)
+          ? alertThresholdsSchema.parse(JSON.parse(budget.alertThresholds))
           : DEFAULT_ALERT_THRESHOLDS;
       } catch {
         thresholds = DEFAULT_ALERT_THRESHOLDS;
@@ -788,7 +795,7 @@ export class BudgetsService {
     now: Date = new Date(),
     customStart?: string,
   ): { start: string; end: string } {
-    const fmt = (d: Date) => d.toISOString().split('T')[0];
+    const fmt = (d: Date) => d.toISOString().slice(0, 10);
 
     switch (period) {
       case 'weekly': {
@@ -836,7 +843,7 @@ export class BudgetsService {
   }
 
   getPreviousPeriodDates(period: string, now: Date = new Date()): { start: string; end: string } {
-    const fmt = (d: Date) => d.toISOString().split('T')[0];
+    const fmt = (d: Date) => d.toISOString().slice(0, 10);
 
     switch (period) {
       case 'weekly': {

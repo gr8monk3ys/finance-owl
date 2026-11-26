@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { DetectionService, type TransactionRecord } from './detection.service';
 import type { DrizzleDB } from '../../database/database.module';
@@ -7,11 +8,11 @@ describe('DetectionService', () => {
   let mockDb: DrizzleDB;
 
   beforeEach(() => {
-    mockDb = {
+    mockDb = fromAny({
       select: vi.fn(),
       insert: vi.fn(),
       update: vi.fn(),
-    } as any;
+    });
 
     service = new DetectionService(mockDb);
   });
@@ -78,7 +79,7 @@ describe('DetectionService', () => {
         frequency: 'weekly',
       });
       // Next expected date = last charge + one weekly cycle.
-      expect(result[0].nextExpectedDate).toBe(daysBefore(-4));
+      expect(result[0]?.nextExpectedDate).toBe(daysBefore(-4));
     });
 
     it('should reject inconsistent amounts (high standard deviation)', () => {
@@ -138,7 +139,7 @@ describe('DetectionService', () => {
       const result = detect([5, 35, 65].map((days) => charge(null, 25.0, days)));
 
       expect(result).toHaveLength(1);
-      expect(result[0].merchantName).toBe('Recurring Service');
+      expect(result[0]?.merchantName).toBe('Recurring Service');
     });
 
     it('should tolerate small amount variations within 10%', () => {
@@ -149,7 +150,7 @@ describe('DetectionService', () => {
       ]);
 
       expect(result).toHaveLength(1);
-      expect(result[0].frequency).toBe('monthly');
+      expect(result[0]?.frequency).toBe('monthly');
     });
 
     it('should detect biweekly subscription', () => {
@@ -160,7 +161,7 @@ describe('DetectionService', () => {
       );
 
       expect(result).toHaveLength(1);
-      expect(result[0].frequency).toBe('biweekly');
+      expect(result[0]?.frequency).toBe('biweekly');
     });
 
     it('should report bimonthly and semiannual cadences the DTOs now accept', () => {
@@ -343,7 +344,7 @@ describe('DetectionService', () => {
       const recentDate = new Date(now);
       recentDate.setDate(recentDate.getDate() - 10);
 
-      const sorted = [{ date: recentDate.toISOString().split('T')[0], amount: 9.99 }];
+      const sorted = [{ date: recentDate.toISOString().slice(0, 10), amount: 9.99 }];
 
       expect(service.detectTrial(sorted)).toBe(true);
     });
@@ -356,8 +357,8 @@ describe('DetectionService', () => {
       date2.setDate(date2.getDate() - 5);
 
       const sorted = [
-        { date: date1.toISOString().split('T')[0], amount: 9.99 },
-        { date: date2.toISOString().split('T')[0], amount: 9.99 },
+        { date: date1.toISOString().slice(0, 10), amount: 9.99 },
+        { date: date2.toISOString().slice(0, 10), amount: 9.99 },
       ];
 
       expect(service.detectTrial(sorted)).toBe(true);
@@ -378,7 +379,7 @@ describe('DetectionService', () => {
       const oldDate = new Date(now);
       oldDate.setDate(oldDate.getDate() - 60);
 
-      const sorted = [{ date: oldDate.toISOString().split('T')[0], amount: 9.99 }];
+      const sorted = [{ date: oldDate.toISOString().slice(0, 10), amount: 9.99 }];
 
       expect(service.detectTrial(sorted)).toBe(false);
     });
@@ -487,8 +488,8 @@ describe('DetectionService', () => {
       const result = await service.detectDuplicates('user_1');
 
       expect(result).toHaveLength(1);
-      expect(result[0].normalizedName).toBe('netflix');
-      expect(result[0].subscriptions).toHaveLength(2);
+      expect(result[0]?.normalizedName).toBe('netflix');
+      expect(result[0]?.subscriptions).toHaveLength(2);
     });
 
     it('should not report non-duplicate subscriptions', async () => {
@@ -565,7 +566,7 @@ describe('DetectionService', () => {
       const result = await service.detectDuplicates('user_1');
 
       expect(result).toHaveLength(1);
-      expect(result[0].normalizedName).toBe('spotify');
+      expect(result[0]?.normalizedName).toBe('spotify');
     });
   });
 
@@ -601,6 +602,16 @@ describe('DetectionService', () => {
   });
 
   // ─── Median and Standard Deviation Helpers ──────────────────────────
+
+  describe('iqr', () => {
+    it('returns zeros for no values instead of NaN', () => {
+      expect(service.iqr([])).toEqual({ q1: 0, q3: 0, iqr: 0 });
+    });
+
+    it('computes quartiles of sorted values', () => {
+      expect(service.iqr([1, 2, 3, 4, 5, 6, 7, 8])).toEqual({ q1: 3, q3: 7, iqr: 4 });
+    });
+  });
 
   describe('median', () => {
     it('should return median of odd-length array', () => {
@@ -650,10 +661,10 @@ describe('DetectionService', () => {
       expect(result[0]).toHaveProperty('isTrial');
       expect(result[0]).toHaveProperty('priceChange');
 
-      expect(result[0].category).toBe('streaming');
-      expect(result[0].confidence).toBeDefined();
-      expect(typeof result[0].confidenceScore).toBe('number');
-      expect(typeof result[0].isTrial).toBe('boolean');
+      expect(result[0]?.category).toBe('streaming');
+      expect(result[0]?.confidence).toBeDefined();
+      expect(typeof result[0]?.confidenceScore).toBe('number');
+      expect(typeof result[0]?.isTrial).toBe('boolean');
     });
 
     it('should detect price change via detectPriceChange for amounts that span clusters', () => {

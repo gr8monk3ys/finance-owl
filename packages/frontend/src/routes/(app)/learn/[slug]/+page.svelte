@@ -71,8 +71,8 @@
     let inTable = false;
     let tableRows: string[] = [];
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
 
       if (line.startsWith('|') && line.endsWith('|')) {
         if (!inTable) {
@@ -86,7 +86,7 @@
           inTable = false;
           tableRows = [];
         }
-        result.push(lines[i]);
+        result.push(rawLine);
       }
     }
     if (inTable) {
@@ -135,7 +135,7 @@
   function renderTable(rows: string[]): string {
     if (rows.length < 2) return rows.join('\n');
 
-    const headerCells = rows[0]
+    const headerCells = (rows[0] ?? '')
       .split('|')
       .filter((c) => c.trim())
       .map((c) => c.trim());

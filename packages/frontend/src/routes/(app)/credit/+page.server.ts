@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   addScore: async ({ request, locals }) => {
     const formData = await request.formData();
     const score = Number(formData.get('score'));
@@ -187,4 +187,4 @@ export const actions: Actions = {
       });
     }
   },
-};
+} satisfies Actions;

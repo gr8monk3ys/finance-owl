@@ -114,8 +114,9 @@ export class FinicityProvider implements BankAggregatorProvider, OnModuleInit {
         accounts: Array<{ institutionId: number }>;
       }>('GET', `/aggregation/v1/customers/${customerId}/accounts`);
 
-      if (loginResponse.accounts.length > 0) {
-        institutionId = String(loginResponse.accounts[0].institutionId);
+      const [firstAccount] = loginResponse.accounts;
+      if (firstAccount) {
+        institutionId = String(firstAccount.institutionId);
         try {
           const instInfo = await this.getInstitution(institutionId);
           institutionName = instInfo.name;

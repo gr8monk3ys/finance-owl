@@ -42,7 +42,8 @@ is no pnpm or npm here. Turbo drives the cross-package tasks.
 bun install --frozen-lockfile
 bun run dev                                             # full local stack
 bun run build --filter='!@finance-owl/mobile'
-bun run lint                                            # also: typecheck, format:check
+bun run check                                           # format, lint, typecheck, test, depcruise
+bun run lint                                            # also: typecheck, format:check, depcruise
 bun run --filter @finance-owl/backend test --coverage
 bun run --filter @finance-owl/backend test:integration  # needs postgres + redis
 bun run --filter @finance-owl/frontend test:e2e         # needs a seeded db + the API up

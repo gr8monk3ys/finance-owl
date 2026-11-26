@@ -121,8 +121,8 @@ describe('AdaptiveBudgetService', () => {
         pattern: 'holiday_spike',
         affectedMonths: [12],
       });
-      expect(result[0].recommendation).toContain('Gifts');
-      expect(result[0].averageIncrease).toBeGreaterThan(25);
+      expect(result[0]?.recommendation).toContain('Gifts');
+      expect(result[0]?.averageIncrease).toBeGreaterThan(25);
     });
 
     it('classifies a Jun-Aug spike as a summer pattern', async () => {
@@ -139,8 +139,8 @@ describe('AdaptiveBudgetService', () => {
       const result = await service.detectSeasonalPatterns(mockUserId);
 
       expect(result).toHaveLength(1);
-      expect(result[0].pattern).toBe('summer_increase');
-      expect(result[0].affectedMonths.sort()).toEqual([6, 7]);
+      expect(result[0]?.pattern).toBe('summer_increase');
+      expect(result[0]?.affectedMonths.sort()).toEqual([6, 7]);
     });
   });
 
@@ -184,8 +184,8 @@ describe('AdaptiveBudgetService', () => {
       });
       // avg=600, overage=100, adjustment=min(100*1.10, 500*0.10*3)=min(110,150)=110
       // newAmount = ceil(610/5)*5 = 610
-      expect(result[0].newAmount).toBe(610);
-      expect(result[0].reason).toContain('exceeding budget');
+      expect(result[0]?.newAmount).toBe(610);
+      expect(result[0]?.reason).toContain('exceeding budget');
       expect(mockDb.update).toHaveBeenCalled();
     });
 
@@ -214,9 +214,9 @@ describe('AdaptiveBudgetService', () => {
 
       expect(result).toHaveLength(1);
       // surplus=800, adjustment=800*0.07*3=168, newAmount=ceil(832/5)*5=835
-      expect(result[0].newAmount).toBe(835);
-      expect(result[0].changePercent).toBeLessThan(0);
-      expect(result[0].reason).toContain('below');
+      expect(result[0]?.newAmount).toBe(835);
+      expect(result[0]?.changePercent).toBeLessThan(0);
+      expect(result[0]?.reason).toContain('below');
     });
 
     it('preemptively increases a budget with an upward trend nearing its limit', async () => {
@@ -243,9 +243,9 @@ describe('AdaptiveBudgetService', () => {
       const result = await service.autoAdjustBudgets(mockUserId, 'moderate');
 
       expect(result).toHaveLength(1);
-      expect(result[0].reason).toContain('Preemptive');
+      expect(result[0]?.reason).toContain('Preemptive');
       // adjustment = budget.amount * up(0.10) = 100 -> newAmount = 1100
-      expect(result[0].newAmount).toBe(1100);
+      expect(result[0]?.newAmount).toBe(1100);
     });
 
     it('skips a budget whose spending does not warrant any adjustment', async () => {
@@ -296,10 +296,10 @@ describe('AdaptiveBudgetService', () => {
       const result = await service.predictNextMonth(mockUserId);
 
       expect(result).toHaveLength(1);
-      expect(result[0].trend).toBe('increasing');
+      expect(result[0]?.trend).toBe('increasing');
       // weightedAvg = (100*1 + 200*2) / 3 = 166.666... -> 166.67
-      expect(result[0].predictedAmount).toBeCloseTo(166.67, 2);
-      expect(result[0].monthOverMonthChange).toBeCloseTo(-16.7, 1);
+      expect(result[0]?.predictedAmount).toBeCloseTo(166.67, 2);
+      expect(result[0]?.monthOverMonthChange).toBeCloseTo(-16.7, 1);
     });
 
     it('uses linear extrapolation with 3+ months and clamps negative predictions to zero', async () => {
@@ -316,9 +316,9 @@ describe('AdaptiveBudgetService', () => {
       const result = await service.predictNextMonth(mockUserId);
 
       expect(result).toHaveLength(1);
-      expect(result[0].trend).toBe('decreasing');
+      expect(result[0]?.trend).toBe('decreasing');
       // Raw linear extrapolation is ~ -83.3; must be clamped to 0.
-      expect(result[0].predictedAmount).toBe(0);
+      expect(result[0]?.predictedAmount).toBe(0);
     });
   });
 

@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NotFoundException } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
@@ -65,7 +66,7 @@ describe('AccountsService', () => {
         .mockImplementation((_key: string, _ttl: number, factory: () => Promise<any>) => factory()),
     };
 
-    service = new AccountsService(mockDb, mockCacheService as any);
+    service = new AccountsService(mockDb, fromAny(mockCacheService));
   });
 
   // ---------------------------------------------------------------------------
@@ -229,7 +230,7 @@ describe('AccountsService', () => {
         name: 'Renamed',
       });
 
-      expect(result.name).toBe('Renamed');
+      expect(result?.name).toBe('Renamed');
       expect(mockDb.update).toHaveBeenCalled();
     });
 
@@ -243,7 +244,7 @@ describe('AccountsService', () => {
         isHidden: true,
       });
 
-      expect(result.isHidden).toBe(true);
+      expect(result?.isHidden).toBe(true);
     });
 
     it('should throw NotFoundException when updating non-existent account', async () => {

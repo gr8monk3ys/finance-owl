@@ -3,6 +3,7 @@ import { eq, and, desc, count, sql } from 'drizzle-orm';
 import { Subject } from 'rxjs';
 import { DATABASE_TOKEN, type DrizzleDB } from '../../database/database.module';
 import * as schema from '../../database/schema';
+import { firstRow } from '../../common/db/first-row';
 
 // ── Notification Types ──────────────────────────────────────────────
 export enum NotificationType {
@@ -55,19 +56,21 @@ export class NotificationsService {
     severity: NotificationSeverity = NotificationSeverity.INFO,
     actionUrl?: string,
   ) {
-    const [notification] = await this.db
-      .insert(schema.notifications)
-      .values({
-        userId,
-        type,
-        severity,
-        title,
-        body: message,
-        actionUrl: actionUrl ?? null,
-        read: false,
-        deleted: false,
-      })
-      .returning();
+    const notification = firstRow(
+      await this.db
+        .insert(schema.notifications)
+        .values({
+          userId,
+          type,
+          severity,
+          title,
+          body: message,
+          actionUrl: actionUrl ?? null,
+          read: false,
+          deleted: false,
+        })
+        .returning(),
+    );
 
     this.logger.debug(`Notification created: type=${type} user=${userId} id=${notification.id}`);
 

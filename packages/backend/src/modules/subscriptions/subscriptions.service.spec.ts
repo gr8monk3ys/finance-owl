@@ -1,3 +1,4 @@
+import { fromPartial } from '@total-typescript/shoehorn';
 import { describe, it, expect } from 'vitest';
 import { SubscriptionsService } from './subscriptions.service';
 import type { DrizzleDB } from '../../database/database.module';
@@ -20,7 +21,7 @@ function serviceReturning(rows: SummaryRow[]): SubscriptionsService {
     leftJoin: () => chain,
     where: () => Promise.resolve(rows),
   };
-  return new SubscriptionsService({ select: () => chain } as unknown as DrizzleDB);
+  return new SubscriptionsService(fromPartial<DrizzleDB>({ select: () => chain }));
 }
 
 const row = (frequency: string, estimatedAmount: number): SummaryRow => ({

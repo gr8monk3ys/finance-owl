@@ -46,7 +46,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   bookmark: async ({ request, locals }) => {
     const formData = await request.formData();
     const slug = String(formData.get('slug'));
@@ -67,4 +67,4 @@ export const actions: Actions = {
       });
     }
   },
-};
+} satisfies Actions;

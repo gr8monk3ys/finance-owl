@@ -1,3 +1,4 @@
+import { fromAny, fromPartial } from '@total-typescript/shoehorn';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from './email.service';
@@ -17,12 +18,12 @@ function createMockConfigService(
     ...overrides,
   };
 
-  return {
+  return fromPartial<ConfigService>({
     get: vi.fn((key: string, defaultValue?: any) => {
       const val = defaults[key];
       return val !== undefined ? val : defaultValue;
     }),
-  } as unknown as ConfigService;
+  });
 }
 
 /**
@@ -55,7 +56,7 @@ describe('EmailService', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     configService = createMockConfigService();
-    service = new EmailService(configService, {} as any);
+    service = new EmailService(configService, fromAny({}));
     mockSendMail = vi.fn().mockResolvedValue({ messageId: 'msg-123' });
     // Simulate onModuleInit without starting the real interval
     setPrivateField(service, 'transporter', createMockTransporter(mockSendMail));
@@ -95,7 +96,7 @@ describe('EmailService', () => {
     it('should auto-generate plain text from HTML when text is not provided', async () => {
       await service.sendEmail('user@example.com', 'Subject', '<p>Hello <strong>World</strong></p>');
 
-      const callArgs = mockSendMail.mock.calls[0][0];
+      const callArgs = mockSendMail.mock.calls[0]?.[0];
       expect(callArgs.text).toBeDefined();
       expect(callArgs.text).toContain('Hello');
       expect(callArgs.text).toContain('World');
@@ -128,7 +129,7 @@ describe('EmailService', () => {
 
     it('should not attempt to send mail when SMTP_HOST is missing', () => {
       const noSmtpConfig = createMockConfigService({ SMTP_HOST: undefined });
-      const svc = new EmailService(noSmtpConfig, {} as any);
+      const svc = new EmailService(noSmtpConfig, fromAny({}));
       svc.onModuleInit();
 
       expect(getPrivateField(svc, 'transporter')).toBeNull();
@@ -238,7 +239,7 @@ describe('EmailService', () => {
       expect(result).toBe(true);
       expect(mockSendMail).toHaveBeenCalledOnce();
 
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toContain('Netflix');
       expect(args.subject).toContain('$15.99');
       expect(args.html).toContain('Netflix');
@@ -259,7 +260,7 @@ describe('EmailService', () => {
       });
 
       expect(result).toBe(true);
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toContain('Dining Out');
       expect(args.subject).toContain('90%');
       expect(args.html).toContain('Dining Out');
@@ -279,7 +280,7 @@ describe('EmailService', () => {
       });
 
       expect(result).toBe(true);
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toContain('Suspicious Store');
       expect(args.html).toContain('Suspicious Store');
       expect(args.html).toContain('flagged');
@@ -300,7 +301,7 @@ describe('EmailService', () => {
       });
 
       expect(result).toBe(true);
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toContain('Security Alert');
       expect(args.html).toContain('Chrome on macOS');
       expect(args.html).toContain('203.0.113.42');
@@ -324,7 +325,7 @@ describe('EmailService', () => {
       });
 
       expect(result).toBe(true);
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toContain('Weekly Summary');
       expect(args.html).toContain('Groceries');
       expect(args.html).toContain('Dining');
@@ -341,7 +342,7 @@ describe('EmailService', () => {
       });
 
       expect(result).toBe(true);
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.subject).toBe('Welcome to FinanceOwl!');
       expect(args.html).toContain('Alice');
       expect(args.html).toContain('Connect Your Accounts');
@@ -364,7 +365,7 @@ describe('EmailService', () => {
         dueDate: '2026-01-01',
       });
 
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.html).toContain('unsubscribe=all');
       expect(args.html).toContain('Manage notification preferences');
     });
@@ -376,7 +377,7 @@ describe('EmailService', () => {
         dueDate: '2026-01-01',
       });
 
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.html).toContain('#10b981');
       expect(args.html).toContain('FinanceOwl');
     });
@@ -384,7 +385,7 @@ describe('EmailService', () => {
     it('should have responsive max-width 600px wrapper', async () => {
       await service.sendWelcome('u@test.com', { userName: 'Bob' });
 
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       expect(args.html).toContain('max-width:600px');
     });
 
@@ -396,7 +397,7 @@ describe('EmailService', () => {
         timestamp: new Date().toISOString(),
       });
 
-      const args = mockSendMail.mock.calls[0][0];
+      const args = mockSendMail.mock.calls[0]?.[0];
       // Should NOT have external stylesheets
       expect(args.html).not.toMatch(/<link[^>]+stylesheet/i);
       // Should have inline styles
@@ -410,7 +411,7 @@ describe('EmailService', () => {
 
   describe('lifecycle', () => {
     it('onModuleInit should initialise transport when SMTP_HOST is set', () => {
-      const svc = new EmailService(configService, {} as any);
+      const svc = new EmailService(configService, fromAny({}));
       svc.onModuleInit();
 
       expect(getPrivateField(svc, 'transporter')).not.toBeNull();
@@ -419,7 +420,7 @@ describe('EmailService', () => {
     });
 
     it('onModuleDestroy should clear the queue interval', () => {
-      const svc = new EmailService(configService, {} as any);
+      const svc = new EmailService(configService, fromAny({}));
       svc.onModuleInit();
 
       const timer = getPrivateField(svc, 'queueTimer');

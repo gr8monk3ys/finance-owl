@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { BudgetsService, type BudgetWithSpent } from './budgets.service';
 
@@ -59,7 +60,7 @@ describe('BudgetsService (periods, alerts, forecasts, households)', () => {
 
   beforeEach(() => {
     mockDb = { select: vi.fn(), insert: vi.fn() };
-    service = new BudgetsService(mockDb, { delPattern: vi.fn() } as any);
+    service = new BudgetsService(mockDb, fromAny({ delPattern: vi.fn() }));
   });
 
   afterEach(() => {
@@ -314,8 +315,8 @@ describe('BudgetsService (periods, alerts, forecasts, households)', () => {
 
       const [only] = await service.forecastEndOfPeriod('user-1');
 
-      expect(only.dailyAllowance).toBe(0);
-      expect(only.status).toBe('on_track');
+      expect(only?.dailyAllowance).toBe(0);
+      expect(only?.status).toBe('on_track');
     });
   });
 
@@ -424,8 +425,8 @@ describe('BudgetsService (periods, alerts, forecasts, households)', () => {
           alertThresholds: [50, 75, 90, 100, 110], // unparseable JSON -> defaults
         });
         // 70 spent in 319 of 365 days projects to 80.09, inside the 100 limit
-        expect(food.projectedSpend).toBe(80.09);
-        expect(food.onTrack).toBe(true);
+        expect(food?.projectedSpend).toBe(80.09);
+        expect(food?.onTrack).toBe(true);
         expect(mockDb.select).toHaveBeenCalledTimes(9);
       });
     });

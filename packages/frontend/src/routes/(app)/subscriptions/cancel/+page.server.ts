@@ -40,7 +40,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   initiate: async ({ request, locals }) => {
     const formData = await request.formData();
     const subscriptionId = formData.get('subscriptionId') as string;
@@ -80,4 +80,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to look up provider' });
     }
   },
-};
+} satisfies Actions;

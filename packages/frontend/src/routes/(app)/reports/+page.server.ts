@@ -6,10 +6,10 @@ import { getErrorMessage } from '#lib/server/error.ts';
 export const load: PageServerLoad = async ({ locals }) => {
   const now = new Date();
   const startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
-  const endDate = now.toISOString().split('T')[0];
+  const endDate = now.toISOString().slice(0, 10);
 
   const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-  const incomeStartDate = sixMonthsAgo.toISOString().split('T')[0];
+  const incomeStartDate = sixMonthsAgo.toISOString().slice(0, 10);
 
   try {
     const [spending, incomeExpense, netWorth, trends] = await Promise.all([
@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   export: async ({ request, locals }) => {
     const formData = await request.formData();
     const type = (formData.get('type') as string) || 'transactions';
@@ -56,9 +56,9 @@ export const actions: Actions = {
         rawText: true,
       });
 
-      return { csv, filename: `financeowl-${type}-${new Date().toISOString().split('T')[0]}.csv` };
+      return { csv, filename: `financeowl-${type}-${new Date().toISOString().slice(0, 10)}.csv` };
     } catch (e: unknown) {
       return fail(500, { error: getErrorMessage(e) || 'Failed to export CSV' });
     }
   },
-};
+} satisfies Actions;

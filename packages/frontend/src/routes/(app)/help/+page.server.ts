@@ -2,7 +2,7 @@ import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { api } from '#lib/server/api.ts';
 
-export const actions: Actions = {
+export const actions = {
   contact: async ({ request, locals }) => {
     const formData = await request.formData();
     const subject = formData.get('subject')?.toString().trim();
@@ -64,4 +64,4 @@ export const actions: Actions = {
       message,
     });
   },
-};
+} satisfies Actions;

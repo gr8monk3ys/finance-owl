@@ -148,10 +148,10 @@ function extractParamNames(fn: (...args: unknown[]) => unknown): string[] {
   const src = fn.toString();
 
   // Match the parameter list between the first pair of parentheses
-  const match = src.match(/\(([^)]*)\)/);
-  if (!match || !match[1].trim()) return [];
+  const paramList = src.match(/\(([^)]*)\)/)?.[1];
+  if (!paramList?.trim()) return [];
 
-  return match[1]
+  return paramList
     .split(',')
     .map((p) => {
       // Strip default values, type annotations, decorators, and destructuring

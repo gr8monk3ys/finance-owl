@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   generate: async ({ request, locals }) => {
     const formData = await request.formData();
     const year = parseInt(formData.get('year') as string, 10);
@@ -42,4 +42,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to generate review' });
     }
   },
-};
+} satisfies Actions;

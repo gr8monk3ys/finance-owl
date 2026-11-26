@@ -1453,7 +1453,7 @@ export function findCancellationEntry(merchantName: string): CancellationCatalog
   const normalized = merchantName.toLowerCase().trim();
 
   if (Object.prototype.hasOwnProperty.call(CATALOG, normalized)) {
-    return CATALOG[normalized];
+    return CATALOG[normalized] ?? null;
   }
 
   for (const [key, entry] of Object.entries(CATALOG)) {

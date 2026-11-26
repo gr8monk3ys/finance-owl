@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   addDebt: async ({ request, locals }) => {
     const formData = await request.formData();
     const data = {
@@ -176,4 +176,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to calculate payoff plan' });
     }
   },
-};
+} satisfies Actions;

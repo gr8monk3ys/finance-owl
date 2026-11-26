@@ -1,3 +1,4 @@
+import { fromAny } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { LayaCategorizerService } from './laya-categorizer.service';
 import { ImportService } from '../import/import.service';
@@ -72,10 +73,13 @@ describe('LayaCategorizerService', () => {
       categoryName: 'Food & Dining',
       confidence: 0.9,
     });
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0] ?? [];
     expect(url).toBe('http://laya.test:8000/v1/systemone');
     expect(init.headers.Authorization).toBe('Bearer secret');
-    const body = JSON.parse(init.body);
+    const body = JSON.parse(init.body) as {
+      state: string;
+      questions: { category: { type: string; criteria: object } };
+    };
     expect(body.state).toContain('Blue Bottle Coffee');
     expect(body.questions.category.type).toBe('choice');
     expect(Object.keys(body.questions.category.criteria)).toEqual(['Food & Dining', 'Travel']);
@@ -196,7 +200,7 @@ describe('laya wiring', () => {
         { date: '2026-09-02', name: 'DELTA AIR 456', amount: 80, merchantName: 'Delta' },
       ],
       'acct-1',
-      { skipDuplicates: true } as any,
+      fromAny({ skipDuplicates: true }),
       'statement.csv',
       'csv',
     );
@@ -225,7 +229,7 @@ describe('laya wiring', () => {
       'user-1',
       [{ date: '2026-09-01', name: 'Coffee', amount: 4.5 }],
       'acct-1',
-      { skipDuplicates: true } as any,
+      fromAny({ skipDuplicates: true }),
       'statement.csv',
       'csv',
     );

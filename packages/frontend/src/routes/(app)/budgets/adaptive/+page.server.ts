@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   'auto-adjust': async ({ request, locals }) => {
     const formData = await request.formData();
     const sensitivity = formData.get('sensitivity') as string;
@@ -69,4 +69,4 @@ export const actions: Actions = {
       return fail(500, { error: getErrorMessage(e) || 'Failed to create budget' });
     }
   },
-};
+} satisfies Actions;

@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 };
 
-export const actions: Actions = {
+export const actions = {
   upload: async ({ request, locals }) => {
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -169,4 +169,4 @@ export const actions: Actions = {
       });
     }
   },
-};
+} satisfies Actions;

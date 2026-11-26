@@ -58,7 +58,7 @@
       txName = selectedReceipt.merchantName || 'Receipt purchase';
       txMerchant = selectedReceipt.merchantName || '';
       txAmount = selectedReceipt.totalAmount || 0;
-      txDate = selectedReceipt.date || new Date().toISOString().split('T')[0];
+      txDate = selectedReceipt.date || new Date().toISOString().slice(0, 10);
       txAccountId = '';
     }
     showCreateTx = true;
@@ -82,16 +82,18 @@
     e.preventDefault();
     dragActive = false;
     const files = e.dataTransfer?.files;
-    if (files && files.length > 0) {
-      selectedFile = files[0];
+    const file = files?.item(0);
+    if (file) {
+      selectedFile = file;
       showUpload = true;
     }
   }
 
   function handleFileSelect(e: Event) {
     const input = e.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      selectedFile = input.files[0];
+    const file = input.files?.item(0);
+    if (file) {
+      selectedFile = file;
       showUpload = true;
     }
   }
@@ -355,8 +357,9 @@
           required
           onchange={(e) => {
             const input = e.currentTarget;
-            if (input.files && input.files.length > 0) {
-              selectedFile = input.files[0];
+            const file = input.files?.item(0);
+            if (file) {
+              selectedFile = file;
             }
           }}
           class="mt-1 block w-full text-sm text-surface-400 file:mr-4 file:rounded-lg file:border-0 file:bg-primary-600 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-primary-700"

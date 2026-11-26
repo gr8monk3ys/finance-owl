@@ -1,3 +1,4 @@
+import { fromPartial } from '@total-typescript/shoehorn';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { CacheService } from './cache.service';
 import { ConfigService } from '@nestjs/config';
@@ -14,9 +15,9 @@ function createConfigService(
     ...overrides,
   };
 
-  return {
+  return fromPartial<ConfigService>({
     get: vi.fn((key: string) => defaults[key]),
-  } as unknown as ConfigService;
+  });
 }
 
 function createFallbackService(): CacheService {

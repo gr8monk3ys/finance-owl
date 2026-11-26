@@ -224,7 +224,7 @@ describe('NotificationsService', () => {
 
       const result = await service.markAsRead(userId, notifId);
 
-      expect(result.read).toBe(true);
+      expect(result?.read).toBe(true);
       expect(mockDb.update).toHaveBeenCalled();
     });
 
@@ -235,7 +235,7 @@ describe('NotificationsService', () => {
 
       const result = await service.markAsRead(userId, notifId);
 
-      expect(result.read).toBe(true);
+      expect(result?.read).toBe(true);
       expect(mockDb.update).not.toHaveBeenCalled();
     });
 
